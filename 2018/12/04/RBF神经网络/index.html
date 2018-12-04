@@ -6,22 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Q-learning算法 | Jesse Tsui的博客</title>
+  <title>RBF神经网络 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等[1]。&amp;emsp;&amp;emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。&amp;emsp;&amp;emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习">
-<meta name="keywords" content="强化学习，算法">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; Powell在1985年提出了多变量插值的径向基函数（RBF）方法；1988年，Broomhead和Lowe首先将RBF应用于自适应神经网络的设计中，从而构成了RBF神经网络；1990年，Poggi和Girosi发表两篇论文，将正则化理论应用于RBF神经网络。其特点是结构简单、训练简洁、学习收敛速度快、能够以任意精度逼近任意连续函数[1神经网络控制与MATL">
+<meta name="keywords" content="机器学习，神经网络，算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Q-learning算法">
-<meta property="og:url" content="http://yoursite.com/2018/11/26/q-learning/index.html">
+<meta property="og:title" content="RBF神经网络">
+<meta property="og:url" content="http://yoursite.com/2018/12/04/RBF神经网络/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等[1]。&amp;emsp;&amp;emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。&amp;emsp;&amp;emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; Powell在1985年提出了多变量插值的径向基函数（RBF）方法；1988年，Broomhead和Lowe首先将RBF应用于自适应神经网络的设计中，从而构成了RBF神经网络；1990年，Poggi和Girosi发表两篇论文，将正则化理论应用于RBF神经网络。其特点是结构简单、训练简洁、学习收敛速度快、能够以任意精度逼近任意连续函数[1神经网络控制与MATL">
 <meta property="og:locale" content="cn">
-<meta property="og:image" content="http://yoursite.com/2018/11/26/q-learning/Q-learning.jpg">
-<meta property="og:updated_time" content="2018-11-26T04:34:37.615Z">
+<meta property="og:image" content="http://yoursite.com/2018/12/04/RBF神经网络/RBF1.jpg">
+<meta property="og:updated_time" content="2018-12-04T03:02:03.803Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Q-learning算法">
-<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等[1]。&amp;emsp;&amp;emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。&amp;emsp;&amp;emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习">
-<meta name="twitter:image" content="http://yoursite.com/2018/11/26/q-learning/Q-learning.jpg">
+<meta name="twitter:title" content="RBF神经网络">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; Powell在1985年提出了多变量插值的径向基函数（RBF）方法；1988年，Broomhead和Lowe首先将RBF应用于自适应神经网络的设计中，从而构成了RBF神经网络；1990年，Poggi和Girosi发表两篇论文，将正则化理论应用于RBF神经网络。其特点是结构简单、训练简洁、学习收敛速度快、能够以任意精度逼近任意连续函数[1神经网络控制与MATL">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/04/RBF神经网络/RBF1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -153,36 +153,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-q-learning" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-RBF神经网络" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Q-learning算法
+      RBF神经网络
     </h1>
   
 
         
-        <a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T03:14:01.932Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
+        <a href="/2018/12/04/RBF神经网络/" class="archive-article-date">
+  	<time datetime="2018-12-04T02:56:13.414Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h6 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a>0x00 引言</h6><p>&emsp;&emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等<sup>[1]</sup>。<br>&emsp;&emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。<br>&emsp;&emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习需要机器对给定的输入自行聚类。而强化学习则是机器主动做出试探动作，并根据环境的反馈来修改行为的学习方式。<br>&emsp;&emsp;本文主要介绍在强化学习中使用最多的基础算法，即Q-learning。</p>
-<h6 id="0x01-Q-learning算法"><a href="#0x01-Q-learning算法" class="headerlink" title="0x01 Q-learning算法"></a>0x01 Q-learning算法</h6><p>&emsp;&emsp;q-learning算法<sup>[2]</sup>包含两个最主要的概念，即状态S（state）和动作A（action），每次通过选择动作更新状态时，要同时按照图中的最优值函数Q计算公式更新Q表。其中参数α称为学习率，其决定这次的误差有多少是要被学习的, 且α是一个小于1 的数。γ为折扣率，是对未来 reward 的衰减值，值在[0,1]选择。</p>
-<p><div align="center"><img src="/2018/11/26/q-learning/Q-learning.jpg" alt="q-learning"><div align="left"><br>&emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。<br>&emsp;&emsp;在了解基础的算法以后，分析一个<a href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm" target="_blank" rel="noopener">实际问题</a><sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。</div></div></p>
-<h6 id="0x02-实例分析"><a href="#0x02-实例分析" class="headerlink" title="0x02 实例分析"></a>0x02 实例分析</h6><p>&emsp;&emsp;现在分析一下<a href="https://www.bilibili.com/video/av16921335/?p=6" target="_blank" rel="noopener">莫烦视频</a><sup>[4]</sup>中的代码段，<a href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py" target="_blank" rel="noopener">代码</a><sup>[5]</sup>可从github上获得。该例子的内容，是移动一个圆点，使其学会以最快的速度从左侧移动至右侧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def build_q_table(n_states, actions):</span><br><span class="line">    table = pd.DataFrame(</span><br><span class="line">        np.zeros((n_states, len(actions))),</span><br><span class="line">        columns=actions,</span><br><span class="line">    )</span><br><span class="line">    return table</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;函数build_q_table旨在新建一个6行2列的Q值表，行代表状态，列代表左右移动。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def choose_action(state, q_table):</span><br><span class="line">    state_actions = q_table.iloc[state, :]</span><br><span class="line">    if (np.random.uniform() &gt; EPSILON) or ((state_actions == 0).all()): </span><br><span class="line">        action_name = np.random.choice(ACTIONS)</span><br><span class="line">    else:</span><br><span class="line">        action_name = state_actions.idxmax()</span><br><span class="line">    return action_name</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;该例子采用ε-greedy策略来选择动作，choose_action即根据ε值选择下一步的实际动作，有90%的机率选择最大的Q值动作，其余10%的机率随机选择其他动作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">def get_env_feedback(S, A):</span><br><span class="line">    if A == &apos;right&apos;: </span><br><span class="line">        if S == N_STATES - 2:</span><br><span class="line">            S_ = &apos;terminal&apos;</span><br><span class="line">            R = 1</span><br><span class="line">        else:</span><br><span class="line">            S_ = S + 1</span><br><span class="line">            R = 0</span><br><span class="line">    else: </span><br><span class="line">        R = 0</span><br><span class="line">        if S == 0:</span><br><span class="line">            S_ = S </span><br><span class="line">        else:</span><br><span class="line">            S_ = S - 1</span><br><span class="line">    return S_, R</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;函数get_env_feedback的作用是假设按照已选择完成的动作行动，则下一状态的环境是否到达最左或最右，若是，则采取相应措施，若不是，则判断可安全执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">def rl():</span><br><span class="line">    q_table = build_q_table(N_STATES, ACTIONS)</span><br><span class="line">    for episode in range(MAX_EPISODES):</span><br><span class="line">        step_counter = 0</span><br><span class="line">        S = 0</span><br><span class="line">        is_terminated = False</span><br><span class="line">        update_env(S, episode, step_counter)</span><br><span class="line">        while not is_terminated:</span><br><span class="line"></span><br><span class="line">            A = choose_action(S, q_table)</span><br><span class="line">            S_, R = get_env_feedback(S, A) </span><br><span class="line">            q_predict = q_table.loc[S, A]</span><br><span class="line">            if S_ != &apos;terminal&apos;:</span><br><span class="line">                q_target = R + GAMMA * q_table.iloc[S_, :].max()</span><br><span class="line">            else:</span><br><span class="line">                q_target = R </span><br><span class="line">                is_terminated = True </span><br><span class="line"></span><br><span class="line">            q_table.loc[S, A] += ALPHA * (q_target - q_predict)</span><br><span class="line">            S = S_ </span><br><span class="line"></span><br><span class="line">            update_env(S, episode, step_counter+1)</span><br><span class="line">            step_counter += 1</span><br><span class="line">    return q_table</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;函数update_env是在搭建环境，这里不赘述。函数rl则是执行函数，循环做选择动作、判断环境、更新Q表以及实际运行动作的过程。</p>
-<h6 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a>0x03 引用文献</h6><p>[1]强化学习方法及其应用研究<br>[2]<a href="https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/" target="_blank" rel="noopener">https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/</a><br>[3]<a href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm" target="_blank" rel="noopener">http://mnemstudio.org/path-finding-q-learning-tutorial.htm</a><br>[4]<a href="https://www.bilibili.com/video/av16921335/?p=6" target="_blank" rel="noopener">https://www.bilibili.com/video/av16921335/?p=6</a><br>[5]<a href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py" target="_blank" rel="noopener">https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py</a> </p>
-
+        <h6 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a>0x00 引言</h6><p>&emsp;&emsp; Powell在1985年提出了多变量插值的径向基函数（RBF）方法；1988年，Broomhead和Lowe首先将RBF应用于自适应神经网络的设计中，从而构成了RBF神经网络；1990年，Poggi和Girosi发表两篇论文，将正则化理论应用于RBF神经网络。其特点是结构简单、训练简洁、学习收敛速度快、能够以任意精度逼近任意连续函数<sup>[1神经网络控制与MATLAB仿真]</sup>。</p>
+<h6 id="0x01-RBF神经网络基本结构"><a href="#0x01-RBF神经网络基本结构" class="headerlink" title="0x01 RBF神经网络基本结构"></a>0x01 RBF神经网络基本结构</h6><p>&emsp;&emsp; 与BP神经网络类似，径向基神经网络是一种含三层神经元的前馈神经网络，分别是输入层、隐含层以及输出层，其基本结构如下图所示<sup>[2 <a href="https://www.cnblogs.com/pinking/p/9349695.html" target="_blank" rel="noopener">https://www.cnblogs.com/pinking/p/9349695.html</a> ]</sup> ：</p>
+<p><div align="center"><img src="/2018/12/04/RBF神经网络/RBF1.jpg" alt="RBF1"><div align="left"></div></div></p>
+<p>&emsp;&emsp;RBF网络的基本思想是：用RBF作为隐单元的“基”构成隐含层空间，这样就可以将输入矢量直接映射到隐空间，而不需要通过权连接。当RBF的中心点确定以后，这种映射关系也就确定了。而隐含层空间到输出空间的映射是线性的，即网络的输出是隐单元输出的线性加权和，此处的权即为网络可调参数。其中，隐含层的作用是把向量从低维度的p映射到高维度的h，这样低维度线性不可分的情况到高维度就可以变得线性可分了，主要就是核函数的思想。这样，网络由输入到输出的映射是非线性的，而网络输出对可调参数而言却又是线性的。网络的权就可由线性方程组直接解出，从而大大加快学习速度并避免局部极小问题。<br>&emsp;&emsp; 第一层:输入层。与BP神经网络输入层含义相同，为输入向量X。<br>&emsp;&emsp; 第二层:隐含层。网络中仅有的隐含层，作用是实现输入空间到隐含空间的非线性变换，这种变换是通过隐含节点的径向基函数实现的。该层即RBF与BP神经网络区别所在，与BP神经网络的激活函数（sigmoid函数）不同，RBF神经网络的激活函数一般取以下三种<sup>[1]</sup>：<br>&emsp;&emsp;&emsp;&emsp;1）高斯函数：</p>
+<p><div align="center">$\varphi \left ( x \right )=exp\left ( -\frac{x^{T}x}{\sigma ^{2}} \right )$<div align="left"><br>&emsp;&emsp;&emsp;&emsp;2)逆多二次函数：</div></div></p>
+<p><div align="center">$\varphi \left ( x \right )=\frac{1}{\left ( x^{T}x+\sigma ^{2} \right )^{\frac{1}{2}}}$<div align="left"><br>&emsp;&emsp;&emsp;&emsp;3）反射sigmoid函数：</div></div></p>
+<p><div align="center">$\varphi \left ( x \right )=\left ( 1+exp\left ( \frac{x^{T}x}{\sigma ^{2}} \right ) \right )^{-1}$<div align="left"><br>&emsp;&emsp;其中最常用的径向基函数是高斯核函数：</div></div></p>
+<p><div align="center">$\varphi \left ( x,u_{i} \right )=exp\left ( -\frac{\left | x-u_{i} \right |^{2}}{2\sigma_{i} ^{2}} \right )\, \, \, i=1,2,\cdots ,n$<div align="left"><br>&emsp;&emsp;式中，$u_{i}$表示神经元i的核函数中心向量；$\sigma _ {i}$表示核函数的宽度参数，控制核函数的径向作用范围。<br>&emsp;&emsp;第三层:输出层。隐含层到输出层为线性映射：</div></div></p>
+<p><div align="center">$y=\sum_{i=1}^{n}w\varphi \left ( x,u_{i} \right )+b$<div align="left"><br>&emsp;&emsp;式中，w为权重，b为偏置。</div></div></p>
+<h6 id="0x01-RBF神经网络学习算法"><a href="#0x01-RBF神经网络学习算法" class="headerlink" title="0x01 RBF神经网络学习算法"></a>0x01 RBF神经网络学习算法</h6>
       
 
       
@@ -195,7 +195,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">强化学习，算法</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">机器学习，神经网络，算法</a>
         		</li>
       		
 		</ul>
@@ -251,7 +251,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/11/26/q-learning/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/12/04/RBF神经网络/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -265,18 +265,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/12/04/RBF神经网络/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          RBF神经网络
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/07/05/CSDN文章HTML转Markdown/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">CSDN文章HTML转Markdown</div>
+    <a href="/2018/11/26/q-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Q-learning算法</div>
       <i class="icon-circle-right"></i>
     </a>
   
