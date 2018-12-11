@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 强化学习，算法 | Jesse Tsui的博客</title>
+  <title>pytorch-BP神经网络拟合simo函数 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+  <meta name="description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253import torchimport torch.nn.functional as Fimport matplotlib.pyplot as pltimport random# torch.manual_s">
 <meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/tags/强化学习，算法/index.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch-BP神经网络拟合simo函数">
+<meta property="og:url" content="http://yoursite.com/2018/12/11/pytorch-BP神经网络拟合simo函数/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253import torchimport torch.nn.functional as Fimport matplotlib.pyplot as pltimport random# torch.manual_s">
 <meta property="og:locale" content="cn">
+<meta property="og:updated_time" content="2018-12-11T10:00:55.162Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jesse Tsui的博客">
-<meta name="twitter:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta name="twitter:title" content="pytorch-BP神经网络拟合simo函数">
+<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253import torchimport torch.nn.functional as Fimport matplotlib.pyplot as pltimport random# torch.manual_s">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -150,60 +151,134 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-pytorch-BP神经网络拟合simo函数" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T03:14:01.932Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/11/26/q-learning/">Q-learning算法</a>
+    <h1 class="article-title" itemprop="name">
+      pytorch-BP神经网络拟合simo函数
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">强化学习，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        <a href="/2018/12/11/pytorch-BP神经网络拟合simo函数/" class="archive-article-date">
+  	<time datetime="2018-12-11T09:58:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># torch.manual_seed(1)    # reproducible</span></span><br><span class="line"></span><br><span class="line">x1 = torch.unsqueeze(torch.linspace(<span class="number">-1</span>, <span class="number">1</span>, <span class="number">100</span>), dim=<span class="number">1</span>)  <span class="comment"># x data (tensor), shape=(100, 1)</span></span><br><span class="line">x2 = x1</span><br><span class="line">x = torch.zeros(<span class="number">10000</span>,<span class="number">2</span>)</span><br><span class="line">x0 = x</span><br><span class="line"><span class="comment">#x = torch.cat((x1,x2), 1)</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">10000</span>):</span><br><span class="line">    j1 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    j2 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    x0[i][<span class="number">0</span>] = x1[j1]</span><br><span class="line">    x0[i][<span class="number">1</span>] = x2[j2]</span><br><span class="line"></span><br><span class="line">x3 = x0[:,<span class="number">0</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x4 = x0[:,<span class="number">1</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">y = <span class="number">1</span>/x3+<span class="number">1</span>/x4</span><br><span class="line"><span class="comment"># = x1.pow(2) + 0.2*torch.rand(x1.size())                 # noisy y data (tensor), shape=(100, 1)</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, n_feature, n_hidden, n_output)</span>:</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.hidden = torch.nn.Linear(n_feature, n_hidden)   <span class="comment"># hidden layer</span></span><br><span class="line">        self.predict = torch.nn.Linear(n_hidden, n_output)   <span class="comment"># output layer</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x = F.relu(self.hidden(x))      <span class="comment"># activation function for hidden layer</span></span><br><span class="line">        x = self.predict(x)             <span class="comment"># linear output</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = Net(n_feature=<span class="number">2</span>, n_hidden=<span class="number">100</span>, n_output=<span class="number">1</span>)     <span class="comment"># define the network</span></span><br><span class="line">print(net)  <span class="comment"># net architecture</span></span><br><span class="line"></span><br><span class="line">optimizer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.2</span>)</span><br><span class="line">loss_func = torch.nn.MSELoss()  <span class="comment"># this is for regression mean squared loss</span></span><br><span class="line"></span><br><span class="line">plt.ion()   <span class="comment"># something about plotting</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">2000</span>):</span><br><span class="line">    prediction = net(x)     <span class="comment"># input x and predict based on x</span></span><br><span class="line"></span><br><span class="line">    loss = loss_func(prediction, y)     <span class="comment"># must be (1. nn output, 2. target)</span></span><br><span class="line"></span><br><span class="line">    optimizer.zero_grad()   <span class="comment"># clear gradients for next train</span></span><br><span class="line">    loss.backward()         <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">    optimizer.step()        <span class="comment"># apply gradients</span></span><br><span class="line"> </span><br><span class="line">print(net(torch.Tensor([<span class="number">1</span>,<span class="number">1</span>])))</span><br></pre></td></tr></table></figure>
+      
 
-          
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/12/11/pytorch-BP神经网络拟合simo函数/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2018/12/07/计算机视觉基础/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">计算机视觉基础</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -226,9 +301,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
