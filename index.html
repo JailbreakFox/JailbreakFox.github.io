@@ -366,16 +366,11 @@
 <p><strong><em>1.2 量化颜色直方图</em></strong><br>&emsp;&emsp;适用于均匀的颜色空间，比如RGB、HSV等，其属性坐标系如下图所示：</p>
 <p><div align="center"><img src="/2018/12/07/计算机视觉基础/量化颜色直方图1.jpg" alt="量化颜色直方图1"><div align="left"></div></div></p>
 <p><strong><em>1.3 聚类颜色直方图</em></strong><br>&emsp;&emsp;适用于非均匀的颜色空间，例如Lab。操作过程需要先使用聚类算法（例如Kmeans）对所有像素点颜色向量进行聚类。</p>
-<p><strong><em>2 几何特征</em></strong><br><strong><em>2.1 边缘/Edge</em></strong><br>&emsp;&emsp;像素明显变化的区域，一般具有丰富的语义信息，该特征主要用于物体识别、几何与视角变换等。<br>&emsp;&emsp;边缘提取操作过程为先高斯去噪，再使用一阶导数获取极值。先使用高斯去噪的原因是导数对噪声敏感。<br>&emsp;&emsp;二维高斯函数如下所示：</p>
-<p><div align="center">$h_{\sigma }\left ( u,v \right )=\frac{1}{2\pi \sigma ^{2}}e^{-\frac{u^{2}+v^{2}}{2\sigma ^{2}}}$<div align="left"></div></div></p>
-<p>&emsp;&emsp;其在x方向上的一阶导数可表示为：</p>
-<p><div align="center">$h_{x}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial x}=\frac{-x}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$<div align="left"></div></div></p>
-<p>&emsp;&emsp;其在y方向上的一阶导数可表示为：</p>
-<p><div align="center">$h_{y}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial y}=\frac{-y}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$<div align="left"></div></div></p>
-<p>&emsp;&emsp;上式中的变量$\sigma $即为<strong>标准差</strong>，该值越大，高斯函数的峰值越小，范围越宽，该变量对于边缘提取的<strong>尺度</strong>有影响。<br>&emsp;&emsp;根据周围像素之间变化程度可以做出梯度向量，梯度（增加最快）的方向可以表示为：</p>
-<p><div align="center">$arctan\left ( \frac{h_{y}\left ( x,y \right )}{h_{x}\left ( x,y \right )} \right )$<div align="left"></div></div></p>
-<p>&emsp;&emsp;梯度幅值/强度可以表示为：</p>
-<p><div align="center">$h_{x}\left ( x,y \right )^{2}+h_{y}\left ( x,y \right )^{2}$<div align="left"></div></div></p>
+<p><strong><em>2 几何特征</em></strong><br><strong><em>2.1 边缘/Edge</em></strong><br>&emsp;&emsp;像素明显变化的区域，一般具有丰富的语义信息，该特征主要用于物体识别、几何与视角变换等。<br>&emsp;&emsp;边缘提取操作过程为先高斯去噪，再使用一阶导数获取极值。先使用高斯去噪的原因是导数对噪声敏感。<br>&emsp;&emsp;二维高斯函数如下所示：<br>$$h_{\sigma }\left ( u,v \right )=\frac{1}{2\pi \sigma ^{2}}e^{-\frac{u^{2}+v^{2}}{2\sigma ^{2}}}$$</p>
+<p>&emsp;&emsp;其在x方向上的一阶导数可表示为：<br>$$h_{x}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial x}=\frac{-x}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$$</p>
+<p>&emsp;&emsp;其在y方向上的一阶导数可表示为：<br>$$h_{y}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial y}=\frac{-y}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$$</p>
+<p>&emsp;&emsp;上式中的变量$\sigma $即为<strong>标准差</strong>，该值越大，高斯函数的峰值越小，范围越宽，该变量对于边缘提取的<strong>尺度</strong>有影响。<br>&emsp;&emsp;根据周围像素之间变化程度可以做出梯度向量，梯度（增加最快）的方向可以表示为：<br>$$arctan\left ( \frac{h_{y}\left ( x,y \right )}{h_{x}\left ( x,y \right )} \right )$$</p>
+<p>&emsp;&emsp;梯度幅值/强度可以表示为：<br>$$h_{x}\left ( x,y \right )^{2}+h_{y}\left ( x,y \right )^{2}$$</p>
 <p>&emsp;&emsp;矢量的箭头方向表示梯度增加最快的方向，矢量的大小用箭头的长度表示，矢量可如下图表示：</p>
 <p><div align="center"><img src="/2018/12/07/计算机视觉基础/边缘1.jpg" alt="边缘1"><div align="left"></div></div></p>
 <p>&emsp;&emsp;不同<strong>标准差</strong>的滤波捕捉到不同<strong>尺度</strong>的边缘。其变化可从下图看出：</p>
