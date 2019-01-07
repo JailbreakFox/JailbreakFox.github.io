@@ -23,7 +23,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/12/12/pytorch-BP神经网络拟合非线性函数/激活函数3.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/12/12/pytorch-BP神经网络拟合非线性函数/bp1.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/12/12/pytorch-BP神经网络拟合非线性函数/bp2.jpg">
-<meta property="og:updated_time" content="2019-01-04T11:18:23.138Z">
+<meta property="og:updated_time" content="2019-01-07T09:44:26.897Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pytorch-BP神经网络拟合非线性函数">
 <meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;神经网络是机器学习中常用的一种方法，而BP神经网络在近些年是运用极为广泛的一种，如吴恩达课程[1]所涉及的神经网络方面的课程便是用的BP神经网络。由于近期刚接触pytorch，以及毕设上的需要，尝试写一篇有关用pytorch和BP神经网络对非线性函数进行拟合的文章。 0x01 BP神经网络的概念与原理&amp;emsp;&amp;emsp;BP(back propagatio">
@@ -180,7 +180,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;神经网络是机器学习中常用的一种方法，而BP神经网络在近些年是运用极为广泛的一种，如<a href="https://study.163.com/course/courseMain.htm?courseId=1004570029" target="_blank" rel="noopener">吴恩达课程</a><sup>[1]</sup>所涉及的神经网络方面的课程便是用的BP神经网络。由于近期刚接触pytorch，以及毕设上的需要，尝试写一篇有关用pytorch和BP神经网络对非线性函数进行拟合的文章。</p>
-<h3 id="0x01-BP神经网络的概念与原理"><a href="#0x01-BP神经网络的概念与原理" class="headerlink" title="0x01 BP神经网络的概念与原理"></a><em>0x01 BP神经网络的概念与原理</em></h3><p>&emsp;&emsp;BP(back propagation)神经网络最初是1986年由Rumelhart和McClelland提出的概念，其是一种按照误差逆向传播算法训练的多层前馈神经网络，也是目前应用最广泛的神经网络<sup>[2]</sup>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 人工神经元</span><br><span class="line">	1.1 神经元模型</span><br><span class="line">	1.2 激活函数</span><br><span class="line">2 BP神经网络的结构与原理</span><br><span class="line">	2.1 前向传播算法</span><br><span class="line">	2.2 代价函数</span><br><span class="line">	2.3 反向传播算法</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x01-BP神经网络的概念与原理"><a href="#0x01-BP神经网络的概念与原理" class="headerlink" title="0x01 BP神经网络的概念与原理"></a><em>0x01 BP神经网络的概念与原理</em></h3><p>&emsp;&emsp;BP(back propagation)神经网络最初是1986年由Rumelhart和McClelland提出的概念，其是一种按照误差逆向传播算法训练的多层前馈神经网络，也是目前应用最广泛的神经网络<sup>[2]</sup>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 人工神经元</span><br><span class="line">  1.1 神经元模型</span><br><span class="line">  1.2 激活函数</span><br><span class="line">2 BP神经网络的结构与原理</span><br><span class="line">  2.1 前向传播算法</span><br><span class="line">  2.2 代价函数</span><br><span class="line">  2.3 反向传播算法</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>1 人工神经元</em></strong><br><strong><em>1.1 神经元模型</em></strong><br>&emsp;&emsp;神经生理学和神经解剖学的研究结果表明，神经元是脑组织的基本单元，同时也是神经系统结构与功能的单位。人类大脑中的神经元互相连接，构成了一庞大复杂的网络，即生物神经网络。神经元在结构上是由细胞体、树突、轴突以及突触四个部分组成的。树突是一种管状延伸物，其作用是接受来自周围的神经冲击信息，相当于细胞的输入端，信息流从树突发出，经过细胞体，接着由轴突传出，轴突相当于细胞的输出端。突触是神经元之间通信的媒介，相当于是不同神经元之间的输入输出接口。</p>
 <p><div align="center"><img src="/2018/12/12/pytorch-BP神经网络拟合非线性函数/神经元1.jpg" alt="神经元1"><div align="left"></div></div></p>
 <p>&emsp;&emsp;借鉴神经元的存在形式，神经元模型便应运而生。早在1943年，心理学家McCulloch和数学家W.Pitts就在分析总结神经元基本特性的基础上提出了MP模型，该模型经过不断改进后，形成了现在被广泛使用的BP神经元模型。人工神经元模型应具备三个要素：<br>&emsp;&emsp;&emsp;&emsp;1）至少具备一组突触或连接，其连接强度常用表示，也可称之为权值；<br>&emsp;&emsp;&emsp;&emsp;2）神经元的输出是由多个输入经过加权处理，并通过累加算法得到的；<br>&emsp;&emsp;&emsp;&emsp;3）具备一个激励函数用于限制神经元的输出。激励函数的作用是将输出信号限制在一个范围内，通常设置值为[0,1]或[-1,1]。<br>&emsp;&emsp;一个典型的人工神经元模型如下图所示：</p>
@@ -443,15 +443,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
