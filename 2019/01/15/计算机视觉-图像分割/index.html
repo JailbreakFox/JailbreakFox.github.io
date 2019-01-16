@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>计算机视觉-图像分割 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01显著性检测&amp;emsp;&amp;emsp;显著性检测关注两类问题。其一显著性">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01 显著性检测&amp;emsp;&amp;emsp;显著性检测关注两">
 <meta name="keywords" content="视觉，入门">
 <meta property="og:type" content="article">
 <meta property="og:title" content="计算机视觉-图像分割">
 <meta property="og:url" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01显著性检测&amp;emsp;&amp;emsp;显著性检测关注两类问题。其一显著性">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01 显著性检测&amp;emsp;&amp;emsp;显著性检测关注两">
 <meta property="og:locale" content="cn">
 <meta property="og:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/计算机视觉1.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/FCN4.jpg">
@@ -25,10 +25,10 @@
 <meta property="og:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/FCN3.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/FCN7.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/FCN8.jpg">
-<meta property="og:updated_time" content="2019-01-15T13:45:51.160Z">
+<meta property="og:updated_time" content="2019-01-16T02:07:57.853Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机视觉-图像分割">
-<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01显著性检测&amp;emsp;&amp;emsp;显著性检测关注两类问题。其一显著性">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; 本文主要知识结构与素材摘自《基于深度学习的计算机视觉》[1]。&amp;emsp;&amp;emsp; 计算机视觉当前主要研究领域如下图所示：  &amp;emsp;&amp;emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。 0x01 显著性检测&amp;emsp;&amp;emsp;显著性检测关注两">
 <meta name="twitter:image" content="http://yoursite.com/2019/01/15/计算机视觉-图像分割/计算机视觉1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
@@ -183,8 +183,8 @@
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
 <p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/计算机视觉1.jpg" alt="计算机视觉1"><div align="left"></div></div></p>
-<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
-<h3 id="0x01显著性检测"><a href="#0x01显著性检测" class="headerlink" title="0x01显著性检测"></a><em>0x01显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
+<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
+<h3 id="0x01-显著性检测"><a href="#0x01-显著性检测" class="headerlink" title="0x01 显著性检测"></a><em>0x01 显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
 <h3 id="0x02-图像分割之物体分割"><a href="#0x02-图像分割之物体分割" class="headerlink" title="0x02 图像分割之物体分割"></a><em>0x02 图像分割之物体分割</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 前景背景分割</span><br><span class="line">  1.1 Graph Cuts分割</span><br><span class="line">  1.2 GrabCut分割</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。<br><strong><em>1.1、Graph Cuts分割</em></strong><br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a href="https://www.cnblogs.com/hjlweilong/p/6119822.html" target="_blank" rel="noopener">博文</a><sup>[2]</sup>。<br><strong><em>1.2、GrabCut分割</em></strong><br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
 <h3 id="0x03-图像分割之语义分割"><a href="#0x03-图像分割之语义分割" class="headerlink" title="0x03 图像分割之语义分割"></a><em>0x03 图像分割之语义分割</em></h3><p>&emsp;&emsp;不但要做一张图片上的物体分割，且要理解、识别各个物体的内容。<br>&emsp;&emsp;语义分割的用处有机器人视觉和场景理解、辅助/自动驾驶、医学X光等。<br>&emsp;&emsp;在2015年之前的语义分割用的算法是手工特征+图模型（CRF）。从2015年开始，便运用深度神经网络模型：<br>&emsp;&emsp;&emsp;&emsp;1）改进的CNN。传统CNN存在一些问题。<br>&emsp;&emsp;&emsp;&emsp;2）全卷积网络/FCN(Fully Convolutional Networks)。所有层都是卷积层，能够解决降采样后的低分辨率问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 全卷积网络/FCN</span><br><span class="line">  1.1 卷积化</span><br><span class="line">  1.2 反卷积</span><br><span class="line">  1.3 跳层结构</span><br><span class="line">2 DeepLab全卷积网络</span><br><span class="line">  2.1 DCNN-孔算法</span><br><span class="line">  2.2 DCNN-Atrous空间金字塔池化</span><br><span class="line">  2.3 全连接CRF</span><br></pre></td></tr></table></figure></p>
@@ -280,6 +280,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2019/01/16/计算机视觉-图像描述/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          计算机视觉-图像描述
+        
+      </div>
+    </a>
   
   
     <a href="/2018/12/30/计算机视觉-图像识别/" id="article-nav-older" class="article-nav-link-wrap">
@@ -434,11 +443,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
