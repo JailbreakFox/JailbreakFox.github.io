@@ -61,7 +61,7 @@
 			
 				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/">随笔</a></li>
+				<li><a href="/archives/index.html">归档</a></li>
 	        
 			</ul>
 		</nav>
@@ -85,9 +85,14 @@
 				
 					<a class="github" target="_blank" href="https://github.com/JailbreakFox" title="github"><i class="icon-github"></i></a>
 		        
+					<a class="weixin" target="_blank" href="/assets/blogImg/weixin.png" title="weixin"><i class="icon-weixin"></i></a>
+		        
 					<a class="mail" target="_blank" href="/tracerxu@126.com" title="mail"><i class="icon-mail"></i></a>
 		        
 			</div>
+		</nav>
+		<nav class="header-music">
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="20" width=100% height=100% src="//music.163.com/outchain/player?type=0&id=2774969739&auto=1&height=32"></iframe>
 		</nav>
 	</header>		
 </div>
@@ -124,6 +129,8 @@
 					
 						<a class="github" target="_blank" href="https://github.com/JailbreakFox" title="github"><i class="icon-github"></i></a>
 			        
+						<a class="weixin" target="_blank" href="/assets/blogImg/weixin.png" title="weixin"><i class="icon-weixin"></i></a>
+			        
 						<a class="mail" target="_blank" href="/tracerxu@126.com" title="mail"><i class="icon-mail"></i></a>
 			        
 				</div>
@@ -135,7 +142,7 @@
 				
 					<li style="width: 50%"><a href="/">主页</a></li>
 		        
-					<li style="width: 50%"><a href="/">随笔</a></li>
+					<li style="width: 50%"><a href="/archives/index.html">归档</a></li>
 		        
 				</ul>
 			</nav>
@@ -165,8 +172,9 @@
 
         
         <a href="/2019/04/29/CMake/" class="archive-article-date">
-  	<time datetime="2019-04-29T15:59:20.626Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-29</time>
+  	<time datetime="2019-04-29T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-29</time>
 </a>
+        
         
       </header>
     
@@ -258,8 +266,9 @@
 
         
         <a href="/2019/03/31/游戏AI-智能体行动系统/" class="archive-article-date">
-  	<time datetime="2019-03-31T07:41:53.333Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
+  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
 </a>
+        
         
       </header>
     
@@ -349,8 +358,9 @@
 
         
         <a href="/2019/01/16/计算机视觉-图像描述/" class="archive-article-date">
-  	<time datetime="2019-01-16T09:36:32.921Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-16</time>
+  	<time datetime="2019-01-16T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-16</time>
 </a>
+        
         
       </header>
     
@@ -437,8 +447,9 @@
 
         
         <a href="/2019/01/15/计算机视觉-图像分割/" class="archive-article-date">
-  	<time datetime="2019-01-15T09:35:21.230Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
+  	<time datetime="2019-01-15T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
 </a>
+        
         
       </header>
     
@@ -527,8 +538,9 @@
 
         
         <a href="/2018/12/30/计算机视觉-图像识别/" class="archive-article-date">
-  	<time datetime="2018-12-30T08:19:39.483Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
+  	<time datetime="2018-12-30T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
 </a>
+        
         
       </header>
     
@@ -613,8 +625,9 @@
 
         
         <a href="/2018/12/12/pytorch-BP神经网络拟合非线性函数/" class="archive-article-date">
-  	<time datetime="2018-12-12T01:54:25.922Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-12</time>
+  	<time datetime="2018-12-12T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-12</time>
 </a>
+        
         
       </header>
     
@@ -645,7 +658,7 @@
 <p>&emsp;&emsp;可视化损失函数在代码中加入如下内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> visdom <span class="keyword">import</span> Visdom</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">vis = Visdom(env=<span class="string">'my_wind'</span>)<span class="comment">#设置环境窗口的名称是'my_wind',如果不设置名称就在main中</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">400</span>):</span><br><span class="line">    x_loss = torch.Tensor([t])</span><br><span class="line">    </span><br><span class="line">    prediction = net(x)     <span class="comment"># input x and predict based on x</span></span><br><span class="line"></span><br><span class="line">    loss = loss_func(prediction, y1)     <span class="comment"># must be (1. nn output, 2. target)</span></span><br><span class="line">    </span><br><span class="line">    vis.line(X=x_loss,Y=loss.unsqueeze(<span class="number">0</span>),win=<span class="string">'polynomial'</span>,update=<span class="string">'append'</span> <span class="keyword">if</span> t&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="keyword">None</span>)</span><br><span class="line"></span><br><span class="line">    optimizer.zero_grad()   <span class="comment"># clear gradients for next train</span></span><br><span class="line">    loss.backward()         <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">    optimizer.step()        <span class="comment"># apply gradients</span></span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;其输出的loss曲线图如下所示：</p>
 <p><div align="center"><img src="/2018/12/12/pytorch-BP神经网络拟合非线性函数/bp3.jpg" alt="bp3"><div align="left"></div></div></p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://study.163.com/course/courseMain.htm?courseId=1004570029" target="_blank" rel="noopener">https://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[2]神经网络的研究及应用<br>[3]<a href="https://www.cnblogs.com/lliuye/p/9486500.html" target="_blank" rel="noopener">https://www.cnblogs.com/lliuye/p/9486500.html</a><br>[4]<a href="https://www.cnblogs.com/Belter/p/6653773.html？utm_source=itdadao&amp;utm_medium=referral" target="_blank" rel="noopener">https://www.cnblogs.com/Belter/p/6653773.html？utm_source=itdadao&amp;utm_medium=referral</a><br>[5]<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">https://www.cnblogs.com/charlotte77/p/5629865.html</a><br>[6]<a href="http://www.rrcun.com/it/LXX516/article/details/79019328" target="_blank" rel="noopener">http://www.rrcun.com/it/LXX516/article/details/79019328</a></p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://study.163.com/course/courseMain.htm?courseId=1004570029" target="_blank" rel="noopener">https://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[2]《神经网络的研究及应用》<br>[3]<a href="https://www.cnblogs.com/lliuye/p/9486500.html" target="_blank" rel="noopener">https://www.cnblogs.com/lliuye/p/9486500.html</a><br>[4]<a href="https://www.cnblogs.com/Belter/p/6653773.html？utm_source=itdadao&amp;utm_medium=referral" target="_blank" rel="noopener">https://www.cnblogs.com/Belter/p/6653773.html？utm_source=itdadao&amp;utm_medium=referral</a><br>[5]<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">https://www.cnblogs.com/charlotte77/p/5629865.html</a><br>[6]<a href="http://www.rrcun.com/it/LXX516/article/details/79019328" target="_blank" rel="noopener">http://www.rrcun.com/it/LXX516/article/details/79019328</a></p>
 
       
 
@@ -712,8 +725,9 @@
 
         
         <a href="/2018/12/07/计算机视觉基础/" class="archive-article-date">
-  	<time datetime="2018-12-07T08:20:52.149Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-07</time>
+  	<time datetime="2018-12-07T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-07</time>
 </a>
+        
         
       </header>
     
@@ -822,8 +836,9 @@
 
         
         <a href="/2018/12/04/RBF神经网络/" class="archive-article-date">
-  	<time datetime="2018-12-04T02:56:13.414Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
+  	<time datetime="2018-12-04T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
 </a>
+        
         
       </header>
     
@@ -906,8 +921,9 @@
 
         
         <a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T03:14:01.932Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
+  	<time datetime="2018-11-26T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
 </a>
+        
         
       </header>
     
@@ -991,6 +1007,7 @@
   	<time datetime="2018-07-05T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
 </a>
         
+        
       </header>
     
     <div class="article-entry" itemprop="articleBody">
@@ -1054,14 +1071,16 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 JailbreakFox
+				&copy; 2019 JailbreakFox
+				by<a href="http://hexo.io/" target="_blank"> Hexo</a>
     	</div>
-      	<div class="footer-right">
-      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
-      	</div>
+			<div class="footer-right">
+				<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+			</div>
     </div>
   </div>
 </footer>
+<script  async  src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     </div>
     <script>
 	var yiliaConfig = {
