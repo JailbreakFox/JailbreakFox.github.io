@@ -159,6 +159,89 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/21/DeepFakes/">DeepFakes(未完成)</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
+  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a href="https://github.com/deepfakes/faceswap" target="_blank" rel="noopener">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a href="https://jailbreakfox.github.io/2019/05/16/环境配置-机器学习" target="_blank" rel="noopener">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
+<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
+<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。<br><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a href="https://github.com/hardikvasa/google-images-download" target="_blank" rel="noopener">GitHub</a>上获取。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">"胡歌"</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">"刘亦菲"</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
+<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。<br><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/21/DeepFakes/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -166,7 +249,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/16/环境配置-机器学习/">环境配置-机器学习</a>
+      <a class="article-title" href="/2019/05/16/环境配置-机器学习/">环境配置-机器学习(待完成)</a>
     </h1>
   
 
@@ -181,13 +264,13 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 机器学习常用库TensorFlow和PyTorch，为避免忘记开发环境的配置，这里记录一下。</p>
-<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md" target="_blank" rel="noopener">Faceswap的安装教程</a>为例，解释如何配置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 Faceswap</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md" target="_blank" rel="noopener">DeepFakes的安装教程</a>为例，解释如何配置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 DeepFakes</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>1、Win10环境下安装</em></strong><br><strong><em>1.1、Anaconda安装</em></strong><br>&emsp;&emsp; Anaconda是一个开源的包、环境管理器，它的优势在于能够配置不同版本python环境，同时集成一键安装各种依赖包和IDE等常用工具，其中包括我们常用的Git、VSCode等软件，所以以后装机的时候完全可以先装一个Anaconda，再用它去管理我们的常用开发工具。<br>&emsp;&emsp;其安装方式较简单，查阅<a href="https://jingyan.baidu.com/article/0202781124ef4a1bcc9ce5cd.html" target="_blank" rel="noopener">百度经验</a>，注意事项如下：<br>&emsp;&emsp;1)右键管理员权限方式打开安装包;<br>&emsp;&emsp;2)个人计算机还是勾选Just Me;<br>&emsp;&emsp;3)取消勾选Add Anaconda to my PATH environment variable。由于该项勾选后，后续需要卸载Anaconda时，将需要手动删除很多路径，因此推荐在安装完毕后自己手动添加环境变量(其实就是系统的链接库查询路径)。<br>&emsp;&emsp;安装完成后，根据需要<a href="https://www.cnblogs.com/jpfss/p/8608204.html" target="_blank" rel="noopener">手动添加环境变量</a>，目的就是为了在CMD或PowerShell环境下识别Conda指令，但实际上也没有必要，原因如下：<br>&emsp;&emsp;1)我们通常情况下会使用Anaconda自带的终端环境Anaconda Powershell Prompt，这不会产生任何错误;<br>&emsp;&emsp;2)就算按上述手动添加环境变量，在CMD或PowerShell环境下还是不能使用”conda activate”或”conda deactivate”命令，还需要在终端运行”conda init”指令，该指令是用来初始化终端和Anaconda环境链接关系的;<br>&emsp;&emsp;3)就算运行“conda init”指令了，CMD变得可以使用”conda activate”或”conda deactivate”命令，但是PowerShell仍然不行，还需要借用<a href="http://yuhao.me/zai-powershellzhong-shi-yong-condade-activate.html" target="_blank" rel="noopener">其他的技术</a>，我已经踩坑这里就别试了，这个方法用完之后，在我的CMD里添加了初始化运行环境，不知道怎么删(类似于Ubuntu下的/.bashrc)，导致每次打开终端都会显示一段错误提示。<br>&emsp;&emsp;总结，不改配置环境也行，使用Anaconda自带的终端环境Anaconda Powershell Prompt，且在后续我会介绍怎么配置VSCode内运行Prompt。<br>&emsp;&emsp;若要添加环境变量，如下：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Anaconda3为安装目录</span></span><br><span class="line">\Anaconda3</span><br><span class="line">\Anaconda3\Scripts</span><br><span class="line">\Anaconda3\Library\bin</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>1.2、Anaconda环境生成</em></strong><br>&emsp;&emsp;Anaconda最大的优势就在于能配置多个Python环境，而由于TensorFlow不同版本只能运行在指定Python版本下，比如这里我们就需要Python3.6的环境，那么就使用Anaconda生成一个独立的环境(注意，每个环境都有自己独立的开发工具，比如就算在base环境下安装了Git，那么在新环境下仍然重新安装)。具体操作流程查阅<a href="https://www.cnblogs.com/W-Yentl/p/7783933.html" target="_blank" rel="noopener">博文</a>，这里简单码一下代码：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先打开Anaconda Prompt</span></span><br><span class="line"><span class="comment">#添加配置清华源</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --set show_channel_urls yes</span><br><span class="line"><span class="comment">#直接添加一个环境，取名为faceswap，且依赖于Python3.6</span></span><br><span class="line">conda create -n faceswap python=<span class="number">3.6</span></span><br><span class="line"><span class="comment">#启动该环境</span></span><br><span class="line">conda activate faceswap</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。<br><strong><em>1.3、Git和VSCode安装</em></strong><br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone faceswap，VSCode用来搭建编译环境。<br><strong><em>1.4、Faceswap</em></strong><br>&emsp;&emsp;由于本教程是以Faceswap软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md" target="_blank" rel="noopener">Faceswap git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone Faceswap，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习)。<br>具体安装方式如下：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。<br><strong><em>1.3、Git和VSCode安装</em></strong><br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone DeepFakes，VSCode用来搭建编译环境。<br><strong><em>1.4、DeepFakes</em></strong><br>&emsp;&emsp;由于本教程是以DeepFakes软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md" target="_blank" rel="noopener">DeepFakes git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone DeepFakes，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习，<strong>且必须选用对应算力的CUDA与CUDNN，否则报错</strong>)。<br>具体安装方式如下：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>1.6、VSCode配置</em></strong><br>&emsp;&emsp;VSCode应该是目前用过最节简的IDE了，体积小，运行快，可自动添加各种插件还开源。如果总是使用Anaconda Prompt或者从Anaconda Navigator运行环境则稍显麻烦，这里简述一下如何将Anaconda环境外安装的VSCode链接至Anaconda并搭建自己的环境。<br>&emsp;&emsp;1)首先下载依赖包-Python;<br>&emsp;&emsp;2)选择File-Preferences-Settings，键入python.python Path，修改路径为/Anaconda3/python.exe，即根目录下的python可执行文件;<br>&emsp;&emsp;3)此时在IDE内打开任意.py文件，IDE左下角便可以选择使用哪个版本Python，点击选择我们在1.2节中搭建环境的Python3.6版本;<br>&emsp;&emsp;4)键入快捷键”CTRL + ~”，打开终端界面，默认使用PowerShell(前面介绍过，使用该终端并不能activate环境)，但是应该会提示更换Prompt版本终端，更改之后就相当于一款内置于VSCode的Anaconda Prompt了。</p>
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3>
+<h3 id="0x02-PyTorch环境配置"><a href="#0x02-PyTorch环境配置" class="headerlink" title="0x02 PyTorch环境配置"></a><em>0x02 PyTorch环境配置</em></h3><h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
       
 
       
@@ -969,117 +1052,6 @@
 
 
   
-    <article id="post-计算机视觉基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/07/计算机视觉基础/">计算机视觉基础</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/07/计算机视觉基础/" class="archive-article-date">
-  	<time datetime="2018-12-07T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-07</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉是一门研究如何使机器“看”的科学，更进一步的说，就是是指用摄影机和电脑代替人眼对目标进行识别、跟踪和测量等机器视觉，并进一步做图形处理，使电脑处理成为更适合人眼观察或传送给仪器检测的图像。<br>&emsp;&emsp; 计算机视觉与机器视觉是很相近的词汇，计算机视觉主要是指使计算机获得视觉能力，而机器视觉所指更广泛一些，包括工业上使用的机器获得视觉能力，又比如机器人的视觉能力等。<br>&emsp;&emsp; 计算机视觉目前主要有两个研究维度，包括<strong>几何属性</strong>和<strong>语义感知</strong>。几何属性比较直观一些，而语义感知更加智能化，比如识别物体以及物体之间的位置关系等。其当前主要研究领域如下图所示：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/计算机视觉1.jpg" alt="计算机视觉1"><div align="left"></div></div></p>
-<h3 id="0x01-图像数据处理"><a href="#0x01-图像数据处理" class="headerlink" title="0x01 图像数据处理"></a><em>0x01 图像数据处理</em></h3><p>&emsp;&emsp;要使计算机获得视觉能力，则首要的一步就是对图像进行处理，以获取最佳的素材图片。本节的研究内容概况如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 图片存储原理</span><br><span class="line">2 空域分析及变换（卷积/滤波）</span><br><span class="line">3 频域分析及变换</span><br><span class="line">  3.1 傅里叶变换</span><br><span class="line">  3.2 小波变换</span><br><span class="line">4 图像金字塔</span><br><span class="line">  4.1 高斯金字塔</span><br><span class="line">  4.2 拉普拉斯金字塔</span><br><span class="line">5 模型匹配</span><br><span class="line">6 特征数据操作</span><br><span class="line">  6.1 主成分分析/PCA</span><br><span class="line">  6.2 奇异值分解/SVD</span><br><span class="line">  6.3 聚类/Cluster</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、图片存储原理</em></strong><br>&emsp;&emsp;一张图的数字化显示方式有许多，目前常用的方法有：<br>&emsp;&emsp;&emsp;&emsp;1）<strong>RGB颜色空间</strong>。即用三原色组合。<br>&emsp;&emsp;&emsp;&emsp;2）CMY（K）颜色空间。用于打印机彩打。<br>&emsp;&emsp;&emsp;&emsp;3）HSV/HSL（I）颜色空间。人类的视觉概念。H，色调；S，饱和度；V，明度；L，亮度。<br>&emsp;&emsp;&emsp;&emsp;4）CIE-XYZ颜色空间。基于人类颜色视觉的直接测定。<br>&emsp;&emsp;&emsp;&emsp;5）CIE-Lab颜色空间。接近人类视觉、致力于感知均匀性<br>&emsp;&emsp;最主流的颜色空间即RGB颜色空间，在硬件上，会用到基于Bayer网格的颜色传感器。</p>
-<p><strong><em>2、空域分析及变换（卷积/滤波）</em></strong><br>&emsp;&emsp;卷积/滤波是在图像处理之前很重要的一个步骤，其核心思想就是对像素点附近的点根据权重做数学运算，如下图所示：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/卷积滤波1.jpg" alt="卷积滤波1"><div align="left"></div></div></p>
-<p>&emsp;&emsp;很多人认为卷积就是滤波，两者并无区别，其实不然。两者在原理上相似，但是在实现的细节上存在一些<a href="https://blog.csdn.net/haoji007/article/details/53911940" target="_blank" rel="noopener">区别</a><sup>[2]</sup>。<br>&emsp;&emsp;卷积/滤波过程是对图片中所有像素点做变换，那么边界像素点的周围像素是不全的，那么就需要对图片做<a href="https://www.cnblogs.com/xiaojianliu/p/9075872.html" target="_blank" rel="noopener">边界补充</a><sup>[3]</sup>，具体的补充方法有补零、边界复制、镜像以及块复制。<br>&emsp;&emsp;卷积/滤波的最终目的是对图像进行处理，所以根据卷积核数学操作的不同，可以对图片进行<a href="https://www.cnblogs.com/xiaojianliu/p/9075872.html" target="_blank" rel="noopener">不同的操作</a><sup>[3]</sup>，例如：<br>&emsp;&emsp;&emsp;&emsp;1）平滑均值滤波/卷积（均值滤波）。该操作是为了抑制噪声，使图像亮度趋于平缓的处理方法就是图像平滑。图像平滑实际上是低通滤波，平滑过程会导致图像边缘模糊化。<br>&emsp;&emsp;&emsp;&emsp;2）平滑中值滤波（中值滤波）。作用与均值滤波一样，比如用于去除椒盐噪声。<br>&emsp;&emsp;&emsp;&emsp;3）平滑高斯滤波/卷积（高斯滤波）。高斯平滑水平和垂直方向呈现高斯分布，更突出了中心点在像素平滑后的权重，相比于均值滤波而言，有着更好的平滑效果。<br>&emsp;&emsp;&emsp;&emsp;4）梯度Prewitt滤波/卷积。对水平边缘或垂直边缘有比较好的检测效果。<br>&emsp;&emsp;&emsp;&emsp;5）梯度Laplacian滤波/卷积。Laplacian也是一种锐化方法，同时也可以做边缘检测，而且边缘检测的应用中并不局限于水平方向或垂直方向</p>
-<p><strong><em>3、频域分析及变换</em></strong><br><strong><em>3.1、傅里叶变换</em></strong><br>&emsp;&emsp;<a href="https://www.cnblogs.com/h2zZhou/p/8405717.html" target="_blank" rel="noopener">傅里叶变换</a><sup>[4]</sup>想要表达的就是一个信号可以由足够多个不同频率和幅值的正余弦波组成。<br>&emsp;&emsp;有了理论基础，接下来就是对图片进行<a href="https://blog.csdn.net/thecentry/article/details/80709593" target="_blank" rel="noopener">二维傅里叶变换</a><sup>[5]</sup>。（理论不是很懂，现在有了神经网络之后，这种变换就很少用了，所以…）</p>
-<p><strong><em>4 图像金字塔</em></strong><br>&emsp;&emsp;图像金字塔是一种以多分辨率来解释图像的结构，通过对原始图像进行多尺度像素采样的方式，生成N个不同分辨率的图像。把具有最高级别分辨率的图像放在底部，以金字塔形状排列，往上是一系列像素（尺寸）逐渐降低的图像，一直到金字塔的顶部只包含一个像素点的图像，这就构成了传统意义上的图像金字塔<sup>[6]</sup>。<br>&emsp;&emsp;一般情况下有两种类型的图像金字塔常常出现在文献和以及实际运用中。他们分别是<strong>高斯金字塔</strong>与<strong>拉普拉斯金字塔</strong>。两者的<a href="https://blog.csdn.net/xbcreal/article/details/52629465" target="_blank" rel="noopener">简要区别</a><sup>[7]</sup>：高斯金字塔采用<strong>下采样</strong>，而拉普拉斯金字塔则用来<strong>上采样</strong>重建一个图像。</p>
-<p><strong><em>4.1 高斯金字塔</em></strong><br>&emsp;&emsp;高斯金字塔能够用来捕捉不同尺寸的物体。之所以要采用高斯滤波加图像金字塔模式的原因是：其一在多次高斯卷积之后，一些像素是多余的，所以要做图像金字塔；其二如果不采用高斯滤波就直接降采样的话，会损失图片原有信息。具体操作过程看<a href="https://blog.csdn.net/xbcreal/article/details/52629465" target="_blank" rel="noopener">博文</a><sup>[7]</sup>。</p>
-<p><strong><em>4.2 拉普拉斯金字塔</em></strong><br>&emsp;&emsp;高斯金字塔会导致高频信息在下采样过程中丢失。而拉普拉斯金字塔采用上采样，能够保留所有层所丢失的高频信息，用于图像恢复</p>
-<p><strong><em>5 模板匹配</em></strong><br>&emsp;&emsp;模板匹配是一种最原始、最基本的模式识别方法，研究某一特定对象物的图案位于图像的什么地方，进而识别对象物，这就是一个匹配问题。其作用是同尺度目标的检测（阴阳师辅助外挂里就用了这个，哈哈！）。<br>&emsp;&emsp;模板匹配有<a href="https://www.cnblogs.com/skyfsm/p/6884253.html" target="_blank" rel="noopener">六个方法</a><sup>[8]</sup>，可以了解一下。</p>
-<p><strong><em>6 特征数据操作</em></strong><br><strong><em>6.3 聚类/Cluster</em></strong><br>&emsp;&emsp;目标是找出混合样本中内在的组群关系。其常用的方法有：<br>&emsp;&emsp;&emsp;&emsp;1）<a href="https://www.cnblogs.com/bourneli/p/3645049.html" target="_blank" rel="noopener">Kmeans</a><sup>[9]</sup><br>&emsp;&emsp;&emsp;&emsp;2）EM算法<br>&emsp;&emsp;&emsp;&emsp;3）Mean shift<br>&emsp;&emsp;&emsp;&emsp;4）谱聚类<br>&emsp;&emsp;&emsp;&emsp;5）层次聚类</p>
-<h3 id="0x02-图像特征及描述"><a href="#0x02-图像特征及描述" class="headerlink" title="0x02 图像特征及描述"></a><em>0x02 图像特征及描述</em></h3><p>&emsp;&emsp;经过图像处理后的图片素材，接下来需要通过图像特征及描述来获取图片中的重要信息。本节内容是在神经网络流行之前计算机视觉常用的一些知识。本节的研究内容概况如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1 颜色特征</span><br><span class="line">  1.1 直方图</span><br><span class="line">  1.2 量化颜色直方图</span><br><span class="line">  1.3 聚类颜色直方图</span><br><span class="line">2 几何特征</span><br><span class="line">  2.1 边缘/Edge</span><br><span class="line">  2.2 兴趣点/关键点</span><br><span class="line">  2.3 Harris角点/Corner</span><br><span class="line">  2.4 斑点/Blob</span><br><span class="line">3 局部特征</span><br><span class="line">  3.1 SIFT关键点</span><br><span class="line">  3.2 SURF关键点</span><br><span class="line">4 纹理特征</span><br><span class="line">  4.1 方向梯度直方图/HOG</span><br><span class="line">  4.2 局部二值模式/LBP</span><br><span class="line">  4.3 滤波器组/Gabor</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1 颜色特征</em></strong><br><strong><em>1.1 直方图</em></strong><br>&emsp;&emsp;没什么好讲的，就是数据统计用的直方图。</p>
-<p><strong><em>1.2 量化颜色直方图</em></strong><br>&emsp;&emsp;适用于均匀的颜色空间，比如RGB、HSV等，其属性坐标系如下图所示：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/量化颜色直方图1.jpg" alt="量化颜色直方图1"><div align="left"></div></div></p>
-<p><strong><em>1.3 聚类颜色直方图</em></strong><br>&emsp;&emsp;适用于非均匀的颜色空间，例如Lab。操作过程需要先使用聚类算法（例如Kmeans）对所有像素点颜色向量进行聚类。</p>
-<p><strong><em>2 几何特征</em></strong><br><strong><em>2.1 边缘/Edge</em></strong><br>&emsp;&emsp;像素明显变化的区域，一般具有丰富的语义信息，该特征主要用于物体识别、几何与视角变换等。<br>&emsp;&emsp;边缘提取操作过程为先高斯去噪，再使用一阶导数获取极值。先使用高斯去噪的原因是导数对噪声敏感。<br>&emsp;&emsp;二维高斯函数如下所示：<br>$$h_{\sigma }\left ( u,v \right )=\frac{1}{2\pi \sigma ^{2}}e^{-\frac{u^{2}+v^{2}}{2\sigma ^{2}}}$$</p>
-<p>&emsp;&emsp;其在x方向上的一阶导数可表示为：<br>$$h_{x}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial x}=\frac{-x}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$$</p>
-<p>&emsp;&emsp;其在y方向上的一阶导数可表示为：<br>$$h_{y}\left ( x,y \right )=\frac{\partial h\left ( x,y \right )}{\partial y}=\frac{-y}{2\pi \sigma ^{4}}e^{-\frac{x^{2}+y^{2}}{2\sigma ^{2}}}$$</p>
-<p>&emsp;&emsp;上式中的变量$\sigma $即为<strong>标准差</strong>，该值越大，高斯函数的峰值越小，范围越宽，该变量对于边缘提取的<strong>尺度</strong>有影响。<br>&emsp;&emsp;根据周围像素之间变化程度可以做出梯度向量，梯度（增加最快）的方向可以表示为：<br>$$arctan\left ( \frac{h_{y}\left ( x,y \right )}{h_{x}\left ( x,y \right )} \right )$$</p>
-<p>&emsp;&emsp;梯度幅值/强度可以表示为：<br>$$h_{x}\left ( x,y \right )^{2}+h_{y}\left ( x,y \right )^{2}$$</p>
-<p>&emsp;&emsp;矢量的箭头方向表示梯度增加最快的方向，矢量的大小用箭头的长度表示，矢量可如下图表示：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/边缘1.jpg" alt="边缘1"><div align="left"></div></div></p>
-<p>&emsp;&emsp;不同<strong>标准差</strong>的滤波捕捉到不同<strong>尺度</strong>的边缘。其变化可从下图看出：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/边缘2.jpg" alt="边缘2"><div align="left"></div></div></p>
-<p><strong><em>2.2 兴趣点/关键点</em></strong><br>&emsp;&emsp;兴趣点/关键点是指稳定的局部特征点，其特点是可重复性与显著性，这类点能够抗图片变换，例如当图片的外貌变换（亮度、光照）以及几何变换（平移、选择、尺度）发生时，仍然能够捕捉到该点。<br>&emsp;&emsp;兴趣点/关键点主要运用在图片配准/拼接、运动跟踪、物体识别、机器人导航以及3D重建。（ROS里的find_object功能包应该就用到了特征点检测）</p>
-<p><strong><em>2.3 Harris角点/Corner</em></strong><br>&emsp;&emsp;如果在任何方向上移动小观察窗，导致大的像素变动的点，肯定是一个角点，其原理如下图所示：</p>
-<p><div align="center"><img src="/2018/12/07/计算机视觉基础/角点1.jpg" alt="角点1"><div align="left"></div></div></p>
-<p><strong><em>2.4 斑点/Blob</em></strong><br>&emsp;&emsp;斑点即一阶极值点或者说是二阶导数零点，这种点对噪声很敏感，需要先做高斯平滑。斑点检测通常也被称为兴趣点检测或者兴趣区域检测，即兴趣点经常指斑点。</p>
-<p><strong><em>3 局部特征</em></strong><br><strong><em>3.1 </em>SIFT关键点*</strong><br>&emsp;&emsp;SIFT的全称是Scale Invariant Feature Transform，尺度不变特征变换，由加拿大教授David G.Lowe提出的。SIFT特征对旋转、尺度缩放、亮度变化等保持不变性，是一种非常稳定的局部特征。<br>&emsp;&emsp;SIFT算法的原理可见<a href="https://blog.csdn.net/weixin_38404120/article/details/73740612" target="_blank" rel="noopener">博文</a><sup>[10]</sup>。</p>
-<p><strong><em>3.1 SURF关键点</em></strong><br>&emsp;&emsp;SURF算法采用均值滤波与积分图像，其计算速度比SIFT快6倍，但是精度不如SIFT。</p>
-<p><strong><em>4 纹理特征</em></strong><br><strong><em>4.1 方向梯度直方图/HOG</em></strong><br>&emsp;&emsp;是一种对图像局部重叠区域的密集型描述符, 它通过计算局部区域的梯度方向直方图来构成特征。<br>&emsp;&emsp;是具体计算过程看<a href="https://www.cnblogs.com/zhazhiqiang/p/3595266.html" target="_blank" rel="noopener">博文</a><sup>[11]</sup>。如果需要检测物体，还需要配合如SVM分类器。</p>
-<p><strong><em>4.2 局部二值模式/LBP</em></strong><br>&emsp;&emsp;LBP（Local Binary Pattern，局部二值模式）是一种用来描述图像局部纹理特征的算子；它具有旋转不变性和灰度不变性等显著的优点。它是首先由T. Ojala, M.Pietikäinen, 和D. Harwood 在1994年提出，用于纹理特征提取。而且，提取的特征是图像的局部的纹理特征。<br>&emsp;&emsp;具体计算过程看<a href="https://blog.csdn.net/heli200482128/article/details/79204008" target="_blank" rel="noopener">博文</a><sup>[12]</sup>。如果需要检测物体，还需要配合如SVM分类器。</p>
-<p><strong><em>4.3 滤波器组/Gabor</em></strong></p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">http://www.chinahadoop.cn/course/916</a><br>[2]<a href="https://blog.csdn.net/haoji007/article/details/53911940" target="_blank" rel="noopener">https://blog.csdn.net/haoji007/article/details/53911940</a><br>[3]<a href="https://www.cnblogs.com/xiaojianliu/p/9075872.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiaojianliu/p/9075872.html</a><br>[4]<a href="https://www.cnblogs.com/h2zZhou/p/8405717.html" target="_blank" rel="noopener">https://www.cnblogs.com/h2zZhou/p/8405717.html</a><br>[5]<a href="https://blog.csdn.net/thecentry/article/details/80709593" target="_blank" rel="noopener">https://blog.csdn.net/thecentry/article/details/80709593</a><br>[6]<a href="https://www.cnblogs.com/jiahenhe2/p/7919356.html" target="_blank" rel="noopener">https://www.cnblogs.com/jiahenhe2/p/7919356.html</a><br>[7]<a href="https://blog.csdn.net/xbcreal/article/details/52629465" target="_blank" rel="noopener">https://blog.csdn.net/xbcreal/article/details/52629465</a><br>[8]<a href="https://www.cnblogs.com/skyfsm/p/6884253.html" target="_blank" rel="noopener">https://www.cnblogs.com/skyfsm/p/6884253.html</a><br>[9]<a href="https://www.cnblogs.com/bourneli/p/3645049.html" target="_blank" rel="noopener">https://www.cnblogs.com/bourneli/p/3645049.html</a><br>[10]<a href="https://blog.csdn.net/weixin_38404120/article/details/73740612" target="_blank" rel="noopener">https://blog.csdn.net/weixin_38404120/article/details/73740612</a><br>[11]<a href="https://www.cnblogs.com/zhazhiqiang/p/3595266.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhazhiqiang/p/3595266.html</a><br>[12]<a href="https://blog.csdn.net/heli200482128/article/details/79204008" target="_blank" rel="noopener">https://blog.csdn.net/heli200482128/article/details/79204008</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/07/计算机视觉基础/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1200,15 +1172,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1220,11 +1196,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">

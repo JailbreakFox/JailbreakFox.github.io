@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 机器学习，神经网络，算法 | Jesse Tsui的博客</title>
+  <title>DeepFakes(未完成) | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/tags/机器学习，神经网络，算法/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到源码。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的博文内介绍过。&amp;emsp;&amp;emsp;这里主要说明一下该项目原理以及开发环境内的">
+<meta name="keywords" content="视觉，应用， AI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepFakes(未完成)">
+<meta property="og:url" content="http://yoursite.com/2019/05/21/DeepFakes/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到源码。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的博文内介绍过。&amp;emsp;&amp;emsp;这里主要说明一下该项目原理以及开发环境内的">
 <meta property="og:locale" content="cn">
+<meta property="og:updated_time" content="2019-05-22T08:53:06.057Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jesse Tsui的博客">
-<meta name="twitter:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta name="twitter:title" content="DeepFakes(未完成)">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到源码。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的博文内介绍过。&amp;emsp;&amp;emsp;这里主要说明一下该项目原理以及开发环境内的">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -157,60 +158,121 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-DeepFakes" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/12/04/RBF神经网络/" class="archive-article-date">
-  	<time datetime="2018-12-04T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/12/04/RBF神经网络/">RBF神经网络</a>
+    <h1 class="article-title" itemprop="name">
+      DeepFakes(未完成)
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
+  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a href="https://github.com/deepfakes/faceswap" target="_blank" rel="noopener">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a href="https://jailbreakfox.github.io/2019/05/16/环境配置-机器学习" target="_blank" rel="noopener">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
+<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
+<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。<br><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a href="https://github.com/hardikvasa/google-images-download" target="_blank" rel="noopener">GitHub</a>上获取。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">"胡歌"</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">"刘亦菲"</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
+<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。<br><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">机器学习，神经网络，算法</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/05/16/环境配置-机器学习/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">环境配置-机器学习(待完成)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-DeepFakes原理"><span class="toc-number">2.</span> <span class="toc-text">0x01 DeepFakes原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-DeepFakes使用教程"><span class="toc-number">3.</span> <span class="toc-text">0x02 DeepFakes使用教程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-引用文献"><span class="toc-number">4.</span> <span class="toc-text">0x03 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -235,9 +297,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
