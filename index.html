@@ -159,6 +159,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/29/CRLF与LF/">CRLF与LF</a>
+    </h1>
+  
+
+        
+        <a href="/2019/08/29/CRLF与LF/" class="archive-article-date">
+  	<time datetime="2019-08-29T05:41:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-29</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式。CR(Carriage Return) 代表回车，对应字符 ‘\r’；LF(Line Feed) 代表换行，对应字符 ‘\n’。<br>&emsp;&emsp;不同操作系统会使用不同的换行方式，这也是导致我们传输文件时出现乱码的原因之一。目前主流的操作系统中，Windows使用的是CRLF, Unix系统(包括Linux, MacOS近些年的版本)使用的是LF。</p>
+<h3 id="0x01-Git换行符"><a href="#0x01-Git换行符" class="headerlink" title="0x01 Git换行符"></a><em>0x01 Git换行符</em></h3><p>&emsp;&emsp;Git服务器使用的换行方式是LF。<br><strong><em>1、换行符自动转换</em></strong><br>&emsp;&emsp;由于要考虑操作系统区别，Git提供了一个”<a href="https://blog.csdn.net/weixin_33275327/article/details/81485051" target="_blank" rel="noopener">换行符自动转换</a><sup>[1]</sup>“(AutoCRLF)功能，即当Windows用户向Git提交代码时，自动将CRLF格式转换为LF格式，当Windows用户拉代码时，又自动将代码转换为CRLF格式。<br>&emsp;&emsp;AutoCRLF使用方法如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##Windows系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时转换为CRLF</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">##Unix系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时不转换</span></span><br><span class="line">git config --global core.autocrlf input</span><br><span class="line"><span class="comment">##None</span></span><br><span class="line"><span class="comment">#提交、检出均不转换</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2、禁止/警告不可逆转换</em></strong><br>&emsp;&emsp;由于没有一个绝对有效的算法来判断一个文件是否采用多种换行符混合模式，因此Git还提供了”<a href="https://www.jianshu.com/p/ec9564fe1c2b" target="_blank" rel="noopener">禁止/警告不可逆转换</a><sup>[2]</sup>“的配置，可以自动完成标准化与转换。它的设置方式如下：<br>&emsp;&emsp;SafeCRLF使用方法如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#拒绝提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">#允许提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">false</span></span><br><span class="line"><span class="comment">#提交包含混合换行符的文件时给出警告</span></span><br><span class="line">git config --global core.safecrlf warn</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x02-换行符格式转换工具"><a href="#0x02-换行符格式转换工具" class="headerlink" title="0x02 换行符格式转换工具"></a><em>0x02 换行符格式转换工具</em></h3><p>&emsp;&emsp;由于日常工作的时候会经常下载到不同换行符格式的文件，导致出现乱码或无法编译。现使用Unix下的一个转换工具<a href="https://blog.csdn.net/yonggang7/article/details/38459143" target="_blank" rel="noopener">dos2unix</a><sup>[3]</sup>，它能将LF、CRLF格式文件进行相互转换。安装方式较为简单：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install dos2unix</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;另外附上其常用的使用方法：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-k 保持源文件mtime</span></span><br><span class="line"><span class="comment">#-n 保留旧文件，转换结果输出到新文件。</span></span><br><span class="line">dos2unix -k -n file newfile</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://blog.csdn.net/weixin_33275327/article/details/81485051" target="_blank" rel="noopener">https://blog.csdn.net/weixin_33275327/article/details/81485051</a><br>[2]<a href="https://www.jianshu.com/p/ec9564fe1c2b" target="_blank" rel="noopener">https://www.jianshu.com/p/ec9564fe1c2b</a><br>[3]<a href="https://blog.csdn.net/yonggang7/article/details/38459143" target="_blank" rel="noopener">https://blog.csdn.net/yonggang7/article/details/38459143</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/08/29/CRLF与LF/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-设计模式-创建型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1004,93 +1084,6 @@
 
 
   
-    <article id="post-计算机视觉-图像识别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/30/计算机视觉-图像识别/">计算机视觉-图像识别</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/30/计算机视觉-图像识别/" class="archive-article-date">
-  	<time datetime="2018-12-30T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
-<p><div align="center"><img src="/2018/12/30/计算机视觉-图像识别/计算机视觉1.jpg" alt="计算机视觉1"><div align="left"></div></div></p>
-<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像识别的内容。</p>
-<h3 id="0x01-图像识别之图像分类"><a href="#0x01-图像识别之图像分类" class="headerlink" title="0x01 图像识别之图像分类"></a><em>0x01 图像识别之图像分类</em></h3><p>&emsp;&emsp;图像分类，根据各自在图像信息中所反映的不同特征，把不同类别的目标区分开来的图像处理方法。它利用计算机对图像进行定量分析，把图像或图像中的每个像元或区域划归为若干个类别中的某一种，以代替人的视觉判读。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 神经网络基础</span><br><span class="line">2 卷积神经网络(CNN)</span><br><span class="line">  2.1 CNN基本层</span><br><span class="line">  2.2 AlexNet</span><br><span class="line">  2.3 VGG</span><br><span class="line">  2.4 Inception V1-&gt;V4</span><br><span class="line">  2.5 ResNet-&gt;ResNeXt</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、神经网络基础</em></strong><br>&emsp;&emsp;神经网络是机器学习领域中常使用的一种学习方法，具体内容可参考吴恩达教授的<a href="http://study.163.com/course/courseMain.htm?courseId=1004570029" target="_blank" rel="noopener">机器学习课程</a><sup>[2]</sup>。</p>
-<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。<br><strong><em>2.1、CNN基本层</em></strong><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin" target="_blank" rel="noopener">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
-<p><div align="center"><img src="/2018/12/30/计算机视觉-图像识别/CNN1.jpg" alt="CNN1"><div align="left"><br>&emsp;&emsp;&emsp;&emsp;举个例子，若输入图片为32$\times $32$\times $3，卷积核为5$\times $5$\times $3，且卷积核数量为6，且不补零，则输出特征为28$\times $28$\times $6。可见输出特征厚度只与卷积核数量有关。<br>&emsp;&emsp;&emsp;&emsp;CNN卷积层的非线性激活函数：sigmoid或是ReLU，可参考<a href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">pytorch-BP神经网络拟合非线性函数</a><sup>[4]</sup>。<br>&emsp;&emsp;2）CNN池化层：<br>&emsp;&emsp;&emsp;&emsp;池化层的作用是进行特征融合，降维。计算方式有最大化池化与平均值池化，以前者为例，操作过程如下图所示：</div></div></p>
-<p><div align="center"><img src="/2018/12/30/计算机视觉-图像识别/CNN2.jpg" alt="CNN2"><div align="left"><br>&emsp;&emsp;3）CNN全连接层：<br>&emsp;&emsp;&emsp;&emsp;全连接层作用是分类，可以理解为就是普通的神经网络，其具体操作过程参考<a href="https://blog.csdn.net/gyh_420/article/details/78569225" target="_blank" rel="noopener">对于全连接层的理解</a><sup>[5]</sup>。<br>&emsp;&emsp;4）CNN-Softmax层：<br>&emsp;&emsp;&emsp;&emsp;softmax层作用是将全连接层的实数向量压缩到（0,1），即为概率。实质为指数归一化函数，其公式如下：</div></div></p>
-<p><div align="center"><img src="/2018/12/30/计算机视觉-图像识别/CNN3.jpg" alt="CNN3"><div align="left"></div></div></p>
-<h3 id="0x02-图像识别之物体检测"><a href="#0x02-图像识别之物体检测" class="headerlink" title="0x02 图像识别之物体检测"></a><em>0x02 图像识别之物体检测</em></h3><p>&emsp;&emsp;物体检测是计算机视觉中的经典问题之一，其任务是用框去标出图像中物体的位置，并给出物体的类别。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 区域卷积神经网络R-CNN</span><br><span class="line">2 SPP-Net网络</span><br><span class="line">3 Fast R-CNN</span><br><span class="line">4 Faster R-CNN</span><br><span class="line">5 R-FCN</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、区域卷积神经网络R-CNN</em></strong><br>&emsp;&emsp;这种网络的内部状态可以展示动态时序行为。不同于前馈神经网络的是，RNN可以利用它内部的记忆来处理任意时序的输入序列，这让它可以更容易处理如不分段的手写识别、语音识别等。<br>&emsp;&emsp;RNN物体检测具体过程为输入图片$\rightarrow $区域截取$\rightarrow $手工提取特征$\rightarrow $分类器分类，相应的过程图如下：</p>
-<p><div align="center"><img src="/2018/12/30/计算机视觉-图像识别/RNN1.jpg" alt="RNN1"><img src="/2018/12/30/计算机视觉-图像识别/RNN2.jpg" alt="RNN2"><div align="left"></div></div></p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">http://www.chinahadoop.cn/course/916</a><br>[2]<a href="http://study.163.com/course/courseMain.htm?courseId=1004570029" target="_blank" rel="noopener">http://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[3]<a href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin" target="_blank" rel="noopener">https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin</a>)<br>[4]<a href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/</a><br>[5]<a href="https://blog.csdn.net/gyh_420/article/details/78569225" target="_blank" rel="noopener">https://blog.csdn.net/gyh_420/article/details/78569225</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/30/计算机视觉-图像识别/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1211,11 +1204,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1243,19 +1240,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
             
             <div class="clearfix"></div>
