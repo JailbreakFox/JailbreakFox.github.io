@@ -717,19 +717,19 @@
 
 
   
-    <article id="post-Markdown" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Git与Hexo" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/05/Markdown/">Markdown</a>
+      <a class="article-title" href="/2018/07/05/Git与Hexo/">Git与Hexo</a>
     </h1>
   
 
         
-        <a href="/2018/07/05/Markdown/" class="archive-article-date">
+        <a href="/2018/07/05/Git与Hexo/" class="archive-article-date">
   	<time datetime="2018-07-05T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
 </a>
         
@@ -738,10 +738,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。</p>
-<h3 id="0x01-Markdown编辑器"><a href="#0x01-Markdown编辑器" class="headerlink" title="0x01 Markdown编辑器"></a><em>0x01 Markdown编辑器</em></h3><p>&emsp;&emsp;其实网上关于<a href="https://blog.csdn.net/wads23456/article/details/79521019" target="_blank" rel="noopener">Markdown编辑器</a>的推荐也已经很多了。<br>&emsp;&emsp;这里自己找到一个比较好的编辑方法，即使用Visual Studio Code中的一款Markdown插件Markdown All in One，可以找到很多它的教程，包括<a href="https://github.com/yzhang-gh/vscode-markdown" target="_blank" rel="noopener">git仓库</a>，<a href="https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one#overview" target="_blank" rel="noopener">VSC插件介绍</a>，<a href="https://www.cnblogs.com/special-li/p/9099727.html" target="_blank" rel="noopener">别人博客里的介绍</a>。</p>
-<h3 id="0x02-CSDN文章HTML转Markdown"><a href="#0x02-CSDN文章HTML转Markdown" class="headerlink" title="0x02 CSDN文章HTML转Markdown"></a><em>0x02 CSDN文章HTML转Markdown</em></h3><p>&emsp;&emsp;CSDN在国内的受众应该是相当多的，所以很多的优质文章通常会被发布在CSDN之上，而这些文章通常都是HTML格式编辑，无法直接移植到以Markdown格式为标准的hexo上。这里找到了一种比较好的办法来移植。<br>&emsp;&emsp;目前已经有了将HTML格式转化成Markdown格式的轮子，且有<a href="http://www.atool.org/html2markdown.php" target="_blank" rel="noopener">在线转换的网站</a>。<br>&emsp;&emsp;具体的实施步骤可根据<a href="https://blog.csdn.net/zhongjianblackberry/article/details/79456338" target="_blank" rel="noopener">教程</a>的指导，可以将文章的HTML代码直接copy下来，并转换成Markdown格式，然后放入.md文档中。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+        <p>安装配置node.js</p>
+<h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><strong><em>0x00 引言</em></strong></h3><h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><strong><em>0x01 Git</em></strong></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">2</span><br></pre></td></tr></table></figure></p>
+<h4 id="1、配置"><a href="#1、配置" class="headerlink" title="1、配置"></a><strong><em>1、配置</em></strong></h4><p><em>1.1、用户与邮箱</em><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">"your name"</span></span><br><span class="line">git config --global user.email <span class="string">"your email"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure></p>
+<p><em>1.2、CRLF与LF</em><br>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式，具体设置方式请查阅<a href="https://jailbreakfox.github.io/2019/08/29/CRLF%E4%B8%8ELF/" target="_blank" rel="noopener">CRLF与LF</a>。  </p>
+<h3 id="0x02-MarkDown"><a href="#0x02-MarkDown" class="headerlink" title="0x02 MarkDown"></a><strong><em>0x02 MarkDown</em></strong></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux-Atom下部署MarkDown</span><br><span class="line">  1.1 下载MarkDown代码增强</span><br><span class="line">  1.2</span><br><span class="line">2 MarkDown基本语法</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-Hexo"><a href="#0x03-Hexo" class="headerlink" title="0x03 Hexo"></a><strong><em>0x03 Hexo</em></strong></h3><p>&emsp;&emsp;Hexo提供了快速方便的一键部署功能，让您只需一条命令就能将网站部署到服务器上。   </p>
+<h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><strong><em>0x04 Git与Hexo搭建博客</em></strong></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Node.js安装与配置</span><br></pre></td></tr></table></figure>
+<h4 id="1、Git安装与配置"><a href="#1、Git安装与配置" class="headerlink" title="1、Git安装与配置"></a><strong><em>1、Git安装与配置</em></strong></h4><p>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
+<p><div align="center"><img src="/2018/07/05/Git与Hexo/博客仓库.png" alt="Image text"><div align="left"></div></div></p>
+<h4 id="2、Node-js安装与配置"><a href="#2、Node-js安装与配置" class="headerlink" title="2、Node.js安装与配置"></a><strong><em>2、Node.js安装与配置</em></strong></h4><p>&emsp;&emsp;Node.js安装方法这里就不再赘述</p>
+<h3 id="0x05-Hexo配置"><a href="#0x05-Hexo配置" class="headerlink" title="0x05 Hexo配置"></a><strong><em>0x05 Hexo配置</em></strong></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><strong><em>0x06 引用文献</em></strong></h3>
       
 
       
@@ -753,7 +760,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/05/Markdown/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/07/05/Git与Hexo/">展开全文 >></a>
         </p>
       
 
@@ -973,10 +980,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
@@ -985,15 +988,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
