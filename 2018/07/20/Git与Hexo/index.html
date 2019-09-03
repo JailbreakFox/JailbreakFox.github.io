@@ -8,20 +8,20 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Git与Hexo | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="安装配置node.js 0x00 引言0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。12341 配置  1.1 用户与邮箱  1.2 CRLF与LF2 1、配置1.1、用户与邮箱1234567#配置全局用户名与邮箱名，如果不是全局的则去掉--globalgit config --global user.nam">
-<meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。 0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。123451 配置  1.1 用户与邮箱  1.2 CRLF与LF  1.3 SSH key2 1、配置1.1、用户与邮">
+<meta name="keywords" content="计算机技术">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git与Hexo">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/Git与Hexo/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/20/Git与Hexo/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="安装配置node.js 0x00 引言0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。12341 配置  1.1 用户与邮箱  1.2 CRLF与LF2 1、配置1.1、用户与邮箱1234567#配置全局用户名与邮箱名，如果不是全局的则去掉--globalgit config --global user.nam">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。 0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。123451 配置  1.1 用户与邮箱  1.2 CRLF与LF  1.3 SSH key2 1、配置1.1、用户与邮">
 <meta property="og:locale" content="cn">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/Git与Hexo/博客仓库.png">
-<meta property="og:updated_time" content="2019-08-31T12:20:39.500Z">
+<meta property="og:image" content="http://yoursite.com/2018/07/20/Git与Hexo/博客仓库.png">
+<meta property="og:updated_time" content="2019-09-03T12:16:30.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git与Hexo">
-<meta name="twitter:description" content="安装配置node.js 0x00 引言0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。12341 配置  1.1 用户与邮箱  1.2 CRLF与LF2 1、配置1.1、用户与邮箱1234567#配置全局用户名与邮箱名，如果不是全局的则去掉--globalgit config --global user.nam">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/05/Git与Hexo/博客仓库.png">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。 0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。123451 配置  1.1 用户与邮箱  1.2 CRLF与LF  1.3 SSH key2 1、配置1.1、用户与邮">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/20/Git与Hexo/博客仓库.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -172,8 +172,8 @@
   
 
         
-        <a href="/2018/07/05/Git与Hexo/" class="archive-article-date">
-  	<time datetime="2018-07-05T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
+        <a href="/2018/07/20/Git与Hexo/" class="archive-article-date">
+  	<time datetime="2018-07-20T12:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
 </a>
         
         
@@ -185,17 +185,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>安装配置node.js</p>
-<h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><strong><em>0x00 引言</em></strong></h3><h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><strong><em>0x01 Git</em></strong></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">2</span><br></pre></td></tr></table></figure></p>
-<h4 id="1、配置"><a href="#1、配置" class="headerlink" title="1、配置"></a><strong><em>1、配置</em></strong></h4><p><em>1.1、用户与邮箱</em><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">"your name"</span></span><br><span class="line">git config --global user.email <span class="string">"your email"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure></p>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;记录一下我自己的<a href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html" target="_blank" rel="noopener">Git + Github搭建</a>细节，顺便记录Git、Hexo与MarkDown的相关知识。</p>
+<h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><em>0x01 Git</em></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">2</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、配置</em></strong><br><em>1.1、用户与邮箱</em><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">"your name"</span></span><br><span class="line">git config --global user.email <span class="string">"your email"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure></p>
 <p><em>1.2、CRLF与LF</em><br>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式，具体设置方式请查阅<a href="https://jailbreakfox.github.io/2019/08/29/CRLF%E4%B8%8ELF/" target="_blank" rel="noopener">CRLF与LF</a>。  </p>
-<h3 id="0x02-MarkDown"><a href="#0x02-MarkDown" class="headerlink" title="0x02 MarkDown"></a><strong><em>0x02 MarkDown</em></strong></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux-Atom下部署MarkDown</span><br><span class="line">  1.1 下载MarkDown代码增强</span><br><span class="line">  1.2</span><br><span class="line">2 MarkDown基本语法</span><br></pre></td></tr></table></figure></p>
-<h3 id="0x03-Hexo"><a href="#0x03-Hexo" class="headerlink" title="0x03 Hexo"></a><strong><em>0x03 Hexo</em></strong></h3><p>&emsp;&emsp;Hexo提供了快速方便的一键部署功能，让您只需一条命令就能将网站部署到服务器上。   </p>
-<h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><strong><em>0x04 Git与Hexo搭建博客</em></strong></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Node.js安装与配置</span><br></pre></td></tr></table></figure>
-<h4 id="1、Git安装与配置"><a href="#1、Git安装与配置" class="headerlink" title="1、Git安装与配置"></a><strong><em>1、Git安装与配置</em></strong></h4><p>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
-<p><div align="center"><img src="/2018/07/05/Git与Hexo/博客仓库.png" alt="Image text"><div align="left"></div></div></p>
-<h4 id="2、Node-js安装与配置"><a href="#2、Node-js安装与配置" class="headerlink" title="2、Node.js安装与配置"></a><strong><em>2、Node.js安装与配置</em></strong></h4><p>&emsp;&emsp;Node.js安装方法这里就不再赘述</p>
-<h3 id="0x05-Hexo配置"><a href="#0x05-Hexo配置" class="headerlink" title="0x05 Hexo配置"></a><strong><em>0x05 Hexo配置</em></strong></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><strong><em>0x06 引用文献</em></strong></h3>
+<p><em>1.3、SSH key</em><br>&emsp;&emsp;由于Git使用过程中直接传输帐号密码会不太安全，另外也很不方便(每次使用都要输帐号密码)，因此可以考虑为Git帐号添加SSH key。  </p>
+<h3 id="0x02-MarkDown"><a href="#0x02-MarkDown" class="headerlink" title="0x02 MarkDown"></a><em>0x02 MarkDown</em></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux-Atom下部署MarkDown</span><br><span class="line">  1.1 下载MarkDown代码增强</span><br><span class="line">  1.2</span><br><span class="line">2 MarkDown基本语法</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-Hexo及主题"><a href="#0x03-Hexo及主题" class="headerlink" title="0x03 Hexo及主题"></a><em>0x03 Hexo及主题</em></h3><p>&emsp;&emsp;Hexo提供了快速方便的一键部署功能，让您只需一条命令就能将网站部署到服务器上。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Hexo命令</span><br><span class="line">2 主题与配置</span><br><span class="line">  2.1 Yilia</span><br><span class="line">    2.1.1 安装与配置</span><br><span class="line">    2.1.2</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、Hexo命令</em></strong><br>&emsp;&emsp;这里记录几个Hexo常用的命令:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---新建一个网站---</span></span><br><span class="line"><span class="comment">#如果没有设置文件夹爱，Hexo 默认在目前的文件夹建立网站</span></span><br><span class="line">hexo init [folder]</span><br><span class="line"></span><br><span class="line"><span class="comment">#---新建一篇文章---</span></span><br><span class="line">hexo new <span class="string">"文章名"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---效果测试三连---</span></span><br><span class="line"><span class="comment">#清除缓存文件</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="comment">#生成网站静态文件</span></span><br><span class="line"><span class="comment">#hexo generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="comment">#启动本地服务器</span></span><br><span class="line"><span class="comment">#hexo server</span></span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#---自动生成网站静态文件，并部署到设定的仓库---</span></span><br><span class="line"><span class="comment">#hexo deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2、主题与配置</em></strong><br>&emsp;&emsp;这里写一些我自己用的主题，以及其配置。<br><em>2.1、Yilia</em><br><em>2.1.1、安装与配置</em><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---安装Yilia---</span></span><br><span class="line"><span class="comment">#并将其放入theme/文件夹下</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/litten/hexo-theme-yilia.git</span><br><span class="line"><span class="comment">#---配置主题为Yilia---</span></span><br><span class="line"><span class="comment">#修改hexo根目录下的_config.yml为theme: yilia</span></span><br><span class="line"><span class="comment">#---修改Yilia的配置---</span></span><br><span class="line"><span class="comment">#修改themes/Yilia/_config.yml</span></span><br><span class="line"><span class="comment">#包括样式、图片等私人订制内容。如果有图片，放到/source/assets/下</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><em>0x04 Git与Hexo搭建博客</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Nodejs与npm安装</span><br><span class="line">3 Hexo安装与配置</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Git安装与配置</em></strong><br>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
+<p><div align="center"><br><img src="/2018/07/20/Git与Hexo/博客仓库.png" width="600" height="500"></div></p>
+<div align="left">
+
+<p><strong><em>2、Nodejs与npm安装</em></strong><br>&emsp;&emsp;Nodejs<a href="https://github.com/JailbreakFox/Ubuntu16.04-LTS-sh/blob/master/Ubuntu16.04配置sh包/Nodejs.sh" target="_blank" rel="noopener">安装方法</a>这里就不再赘述;npm是一款包管理工具，安装方法也不再赘述。  </p>
+<p><strong><em>3、Hexo安装与配置</em></strong><br>&emsp;&emsp;在安装完Node.js与npm之后，就可以很方便地安装Hexo了:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装Hexo</span></span><br><span class="line">sudo npm install -g hexo</span><br><span class="line"></span><br><span class="line"><span class="comment">#将目标文件夹初始化为博客存放点</span></span><br><span class="line">sudo hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line">sudo chmod 777 -R 博客初始化文件夹</span><br><span class="line"></span><br><span class="line"><span class="comment">#直接三连，分别是清除、生成和部署</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#登录 http://localhost:4000/ 查看效果</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><strong><em>0x05 引用文献</em></strong></h3></div>
       
 
       
@@ -203,6 +209,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -254,7 +271,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Git"><span class="toc-number">2.</span> <span class="toc-text">0x01 Git</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、配置"><span class="toc-number">2.1.</span> <span class="toc-text">1、配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-MarkDown"><span class="toc-number">3.</span> <span class="toc-text">0x02 MarkDown</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Hexo"><span class="toc-number">4.</span> <span class="toc-text">0x03 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-Git与Hexo搭建博客"><span class="toc-number">5.</span> <span class="toc-text">0x04 Git与Hexo搭建博客</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、Git安装与配置"><span class="toc-number">5.1.</span> <span class="toc-text">1、Git安装与配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、Node-js安装与配置"><span class="toc-number">5.2.</span> <span class="toc-text">2、Node.js安装与配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-Hexo配置"><span class="toc-number">6.</span> <span class="toc-text">0x05 Hexo配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-引用文献"><span class="toc-number">7.</span> <span class="toc-text">0x06 引用文献</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Git"><span class="toc-number">2.</span> <span class="toc-text">0x01 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-MarkDown"><span class="toc-number">3.</span> <span class="toc-text">0x02 MarkDown</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Hexo及主题"><span class="toc-number">4.</span> <span class="toc-text">0x03 Hexo及主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-Git与Hexo搭建博客"><span class="toc-number">5.</span> <span class="toc-text">0x04 Git与Hexo搭建博客</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-引用文献"><span class="toc-number">6.</span> <span class="toc-text">0x05 引用文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -393,7 +410,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -401,15 +426,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -417,7 +434,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
