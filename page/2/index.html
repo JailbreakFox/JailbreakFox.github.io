@@ -652,11 +652,16 @@
 <p><div align="center"><img src="/2018/08/01/操作系统安装/FbinstTool1.png" alt="FbinstTool1"><div align="left"></div></div></p>
 <p><div align="center"><img src="/2018/08/01/操作系统安装/FbinstTool2.png" alt="FbinstTool2"><div align="left"><br>&emsp;&emsp;可知，我把Ubuntu14.04的ISO文件放在了目录G:/ISO下，另外两个文件initrd与vmlinuz.efi是从镜像文件里拿出来的，具体位置看博客，原因似乎是FbinstTool需要调用，那么接下来看看FbinstTool的配置文件grldr究竟在说些什么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#不用管这两行了</span><br><span class="line">default 0</span><br><span class="line">timeout 60</span><br><span class="line">#Auto方式启动PE，启动PE的方式也不用管了</span><br><span class="line">title Windows PE (Auto)</span><br><span class="line">find --set-root --ignore-floppies /wepe/wepemenu.ini || find --set-root --ignore-floppies /wepe.iso</span><br><span class="line">configfile /wepe/wepemenu.ini || map /wepe.iso (0xff) &amp;&amp; map --hook &amp;&amp; chainloader (0xff)</span><br><span class="line">#EFI方式启动PE，可删</span><br><span class="line">title Windows PE (From EFI)</span><br><span class="line">errorcheck off</span><br><span class="line">find --set-root --ignore-floppies /wepe/wepemenu.ini &amp;&amp; configfile /wepe/wepemenu.ini</span><br><span class="line">errorcheck on</span><br><span class="line">#UD方式启动PE，可删</span><br><span class="line">title Windows PE (From UD)</span><br><span class="line">errorcheck off</span><br><span class="line">map (ud)/wepe.iso (0xff)</span><br><span class="line">map --hook</span><br><span class="line">chainloader (0xff)</span><br><span class="line">errorcheck on</span><br><span class="line">#关键在这儿，引入名为Ubuntu14.04的系统，且指明重要文件的位置</span><br><span class="line">title Ubuntu14.04</span><br><span class="line">find --set-root /ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">kernel /ISO/vmlinuz.efi boot=casper iso-scan/filename=/ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">initrd /ISO/initrd</span><br><span class="line">boot</span><br><span class="line">#为了制作多系统U盘可以仿照上面一条的方法自行添加</span><br></pre></td></tr></table></figure></div></div></p>
 <p>&emsp;&emsp;OK！说了这么多，U盘已经制作完了，接下来要装单系统或是双系统，可接下去看：</p>
-<h3 id="0x02-单系统重装"><a href="#0x02-单系统重装" class="headerlink" title="0x02 单系统重装"></a><em>0x02 单系统重装</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 进入BIOS的方式</span><br><span class="line">2 Windows 10系统重装</span><br><span class="line">  2.1 方案一：重置此电脑</span><br><span class="line">  2.2 方案二：使用微PE制作的Windows系统U盘</span><br><span class="line">3 任意系统重装</span><br><span class="line">  3.1 使用微PE+FbinstTool制作的多系统U盘</span><br></pre></td></tr></table></figure>
+<h3 id="0x02-单系统重装"><a href="#0x02-单系统重装" class="headerlink" title="0x02 单系统重装"></a><em>0x02 单系统重装</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 进入BIOS的方式</span><br><span class="line">2 Windows 10系统重装</span><br><span class="line">  2.1 方案一：重置此电脑</span><br><span class="line">  2.2 方案二：使用微PE制作的Windows系统U盘</span><br><span class="line">3 任意系统重装</span><br><span class="line">  3.1 使用微PE+FbinstTool制作的多系统U盘</span><br><span class="line">4 Ubuntu系统相关</span><br><span class="line">  4.1 Ubuntu系统磁盘分配推荐</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、进入BIOS的方式</em></strong><br>品牌电脑进入BIOS的按键一般如下：</p>
 <p><div align="center"><img src="/2018/08/01/操作系统安装/BIOS进入按键.jpg" alt="BIOS进入按键"><div align="left"></div></div></p>
 <p><strong><em>2、Windows 10系统重装</em></strong><br><strong><em>2.1、方案一：重置此电脑</em></strong><br>&emsp;&emsp;Windows 10较人性化的一点就是自带系统重装功能，关于Win10重置电脑的资料可直接查阅<a href="https://jingyan.baidu.com/article/b0b63dbf310d2f4a49307071.html" target="_blank" rel="noopener">百度经验</a><sup>[3]</sup>。<br>&emsp;&emsp;这边需要注意的两点是:1)重置电脑可以选择只重置盘符C或者全部盘符清理（相当于完全重装电脑）;2)如果盘符C的空间不足，则会直接报错，并提示增加C盘空间再重置，假如没报错在重置的时候也会出错，所以要保证C盘剩余容量大于10G（个人经验）。<br><strong><em>2.2、方案二：使用微PE制作的Windows系统U盘</em></strong><br>&emsp;&emsp;这里以安装Win10系统为例，安装过程可查阅<a href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html" target="_blank" rel="noopener">百度经验</a>。</p>
 <p><strong><em>3、任意系统重装</em></strong><br><strong><em>3.1、使用微PE+FbinstTool制作的多系统U盘</em></strong><br>&emsp;&emsp;(1)直接U盘方式启动，先运行Auto PE，进入PE系统后设置盘符，由于安装单系统，所以格式化所有盘符;<br>&emsp;&emsp;(2)重启，并以title名为 Ubuntu14.04 U盘进入方法启动，可以看到进入了一个Ubuntu系统桌面，但是桌面上还有两个文件，其中一个是Install Ubuntu14.04，按步骤安装即可;<br>&emsp;&emsp;(3)安装完成，重启进入BIOS，并将U盘启动后移，继续重启即可运行Ubuntu系统。</p>
+<p><strong><em>4、Ubuntu系统相关</em></strong><br><strong><em>4.1、Ubuntu系统磁盘分配推荐</em></strong><br>&emsp;&emsp;磁盘分配即系统使用过程中硬盘空间的资源合理配置，这里记录一下比较适合的<a href="https://www.cnblogs.com/116970u/p/10487452.html" target="_blank" rel="noopener">分配方法</a>，下面以128G工控机为例。<br>&emsp;&emsp;首先，介绍各挂载点作用：<br>| 挂载点 | 分区类型    | 说明                      |<br>| —– | ——– | ————————————————- |<br>| /     | 主分区 | 用于存放系统，相当于windows的C盘，15G即可 |<br>| /home | 逻辑分区 | 用户存储数据用，要尽可能大           |<br>| /boot | 主分区 | 引导分区，大小设置为480M                |<br>| swap  | 逻辑分区 | 相当于电脑内存，大小设置为电脑内存大小(2/4/8/16G)|<br>&emsp;&emsp;给出高级用户Desktop版本的分配建议：<br>| 挂载点 | 装置    | 说明                      |<br>| —— | ——— | ————————— |<br>| /      | /dev/hda1 | 15G                         |<br>| /home  | /dev/hda2 | 最大的剩余空间       |<br>| /boot  | /dev/hda3 | 480MB左右                 |<br>| swap   | /dev/hda5 | 大约内存大小(建议至少512MB) |<br>&emsp;&emsp;高级用户Server版本的分配建议：<br>| 挂载点 | 装置    | 说明                      |<br>| —— | ——— | ————————— |<br>| /      | /dev/hda1 | 15G                         |<br>| /home  | /dev/hda2 | 最大的剩余空间       |<br>| /boot  | /dev/hda3 | 480MB左右                 |<br>| swap   | /dev/hda5 | 大约内存大小(建议至少512MB) |<br>| /var   | /dev/hda6 | 视服务器功能决定大小 |</p>
+<p><div align="center"><img src="/2018/08/01/操作系统安装/swap.png" alt="swap"><div align="left"></div></div></p>
+<p><div align="center"><img src="/2018/08/01/操作系统安装/boot.png" alt="boot"><div align="left"></div></div></p>
+<p><div align="center"><img src="/2018/08/01/操作系统安装/home.png" alt="home"><div align="left"></div></div></p>
+<p><div align="center"><img src="/2018/08/01/操作系统安装/root.png" alt="root"><div align="left"></div></div></p>
 <h3 id="0x03-双系统安装"><a href="#0x03-双系统安装" class="headerlink" title="0x03 双系统安装"></a><em>0x03 双系统安装</em></h3><p>&emsp;&emsp;出于工作的需要，有时候需要用到Ubuntu系统，这里讲一下在Win10系统上安装Ubuntu14.04系统方法。<br>&emsp;&emsp;1)制作系统U盘。这已在第一章中讲过，可回头去看如何制作。<br>&emsp;&emsp;2)给Win10分区。为了方便给第二系统腾出空间，需要先给该系统分出一个盘符，具体的分区方法查阅<a href="https://jingyan.baidu.com/article/3d69c551233c56f0ce02d759.html" target="_blank" rel="noopener">百度经验</a>。<br>&emsp;&emsp;3)BIOS选择U盘启动项。每台电脑情况都不一样，而且和当前系统也有关系，比如我的Y430P机身侧面有一个NAVO键可直接进入BIOS，其他电脑见第二章1节。</p>
 <h3 id="0x04-Windows-10子系统"><a href="#0x04-Windows-10子系统" class="headerlink" title="0x04 Windows 10子系统"></a><em>0x04 Windows 10子系统</em></h3><h3 id="0x05-虚拟机"><a href="#0x05-虚拟机" class="headerlink" title="0x05 虚拟机"></a><em>0x05 虚拟机</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 VirtualBox安装Kali</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、VirtualBox安装Kali</em></strong><br>&emsp;&emsp;VirtualBox 是一款开源虚拟机软件，在Docker中被默认使用。Kali是一款用于信息安全的操作系统，具体的安装流程可看<a href="https://blog.csdn.net/JaydenWang5310/article/details/78104472" target="_blank" rel="noopener">博客</a></p>
@@ -997,23 +1002,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1022,6 +1023,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
