@@ -6,19 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 游戏设计，游戏AI，入门 | Jesse Tsui的博客</title>
+  <title>流媒体 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/tags/游戏设计，游戏AI，入门/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。&amp;emsp;&amp;emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务">
+<meta name="keywords" content="工具，流">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流媒体">
+<meta property="og:url" content="http://yoursite.com/2020/01/31/流媒体/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。&amp;emsp;&amp;emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务">
 <meta property="og:locale" content="cn">
+<meta property="og:image" content="http://yoursite.com/2020/01/31/流媒体/流媒体开源框架.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/01/31/流媒体/obs推流.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/01/31/流媒体/obs输出.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/31/流媒体/obs视频.png">
+<meta property="og:updated_time" content="2020-01-31T04:55:52.303Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jesse Tsui的博客">
-<meta name="twitter:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta name="twitter:title" content="流媒体">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。&amp;emsp;&amp;emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务">
+<meta name="twitter:image" content="http://yoursite.com/2020/01/31/流媒体/流媒体开源框架.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -157,60 +163,130 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-流媒体" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/31/游戏AI-智能体行动系统/" class="archive-article-date">
-  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/31/游戏AI-智能体行动系统/">游戏AI-智能体行动系统</a>
+    <h1 class="article-title" itemprop="name">
+      流媒体
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2020/01/31/流媒体/" class="archive-article-date">
+  	<time datetime="2020-01-31T03:16:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-31</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。<br>&emsp;&emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务器获取视频的技术。<br>&emsp;&emsp;由于流媒体服务器需要公网IP，这里直接使用阿里云服务器。  </p>
+<h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a><em>0x01 环境搭建</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 流媒体服务器</span><br><span class="line">  1.1 云服务器搭建</span><br><span class="line">  1.2 srs部署</span><br><span class="line">2 OBS推流部署</span><br><span class="line">3 VLC拉流部署</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 流媒体服务器</em></strong><br><strong><em>1.1 云服务器搭建</em></strong><br>&emsp;&emsp;这里用的是<a href="https://www.aliyun.com" target="_blank" rel="noopener">阿里云服务器</a><sup>[1]</sup>，由于考虑到只是测试使用，因此买了一款1核2G，1Mbps的服务器。运行远程主机以后，记得<strong>添加安全组并开启1935端口</strong>，因为后面的srs需要用到该端口来交互信息。<br>&emsp;&emsp;值得注意的是，阿里云已经为用户提供了直播控制台，也就是说没必要自己部署流媒体服务器，但是由于要收费，我们这里还是部署开源的框架。<br><strong><em>1.2 srs部署</em></strong><br>&emsp;&emsp;流媒体服务器目前有很多优秀的开源框架，知乎上也有对比不同框架的<a href="https://www.zhihu.com/question/31160392/answer/256141081" target="_blank" rel="noopener">文章</a><sup>[2]</sup>，这里我们选用srs。</p>
+<p><div align="center"><img src="/2020/01/31/流媒体/流媒体开源框架.jpg" alt="流媒体开源框架"><div align="left"></div></div></p>
+<p>&emsp;&emsp;从上图可以看到，srs部署在Ubuntu下，网上有很多<a href="https://blog.csdn.net/lmj623565791/article/details/77937483" target="_blank" rel="noopener">技术博客</a><sup>[3]</sup>已经具体介绍了其安装方式:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先去Git上clone</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ossrs/srs.git</span><br><span class="line"><span class="built_in">cd</span> srs/trunk</span><br><span class="line"><span class="comment">#配置</span></span><br><span class="line">./configure</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line">make</span><br><span class="line"><span class="comment">#开启服务，第一次需要输入</span></span><br><span class="line">./objs/srs -c conf/srs.conf</span><br><span class="line"><span class="comment">#以后只需要输入 ./etc/init.d/srs start</span></span><br><span class="line"><span class="comment">#关闭服务为./etc/init.d/srs stop</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2 OBS推流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是OBS，非常好用快速，该软件可从<a href="https://obsproject.com" target="_blank" rel="noopener">官网</a><sup>[4]</sup>免费下载。第一次使用，需要修改一些关键设置:<br>&emsp;&emsp;1)推流设置<br>&emsp;&emsp;这是最重要的设置内容，拉流的时候需要用到该地址。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs推流.jpg" alt="obs推流"><div align="left"></div></div></p>
+<p>&emsp;&emsp;推流地址的设置格式如下:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户名</span></span><br><span class="line">rtmp://你的ip/你喜欢的url</span><br><span class="line"><span class="comment">#串流密钥(适用于开源框架，不适用于阿里云的直播控制台)</span></span><br><span class="line">你喜欢的任意字符串</span><br><span class="line"><span class="comment">#上述两者合起来就是你的流地址</span></span><br><span class="line"><span class="comment">#例如rtmp://11.11.11.11/xyh/tiancai</span></span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;2)输出设置<br>&emsp;&emsp;这个设置关系到你直播内容的清晰度、流量使用量等，设置方法可以参考<a href="https://www.bilibili.com/video/av52560685" target="_blank" rel="noopener">B站大佬的教程</a><sup>[5]</sup>。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs输出.png" alt="obs输出"><div align="left"></div></div></p>
+<p>&emsp;&emsp;x264是一个开源的H.264/MPEG-4 AVC视频编码函数库(不明觉厉就选它)。CBR是以恒定比特率方式进行编码(具体内容请自行查阅，由于服务器流量少，只能给500 Kbps)。CPU使用预设可根据自己电脑配置做调整。  </p>
+<p>&emsp;&emsp;3)视频设置<br>&emsp;&emsp;基础分辨率为电脑的分辨率，输出分辨率为拉流端的分辨率，如果流媒体服务器流量小，可以选择较小的输出分辨率。FPS值为刷新频率，普通人人眼能识别的帧率只需25帧，这里给30帧，也是为了考虑流量问题。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs视频.png" alt="obs视频"><div align="left"></div></div></p>
+<p>&emsp;&emsp;设置完成后，只需要点击”开始推流”即可。</p>
+<p><strong><em>3 VLC拉流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是VLC，PC端也可以从官网上直接下载，安卓端可以从APKPure下载。下载完成后在”串流”菜单中输入 1.2 节中设置的流地址，就能连上流媒体服务器，进行拉流动作。</p>
+<h3 id="0x02-常见问题"><a href="#0x02-常见问题" class="headerlink" title="0x02 常见问题"></a><em>0x02 常见问题</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 黑屏</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 黑屏</em></strong><br>&emsp;&emsp;OBS推流时，设置”显示器捕获”与”窗口捕获”，打开以后显示黑屏。有多种问题源，因此有多种解决方法，常见原因参考<a href="https://www.bilibili.com/video/av65194185" target="_blank" rel="noopener">B站up主教程</a><sup>[6]</sup>。<br>&emsp;&emsp;我的电脑原因可能是obs渲染采用的是集成显卡，解决方法查阅<a href="http://tieba.baidu.com/p/6364329041" target="_blank" rel="noopener">贴吧</a><sup>[7]</sup>。Windows10 设置，系统，显示，最下边图形设置。图形性能首选项里边，经典应用，浏览添加OBS应用程序，OBS选项设置为节能（反正我的节能是集成图形输出，设置完毕之后就可以用）。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://www.aliyun.com" target="_blank" rel="noopener">https://www.aliyun.com</a><br>[2]<a href="https://www.zhihu.com/question/31160392/answer/256141081" target="_blank" rel="noopener">https://www.zhihu.com/question/31160392/answer/256141081</a><br>[3]<a href="https://blog.csdn.net/lmj623565791/article/details/77937483" target="_blank" rel="noopener">https://blog.csdn.net/lmj623565791/article/details/77937483</a><br>[4]<a href="https://obsproject.com" target="_blank" rel="noopener">https://obsproject.com</a><br>[5]<a href="https://www.bilibili.com/video/av52560685" target="_blank" rel="noopener">https://www.bilibili.com/video/av52560685</a><br>[6]<a href="https://www.bilibili.com/video/av65194185" target="_blank" rel="noopener">https://www.bilibili.com/video/av65194185</a><br>[7]<a href="http://tieba.baidu.com/p/6364329041" target="_blank" rel="noopener">http://tieba.baidu.com/p/6364329041</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">游戏设计，游戏AI，入门</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具，流</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/08/29/CRLF与LF/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CRLF与LF</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-环境搭建"><span class="toc-number">2.</span> <span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-常见问题"><span class="toc-number">3.</span> <span class="toc-text">0x02 常见问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-引用文献"><span class="toc-number">4.</span> <span class="toc-text">0x03 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -235,9 +311,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

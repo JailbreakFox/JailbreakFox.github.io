@@ -159,6 +159,98 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/31/流媒体/">流媒体</a>
+    </h1>
+  
+
+        
+        <a href="/2020/01/31/流媒体/" class="archive-article-date">
+  	<time datetime="2020-01-31T03:16:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-31</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。<br>&emsp;&emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务器获取视频的技术。<br>&emsp;&emsp;由于流媒体服务器需要公网IP，这里直接使用阿里云服务器。  </p>
+<h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a><em>0x01 环境搭建</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 流媒体服务器</span><br><span class="line">  1.1 云服务器搭建</span><br><span class="line">  1.2 srs部署</span><br><span class="line">2 OBS推流部署</span><br><span class="line">3 VLC拉流部署</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 流媒体服务器</em></strong><br><strong><em>1.1 云服务器搭建</em></strong><br>&emsp;&emsp;这里用的是<a href="https://www.aliyun.com" target="_blank" rel="noopener">阿里云服务器</a><sup>[1]</sup>，由于考虑到只是测试使用，因此买了一款1核2G，1Mbps的服务器。运行远程主机以后，记得<strong>添加安全组并开启1935端口</strong>，因为后面的srs需要用到该端口来交互信息。<br>&emsp;&emsp;值得注意的是，阿里云已经为用户提供了直播控制台，也就是说没必要自己部署流媒体服务器，但是由于要收费，我们这里还是部署开源的框架。<br><strong><em>1.2 srs部署</em></strong><br>&emsp;&emsp;流媒体服务器目前有很多优秀的开源框架，知乎上也有对比不同框架的<a href="https://www.zhihu.com/question/31160392/answer/256141081" target="_blank" rel="noopener">文章</a><sup>[2]</sup>，这里我们选用srs。</p>
+<p><div align="center"><img src="/2020/01/31/流媒体/流媒体开源框架.jpg" alt="流媒体开源框架"><div align="left"></div></div></p>
+<p>&emsp;&emsp;从上图可以看到，srs部署在Ubuntu下，网上有很多<a href="https://blog.csdn.net/lmj623565791/article/details/77937483" target="_blank" rel="noopener">技术博客</a><sup>[3]</sup>已经具体介绍了其安装方式:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先去Git上clone</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ossrs/srs.git</span><br><span class="line"><span class="built_in">cd</span> srs/trunk</span><br><span class="line"><span class="comment">#配置</span></span><br><span class="line">./configure</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line">make</span><br><span class="line"><span class="comment">#开启服务，第一次需要输入</span></span><br><span class="line">./objs/srs -c conf/srs.conf</span><br><span class="line"><span class="comment">#以后只需要输入 ./etc/init.d/srs start</span></span><br><span class="line"><span class="comment">#关闭服务为./etc/init.d/srs stop</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2 OBS推流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是OBS，非常好用快速，该软件可从<a href="https://obsproject.com" target="_blank" rel="noopener">官网</a><sup>[4]</sup>免费下载。第一次使用，需要修改一些关键设置:<br>&emsp;&emsp;1)推流设置<br>&emsp;&emsp;这是最重要的设置内容，拉流的时候需要用到该地址。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs推流.jpg" alt="obs推流"><div align="left"></div></div></p>
+<p>&emsp;&emsp;推流地址的设置格式如下:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户名</span></span><br><span class="line">rtmp://你的ip/你喜欢的url</span><br><span class="line"><span class="comment">#串流密钥(适用于开源框架，不适用于阿里云的直播控制台)</span></span><br><span class="line">你喜欢的任意字符串</span><br><span class="line"><span class="comment">#上述两者合起来就是你的流地址</span></span><br><span class="line"><span class="comment">#例如rtmp://11.11.11.11/xyh/tiancai</span></span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;2)输出设置<br>&emsp;&emsp;这个设置关系到你直播内容的清晰度、流量使用量等，设置方法可以参考<a href="https://www.bilibili.com/video/av52560685" target="_blank" rel="noopener">B站大佬的教程</a><sup>[5]</sup>。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs输出.png" alt="obs输出"><div align="left"></div></div></p>
+<p>&emsp;&emsp;x264是一个开源的H.264/MPEG-4 AVC视频编码函数库(不明觉厉就选它)。CBR是以恒定比特率方式进行编码(具体内容请自行查阅，由于服务器流量少，只能给500 Kbps)。CPU使用预设可根据自己电脑配置做调整。  </p>
+<p>&emsp;&emsp;3)视频设置<br>&emsp;&emsp;基础分辨率为电脑的分辨率，输出分辨率为拉流端的分辨率，如果流媒体服务器流量小，可以选择较小的输出分辨率。FPS值为刷新频率，普通人人眼能识别的帧率只需25帧，这里给30帧，也是为了考虑流量问题。  </p>
+<p><div align="center"><img src="/2020/01/31/流媒体/obs视频.png" alt="obs视频"><div align="left"></div></div></p>
+<p>&emsp;&emsp;设置完成后，只需要点击”开始推流”即可。</p>
+<p><strong><em>3 VLC拉流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是VLC，PC端也可以从官网上直接下载，安卓端可以从APKPure下载。下载完成后在”串流”菜单中输入 1.2 节中设置的流地址，就能连上流媒体服务器，进行拉流动作。</p>
+<h3 id="0x02-常见问题"><a href="#0x02-常见问题" class="headerlink" title="0x02 常见问题"></a><em>0x02 常见问题</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 黑屏</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 黑屏</em></strong><br>&emsp;&emsp;OBS推流时，设置”显示器捕获”与”窗口捕获”，打开以后显示黑屏。有多种问题源，因此有多种解决方法，常见原因参考<a href="https://www.bilibili.com/video/av65194185" target="_blank" rel="noopener">B站up主教程</a><sup>[6]</sup>。<br>&emsp;&emsp;我的电脑原因可能是obs渲染采用的是集成显卡，解决方法查阅<a href="http://tieba.baidu.com/p/6364329041" target="_blank" rel="noopener">贴吧</a><sup>[7]</sup>。Windows10 设置，系统，显示，最下边图形设置。图形性能首选项里边，经典应用，浏览添加OBS应用程序，OBS选项设置为节能（反正我的节能是集成图形输出，设置完毕之后就可以用）。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://www.aliyun.com" target="_blank" rel="noopener">https://www.aliyun.com</a><br>[2]<a href="https://www.zhihu.com/question/31160392/answer/256141081" target="_blank" rel="noopener">https://www.zhihu.com/question/31160392/answer/256141081</a><br>[3]<a href="https://blog.csdn.net/lmj623565791/article/details/77937483" target="_blank" rel="noopener">https://blog.csdn.net/lmj623565791/article/details/77937483</a><br>[4]<a href="https://obsproject.com" target="_blank" rel="noopener">https://obsproject.com</a><br>[5]<a href="https://www.bilibili.com/video/av52560685" target="_blank" rel="noopener">https://www.bilibili.com/video/av52560685</a><br>[6]<a href="https://www.bilibili.com/video/av65194185" target="_blank" rel="noopener">https://www.bilibili.com/video/av65194185</a><br>[7]<a href="http://tieba.baidu.com/p/6364329041" target="_blank" rel="noopener">http://tieba.baidu.com/p/6364329041</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具，流</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/31/流媒体/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -997,97 +1089,6 @@
 
 
   
-    <article id="post-计算机视觉-图像分割" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/15/计算机视觉-图像分割/">计算机视觉-图像分割</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/15/计算机视觉-图像分割/" class="archive-article-date">
-  	<time datetime="2019-01-15T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/计算机视觉1.jpg" alt="计算机视觉1"><div align="left"></div></div></p>
-<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
-<h3 id="0x01-显著性检测"><a href="#0x01-显著性检测" class="headerlink" title="0x01 显著性检测"></a><em>0x01 显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
-<h3 id="0x02-图像分割之物体分割"><a href="#0x02-图像分割之物体分割" class="headerlink" title="0x02 图像分割之物体分割"></a><em>0x02 图像分割之物体分割</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 前景背景分割</span><br><span class="line">  1.1 Graph Cuts分割</span><br><span class="line">  1.2 GrabCut分割</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。<br><strong><em>1.1、Graph Cuts分割</em></strong><br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a href="https://www.cnblogs.com/hjlweilong/p/6119822.html" target="_blank" rel="noopener">博文</a><sup>[2]</sup>。<br><strong><em>1.2、GrabCut分割</em></strong><br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
-<h3 id="0x03-图像分割之语义分割"><a href="#0x03-图像分割之语义分割" class="headerlink" title="0x03 图像分割之语义分割"></a><em>0x03 图像分割之语义分割</em></h3><p>&emsp;&emsp;不但要做一张图片上的物体分割，且要理解、识别各个物体的内容。<br>&emsp;&emsp;语义分割的用处有机器人视觉和场景理解、辅助/自动驾驶、医学X光等。<br>&emsp;&emsp;在2015年之前的语义分割用的算法是手工特征+图模型（CRF）。从2015年开始，便运用深度神经网络模型：<br>&emsp;&emsp;&emsp;&emsp;1）改进的CNN。传统CNN存在一些问题。<br>&emsp;&emsp;&emsp;&emsp;2）全卷积网络/FCN(Fully Convolutional Networks)。所有层都是卷积层，能够解决降采样后的低分辨率问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 全卷积网络/FCN</span><br><span class="line">  1.1 卷积化</span><br><span class="line">  1.2 反卷积</span><br><span class="line">  1.3 跳层结构</span><br><span class="line">2 DeepLab全卷积网络</span><br><span class="line">  2.1 DCNN-孔算法</span><br><span class="line">  2.2 DCNN-Atrous空间金字塔池化</span><br><span class="line">  2.3 全连接CRF</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、全卷积网络</em></strong><br>&emsp;&emsp;全卷积网络具有三个重要的操作：<br>&emsp;&emsp;&emsp;&emsp;1）卷积化。即将所有的全连接层转换成卷积层，适应任意的尺寸输入，并输出低分辨率的图片。<br>&emsp;&emsp;&emsp;&emsp;2）<strong>反卷积</strong>。将低分辨率的图片进行上采样，输出同分辨率的分割图片。<br>&emsp;&emsp;&emsp;&emsp;3）跳层结构。精化分割图片。<br>&emsp;&emsp;全卷积网络的构架图例如下所示：</p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN4.jpg" alt="FCN4"><div align="left"><br><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" target="_blank" rel="noopener">计算机视觉-图像识别</a><sup>[3]</sup>。<br><strong>*<em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</div></div></p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN1.jpg" alt="FCN1"><div align="left"><br>&emsp;&emsp;有必要细致地解释一下卷积以及反卷积的矩阵化写法。有如下所示4$\times $4的图像，需要卷积为2$\times $2的输出：<br>&emsp;&emsp;则每个卷积核都可以写为如下图所示的一行，合并成一个矩阵C，输入量为图像的16个元素展开成一个列向量x，输出为一个包含四个元素的列向量y，卷积过程可以用公式$y=Cx$表示。</div></div></p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN5.jpg" alt="FCN5"><img src="/2019/01/15/计算机视觉-图像分割/FCN6.jpg" alt="FCN6"><div align="left"><br>&emsp;&emsp;则每个反卷积核则可用公式$y=C^{T}x$表示。<br>&emsp;&emsp;还有一种反池化操作(据说用的不多)，每次均要记录池化时的位置，其过程如下图所示：</div></div></p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN2.jpg" alt="FCN2"><div align="left"><br><strong><em>1.3、跳层结构</em></strong><br>&emsp;&emsp;即将当前卷积层与前两层卷积层的输出做融合。这样做的原因是直接使用32倍反卷积得到的分割结果过于粗糙。</div></div></p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN3.jpg" alt="FCN3"><div align="left"></div></div></p>
-<p><strong><em>2、DeepLab全卷积网络</em></strong><br>&emsp;&emsp;由于反卷积存在一定的缺陷，比如不能完全恢复信息。现在常用的网络为DeepLab全卷积网络。其基本结构为优化后的DCNN+传统的CRF图模型。<br><strong>*<em>2.1、DCNN-孔算法</em></strong><br>&emsp;&emsp;解决了原始FCN网络的输出低分辨率问题，能够灵活控制分辨率。其正式名称为膨胀卷积，取代上采样反卷积。其rate值越大，感受野越大，所谓rate即在卷积核元素之间插入步长，如下图所示：</p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN7.jpg" alt="FCN7"><div align="left"><br><strong><em>2.2、DCNN-Atrous空间金字塔池化</em></strong><br>&emsp;&emsp;在第六层并行引入4个不同rate的膨胀卷积，能够解决物体在多尺度图像中状态不同的问题，其过程如下图所示：</div></div></p>
-<p><div align="center"><img src="/2019/01/15/计算机视觉-图像分割/FCN8.jpg" alt="FCN8"><div align="left"><br><strong><em>2.3、全连接CRF</em></strong><br>&emsp;&emsp;其作用是通过迭代精化分割结果(恢复精确边界)。</div></div></p>
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a href="http://www.chinahadoop.cn/course/916" target="_blank" rel="noopener">http://www.chinahadoop.cn/course/916</a><br>[2]<a href="https://www.cnblogs.com/hjlweilong/p/6119822.html" target="_blank" rel="noopener">https://www.cnblogs.com/hjlweilong/p/6119822.html</a><br>[3]<a href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" target="_blank" rel="noopener">https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/15/计算机视觉-图像分割/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1102,7 +1103,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-				&copy; 2019 JailbreakFox
+				&copy; 2020 JailbreakFox
 				by<a href="http://hexo.io/" target="_blank"> Hexo</a>
     	</div>
 			<div class="footer-right">
@@ -1212,11 +1213,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1229,6 +1230,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
