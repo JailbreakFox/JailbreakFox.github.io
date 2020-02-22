@@ -716,6 +716,92 @@
 
 
   
+    <article id="post-C++数据结构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/21/C++数据结构/">C++数据结构</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/21/C++数据结构/" class="archive-article-date">
+  	<time datetime="2018-10-21T07:44:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;数据结构是以某种特定的布局方式存储数据的容器。<br>&emsp;&emsp;在C++标准库中，STL(标准模板库)就借助类模板把常用的数据结构及其算法都实现了一遍，并且做到了数据结构和算法的分离。另外也可以使用boost库。<br>&emsp;&emsp;常用的数据结构为以下八种:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0x01 容器-向量元素连接结构</span><br><span class="line">  1 数组</span><br><span class="line">  2 链表</span><br><span class="line">0x02 容器适配器-向量元素特殊增删方式</span><br><span class="line">  1 栈</span><br><span class="line">  2 队列</span><br><span class="line"></span><br><span class="line">树</span><br><span class="line">图</span><br><span class="line">字典树（这是一种高效的树形结构，但值得单独说明）</span><br><span class="line">散列表（哈希表）</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x01-容器-向量元素连接结构"><a href="#0x01-容器-向量元素连接结构" class="headerlink" title="0x01 容器-向量元素连接结构"></a><em>0x01 容器-向量元素连接结构</em></h3><p>&emsp;&emsp;向量是由一组数据组合成的，但在计算机存储元器件内，需要以特定的方式连接。连接方式可分为静态连接(数组)与动态连接(链表)。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 数组</span><br><span class="line">2 链表</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、数组</em></strong><br>&emsp;&emsp;以数组方式存储的向量，在内存空间的存储形式是连续的，因此又称为静态连接。在C++中，其对应的类为std::vector。<br>&emsp;&emsp;相比于动态连接的链表，数组方式数据存储效率更高;缺点是当要在元素中间插入新元素时效率很低，因插入过程为将插入位置后续元素均后移再插入新元素。所以std::vector插入新元素时多为栈(下一章节)的方式，即push_back/emplace_back。</p>
+<p><strong><em>2、链表</em></strong><br>&emsp;&emsp;链表就像一个节点链，其中每个节点包含着数据和指向后续节点的指针，因此又称为动态连接。在C++中，其对应的类为std::list。<br>&emsp;&emsp;相比于静态连接的数组，链表在任意位置插入新元素的效率更高，因为新增元素时只需要修改上一元素指针指向及该元素指针指向;缺点是数据存储效率较低。所以当向量元素增删方式为队列(下一章节)时，元素之间的连接结构常用链表。</p>
+<h3 id="0x02-容器适配器-向量元素特殊增删方式"><a href="#0x02-容器适配器-向量元素特殊增删方式" class="headerlink" title="0x02 容器适配器-向量元素特殊增删方式"></a><em>0x02 容器适配器-向量元素特殊增删方式</em></h3><p>&emsp;&emsp;在数组或链表中，向量元素的增删除了任意选定需要增删的元素之外，还有两种常用的特殊增删方式。即栈和队列，前者可描述为元素”后进先出”，而后者可描述为元素”先进先出”。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 栈</span><br><span class="line">2 队列</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、栈</em></strong><br>&emsp;&emsp;以栈的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量末尾的元素。因此栈的元素增删可形象地描述为”后进先出”，可参考如下图:</p>
+<p><div align="center"><br><img src="/2018/10/21/C++数据结构/./栈操作.png" width="400" height="250"></div></p>
+<p><div align="left"><br>&emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有栈功能的容器，其类名为std::stack。stack容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  </div></p>
+<p><strong><em>2、队列</em></strong><br>&emsp;&emsp;以队列的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量首部的元素。因此栈的元素增删可形象地描述为”先进先出”，可参考如下图:</p>
+<p><div align="center"><br><img src="/2018/10/21/C++数据结构/./队列操作.png" width="400" height="250"></div></p>
+<p><div align="left"><br>&emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有队列功能的容器，其类名为std::queue。queue容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  </div></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/21/C++数据结构/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-操作系统安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1124,11 +1210,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1137,6 +1223,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
