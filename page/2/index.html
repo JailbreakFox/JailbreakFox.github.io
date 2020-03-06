@@ -750,12 +750,12 @@
 <div align="left">  
 
 <p><strong><em>3.1.3、AVL树</em></strong><br>&emsp;&emsp;所谓AVL树，是指所有节点的左右子树高度差不大于1的树。<br>&emsp;&emsp;AVL优点是查询速度非常快(平衡性好);缺点是每个节点都需要存储一个int型数据(-1,0,1)，用于表达左右子树的高度差，且旋转频次更高。AVL多用于数据库。</p>
-<p><strong><em>3.2、高级搜索树</em></strong><br>&emsp;&emsp;通过对任何一条从根到叶子的简单路径上各个节点的颜色进行约束，确保没有一条路径会比其他路径长2倍，因而是近似平衡的。所以相对于严格要求平衡的AVL树来说，它的旋转保持平衡次数较少。用于搜索时，插入删除次数多的情况下我们就用红黑树来取代AVL。<br>&emsp;&emsp;实际应用中，C++ STL(map、set)均基于红黑树。其原理可能较为难理解，具体介绍看<a href="https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621" target="_blank" rel="noopener">视频</a>。红黑树举例如下图:</p>
+<p><strong><em>3.2、高级搜索树</em></strong><br>&emsp;&emsp;通过对任何一条从根到叶子的简单路径上各个节点的颜色进行约束，确保没有一条路径会比其他路径长2倍，因而是近似平衡的。所以相对于严格要求平衡的AVL树来说，它的旋转保持平衡次数较少。用于搜索时，插入删除次数多的情况下我们就用红黑树来取代AVL。<br>&emsp;&emsp;实际应用中，C++ STL(map、set)均基于红黑树。其原理可能较为难理解，具体介绍看<a href="https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621" target="_blank" rel="noopener">视频</a><sup>[1]</sup>。红黑树举例如下图:</p>
 <p><div align="center"><br><img src="/2018/10/21/C++数据结构/./红黑树.jpg" width="350" height="250"></div></p>
 <div align="left">  
 
 <p>&emsp;&emsp;红黑树必须满足如下性质:1)根节点必须为黑色;2)父子节点不能同为红色;3)从根节点出发到任意叶子节点，黑色节点数量必须一致。</p>
-<p><strong><em>4、图</em></strong><br>&emsp;&emsp;树是一种层次化结构，可以方便地用来描述种属关系。但是现实世界中，很多问题并不是这种从根往下衍生的关系，比如社交网络或者运输网络等，这时图的作用即可体现。<br><strong><em>4.1、图论</em></strong><br>&emsp;&emsp;图论是数学的一个分支，它以图为研究对象。图论中的图是由若干给定的点及连接两点的线所构成的图形，这种图形通常用来描述某些事物之间的某种特定关系，用点代表事物，用连接两点的线表示相应两个事物间具有这种关系。<br>以下内容摘自<a href="https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409" target="_blank" rel="noopener">视频</a>。</p>
+<p><strong><em>4、图</em></strong><br>&emsp;&emsp;树是一种层次化结构，可以方便地用来描述种属关系。但是现实世界中，很多问题并不是这种从根往下衍生的关系，比如社交网络或者运输网络等，这时图的作用即可体现。<br><strong><em>4.1、图论</em></strong><br>&emsp;&emsp;图论是数学的一个分支，它以图为研究对象。图论中的图是由若干给定的点及连接两点的线所构成的图形，这种图形通常用来描述某些事物之间的某种特定关系，用点代表事物，用连接两点的线表示相应两个事物间具有这种关系。<br>以下内容摘自<a href="https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409" target="_blank" rel="noopener">视频</a><sup>[2]</sup>。</p>
 <p><strong><em>4.1.1、基本概念</em></strong><br><strong>1) 有向图与无向图</strong><br>&emsp;&emsp;无方向的图为无向图，有方向的图为有向图，其中圆圈称为”结点”，连接线称为”边”:</p>
 <p><div align="center"><br><img src="/2018/10/21/C++数据结构/./有向图与无向图.png" width="400" height="250"></div></p>
 <div align="left">  
@@ -778,7 +778,7 @@
 <p><div align="center"><br><img src="/2018/10/21/C++数据结构/./权矩阵.png" width="600" height="400"></div></p>
 <div align="left">  
 
-<p><strong><em>5、哈希表</em></strong><br>&emsp;&emsp;除了树和图，还有一种寻址容易，插入删除也容易的数据结构哈希表，哈希表也叫散列表，是根据关键码值(key)而直接进行访问的数据结构。<br><strong><em>5.1、基本概念</em></strong><br>&emsp;&emsp;哈希表实质上就是一个元素为链表的数组，而原来数组下标更改为了key，其计算方法是通过某种算法将hash值转换得到，这种算法叫做”散列法”，其对应的映射函数叫做”散列函数”，存放记录的数组叫做”散列表”。</p>
+<p><strong><em>5、哈希表</em></strong><br>&emsp;&emsp;除了树和图，还有一种寻址容易，插入删除也容易的数据结构<a href="https://blog.csdn.net/yyyljw/article/details/80903391" target="_blank" rel="noopener">哈希表</a><sup>[3]</sup>，哈希表也叫散列表，是根据关键码值(key)而直接进行访问的数据结构。<br><strong><em>5.1、基本概念</em></strong><br>&emsp;&emsp;哈希表实质上就是一个元素为链表的数组，而原来数组下标更改为了key，其计算方法是通过某种算法将hash值转换得到，这种算法叫做”散列法”，其对应的映射函数叫做”散列函数”，存放记录的数组叫做”散列表”。</p>
 <p><div align="center"><br><img src="/2018/10/21/C++数据结构/./哈希表.png" width="600" height="400"></div></p>
 <div align="left">  
 
@@ -791,6 +791,7 @@
 <p><strong><em>2、队列</em></strong><br>&emsp;&emsp;以队列的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量首部的元素。因此栈的元素增删可形象地描述为”先进先出”，可参考如下图:</p>
 <p><div align="center"><br><img src="/2018/10/21/C++数据结构/./队列操作.png" width="400" height="250"></div></p>
 <p><div align="left"><br>&emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有队列功能的容器，其类名为std::queue。queue容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  </div></p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621" target="_blank" rel="noopener">https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621</a><br>[2]<a href="https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409" target="_blank" rel="noopener">https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409</a><br>[3]<a href="https://blog.csdn.net/yyyljw/article/details/80903391" target="_blank" rel="noopener">https://blog.csdn.net/yyyljw/article/details/80903391</a></p>
 </div></div></div></div></div></div></div></div></div>
       
 
@@ -1236,11 +1237,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1252,6 +1253,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
@@ -1260,19 +1265,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
