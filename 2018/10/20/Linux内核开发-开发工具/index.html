@@ -6,19 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2018 | Jesse Tsui的博客</title>
+  <title>Linux内核开发-开发工具 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/archives/2018/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
+<meta name="keywords" content="Linux 工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内核开发-开发工具">
+<meta property="og:url" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
 <meta property="og:locale" content="cn">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim键盘图.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim命令图解.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/top.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/free.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/vmstat.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/slabtop.png">
+<meta property="og:updated_time" content="2020-03-12T03:23:51.640Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jesse Tsui的博客">
-<meta name="twitter:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta name="twitter:title" content="Linux内核开发-开发工具">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
+<meta name="twitter:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim键盘图.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -157,264 +165,168 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Linux内核开发-开发工具" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/12/30/计算机视觉-图像识别/" class="archive-article-date">
-  	<time datetime="2018-12-30T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/12/30/计算机视觉-图像识别/">计算机视觉-图像识别</a>
+    <h1 class="article-title" itemprop="name">
+      Linux内核开发-开发工具
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/12/12/pytorch-BP神经网络拟合非线性函数/" class="archive-article-date">
-  	<time datetime="2018-12-12T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/12/12/pytorch-BP神经网络拟合非线性函数/">pytorch-BP神经网络拟合非线性函数</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch，神经网络，机器学习</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/12/07/计算机视觉基础/" class="archive-article-date">
-  	<time datetime="2018-12-07T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/12/07/计算机视觉基础/">计算机视觉基础</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/12/04/RBF神经网络/" class="archive-article-date">
-  	<time datetime="2018-12-04T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/12/04/RBF神经网络/">RBF神经网络</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">机器学习，神经网络，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/11/26/q-learning/">Q-learning算法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">强化学习，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/21/C++数据结构/" class="archive-article-date">
-  	<time datetime="2018-10-21T07:44:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/21/C++数据结构/">C++数据结构</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/20/Linux内核开发-开发工具/" class="archive-article-date">
+        
+        <a href="/2018/10/20/Linux内核开发-开发工具/" class="archive-article-date">
   	<time datetime="2018-10-20T07:00:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-20</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/20/Linux内核开发-开发工具/">Linux内核开发-开发工具</a>
-    </h1>
-  
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux内核开发所用到的工具。</p>
+<h3 id="0x01-Vim"><a href="#0x01-Vim" class="headerlink" title="0x01 Vim"></a><em>0x01 Vim</em></h3><p>&emsp;&emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考<a href="https://www.runoob.com/linux/linux-vim.html" target="_blank" rel="noopener">菜鸟教程</a>。</p>
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./Vim键盘图.png" width="450" height="300"></div></p>
+<div align="left">  
 
-        <div class="article-info info-on-right">
-          
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./Vim命令图解.png" width="450" height="300"></div></p>
+<div align="left">  
+
+<h3 id="0x02-Linux系统常用工具"><a href="#0x02-Linux系统常用工具" class="headerlink" title="0x02 Linux系统常用工具"></a><em>0x02 Linux系统常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 top</span><br><span class="line">  1.1 系统运行时间和平均负载</span><br><span class="line">  1.2 进程状态</span><br><span class="line">  1.3 CPU状态</span><br><span class="line">  1.4 内存使用</span><br><span class="line">  1.5 各进程的状态监控</span><br><span class="line">2 free</span><br><span class="line">3 vmstat</span><br><span class="line">4 slabtop</span><br><span class="line">5 pmap</span><br><span class="line">6 dmesg</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、top</em></strong><br>&emsp;&emsp;<a href="https://www.cnblogs.com/mushang1hao/p/10767062.html" target="_blank" rel="noopener">top命令</a>经常用来监控Linux的系统状况，比如cpu、内存的使用，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure></p>
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./top.png" width="450" height="300"></div></p>
+<div align="left">  
+
+<p><strong><em>1.1、系统运行时间和平均负载</em></strong>  </p>
+<ul>
+<li>top：当前时间</li>
+<li>up：系统已运行的时间</li>
+<li>user：当前登录用户的数量</li>
+<li>load average：相应最近5、10和15分钟内的平均负载，每隔5秒钟检查一次活跃的进程数。 </li>
+</ul>
+<p><strong><em>1.2、进程状态</em></strong><br>&emsp;&emsp;按”t”切换显示状态。  </p>
+<ul>
+<li>total：总共进程数</li>
+<li>running：运行中进程</li>
+<li>sleeping：休眠中进程</li>
+<li>stopped：停止中进程</li>
+<li>zombie：僵尸进程  </li>
+</ul>
+<p><strong><em>1.3、CPU状态</em></strong><br>&emsp;&emsp;按”1”显示所有CPU状态。 </p>
+<ul>
+<li>us / user： 用户空间占用CPU的百分比</li>
+<li>sy / system: 内核空间占用CPU的百分比</li>
+<li>ni / niced：改变过优先级的进程占用CPU的百分比</li>
+<li>id：空闲CPU百分比</li>
+<li>wa / IO wait: IO等待占用CPU的百分比</li>
+<li>hi：处理硬件中断占用CPU的百分比</li>
+<li>si: 处理软件中断占用CPU的百分比</li>
+<li>st：这个虚拟机被hypervisor偷去时间占用CPU的百分比（译注：如果当前处于一个hypervisor下的vm，实际上hypervisor也是要消耗一部分CPU处理时间的）。</li>
+</ul>
+<p><strong><em>1.4、内存使用</em></strong><br>&emsp;&emsp;按”m”切换显示状态。<br><em>内存区-Mem</em>  </p>
+<ul>
+<li>total：物理内存总量</li>
+<li>used：使用中的内存总量</li>
+<li>free：空闲内存总量</li>
+<li>buffers/cache：缓存的内存量</li>
+</ul>
+<p><em>交换分区-Swap</em>  </p>
+<ul>
+<li>total：交换区总量</li>
+<li>used：使用的交换区总量</li>
+<li>free：空闲交换区总量</li>
+<li>avail Mem：缓冲的交换区总量</li>
+</ul>
+<p><strong><em>1.5、各进程的状态监控</em></strong><br>&emsp;&emsp;按”f”可添加需要监控的状态变量，按”M”可按各进程内存占有百分比降序排列，按”P”可按各进程CPU占有百分比降序排列。  </p>
+<ul>
+<li>PID：进程ID，进程的唯一标识符</li>
+<li>USER：进程所有者的实际用户名。</li>
+<li>PR：进程的调度优先级。这个字段的一些值是’rt’。这意味这这些进程运行在实时态。</li>
+<li>NI：进程的nice值（优先级）。越小的值意味着越高的优先级。负值表示高优先级，正值表示低优先级</li>
+<li>VIRT：进程使用的虚拟内存。进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES</li>
+<li>RES：驻留内存大小。驻留内存是任务使用的非交换物理内存大小。进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA</li>
+<li>SHR：SHR是进程使用的共享内存。共享内存大小，单位kb</li>
+<li>S：这个是进程的状态。它有以下不同的值:<ul>
+<li>D：不可中断的睡眠态。</li>
+<li>R：运行态</li>
+<li>S：睡眠态</li>
+<li>T：被跟踪或已停止</li>
+<li>Z：僵尸态</li>
+</ul>
+</li>
+<li>%CPU：自从上一次更新时到现在任务所使用的CPU时间百分比。</li>
+<li>%MEM：进程使用的可用物理内存百分比。</li>
+<li>TIME+：任务启动后到现在所使用的全部CPU时间，精确到百分之一秒。</li>
+<li>COMMAND：运行进程所使用的命令。进程名称（命令名/命令行）</li>
+</ul>
+<p><strong><em>2、free</em></strong><br>&emsp;&emsp;free 命令显示系统内存的使用情况，包括物理内存、交换内存(swap)和内核缓冲区内存，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最直接</span></span><br><span class="line">free</span><br><span class="line"><span class="comment"># 更友好的输出结果</span></span><br><span class="line">free -h</span><br><span class="line"><span class="comment"># 指定3s不间断更新</span></span><br><span class="line">free -h -s 3</span><br></pre></td></tr></table></figure></p>
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./free.png" width="450" height="300"></div></p>
+<div align="left">  
+
+<ul>
+<li>Mem行：是内存的使用情况。</li>
+<li>Swap行：是交换空间的使用情况。</li>
+<li>total列：显示系统总的可用物理内存和交换空间大小。</li>
+<li>used列：显示已经被使用的物理内存和交换空间。</li>
+<li>free列：显示还有多少物理内存和交换空间可用使用。</li>
+<li>shared列：显示被共享使用的物理内存大小。</li>
+<li>buff/cache列：显示被 buffer 和 cache 使用的物理内存大小。</li>
+<li>available列：显示还可以被应用程序使用的物理内存大小。</li>
+</ul>
+<p><strong><em>3、vmstat</em></strong><br>&emsp;&emsp;vmstat命令可对操作系统的虚拟内存、进程、CPU活动进行监控，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 时间间隔2s，采样10次</span></span><br><span class="line">vmstat 2 10</span><br></pre></td></tr></table></figure></p>
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./vmstat.png" width="450" height="300"></div></p>
+<div align="left">  
+
+<p><em>进程-Procs</em>  </p>
+<ul>
+<li>r: 运行队列中进程数量</li>
+<li>b： 等待IO的进程数量</li>
+</ul>
+<p><em>内存-Memory</em></p>
+<ul>
+<li>swpd: 使用虚拟内存大小</li>
+<li>free: 可用内存大小</li>
+<li>buff: 用作缓冲的内存大小</li>
+<li>cache: 用作缓存的内存大小</li>
+</ul>
+<p><em>交换分区-Swap</em></p>
+<ul>
+<li>si: 每秒从交换区写到内存的大小</li>
+<li>so: 每秒写入交换区的内存大小</li>
+</ul>
+<p><em>IO</em></p>
+<ul>
+<li>in: 每秒中断数，包括时钟中断。【interrupt】</li>
+<li>cs: 每秒上下文切换数。【count/second】</li>
+</ul>
+<p><em>CPU</em></p>
+<ul>
+<li>us: 用户进程执行时间(user time)</li>
+<li>sy: 系统进程执行时间(system time)</li>
+<li>id: 空闲时间(包括IO等待时间),中央处理器的空闲时间 。以百分比表示。</li>
+<li>wa: 等待IO时间</li>
+</ul>
+<p><strong><em>4、slabtop</em></strong><br>&emsp;&emsp;Linux内核需要为临时对象如任务或者设备结构和节点分配内存，缓存分配器管理着这些类型对象的缓存。现代Linux内核部署了该缓存分配器以持有缓存，称之为片。不同类型的片缓存由片分配器维护。本文集中讨论slabtop命令，该命令显示了实时内核片缓存信息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># slabtop排序方式设置为最常用的cache size</span></span><br><span class="line">slabtop -sc</span><br></pre></td></tr></table></figure></p>
+<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./slabtop.png" width="450" height="300"></div></p>
+<div align="left">  
+
+<p><strong><em>5、pmap</em></strong><br>&emsp;&emsp;pmap命令用于报告进程的内存映射关系，是Linux调试及运维一个很好的工具，这里自己写个代码来测试该工具：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 编译具有如下代码的test.cpp文件</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *buf;</span><br><span class="line">    buf = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>));</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0x55</span>, <span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>));</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;编译完成后，使用如下命令运行：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在后台执行test程序</span></span><br><span class="line">./<span class="built_in">test</span> &amp;</span><br><span class="line"><span class="comment"># 记录下后台运行时的程序PID，并使pmap工具查看</span></span><br><span class="line">pmap <span class="string">"程序PID"</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>6、dmesg</em></strong><br>&emsp;&emsp;dmesg命令用于显示开机信息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># "-T"代表log打印出时间，"-d"代表log打印出两条指令之间的差值</span></span><br><span class="line">dmesg -T -d</span><br></pre></td></tr></table></figure></p>
+</div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -426,122 +338,77 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/08/01/操作系统安装/" class="archive-article-date">
-  	<time datetime="2018-08-01T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-01</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2018/10/21/C++数据结构/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          C++数据结构
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/01/操作系统安装/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">操作系统安装（待完成）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/01/操作系统安装/">操作系统安装（待完成）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技巧</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Vim"><span class="toc-number">2.</span> <span class="toc-text">0x01 Vim</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-Linux系统常用工具"><span class="toc-number">3.</span> <span class="toc-text">0x02 Linux系统常用工具</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/20/Git与Hexo/" class="archive-article-date">
-  	<time datetime="2018-07-20T12:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/07/20/Git与Hexo/">Git与Hexo</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/05/博客伊始/" class="archive-article-date">
-  	<time datetime="2018-07-05T12:07:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/07/05/博客伊始/">博客伊始</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -566,8 +433,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
