@@ -6,19 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 游戏设计，游戏AI，入门 | Jesse Tsui的博客</title>
+  <title>DBus | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta name="keywords" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/tags/游戏设计，游戏AI，入门/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。    0x01 DBus简介&amp;emsp;&amp;emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。121 运行机制2 重要ID">
+<meta name="keywords" content="计算机技术">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DBus">
+<meta property="og:url" content="http://yoursite.com/2020/03/21/DBus/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。    0x01 DBus简介&amp;emsp;&amp;emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。121 运行机制2 重要ID">
 <meta property="og:locale" content="cn">
+<meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/DBus框架.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/D-feet.png">
+<meta property="og:updated_time" content="2020-03-22T13:41:09.525Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jesse Tsui的博客">
-<meta name="twitter:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta name="twitter:title" content="DBus">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。    0x01 DBus简介&amp;emsp;&amp;emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。121 运行机制2 重要ID">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/21/DBus/DBus框架.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -157,60 +161,144 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-DBus" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/31/游戏AI-智能体行动系统/" class="archive-article-date">
-  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/31/游戏AI-智能体行动系统/">游戏AI-智能体行动系统</a>
+    <h1 class="article-title" itemprop="name">
+      DBus
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2020/03/21/DBus/" class="archive-article-date">
+  	<time datetime="2020-03-21T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。</p>
+<p><div align="center"><br><img src="/2020/03/21/DBus/DBus框架.png" width="700" height="400"></div></p>
+<div align="left">
+
+<h3 id="0x01-DBus简介"><a href="#0x01-DBus简介" class="headerlink" title="0x01 DBus简介"></a><em>0x01 DBus简介</em></h3><p>&emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 运行机制</span><br><span class="line">2 重要ID</span><br></pre></td></tr></table></figure></p>
+<p><em>1、运行机制</em>  </p>
+<ul>
+<li>DBus-daemon : 运行一个DBus-daemon就是创建了一条通信的总线Bus。总线分为 系统总线(system daemon)/会话总线(session daemon) 两类，例如Ubuntu系统开启时会自动拉起一个系统总线和会话总线。</li>
+<li>Connection : 当一个进程(Application)连接到Bus总线上面时，就产生了连接(Connection)。</li>
+<li>Application : 每个进程即为一个Application。DBus能实现进程间通信，且其实现是基于socket的，因此总有一个等待连接的Server APP，以及一个主动连接的Client APP。</li>
+<li>Object : 可理解为程序员希望用DBus实现的进程间通信类。</li>
+<li>Interface : 可理解为每个Object内的类成员。</li>
+<li>通信方式 : D-bus里面支持的通信方式有signal/method两种。前者其实就是广播(UDP,一对多的通信方式);后者则是一问一答(TCP，一对一的通信),这种方式有点像远程调用，Client APP1调用Server APP2的method并传递参数给这个method，获取到这个method返回的结果。</li>
+</ul>
+<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html" target="_blank" rel="noopener">参考教程</a>。</p>
+<ul>
+<li>Address : 用于标识DBus-daemon。当一个DBus-daemon运行以后，其他的app该怎么连接到这个DBus-daemon，靠的就是address。格式如/com/polkit/qt/example/dbus。</li>
+<li>BusName : 用于标志Application。当一个进程连接上DBus-daemon，就需要注册一个BusName方便其他进程找到自己。格式如com.polkit.qt.example.dbus。</li>
+<li>Object Path : 用于标识Object类。当Client APP1的Object要跟Server APP2的Object通信时，就要告诉DBus-daemon目标的Object Path。格式如/com/polkit/qt/example/dbus。</li>
+<li>Interface name : 用于标志Object类成员。格式如com.polkit.qt.example.dbus。</li>
+<li>Member name : 用于标志通信类型信息。无特殊格式。</li>
+</ul>
+<h3 id="0x02-QDBus简介"><a href="#0x02-QDBus简介" class="headerlink" title="0x02 QDBus简介"></a><em>0x02 QDBus简介</em></h3><p>&emsp;&emsp;Qt有DBus的具体实现库，即QDBus。QDBus可参考QtLearning/QDbus里的实现代码，具体使用方式如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用命令qdbuscpp2xml生成dbus.h的xml文件</span></span><br><span class="line"><span class="comment"># dbus类为客户端用来调用服务端的接口</span></span><br><span class="line">qdbuscpp2xml dbus.h -A -o com.polkit.qt.example.dbus.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-DBus工具"><a href="#0x03-DBus工具" class="headerlink" title="0x03 DBus工具"></a><em>0x03 DBus工具</em></h3><p>&emsp;&emsp;下面介绍一些用来生成DBus或查看DBus运行状态的工具。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 QDBus文件生成工具</span><br><span class="line">  1.1 qdbuscpp2xml</span><br><span class="line">  1.2 qdbusxml2cpp</span><br><span class="line">2 DBus状态分析工具</span><br><span class="line">  2.1 D-feet</span><br><span class="line">  2.2 dbus_send/dbus_monitor</span><br></pre></td></tr></table></figure></p>
+<p><em>1、QDBus文件生成工具</em><br>&emsp;&emsp;如上一章所示，QDBus的进程间通信类实现需要先根据该类生成xml文件，再根据xml生成用于Server APP的adaptor以及用于Client APP的interface。<br><em>1.1、qdbuscpp2xml</em><br>&emsp;&emsp;qdbuscpp2xml会解析QObject派生类的C++头文件或是源文件，生成DBus的内省xml文件。qdbuscpp2xml会区分函数的输入输出，如果参数声明为const则会是输入，否则可能会被当作输出。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qdbuscpp2xml使用语法如下：</span></span><br><span class="line">qdbuscpp2xml [options...] [files...]</span><br><span class="line"><span class="comment"># Options参数如下：</span></span><br><span class="line"><span class="comment"># -p|-s|-m：只解析脚本化的属性、信号、方法(槽函数)</span></span><br><span class="line"><span class="comment"># -P|-S|-M：解析所有的属性、信号、方法(槽函数) </span></span><br><span class="line"><span class="comment"># -a：输出所有的脚本化内容，等价于-psm </span></span><br><span class="line"><span class="comment"># -A：输出所有的内容，等价于-PSM    </span></span><br><span class="line"><span class="comment"># -o filename：输出内容到filename文件</span></span><br></pre></td></tr></table></figure></p>
+<p><em>1.2、qdbusxml2cpp</em><br>&emsp;&emsp;qdbusxml2cpp能根据上一节生成的xml文件生成用于Server APP的adaptor以及用于Client APP的interface。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractAdaptor的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractInterface的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure></p>
+<p><em>2、DBus状态分析工具</em><br>&emsp;&emsp;DBus运行过程中，需要用调试工具观察运行状态，这里介绍两种工具，分别是D-feet以及dbus_send/dbus_monitor。<br><em>2.1、D-feet</em><br>&emsp;&emsp;D-feet是Red Hat公司研发的DBus调试工具。当你准备用DBus来写你的程序时，D-feet是非常用的，它可以显示service提供的所有对象、信号、和方法，另外还可以通过它实现方法调用。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装D-feet</span></span><br><span class="line">sudo apt-get install d-feet</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">d-feet</span><br></pre></td></tr></table></figure></p>
+<p><div align="center"><br><img src="/2020/03/21/DBus/D-feet.png" width="700" height="400"></div></p>
+<div align="left">
+
+<p><em>2.1、dbus_send/dbus_monitor</em><br>&emsp;&emsp;有了D-feet就足矣，这俩工具待补充。</p>
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html" target="_blank" rel="noopener">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
+</div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">游戏设计，游戏AI，入门</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2020/01/31/流媒体/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">流媒体</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-引言"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-DBus简介"><span class="toc-number">2.</span> <span class="toc-text">0x01 DBus简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-QDBus简介"><span class="toc-number">3.</span> <span class="toc-text">0x02 QDBus简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-DBus工具"><span class="toc-number">4.</span> <span class="toc-text">0x03 DBus工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-引用文献"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -235,9 +323,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
