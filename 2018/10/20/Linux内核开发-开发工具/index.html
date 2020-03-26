@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Linux内核开发-开发工具 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具123456789101112131 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2">
 <meta name="keywords" content="Linux 工具">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux内核开发-开发工具">
 <meta property="og:url" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具123456789101112131 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2">
 <meta property="og:locale" content="cn">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim键盘图.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim命令图解.png">
@@ -22,10 +22,10 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/free.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/vmstat.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/slabtop.png">
-<meta property="og:updated_time" content="2020-03-12T03:23:51.640Z">
+<meta property="og:updated_time" content="2020-03-26T12:37:59.363Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux内核开发-开发工具">
-<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具12345678910111 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2 free">
+<meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;Linux内核开发所用到的工具。 0x01 Vim&amp;emsp;&amp;emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考菜鸟教程。           0x02 Linux系统常用工具123456789101112131 top  1.1 系统运行时间和平均负载  1.2 进程状态  1.3 CPU状态  1.4 内存使用  1.5 各进程的状态监控2">
 <meta name="twitter:image" content="http://yoursite.com/2018/10/20/Linux内核开发-开发工具/Vim键盘图.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
@@ -198,7 +198,7 @@
 <p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./Vim命令图解.png" width="450" height="300"></div></p>
 <div align="left">  
 
-<h3 id="0x02-Linux系统常用工具"><a href="#0x02-Linux系统常用工具" class="headerlink" title="0x02 Linux系统常用工具"></a><em>0x02 Linux系统常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 top</span><br><span class="line">  1.1 系统运行时间和平均负载</span><br><span class="line">  1.2 进程状态</span><br><span class="line">  1.3 CPU状态</span><br><span class="line">  1.4 内存使用</span><br><span class="line">  1.5 各进程的状态监控</span><br><span class="line">2 free</span><br><span class="line">3 vmstat</span><br><span class="line">4 slabtop</span><br><span class="line">5 pmap</span><br><span class="line">6 dmesg</span><br></pre></td></tr></table></figure>
+<h3 id="0x02-Linux系统常用工具"><a href="#0x02-Linux系统常用工具" class="headerlink" title="0x02 Linux系统常用工具"></a><em>0x02 Linux系统常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 top</span><br><span class="line">  1.1 系统运行时间和平均负载</span><br><span class="line">  1.2 进程状态</span><br><span class="line">  1.3 CPU状态</span><br><span class="line">  1.4 内存使用</span><br><span class="line">  1.5 各进程的状态监控</span><br><span class="line">2 free</span><br><span class="line">3 vmstat</span><br><span class="line">4 slabtop</span><br><span class="line">5 pmap</span><br><span class="line">6 dmesg</span><br><span class="line">7 journalctl</span><br><span class="line">8 <span class="built_in">kill</span></span><br></pre></td></tr></table></figure>
 <p><strong><em>1、top</em></strong><br>&emsp;&emsp;<a href="https://www.cnblogs.com/mushang1hao/p/10767062.html" target="_blank" rel="noopener">top命令</a>经常用来监控Linux的系统状况，比如cpu、内存的使用，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure></p>
 <p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./top.png" width="450" height="300"></div></p>
 <div align="left">  
@@ -528,10 +528,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
@@ -544,15 +540,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

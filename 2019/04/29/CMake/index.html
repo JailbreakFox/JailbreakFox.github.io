@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Jesse Tsui的博客">
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp/.h/.so/.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等[1]。但再深一层次地说，">
 <meta property="og:locale" content="cn">
-<meta property="og:updated_time" content="2019-09-03T12:24:54.285Z">
+<meta property="og:updated_time" content="2020-03-26T14:57:10.978Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CMake">
 <meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp/.h/.so/.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等[1]。但再深一层次地说，">
@@ -197,7 +197,7 @@
 <p>&emsp;&emsp;大意是Qt版本5.2.1与5.7.1的链接库不匹配，无法融合。可知实际上我的系统里存在多版本的Qt，Qt实质上会在默认库路径/usr/lib下生成一些必要的库，这也是报错的原因。这里有一个解决的技巧，即将所有lib文件全部放入目标文件夹，并执行程序，最后发现程序正常运行，可见库中必然还存在一个特定的动态链接库，使用二分法，多次将不同文件放入目标文件夹运行，迭代排查后发现缺少链接库libQt5DBus.so.5链接库，将其放入目标文件夹，运行正常（这个方法很牛逼，我都佩服我自己，全网基本上没有资料说这个文件的）。<br>&emsp;&emsp;这里还有两个细节，第一点libQt5DBus.so.5是一个类似于快捷方式的文件，它会链接到libQt5DBus.so.5.7.1上（库里还有一个libQt5DBus.so.5.7，暂时不知道何用），所以最后只需要取出libQt5DBus.so.5.7.1并重命名为libQt5DBus.so.5即可，链接库libQt5XcbQpa.so.5同理。第二点，有必要猜测下这三个链接库存在的意义，libqxcb.so应该是qt的入口库，然后libQt5XcbQpa.so.5是实际运行的函数，并且链接到了5.7.1的子版本上（方便版本控制），而这里的libQt5DBus.so.5应该是做Qt不同版本之间的一个解释器。</p>
 <p><strong><em>2.2、方案二：安装至默认lib文件夹</em></strong><br>&emsp;&emsp;方案一虽然可以顺利运行，但是每次要修改环境变量实际上是非常麻烦的事情，且并不是所有软件使用者都有这个觉悟，那么我们要考虑更加便捷的方法，即将库文件用CMake install至系统默认搜索的库，即在1.3节中已经叙述过的/usr/lib与/lib位置。在1.3节也讲过了，如果将所有库文件放入lib文件夹下的子文件夹内，则系统仍搜索不到链接库（如果要采取修改/etc/ld.so.conf以及添加ldconfig命令，则还不如方案一便捷）。唯一的办法就是将所有库文件全部install至lib文件夹下，运行程序完美报错：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: relocation error: /usr/lib/libQt5X11Extras.so.<span class="number">5</span>: symbol qt_version_tag, version Qt_5.<span class="number">7</span> <span class="keyword">not</span> <span class="keyword">defined</span> <span class="keyword">in</span> file libQt5Core.so.<span class="number">5</span> with link <span class="built_in">time</span> reference</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;未知错误（应该是多版本Qt的原因，还害得我修改了lib库所有文件权限，导致sudo用不了、系统时间出错、U盘都不出等一系列尿频尿急症状T_T）等待填坑。</p>
-<p><strong>*<em>2.3、方案三：CMake添加RPATH</em></strong><br>&emsp;&emsp;在1.4节中已经叙述过CMake RPATH的用途，该方案可以说是最便捷和人性化的了，第一不用修改环境变量，第二在make与make install的过程中就能决定中间执行程序与安装执行程序的库链接路径。<br>&emsp;&emsp;根据1.4节中提到的<a href="https://www.cnblogs.com/rickyk/p/3884257.html" target="_blank" rel="noopener">博客</a><sup>[8]</sup>，我们只需要在CmakeList.txt的install部分添加如下指令：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#修改安装执行程序的库链接路径</span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line">#保证只针对当前的target进行make install的时候RPATH的写入了</span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br></pre></td></tr></table></figure></p>
+<p><strong>*<em>2.3、方案三：CMake添加RPATH</em></strong><br>&emsp;&emsp;在1.4节中已经叙述过CMake RPATH的用途，该方案可以说是最便捷和人性化的了，第一不用修改环境变量，第二在make与make install的过程中就能决定中间执行程序与安装执行程序的库链接路径。<br>&emsp;&emsp;根据1.4节中提到的<a href="https://www.cnblogs.com/rickyk/p/3884257.html" target="_blank" rel="noopener">博客</a><sup>[8]</sup>，我们只需要在CmakeList.txt的install部分添加如下指令：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#方法一：在CMakeLists.txt文件中修改</span><br><span class="line">#修改安装执行程序的库链接路径</span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line">#保证只针对当前的target进行make install的时候RPATH的写入了</span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line">#方法二：在编译时修改</span><br><span class="line">#这里将install路径设置为build</span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../build/ ..</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;这里依旧分享一个小技巧，使用指令readelf可以查看某一可执行程序的RPATH：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -d 程序名</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>2.4、方案四：CMake静态编译</em></strong><br>&emsp;&emsp;除了上述三种调控动态链接库位置与链接的方式之外，我们还可以用CMake实现静态编译，即将三方库的动态链接库或者静态链接库加上自己的程序编译在一起，得到不需要外接库的可执行程序，在1.1节之中已经分析过了这种程序的优缺点（小型项目还好，一旦做大型项目，不但编译慢而且运行的电脑也会被大量占用空间）。目前该方式只在网上搜索到设置CMake设置静态编译的一段命令：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS "-static $&#123;CMAKE_CXX_FLAGS&#125;")</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;该方法等待填坑（不了解意思，执行之后也会报错）。</p>
@@ -412,10 +412,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
@@ -428,15 +424,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
