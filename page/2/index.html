@@ -159,6 +159,98 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-游戏AI-智能体行动系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/31/游戏AI-智能体行动系统/">游戏AI-智能体行动系统</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/31/游戏AI-智能体行动系统/" class="archive-article-date">
+  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 游戏AI和学术意义上的AI不同，后者尝试靠智能算法去优化或解决问题，而前者则是指在借助智能算法来改变NPC的思考和行为方式，从而让玩家感受到机器人的智能。本文将从几方面探讨游戏AI<sup>[1]</sup>：1)智能体的思考系统，包括有限状态机FSM、行为树与模糊逻辑等；2）智能体的感知系统，负责感知周围环境，并为思考和行动系统提供基础信息；3）智能体的行动系统，包括操控行为、A*寻路以及导航网络等；4）智能体的战略系统，即群集行为。<br>&emsp;&emsp;游戏中的AI角色行为一直处于感知-思考-行动的无限循环之中。本文主要研究智能体的行动系统，原文的游戏引擎采用unity3D，这里不介绍代码，代码请看原文献。智能体AI架构如下图所示：</p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/AI架构.png" alt="游戏AI-智能体行动系统"><div align="left"></div></div></p>
+<h3 id="0x01-智能体操控行为"><a href="#0x01-智能体操控行为" class="headerlink" title="0x01 智能体操控行为"></a><em>0x01 智能体操控行为</em></h3><p>&emsp;&emsp; 操控行为就像赋予智能体自主行动能力一样，使其按照一定的逻辑规则<sup>[2]</sup>来运动，这种行为的感知类似于真实的生物，是有范围且较小的。而A*寻路则是一种寻找最优解的方法，前提是对个体来说，在个体与目标之间的路况是全部已知的，目的是寻找最短路径并避开障碍物，最后到达目标。对于仿真大型群体，前者效率更高，且行为更真实和优美。而在仿真少量个体行为时，后者更具即使策略意义。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 个体行为操控</span><br><span class="line">  1.1 靠近与离开</span><br><span class="line">  1.2 抵达</span><br><span class="line">  1.3 追逐与逃避</span><br><span class="line">  1.4 随机徘徊</span><br><span class="line">  1.5 路径跟随</span><br><span class="line">  1.6 避开障碍</span><br><span class="line">2 群体行为操控</span><br><span class="line">  2.1 分离</span><br><span class="line">  2.2 队列</span><br><span class="line">  2.3 聚集</span><br></pre></td></tr></table></figure></p>
+<p> <strong><em>1、个体行为操控</em></strong><br> <strong><em>1.1、靠近与离开</em></strong><br>&emsp;&emsp; 靠近过程是指给智能体一个理想情况下指向目标的预期速度向量，并施加力，实时改变速度至预期速度向量。而离开过程恰恰相反，是指给智能体一个理想情况下远离目标的预期速度向量。二者的具体过程看下图：</p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/靠近与离开.png" alt="游戏AI-智能体行动系统"><div align="left"><br>&emsp;&emsp; 从图中可见，靠近(寻找)的预期速度向量为当前速度向量与靠近(寻找)遥控力向量之差，其变化速度可在操控力向量前加系数。而离开的预期速度向量为当前速度向量与离开遥控力向量之差。<br><strong><em>1.2、抵达</em></strong><br> &emsp;&emsp; 抵达行为与靠近的差别在于，前者的预期速度向量将随着智能体与目标之间的距离而改变，并且可是设置减速半径，当智能体在半径之外，便采取靠近的全速模式，当在半径内时，速度随距离减小而减小至零。<br><strong><em>1.3、追逐与逃避</em></strong><br>&emsp;&emsp;追逐与靠近的不同点是目标为移动物体，为了达到追逐的目的，需要分两种情况：1)目标运动的速度方向与智能体速度方向夹角小于20°，这种情况下直接采取靠近算法；2)夹角大于20°，这种情况下说明智能体并不是面对目标，所以要像猎豹追鹿一样预测时间<em>T</em>之后的目标位置，并对预测点采取靠近算法，如下左图所示：</div></div></p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/追逐与逃避.png" alt="游戏AI-智能体行动系统"><div align="left"><br>&emsp;&emsp;该预测时间<em>T</em>设定为与两者距离成正比，与两者速度成反比。夹角的计算方法，如上右图，可采用两个单位向量的点积求解。<br>&emsp;&emsp;逃避过程相对简单，不用像追逐一样考虑两种情况，只需要预测追逐者时间<em>T</em>之后的位置，该预测时间可设定为常数，或者与两者距离成正比(当然不应该去设置与速度之间成反比，这样子怕是永远追不上？)。<br><strong><em>1.4、随机徘徊</em></strong><br>&emsp;&emsp;随机徘徊是让智能体产生有真实感的随机移动，比如巡逻的士兵与惬意吃草的牛羊。如果使用隔时间分配任意目标点的方法，会使行为看起来不真实，类似会突然掉头。Craig Reynolds<sup>[3]</sup>在1999年发表的一篇文献解决了该问题，他采用左下图所示方法，在一个圆周上生成目标点，且随时间更新位置，智能体采用靠近算法接近目标，当达到位置时重新生成圆周并反复该过程。最终生成由下图所示行动轨迹。</div></div></p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/随机徘徊.png" alt="游戏AI-智能体行动系统"><div align="left"><br><strong><em>1.5、路径跟随</em></strong><br>&emsp;&emsp;路径跟随常常会用在赛车游戏中，它需要智能体按照某条指定路径运动，最简单的实现方法就是在一条路径上选取路点，让智能体做靠近算法，达到一个路点再朝向下一个。为了增加运动的平滑与多变，这里引入路点的半径，即当智能体接触到半径，就当作其已经到达该路点。如下图所示，不同的路点半径会导致运动过程变化。</div></div></p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/路径跟随.png" alt="游戏AI-智能体行动系统"><div align="left"><br><strong><em>1.6、避开障碍</em></strong><br>&emsp;&emsp;智能体在朝着目标方向移动的时候，可能会在路上遇到障碍物，如果没有察觉到就会产生碰撞，为了躲避障碍物，我们在智能体速度方向上添加两个向量ahead、ahead2，如左下图所示。当任何一个向量在障碍物半径内时，都会给智能体施加一个如由下图所示的躲避力。至于为什么加两个视觉向量的原因，是当智能体的远视角开始躲避障碍物时，近视角可能会碰到另一个障碍物，那么躲避优先级就改变为更近的障碍物。</div></div></p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/避开障碍.png" alt="游戏AI-智能体行动系统"><div align="left"></div></div></p>
+<p><strong><em>2、群体行为操控</em></strong><br>&emsp;&emsp;相比与A*寻路，操控行为最大的优势就是在做群体行为操控时展现出的真实感。在研究相关算法之前，先引入两个先导知识<sup>[3]</sup>：1)组行为。是指群体中的个体之间相互交互的一些操控力规则，主要有分离、队列和聚集三种行为。2)雷达。个体要实现决定使用哪些操控力的前提是检测附近的AI角色，这种侦测行为与雷达相似。</p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/组行为.png" alt="游戏AI-智能体行动系统"><div align="left"></div></div></p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/雷达.png" alt="游戏AI-智能体行动系统"><div align="left"><br><strong><em>2.1、分离</em></strong><br>&emsp;&emsp;分离就是避免个体在局部过于拥挤而产生的操控力，如上图所示黑色三角形所表示的智能体通过雷达扫描附近有三个白三角表示的邻居，先求出某个邻居对智能体的排斥力方向单位向量，即$\frac{r}{\left | r \right |}$，而排斥力的大小与距离成反比，因此排斥力应为$\frac{r}{\left | r \right | ^{2}}$，最后将所有邻居的操控力相加即为总的分离操控力。<br><strong><em>2.2、队列</em></strong><br>&emsp;&emsp;队列就是朝向附近同伴平均朝向的操控力，图中显示黑色三角形头部的灰线为其当前速度，黑线代表所有邻居速度方向的平均值，则队列操控力即为黑线与灰线的插值向量。<br><strong><em>2.3、聚集</em></strong><br>&emsp;&emsp;聚集就是向附近同伴的平均位置移动的操控力，图中四个邻居连接的黑点即为他们的平均值，从智能体指向黑色小点的向量即为聚集操控力。</div></div></p>
+<h3 id="0x02-A星寻路"><a href="#0x02-A星寻路" class="headerlink" title="0x02 A星寻路"></a><em>0x02 A星寻路</em></h3><p>&emsp;&emsp; 寻找最优路径是让智能体显得更聪明的方法，A*寻路就是一种寻找最短路径并避开障碍物的算法，相比于操控行为，需要提前知道地图上的各个节点以及每个点的代价值，占用cpu强度大，因此更适合于控制少量且高智商的智能体。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 导航图网格划分方式</span><br><span class="line">  1.1 单元导航图</span><br><span class="line">  1.2 可视点导航图</span><br><span class="line">  1.3 导航网格</span><br><span class="line">2 A*寻路算法</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、导航图网格划分方式</em></strong><br>&emsp;&emsp; A*寻路网格划分方式通常有3种：基于单元的导航图、基于可视点的导航图与导航网格。现在的游戏中，广泛使用的方式是利用导航网格寻路，再靠设计师手工放置躲藏点、埋伏点进行战术决策。此三种导航图划分如下图：</p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/A寻路方式.png" alt="游戏AI-智能体行动系统"><div align="left"><br><strong><em>1.1、单元导航图</em></strong><br>&emsp;&emsp; 这种方法是将游戏地图划分为多个正方形或六边形单元组成的规则网络。如果划分格数过大会导致难得到好的路径，格数过小则需要储存大量节点，且影响cpu效率。并不算是一种很好的分割方法。<br><strong><em>1.2、可视点导航图</em></strong><br>&emsp;&emsp; 可视点导航图又称路点图，是依靠场景设计者在场景中手动设置一些两点之间可见的路径点(不可见的话，就可能会跨障碍物，这样的路径是不可选取的)。这种方法的<strong>优点</strong>是灵活性强，场景设计者可根据自己的想法选择掩护、伏击位置，同时增加相应的位置信息(与路径代价相关的位置信息，在选择路径时要用到)。这种方法的<strong>缺点</strong>是：1)手工放置路径点很繁琐。尤其是在地图巨大的情况下；2)难以表示出实际的二维行走区域。如图中所示标的点位通常在墙边缘，而实际行走应该是在路中央；3)存在严重的组合爆炸问题。由于是人工布置点，因此点数无法控制精确，大量的点位将导致路径组合数爆炸。<br>&emsp;&emsp; 综上所述，场景设计师通常依靠可视点导航图来手工放置躲藏点、埋伏点等特殊点位进行战术决策。<br><strong><em>1.3、导航网络</em></strong><br>&emsp;&emsp; 导航网络用多边形来分割场景，从图中可以观察到，此种方法分割的路径点数量远远少于单元导航图，且路径点为各多边形的中心点，这将大大减轻cpu的压力。使用这种分割方法要注意的是，如果智能体完全按照路径点来行走，如图中灰线所示就显得很笨拙，人的真实行为应当是类似于黑线所示，这类问题称为路径的<strong>平滑</strong>，unity3D的A* Pathfinding Project已经包含了相关的后处理功能。<br>&emsp;&emsp; 综上所述，场景设计师通常使用这种方法来分割场景，但其缺点是生成导航网格需要较长时间。</div></div></p>
+<p><strong><em>2、A星寻路算法</em></strong><br>&emsp;&emsp;A星寻路算法即一种使智能体寻找最短路径并避开障碍物的算法，先引入四个术语：1)代价。代价是在寻路过程中节点之间的消耗值，由设计师定义，例如时间、能量、金钱等等。2)目标估计。由于从当前节点到目标节点的代价无法计算(因为路径未知)，则需要一种算法来估算该代价值，比如单元导航图就可以计算两节点之间的相对(x+y)值；3)节点属性。在A星算法中，每个节点都必须包含3个属性值，分别是g-从起始节点到当前节点的总代价，h-目标估计，f=g+h。4)Open表与Closed表。前者所记录的节点表示已经计算节点属性且没被单独拿出来计算其周围所有单元节点属性的节点，而后者记录的节点表示已经计算节点属性且已经被单独拿出来计算其周围所有单元节点属性的节点。A星算法具体运作过程如下gif图所示： </p>
+<p><div align="center"><img src="/2019/03/31/游戏AI-智能体行动系统/A寻路.gif" alt="游戏AI-智能体行动系统"><div align="left"><br>&emsp;&emsp;A星寻路算法的具体流程如下：1)计算起始点的节点属性，并将其归入Open表；2)计算起始点附近所有单元节点属性，并将起始点归入Closed表，邻近点归入Open表；3)从邻近点搜索f值最小的点，并重复1、2两条过程。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；4)从所有Open表节点中寻找f值最小的点，并无限重复1、2、4三条过程，直到终止点被加入Open表。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；5)导出运动箭头记录的最优路径。<br>&emsp;&emsp;实际上A星寻路算法与人类择优过程很类似，我们总是能算未来几步路，并据此选择当前情况下最优的方案，但由于我们以为自己与目标之间一马平川，所以有许多障碍离得太远也就忽视了，当我们碰壁失败了，才会总结出这条路不通的结论，于是我们就更新观念，认为当初应该选择哪条路将更快，这时就更新了那条初始道路的节点属性，如此往复循环，最后我们能够明白哪条路才是真正的最优解。虽然这种方法看起来很笨，但是在未知障碍的情况下应该算是较好的策略了。</div></div></p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]unity3D人工智能编程精粹<br>[2]<a href="https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model" target="_blank" rel="noopener">https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model</a><br>[3]<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">游戏设计，游戏AI，入门</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/31/游戏AI-智能体行动系统/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-计算机视觉-图像描述" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1143,103 +1235,6 @@
 
 
   
-    <article id="post-操作系统安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/01/操作系统安装/">操作系统安装（待完成）</a>
-    </h1>
-  
-
-        
-        <a href="/2018/08/01/操作系统安装/" class="archive-article-date">
-  	<time datetime="2018-08-01T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-01</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 很多时候需要自己安装操作系统，比如重装系统、装双系统等等情况，这里将记录操作系统安装的相关内容。</p>
-<h3 id="0x01-自制系统U盘"><a href="#0x01-自制系统U盘" class="headerlink" title="0x01 自制系统U盘"></a><em>0x01 自制系统U盘</em></h3><p>&emsp;&emsp;使用U盘制作系统盘是种廉价且方便的方法，网上有许多教程，具体方法可分为两种，第一种是<a href="https://jingyan.baidu.com/article/ab69b2706bbb1a2ca7189f2d.html" target="_blank" rel="noopener">PE安装</a><sup>[1]</sup>，第二种是<a href="https://jingyan.baidu.com/article/5225f26b0bb45fe6fa0908bc.html" target="_blank" rel="noopener">ISO写入</a>。前者更加可靠，且系统U盘仍有一部分可以当作U盘来使用，且一个U盘可以放多种系统。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 PE制作系统U盘</span><br><span class="line">  1.1 微PE制作Windows系统U盘</span><br><span class="line">  1.2 微PE+FbinstTool制作多系统U盘</span><br><span class="line">2 ISO烧制系统U盘</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、PE制作系统U盘</em></strong><br><strong><em>1.1、微PE安装Win</em></strong><br>&emsp;&emsp;PE(Windows Preinstallation Environment)，是Windows的预安装环境，可以理解为一种占用很小存储量的系统。由于本身就是Windows的原装系统，所以实际上只是对Win系统的安装友好，这里以安装Win10系统为例，安装过程可查阅<a href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html" target="_blank" rel="noopener">百度经验</a>。<br>&emsp;&emsp;1)安装PE工具，并用其格式化U盘。PE工具优点在于，体积小但是功能齐全，没有植入广告和垃圾软件，下载链接在上述经验<sup>[1]</sup>里。<br>&emsp;&emsp;2)从<a href="http://mirrors.aliyun.com/ubuntu-releases/14.04/" target="_blank" rel="noopener">阿里云镜像</a><sup>[2]</sup>上下载对应的.iso文件，并将其放入U盘。<br>&emsp;&emsp;OK！系统U盘已制作完成，接下去可以选择依赖于U盘的单个系统重装或是双系统安装。<br>&emsp;&emsp;这里有几点需要注意:1)微PE格式化U盘以后生成两个盘符，其中一个用来存放PE系统，另一个较大的盘用来存放想安装的系统ISO或者GHOST，两者均可在PE系统桌面下直接安装;2)可以直接去PE系统桌面下进行盘符分区，也可以直接在旧的系统下分区(这里只是方便没有系统的电脑分区)。<br><strong><em>1.1、PE+FbinstTool制作多系统U盘</em></strong><br>&emsp;&emsp;由于PE系统桌面本身是无法直接安装Ubuntu的，因此我们需要借用另一个工具-FbinstTool。该工具实际上与微PE类似，只不过实际操作过程有点区别，我们只需要安装一遍就能理解。这里以4G内存U盘PE方法制作Ubuntu14.04为例，具体的操作过程可参见为数不多的一篇<a href="https://www.cnblogs.com/acbingo/p/4515240.html" target="_blank" rel="noopener">博文</a>，我们用到的工具实质上为微PE+FbinstTool，前者用来格式化U盘并加入一个基础的PE系统(与上一节一致)，而后者就可以直接放在U盘下依靠一个名为grldr(类似于Cmakelist)的文件被系统识别，它负责告诉系统我的U盘里包含了哪些系统。根据博客里的指导，我们先看下U盘非PE盘符下的文件结构：</p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/FbinstTool1.png" alt="FbinstTool1"><div align="left"></div></div></p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/FbinstTool2.png" alt="FbinstTool2"><div align="left"><br>&emsp;&emsp;可知，我把Ubuntu14.04的ISO文件放在了目录G:/ISO下，另外两个文件initrd与vmlinuz.efi是从镜像文件里拿出来的，具体位置看博客，原因似乎是FbinstTool需要调用，那么接下来看看FbinstTool的配置文件grldr究竟在说些什么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#不用管这两行了</span><br><span class="line">default 0</span><br><span class="line">timeout 60</span><br><span class="line">#Auto方式启动PE，启动PE的方式也不用管了</span><br><span class="line">title Windows PE (Auto)</span><br><span class="line">find --set-root --ignore-floppies /wepe/wepemenu.ini || find --set-root --ignore-floppies /wepe.iso</span><br><span class="line">configfile /wepe/wepemenu.ini || map /wepe.iso (0xff) &amp;&amp; map --hook &amp;&amp; chainloader (0xff)</span><br><span class="line">#EFI方式启动PE，可删</span><br><span class="line">title Windows PE (From EFI)</span><br><span class="line">errorcheck off</span><br><span class="line">find --set-root --ignore-floppies /wepe/wepemenu.ini &amp;&amp; configfile /wepe/wepemenu.ini</span><br><span class="line">errorcheck on</span><br><span class="line">#UD方式启动PE，可删</span><br><span class="line">title Windows PE (From UD)</span><br><span class="line">errorcheck off</span><br><span class="line">map (ud)/wepe.iso (0xff)</span><br><span class="line">map --hook</span><br><span class="line">chainloader (0xff)</span><br><span class="line">errorcheck on</span><br><span class="line">#关键在这儿，引入名为Ubuntu14.04的系统，且指明重要文件的位置</span><br><span class="line">title Ubuntu14.04</span><br><span class="line">find --set-root /ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">kernel /ISO/vmlinuz.efi boot=casper iso-scan/filename=/ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">initrd /ISO/initrd</span><br><span class="line">boot</span><br><span class="line">#为了制作多系统U盘可以仿照上面一条的方法自行添加</span><br></pre></td></tr></table></figure></div></div></p>
-<p>&emsp;&emsp;OK！说了这么多，U盘已经制作完了，接下来要装单系统或是双系统，可接下去看：</p>
-<h3 id="0x02-单系统重装"><a href="#0x02-单系统重装" class="headerlink" title="0x02 单系统重装"></a><em>0x02 单系统重装</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 进入BIOS的方式</span><br><span class="line">2 Windows 10系统重装</span><br><span class="line">  2.1 方案一：重置此电脑</span><br><span class="line">  2.2 方案二：使用微PE制作的Windows系统U盘</span><br><span class="line">3 任意系统重装</span><br><span class="line">  3.1 使用微PE+FbinstTool制作的多系统U盘</span><br><span class="line">4 Ubuntu系统相关</span><br><span class="line">  4.1 Ubuntu系统磁盘分配推荐</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、进入BIOS的方式</em></strong><br>品牌电脑进入BIOS的按键一般如下：</p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/BIOS进入按键.jpg" alt="BIOS进入按键"><div align="left"></div></div></p>
-<p><strong><em>2、Windows 10系统重装</em></strong><br><strong><em>2.1、方案一：重置此电脑</em></strong><br>&emsp;&emsp;Windows 10较人性化的一点就是自带系统重装功能，关于Win10重置电脑的资料可直接查阅<a href="https://jingyan.baidu.com/article/b0b63dbf310d2f4a49307071.html" target="_blank" rel="noopener">百度经验</a><sup>[3]</sup>。<br>&emsp;&emsp;这边需要注意的两点是:1)重置电脑可以选择只重置盘符C或者全部盘符清理（相当于完全重装电脑）;2)如果盘符C的空间不足，则会直接报错，并提示增加C盘空间再重置，假如没报错在重置的时候也会出错，所以要保证C盘剩余容量大于10G（个人经验）。<br><strong><em>2.2、方案二：使用微PE制作的Windows系统U盘</em></strong><br>&emsp;&emsp;这里以安装Win10系统为例，安装过程可查阅<a href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html" target="_blank" rel="noopener">百度经验</a>。</p>
-<p><strong><em>3、任意系统重装</em></strong><br><strong><em>3.1、使用微PE+FbinstTool制作的多系统U盘</em></strong><br>&emsp;&emsp;(1)直接U盘方式启动，先运行Auto PE，进入PE系统后设置盘符，由于安装单系统，所以格式化所有盘符;<br>&emsp;&emsp;(2)重启，并以title名为 Ubuntu14.04 U盘进入方法启动，可以看到进入了一个Ubuntu系统桌面，但是桌面上还有两个文件，其中一个是Install Ubuntu14.04，按步骤安装即可;<br>&emsp;&emsp;(3)安装完成，重启进入BIOS，并将U盘启动后移，继续重启即可运行Ubuntu系统。</p>
-<p><strong><em>4、Ubuntu系统相关</em></strong><br><strong><em>4.1、Ubuntu系统磁盘分配推荐</em></strong><br>&emsp;&emsp;磁盘分配即系统使用过程中硬盘空间的资源合理配置，这里记录一下比较适合的<a href="https://www.cnblogs.com/116970u/p/10487452.html" target="_blank" rel="noopener">分配方法</a>，下面以128G工控机为例。<br>&emsp;&emsp;首先，介绍各挂载点作用：<br>| 挂载点 | 分区类型    | 说明                      |<br>| —– | ——– | ————————————————- |<br>| /     | 主分区 | 用于存放系统，相当于windows的C盘，15G即可 |<br>| /home | 逻辑分区 | 用户存储数据用，要尽可能大           |<br>| /boot | 主分区 | 引导分区，大小设置为480M                |<br>| swap  | 逻辑分区 | 相当于电脑内存，大小设置为电脑内存大小(2/4/8/16G)|<br>&emsp;&emsp;给出高级用户Desktop版本的分配建议：<br>| 挂载点 | 装置    | 说明                      |<br>| —— | ——— | ————————— |<br>| /      | /dev/hda1 | 15G                         |<br>| /home  | /dev/hda2 | 最大的剩余空间       |<br>| /boot  | /dev/hda3 | 480MB左右                 |<br>| swap   | /dev/hda5 | 大约内存大小(建议至少512MB) |<br>&emsp;&emsp;高级用户Server版本的分配建议：<br>| 挂载点 | 装置    | 说明                      |<br>| —— | ——— | ————————— |<br>| /      | /dev/hda1 | 15G                         |<br>| /home  | /dev/hda2 | 最大的剩余空间       |<br>| /boot  | /dev/hda3 | 480MB左右                 |<br>| swap   | /dev/hda5 | 大约内存大小(建议至少512MB) |<br>| /var   | /dev/hda6 | 视服务器功能决定大小 |</p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/swap.png" alt="swap"><div align="left"></div></div></p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/boot.png" alt="boot"><div align="left"></div></div></p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/home.png" alt="home"><div align="left"></div></div></p>
-<p><div align="center"><img src="/2018/08/01/操作系统安装/root.png" alt="root"><div align="left"></div></div></p>
-<h3 id="0x03-双系统安装"><a href="#0x03-双系统安装" class="headerlink" title="0x03 双系统安装"></a><em>0x03 双系统安装</em></h3><p>&emsp;&emsp;出于工作的需要，有时候需要用到Ubuntu系统，这里讲一下在Win10系统上安装Ubuntu14.04系统方法。<br>&emsp;&emsp;1)制作系统U盘。这已在第一章中讲过，可回头去看如何制作。<br>&emsp;&emsp;2)给Win10分区。为了方便给第二系统腾出空间，需要先给该系统分出一个盘符，具体的分区方法查阅<a href="https://jingyan.baidu.com/article/3d69c551233c56f0ce02d759.html" target="_blank" rel="noopener">百度经验</a>。<br>&emsp;&emsp;3)BIOS选择U盘启动项。每台电脑情况都不一样，而且和当前系统也有关系，比如我的Y430P机身侧面有一个NAVO键可直接进入BIOS，其他电脑见第二章1节。</p>
-<h3 id="0x04-Windows-10子系统"><a href="#0x04-Windows-10子系统" class="headerlink" title="0x04 Windows 10子系统"></a><em>0x04 Windows 10子系统</em></h3><h3 id="0x05-虚拟机"><a href="#0x05-虚拟机" class="headerlink" title="0x05 虚拟机"></a><em>0x05 虚拟机</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 VirtualBox安装Kali</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、VirtualBox安装Kali</em></strong><br>&emsp;&emsp;VirtualBox 是一款开源虚拟机软件，在Docker中被默认使用。Kali是一款用于信息安全的操作系统，具体的安装流程可看<a href="https://blog.csdn.net/JaydenWang5310/article/details/78104472" target="_blank" rel="noopener">博客</a></p>
-<h3 id="0x06-Docker容器技术"><a href="#0x06-Docker容器技术" class="headerlink" title="0x06 Docker容器技术"></a><em>0x06 Docker容器技术</em></h3><p>&emsp;&emsp;Docker容器技术与虚拟机一样，是在当前系统下使用其他系统软件的方法，但它更方便快捷，占用体积更小，运行目标程序只需要拥有一个配置好环境的镜像文件即可。关于Docker可以参考<a href="https://www.runoob.com/docker/docker-hello-world.html" target="_blank" rel="noopener">教程</a>。另外比较重要的一点是Docker所使用的<a href="https://blog.51cto.com/11880730/2115614" target="_blank" rel="noopener">四种网络连接方式</a>，比较幸运的是其默认使用桥接模式，方便信息安全方面的技术研究。<br>&emsp;&emsp;如教程所示，Win10专业版有较方便的安装方法，但是普通版本的Win10安装Docker还有许多坑在那儿。这里讲一讲Win10安装Docker的步骤<br>&emsp;&emsp;1)从<a href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/" target="_blank" rel="noopener">阿里云镜像</a>种下载最新的Docker toolbox，这个ce版本在Win10上是支持的。<br>&emsp;&emsp;2)安装下载文件，git可以选用自己以前安装的，所以不用下载，只需在安装完成后，右键Docker Quickstart Terminal属性，并修改目标git的bash.exe路径即可。<br>&emsp;&emsp;3)右键管理员方式启动Docker Quickstart Terminal，发现程序一直<a href="https://blog.csdn.net/dhaiuda/article/details/81975550" target="_blank" rel="noopener">卡死在boot2docker.iso的下载</a>，只需按链接里的方法即可解决，原因就是没有翻墙，也可以ss开启全局模式下载。<br>&emsp;&emsp;4)每次运行都需要右键管理员模式运行。</p>
-<h3 id="0x07-软件安装脚本与镜像制作"><a href="#0x07-软件安装脚本与镜像制作" class="headerlink" title="0x07 软件安装脚本与镜像制作"></a><em>0x07 软件安装脚本与镜像制作</em></h3><p>&emsp;&emsp;由于各种原因，经常需要在不同的电脑上安装不同的系统，但是每次重装以后都会导致需要重新安装软件以及修改配置，为了节约时间，这里提出两种解决办法:1)软件安装脚本编写。即将各个软件的下载步骤写成脚本文件，一键安装;2)镜像制作。即将已经配置好的系统生成一个镜像，并使用U盘安装，也被称为非纯净系统。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 软件安装脚本</span><br><span class="line">  1.1 Ubuntu14.04安装脚本</span><br><span class="line">2 镜像制作</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>1、软件安装脚本</em></strong><br><strong><em>1.1、Ubuntu14.04安装脚本</em></strong><br>&emsp;&emsp;由于工作需要，该系统下的软件安装脚本，本人已在git上屯了一个<a href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh" target="_blank" rel="noopener">仓库</a>，并会不时地维护，如果想加入的小伙伴可以Fork一下。</p>
-<p><strong><em>2、镜像制作</em></strong><br>&emsp;&emsp;</p>
-<h3 id="0x08-引用文献"><a href="#0x08-引用文献" class="headerlink" title="0x08 引用文献"></a><em>0x08 引用文献</em></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技巧</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/01/操作系统安装/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1364,6 +1359,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
@@ -1385,10 +1384,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
