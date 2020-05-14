@@ -159,6 +159,100 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-CMake" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/29/CMake/">CMake</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/29/CMake/" class="archive-article-date">
+  	<time datetime="2019-04-29T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-29</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp/.h/.so/.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等<sup>[1]</sup>。但再深一层次地说，编译时文件之间的组织关系都是由一个名叫makefile的文件来完成的，只不过IDE已经代替完成了这件复杂的任务，所以通常我们对该文件并不熟悉。<br>&emsp;&emsp; makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。但是makefile语言本身比较抽象，让程序猿来手写是件非常费时费力的事情，于是CMake便应运而生了。CMake是比makefile抽象层次更高的项目管理工具，CMake能够通过命令转换成makefile文件，而所有一切软件设计人猿需要实现的编译任务均写在名为CMakeLists.txt文件内。<br>&emsp;&emsp; 本文将从两方面入手，来剖析和学习CMake。一个方向是从CMake的<a href="https://cmake.org/cmake-tutorial" target="_blank" rel="noopener">官方文档</a><sup>[2]</sup>入手,当然也可以看<a href="https://www.hahack.com/codes/cmake" target="_blank" rel="noopener">中文版文档</a><sup>[3]</sup>，推荐看中文版资料，详细且循序渐进，<a href="https://github.com/wzpan/cmake-demo" target="_blank" rel="noopener">代码</a><sup>[4]</sup>可在git上找到，该方向不再赘述；第二个方向是从一些比较实际的编译目标入手。</p>
+<h3 id="0x01-CMake可移植程序编译"><a href="#0x01-CMake可移植程序编译" class="headerlink" title="0x01 CMake可移植程序编译"></a><em>0x01 CMake可移植程序编译</em></h3><p>&emsp;&emsp; 由于程序经常需要在不同电脑之间使用，但是每次都需要重新搭建环境非常繁琐，现在希望通过CMake编译，能够将可执行程序用到的三方库打包，那么在统一个ubuntu系统下即可即插即用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 基础知识</span><br><span class="line">  1.1 静态库与动态库</span><br><span class="line">  1.2 CMake基础编译方式</span><br><span class="line">  1.3 Ubuntu搜索路径方式</span><br><span class="line">  1.4 CMake RPATH简介</span><br><span class="line">  1.5 可执行程序链接库批量处理</span><br><span class="line">2 CMake编译可移植程序方案</span><br><span class="line">  2.1 方案一：添加环境变量</span><br><span class="line">  2.2 方案二：安装至默认lib文件夹</span><br><span class="line">  *2.3 方案三：CMake添加RPATH</span><br><span class="line">  2.4 方案四：CMake静态编译</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1、基础知识</em></strong><br><strong><em>1.1、静态库与动态库</em></strong><br>&emsp;&emsp; 现在的软件基本不可能全部是自己写的函数或类，我们经常需要使用别人的函数或类，那么就有必要得到那些软件的三方库，而库又分为静态库和动态库，在Windows下分别为.lib/.dll后缀文件，在Linux下分别为.a/.so文件。所谓静态库就是编译时和源代码一起被打包入可执行程序的库，而动态库是一些可重复使用的模块，他们的具体区别可参考<a href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html" target="_blank" rel="noopener">教程</a><sup>[5]</sup>。</p>
+<p><strong><em>1.2、CMake基础编译方式</em></strong><br>&emsp;&emsp;看过基本的中文教程demo1可知，CMake实际上都在CmakeList.txt文件内描述完成，一旦写完，只需在顶层的CmakeList.txt文件目录下执行以下语句：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#新建build目录，用来储存编译结果，否则会很乱</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line">#进入build目录</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">#开始生成makefile</span><br><span class="line">cmake ..</span><br><span class="line">#使用makefile编译程序</span><br><span class="line">make</span><br><span class="line">#安装程序，即在目标位置生成可执行程序以及对库文件做操作等</span><br><span class="line">make install</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1.3、Ubuntu搜索路径方式</em></strong><br>&emsp;&emsp;编译之后的可执行程序在其他电脑上无法运行，实质上最关键的问题就在于新的操作系统环境下，程序不知道去什么地方寻找依赖库。Ubuntu系统默认的<a href="https://blog.csdn.net/qq_16097611/article/details/53484724" target="_blank" rel="noopener">.so库搜索方式</a><sup>[6]</sup>根据优先级依次为:1)-L;2)/usr/lib;3)/lib;4)LIBRARY_PATH。<br>&emsp;&emsp;第二三种方法，系统只会该目录下的文件，而不会遍历文件夹，若要识别文件夹下的文件，还需要修改/etc/ld.so.conf，并调用ldconfig命令，这里不再深究。<br>&emsp;&emsp;主要讲的是最后一种方法，修改LIBRARY_PATH，其实就是我们熟知的<a href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html" target="_blank" rel="noopener">修改环境变量</a><sup>[7]</sup>，所以ROS也是这样，要执行rospack find就需要添加环境变量（该文件实质上是命令行每次开启时执行的一段命令，所以这样修改环境变量来运行程序的方法必须是使用./程序，双击的话就无法运行，除非新建一个快捷方式并指定优先运行一段export），那么可以采用：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向/.bashrc中填入搜索路径</span><br><span class="line"><span class="built_in">echo</span> "export LD_LIBRARY_PATH=目标路径" &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a href="https://www.cnblogs.com/rickyk/p/3884257.html" target="_blank" rel="noopener">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。<br><strong><em>1.5、可执行程序链接库批量处理</em></strong><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span>、在build文件夹下新建脚本test.sh</span><br><span class="line">#<span class="number">2</span>、在test.sh中添加语句</span><br><span class="line">chk_lock_test=$( ldd $<span class="number">1</span> | awk '&#123;<span class="keyword">if</span> (match($<span class="number">3</span>,"/"))&#123; <span class="built_in">print</span> $<span class="number">3</span>&#125;&#125;' )</span><br><span class="line">cp -L -n $chk_lock_test $<span class="number">2</span></span><br><span class="line">#<span class="number">3</span>、给脚本一个权限，使其可移动所有文件</span><br><span class="line">sudo chmod <span class="number">777</span> test.sh</span><br><span class="line">#<span class="number">4</span>、脚本目录下执行命令，</span><br><span class="line"> ./test.sh 可执行程序目录 目标目录</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2、CMake编译可移植程序方案</em></strong><br><strong><em>2.1、方案一：添加环境变量</em></strong><br>&emsp;&emsp;具体思路为:1)可执行程序链接库批量处理至CmakeList.txt根目录下;2)CMake将批量处理得到的动态链接库install至目标文件夹下;3)在目标机器的~/.bashrc文件中添加第二步链接库install所在路径;<br>&emsp;&emsp;思路其实非常简单，但是关键的难点在于链接库取得的技巧，这里有必要叙述一下。第一点为取得可执行程序的所有动态链接库，第二点为分析取得所有未被ldd出来的动态链接库。<br>&emsp;&emsp;难点一已经在1.5节中指出，难点二这里以取得Qt所有动态链接库为例展开讨论。实现上述三个步骤以后，我们修改LIBRARY_PATH参数，在可执行程序根目录下输入命令行：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> "export LD_LIBRARY_PATH=目标路径" &gt;&gt;~/.bashrc</span><br><span class="line">#<span class="built_in">cd</span>到可执行程序根目录下，运行程序</span><br><span class="line">./程序名称</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;发现程序报错，错误内容如下：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This application failed to <span class="built_in">start</span> because it could <span class="keyword">not</span> <span class="built_in">find</span> or load the Qt platform plugin "xcb"</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;根据上述提示可知，缺少了名为xcb的一个链接库，<a href="https://blog.csdn.net/u010168781/article/details/82150105" target="_blank" rel="noopener">查阅资料</a><sup>[9]</sup>可知我们需要在可执行目录下新建platforms文件夹，并添加libqxcb.so文件（该文件在qt的/Qt5.7.1/5.7/gcc_64/lib目录下，包括qt所有的链接库都在这个文件夹下面。<em>如何修改该libqxcb.so链接库位置仍未知</em>）。继续执行可执行程序，发现报出同样错误，为了找到错误原因，这里<a href="https://blog.csdn.net/sinat_26106275/article/details/82778951" target="_blank" rel="noopener">引入一个技巧</a><sup>[10]</sup>，即设置命令行的环境变量参数QT_DEBUG_PLUGINS，并修改/.bashrc文件，使其在命令行开启前执行：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> "export QT_DEBUG_PLUGINS=<span class="number">1</span>" &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;再次运行可执行程序，报错出现具体的错误原因：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Found metadata <span class="keyword">in</span> lib /home/cobot/PathImporter/build/platforms/libqxcb.so, metadata=&#123;</span><br><span class="line">    "IID": "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.<span class="number">5</span>.<span class="number">3</span>",</span><br><span class="line">    "MetaData": &#123;</span><br><span class="line">        "Keys": [</span><br><span class="line">            "xcb"</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    "className": "QXcbIntegrationPlugin",</span><br><span class="line">    "debug": false,</span><br><span class="line">    "version": <span class="number">329473</span></span><br><span class="line">&#125;</span><br><span class="line">Got keys from plugin meta data ("xcb")</span><br><span class="line">Cannot load library /home/cobot/PathImporter/build/platforms/libqxcb.so:(libQt5XcbQpa.so.<span class="number">5</span>: 无法打开共享对象文件: 没有那个文件或目录)</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;可见文件夹里实质上还缺少一个名为libQt5XcbQpa.so.5的动态链接库，那么我们只需从qt的lib下找到该库并放入我们的目标文件夹下。再次运行程序并报错：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot mix incompatible Qt library (version <span class="number">0</span>x50201) with this library (version <span class="number">0</span>x50701)</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;大意是Qt版本5.2.1与5.7.1的链接库不匹配，无法融合。可知实际上我的系统里存在多版本的Qt，Qt实质上会在默认库路径/usr/lib下生成一些必要的库，这也是报错的原因。这里有一个解决的技巧，即将所有lib文件全部放入目标文件夹，并执行程序，最后发现程序正常运行，可见库中必然还存在一个特定的动态链接库，使用二分法，多次将不同文件放入目标文件夹运行，迭代排查后发现缺少链接库libQt5DBus.so.5链接库，将其放入目标文件夹，运行正常（这个方法很牛逼，我都佩服我自己，全网基本上没有资料说这个文件的）。<br>&emsp;&emsp;这里还有两个细节，第一点libQt5DBus.so.5是一个类似于快捷方式的文件，它会链接到libQt5DBus.so.5.7.1上（库里还有一个libQt5DBus.so.5.7，暂时不知道何用），所以最后只需要取出libQt5DBus.so.5.7.1并重命名为libQt5DBus.so.5即可，链接库libQt5XcbQpa.so.5同理。第二点，有必要猜测下这三个链接库存在的意义，libqxcb.so应该是qt的入口库，然后libQt5XcbQpa.so.5是实际运行的函数，并且链接到了5.7.1的子版本上（方便版本控制），而这里的libQt5DBus.so.5应该是做Qt不同版本之间的一个解释器。</p>
+<p><strong><em>2.2、方案二：安装至默认lib文件夹</em></strong><br>&emsp;&emsp;方案一虽然可以顺利运行，但是每次要修改环境变量实际上是非常麻烦的事情，且并不是所有软件使用者都有这个觉悟，那么我们要考虑更加便捷的方法，即将库文件用CMake install至系统默认搜索的库，即在1.3节中已经叙述过的/usr/lib与/lib位置。在1.3节也讲过了，如果将所有库文件放入lib文件夹下的子文件夹内，则系统仍搜索不到链接库（如果要采取修改/etc/ld.so.conf以及添加ldconfig命令，则还不如方案一便捷）。唯一的办法就是将所有库文件全部install至lib文件夹下，运行程序完美报错：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: relocation error: /usr/lib/libQt5X11Extras.so.<span class="number">5</span>: symbol qt_version_tag, version Qt_5.<span class="number">7</span> <span class="keyword">not</span> <span class="keyword">defined</span> <span class="keyword">in</span> file libQt5Core.so.<span class="number">5</span> with link <span class="built_in">time</span> reference</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;未知错误（应该是多版本Qt的原因，还害得我修改了lib库所有文件权限，导致sudo用不了、系统时间出错、U盘都不出等一系列尿频尿急症状T_T）等待填坑。</p>
+<p><strong>*<em>2.3、方案三：CMake添加RPATH</em></strong><br>&emsp;&emsp;在1.4节中已经叙述过CMake RPATH的用途，该方案可以说是最便捷和人性化的了，第一不用修改环境变量，第二在make与make install的过程中就能决定中间执行程序与安装执行程序的库链接路径。<br>&emsp;&emsp;根据1.4节中提到的<a href="https://www.cnblogs.com/rickyk/p/3884257.html" target="_blank" rel="noopener">博客</a><sup>[8]</sup>，我们只需要在CmakeList.txt的install部分添加如下指令：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#方法一：在CMakeLists.txt文件中修改</span><br><span class="line">#修改安装执行程序的库链接路径</span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line">#保证只针对当前的target进行make install的时候RPATH的写入了</span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line">#方法二：在编译时修改</span><br><span class="line">#这里将install路径设置为build</span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../build/ ..</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;这里依旧分享一个小技巧，使用指令readelf可以查看某一可执行程序的RPATH：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -d 程序名</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>2.4、方案四：CMake静态编译</em></strong><br>&emsp;&emsp;除了上述三种调控动态链接库位置与链接的方式之外，我们还可以用CMake实现静态编译，即将三方库的动态链接库或者静态链接库加上自己的程序编译在一起，得到不需要外接库的可执行程序，在1.1节之中已经分析过了这种程序的优缺点（小型项目还好，一旦做大型项目，不但编译慢而且运行的电脑也会被大量占用空间）。目前该方式只在网上搜索到设置CMake设置静态编译的一段命令：<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS "-static $&#123;CMAKE_CXX_FLAGS&#125;")</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;该方法等待填坑（不了解意思，执行之后也会报错）。</p>
+<h3 id="0x02-CMake学习中获得优质且繁杂的资源"><a href="#0x02-CMake学习中获得优质且繁杂的资源" class="headerlink" title="0x02 CMake学习中获得优质且繁杂的资源"></a><em>0x02 CMake学习中获得优质且繁杂的资源</em></h3><p>&emsp;&emsp;<a href="https://www.jianshu.com/p/7eeb6f79a275" target="_blank" rel="noopener">CMake中调用Qt模块</a><sup>[11]</sup><br>&emsp;&emsp;<a href="https://blog.csdn.net/bigdog_1027/article/details/79113342" target="_blank" rel="noopener">CMake中add_library include_library以及target_link_libraries区别</a><sup>[12]</sup><br>&emsp;&emsp;<a href="https://www.cnblogs.com/zhoug2020/p/5904206.html" target="_blank" rel="noopener">CMake构建动态、静态库</a><sup>[13]</sup><br>&emsp;&emsp;<a href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html" target="_blank" rel="noopener">CMake的一些变量</a><sup>[14]</sup><br>&emsp;&emsp;<a href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html" target="_blank" rel="noopener">CMake跨平台编译以及静态编译</a><sup>[15]</sup></p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a href="https://blog.csdn.net/caowei880123/article/details/52497550" target="_blank" rel="noopener">https://blog.csdn.net/caowei880123/article/details/52497550</a><br>[2]<a href="https://cmake.org/cmake-tutorial" target="_blank" rel="noopener">https://cmake.org/cmake-tutorial</a><br>[3]<a href="https://www.hahack.com/codes/cmake" target="_blank" rel="noopener">https://www.hahack.com/codes/cmake</a><br>[4]<a href="https://github.com/wzpan/cmake-demo" target="_blank" rel="noopener">https://github.com/wzpan/cmake-demo</a><br>[5]<a href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html" target="_blank" rel="noopener">https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html</a><br>[6]<a href="https://blog.csdn.net/qq_16097611/article/details/53484724" target="_blank" rel="noopener">https://blog.csdn.net/qq_16097611/article/details/53484724</a><br>[7]<a href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html" target="_blank" rel="noopener">https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html</a><br>[8]<a href="https://www.cnblogs.com/rickyk/p/3884257.html" target="_blank" rel="noopener">https://www.cnblogs.com/rickyk/p/3884257.html</a><br>[9]<a href="https://blog.csdn.net/u010168781/article/details/82150105" target="_blank" rel="noopener">https://blog.csdn.net/u010168781/article/details/82150105</a><br>[10]<a href="https://blog.csdn.net/sinat_26106275/article/details/82778951" target="_blank" rel="noopener">https://blog.csdn.net/sinat_26106275/article/details/82778951</a><br>[11]<a href="https://www.jianshu.com/p/7eeb6f79a275" target="_blank" rel="noopener">https://www.jianshu.com/p/7eeb6f79a275</a><br>[12]<a href="https://blog.csdn.net/bigdog_1027/article/details/79113342" target="_blank" rel="noopener">https://blog.csdn.net/bigdog_1027/article/details/79113342</a><br>[13]<a href="https://www.cnblogs.com/zhoug2020/p/5904206.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhoug2020/p/5904206.html</a><br>[14]<a href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html" target="_blank" rel="noopener">https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html</a><br>[15]<a href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html" target="_blank" rel="noopener">https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/29/CMake/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-游戏AI-智能体行动系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1026,230 +1120,6 @@
 
 
   
-    <article id="post-Linux内核开发-开发工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/20/Linux内核开发-开发工具/">Linux内核开发-开发工具</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/20/Linux内核开发-开发工具/" class="archive-article-date">
-  	<time datetime="2018-10-20T07:00:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-20</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux内核开发所用到的工具。</p>
-<h3 id="0x01-Vim"><a href="#0x01-Vim" class="headerlink" title="0x01 Vim"></a><em>0x01 Vim</em></h3><p>&emsp;&emsp;想用终端开发软件的程序员都会选择Vim，使用方法参考<a href="https://www.runoob.com/linux/linux-vim.html" target="_blank" rel="noopener">菜鸟教程</a>。</p>
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./Vim键盘图.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./Vim命令图解.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<h3 id="0x02-Linux系统运维常用工具"><a href="#0x02-Linux系统运维常用工具" class="headerlink" title="0x02 Linux系统运维常用工具"></a><em>0x02 Linux系统运维常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 top</span><br><span class="line">  1.1 系统运行时间和平均负载</span><br><span class="line">  1.2 进程状态</span><br><span class="line">  1.3 CPU状态</span><br><span class="line">  1.4 内存使用</span><br><span class="line">  1.5 各进程的状态监控</span><br><span class="line">2 free</span><br><span class="line">3 vmstat</span><br><span class="line">4 slabtop</span><br><span class="line">5 pmap</span><br><span class="line">6 dmesg</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、top</em></strong><br>&emsp;&emsp;除了 top ，还可以使用 htop 命令，但是需要安装。<br>&emsp;&emsp;<a href="https://www.cnblogs.com/mushang1hao/p/10767062.html" target="_blank" rel="noopener">top命令</a>经常用来监控Linux的系统状况，比如cpu、内存的使用，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure></p>
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./top.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<p><strong><em>1.1、系统运行时间和平均负载</em></strong>  </p>
-<ul>
-<li>top：当前时间</li>
-<li>up：系统已运行的时间</li>
-<li>user：当前登录用户的数量</li>
-<li>load average：相应最近5、10和15分钟内的平均负载，每隔5秒钟检查一次活跃的进程数。 </li>
-</ul>
-<p><strong><em>1.2、进程状态</em></strong><br>&emsp;&emsp;按”t”切换显示状态。  </p>
-<ul>
-<li>total：总共进程数</li>
-<li>running：运行中进程</li>
-<li>sleeping：休眠中进程</li>
-<li>stopped：停止中进程</li>
-<li>zombie：僵尸进程  </li>
-</ul>
-<p><strong><em>1.3、CPU状态</em></strong><br>&emsp;&emsp;按”1”显示所有CPU状态。 </p>
-<ul>
-<li>us / user： 用户空间占用CPU的百分比</li>
-<li>sy / system: 内核空间占用CPU的百分比</li>
-<li>ni / niced：改变过优先级的进程占用CPU的百分比</li>
-<li>id：空闲CPU百分比</li>
-<li>wa / IO wait: IO等待占用CPU的百分比</li>
-<li>hi：处理硬件中断占用CPU的百分比</li>
-<li>si: 处理软件中断占用CPU的百分比</li>
-<li>st：这个虚拟机被hypervisor偷去时间占用CPU的百分比（译注：如果当前处于一个hypervisor下的vm，实际上hypervisor也是要消耗一部分CPU处理时间的）。</li>
-</ul>
-<p><strong><em>1.4、内存使用</em></strong><br>&emsp;&emsp;按”m”切换显示状态。<br><em>内存区-Mem</em>  </p>
-<ul>
-<li>total：物理内存总量</li>
-<li>used：使用中的内存总量</li>
-<li>free：空闲内存总量</li>
-<li>buffers/cache：缓存的内存量</li>
-</ul>
-<p><em>交换分区-Swap</em>  </p>
-<ul>
-<li>total：交换区总量</li>
-<li>used：使用的交换区总量</li>
-<li>free：空闲交换区总量</li>
-<li>avail Mem：缓冲的交换区总量</li>
-</ul>
-<p><strong><em>1.5、各进程的状态监控</em></strong><br>&emsp;&emsp;按”f”可添加需要监控的状态变量，按”M”可按各进程内存占有百分比降序排列，按”P”可按各进程CPU占有百分比降序排列。  </p>
-<ul>
-<li>PID：进程ID，进程的唯一标识符</li>
-<li>USER：进程所有者的实际用户名。</li>
-<li>PR：进程的调度优先级。这个字段的一些值是’rt’。这意味这这些进程运行在实时态。</li>
-<li>NI：进程的nice值（优先级）。越小的值意味着越高的优先级。负值表示高优先级，正值表示低优先级</li>
-<li>VIRT：进程使用的虚拟内存。进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES</li>
-<li>RES：驻留内存大小。驻留内存是任务使用的非交换物理内存大小。进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA</li>
-<li>SHR：SHR是进程使用的共享内存。共享内存大小，单位kb</li>
-<li>S：这个是进程的状态。它有以下不同的值:<ul>
-<li>D：不可中断的睡眠态。</li>
-<li>R：运行态</li>
-<li>S：睡眠态</li>
-<li>T：被跟踪或已停止</li>
-<li>Z：僵尸态</li>
-</ul>
-</li>
-<li>%CPU：自从上一次更新时到现在任务所使用的CPU时间百分比。</li>
-<li>%MEM：进程使用的可用物理内存百分比。</li>
-<li>TIME+：任务启动后到现在所使用的全部CPU时间，精确到百分之一秒。</li>
-<li>COMMAND：运行进程所使用的命令。进程名称（命令名/命令行）</li>
-</ul>
-<p><strong><em>2、free</em></strong><br>&emsp;&emsp;free 命令显示系统内存的使用情况，包括物理内存、交换内存(swap)和内核缓冲区内存，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最直接</span></span><br><span class="line">free</span><br><span class="line"><span class="comment"># 更友好的输出结果</span></span><br><span class="line">free -h</span><br><span class="line"><span class="comment"># 指定3s不间断更新</span></span><br><span class="line">free -h -s 3</span><br></pre></td></tr></table></figure></p>
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./free.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<ul>
-<li>Mem行：是内存的使用情况。</li>
-<li>Swap行：是交换空间的使用情况。</li>
-<li>total列：显示系统总的可用物理内存和交换空间大小。</li>
-<li>used列：显示已经被使用的物理内存和交换空间。</li>
-<li>free列：显示还有多少物理内存和交换空间可用使用。</li>
-<li>shared列：显示被共享使用的物理内存大小。</li>
-<li>buff/cache列：显示被 buffer 和 cache 使用的物理内存大小。</li>
-<li>available列：显示还可以被应用程序使用的物理内存大小。</li>
-</ul>
-<p><strong><em>3、vmstat</em></strong><br>&emsp;&emsp;vmstat命令可对操作系统的虚拟内存、进程、CPU活动进行监控，命令如下：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 时间间隔2s，采样10次</span></span><br><span class="line">vmstat 2 10</span><br></pre></td></tr></table></figure></p>
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./vmstat.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<p><em>进程-Procs</em>  </p>
-<ul>
-<li>r: 运行队列中进程数量</li>
-<li>b： 等待IO的进程数量</li>
-</ul>
-<p><em>内存-Memory</em></p>
-<ul>
-<li>swpd: 使用虚拟内存大小</li>
-<li>free: 可用内存大小</li>
-<li>buff: 用作缓冲的内存大小</li>
-<li>cache: 用作缓存的内存大小</li>
-</ul>
-<p><em>交换分区-Swap</em></p>
-<ul>
-<li>si: 每秒从交换区写到内存的大小</li>
-<li>so: 每秒写入交换区的内存大小</li>
-</ul>
-<p><em>IO</em></p>
-<ul>
-<li>in: 每秒中断数，包括时钟中断。【interrupt】</li>
-<li>cs: 每秒上下文切换数。【count/second】</li>
-</ul>
-<p><em>CPU</em></p>
-<ul>
-<li>us: 用户进程执行时间(user time)</li>
-<li>sy: 系统进程执行时间(system time)</li>
-<li>id: 空闲时间(包括IO等待时间),中央处理器的空闲时间 。以百分比表示。</li>
-<li>wa: 等待IO时间</li>
-</ul>
-<p><strong><em>4、slabtop</em></strong><br>&emsp;&emsp;Linux内核需要为临时对象如任务或者设备结构和节点分配内存，缓存分配器管理着这些类型对象的缓存。现代Linux内核部署了该缓存分配器以持有缓存，称之为片。不同类型的片缓存由片分配器维护。本文集中讨论slabtop命令，该命令显示了实时内核片缓存信息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># slabtop排序方式设置为最常用的cache size</span></span><br><span class="line">slabtop -sc</span><br></pre></td></tr></table></figure></p>
-<p><div align="center"><br><img src="/2018/10/20/Linux内核开发-开发工具/./slabtop.png" width="450" height="300"></div></p>
-<div align="left">  
-
-<p><strong><em>5、pmap</em></strong><br>&emsp;&emsp;pmap命令用于报告进程的内存映射关系，是Linux调试及运维一个很好的工具，这里自己写个代码来测试该工具：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 编译具有如下代码的test.cpp文件</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *buf;</span><br><span class="line">    buf = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>));</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0x55</span>, <span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>));</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;编译完成后，使用如下命令运行：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在后台执行test程序</span></span><br><span class="line">./<span class="built_in">test</span> &amp;</span><br><span class="line"><span class="comment"># 记录下后台运行时的程序PID，并使pmap工具查看</span></span><br><span class="line">pmap <span class="string">"程序PID"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>6、dmesg</em></strong><br>&emsp;&emsp;dmesg命令用于显示开机信息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># "-T"代表log打印出时间，"-d"代表log打印出两条指令之间的差值</span></span><br><span class="line">dmesg -T -d</span><br></pre></td></tr></table></figure></p>
-<h3 id="0x03-Linux系统开发常用工具"><a href="#0x03-Linux系统开发常用工具" class="headerlink" title="0x03 Linux系统开发常用工具"></a><em>0x03 Linux系统开发常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1 日志读取-journalctl</span><br><span class="line">2 进程管理-systemctl</span><br><span class="line">3 核心转储-coredump</span><br><span class="line">4 进程查询-ps + grep</span><br><span class="line">5 杀死进程-<span class="built_in">kill</span>/killall/pkill</span><br><span class="line">6 网络诊断-ping</span><br><span class="line">7 硬件信息-dmidecode/uname + lspci</span><br><span class="line">8 文件操作-cat/less/more/mv/cp/rm/chmod/ls/grep/<span class="built_in">echo</span></span><br><span class="line">9 帮助指令-man</span><br><span class="line">10 屏保设置-xset</span><br><span class="line">11 超级用户-sudo/pkexec</span><br><span class="line">12 文件实时打印-tail</span><br><span class="line">13 压缩文件-zip/rar/tar/xz</span><br><span class="line">14 挂载-mount</span><br><span class="line">15 分区信息-df/fdisk/lsblk</span><br><span class="line">16 权限更改-chmod/chown/chroot</span><br><span class="line">17 创建用户-useradd</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、日志读取-journalctl</em></strong><br>&emsp;&emsp;在Systemd出现之前，Linux系统及各应用的日志都是分别管理的，Systemd开始统一管理了所有Unit的启动日志，这样带来的好处就是可以只用一个 journalctl命令，查看所有内核和应用的日志。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、查看所有日志-----</span></span><br><span class="line">sudo journalctl &gt; <span class="string">"文件名"</span></span><br><span class="line"><span class="comment"># 查看本次启动的所有日志也可以使用</span></span><br><span class="line">sudo journalctl -b &gt; <span class="string">"文件名"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、查看指定时间内的日志-----</span></span><br><span class="line"><span class="comment"># --since代表某段时间之后，--until代表某段时间之前</span></span><br><span class="line">journalctl --since=<span class="string">"2018-09-21 10:21:00"</span> --until=<span class="string">"2018-09-21 10:22:00"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>2、进程管理-systemctl</em></strong><br>&emsp;&emsp;systemd对应的进程管理命令是systemctl。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、进程开启/关闭/重启-----</span></span><br><span class="line">systemctl start <span class="string">"进程名"</span></span><br><span class="line">systemctl stop <span class="string">"进程名"</span></span><br><span class="line">systemctl restart <span class="string">"进程名"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、进程开机自启动-----</span></span><br><span class="line"><span class="comment"># systemctl可以处理/etc/init.d</span></span><br><span class="line">systemctl <span class="built_in">enable</span> <span class="string">"进程名"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>3、核心转储-coredump</em></strong><br>&emsp;&emsp;当程序运行的过程中异常终止或崩溃，操作系统会将程序当时的内存状态记录下来，保存在一个文件中，这种行为就叫做Core Dump（中文有的翻译成“核心转储”)。我们可以认为 core dump 是“内存快照”，但实际上，除了内存信息之外，还有些关键的程序运行状态也会同时 dump 下来，例如寄存器信息（包括程序指针、栈指针等）、内存管理信息、其他处理器和操作系统状态和信息。core dump 对于编程人员诊断和调试程序是非常有帮助的，因为对于有些程序错误是很难重现的，例如指针异常，而 core dump 文件可以再现程序出错时的情景。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、调整cmake为调试模式-----</span></span><br><span class="line"><span class="comment"># 纯调试模式</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_BUILD_TYPE Debug)</span><br><span class="line"><span class="comment"># 或者半调试模式</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_BUILD_TYPE RelWithDebInfo)</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、开启coredump-----</span></span><br><span class="line"><span class="comment"># 查看是否开启coredump，返回0则表示没开启</span></span><br><span class="line"><span class="built_in">ulimit</span> -c</span><br><span class="line"><span class="comment"># 开启coredump</span></span><br><span class="line"><span class="built_in">ulimit</span> -c unlimited</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----3、修改core生成路径-----</span></span><br><span class="line"><span class="comment"># proc/sys/kernel/core_pattern 可以控制corefile保存位置和文件名格式</span></span><br><span class="line"><span class="comment"># corefile的生成路径文件夹</span></span><br><span class="line">mkdir /corefile</span><br><span class="line"><span class="comment">## 控制所产生的core文件存放到/corefile目录下，产生的文件名为core-命令名-pid-时间戳</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"/corefile/core-%e%-p%-%t"</span> &gt; /proc/sys/kernel/core_pattern</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----4、调试模式下生成corefile-----</span></span><br><span class="line">gdb <span class="string">"可执行程序路径"</span> <span class="string">"corefile路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----**5、常用调试手段-----</span></span><br><span class="line"><span class="comment"># 查看内存溢出的进程历史</span></span><br><span class="line">coredumpctl list</span><br><span class="line"><span class="comment"># debug目标PID进程</span></span><br><span class="line">coredumpctl debug <span class="string">"进程PID"</span></span><br><span class="line">bt  <span class="comment"># gdb列出调用栈</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>4 进程查询-ps + grep</em></strong><br>&emsp;&emsp;ps指令能显示进程的消息，grep是Linux下的文本过滤工具，它俩是个组合工具。我们经常用如下命令查找进程：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找所有进程，并过滤出有进程名字片段的所有进程</span></span><br><span class="line"><span class="comment"># "|"是管道命令。通常需要借助管道命令"|"多个命令的组合</span></span><br><span class="line"><span class="comment"># ------ ps -ef ------</span></span><br><span class="line"><span class="comment"># 是用标准的格式显示进程的</span></span><br><span class="line">ps -ef | grep <span class="string">"进程名片段"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------ ps aux ------</span></span><br><span class="line"><span class="comment"># 是用BSD的格式来显示</span></span><br><span class="line">ps aux | grep <span class="string">"进程名片段"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>5、杀死进程-kill/killall/pkill</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kill能杀死指定的ID进程，需要在杀进程之前使用ps等命令再配合grep来查找进程</span></span><br><span class="line"><span class="built_in">kill</span> <span class="string">"参数"</span> <span class="string">"进程ID"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># killall/pkill类似，用于杀死指定名字的进程</span></span><br><span class="line">killall <span class="string">"参数"</span> <span class="string">"进程名"</span></span><br><span class="line">pkill <span class="string">"参数"</span> <span class="string">"进程名"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>6、网络诊断-ping</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、ping单个目标-----</span></span><br><span class="line"><span class="comment"># ping域名</span></span><br><span class="line">ping www.baidu.com</span><br><span class="line"><span class="comment"># ping IP</span></span><br><span class="line">ping 10.10.10.1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、ping多个目标-----</span></span><br><span class="line"><span class="comment"># %d ：表示变量的意思</span></span><br><span class="line"><span class="comment"># (1,1,255)：参数一代表起始值，参数二代表递增值，参数三代表末尾值。</span></span><br><span class="line"><span class="keyword">for</span> /L %d <span class="keyword">in</span>（1,1,255） <span class="keyword">do</span> ping 192.168.1.%d</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>7、硬件信息-dmidecode + lspci</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、所有硬件信息-----</span></span><br><span class="line">dmidecode –q</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">uname -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、显卡信息-----</span></span><br><span class="line">lspci | grep -i vga     <span class="comment"># VGA设备</span></span><br><span class="line">lspci | grep -i nvidia  <span class="comment"># NVIDIA设备</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>8、文件操作-cat/mv/cp/rm/chmod</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、cat-----</span></span><br><span class="line"><span class="comment"># 用于连接文件并打印到标准输出</span></span><br><span class="line">cat <span class="string">"文件路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、less-----</span></span><br><span class="line"><span class="comment"># 用于连接文件并打印到标准输出</span></span><br><span class="line">less <span class="string">"文件路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----3、more-----</span></span><br><span class="line"><span class="comment"># 用于连接文件并打印到标准输出</span></span><br><span class="line">more <span class="string">"文件路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----4、mv-----</span></span><br><span class="line"><span class="comment"># 将文件移动到目标路径</span></span><br><span class="line">mv <span class="string">"文件路径"</span> <span class="string">"目标路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----5、cp-----</span></span><br><span class="line"><span class="comment"># 将文件拷贝到目标路径</span></span><br><span class="line">cp <span class="string">"文件路径"</span> <span class="string">"目标路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----6、rm-----</span></span><br><span class="line"><span class="comment"># 删除文件</span></span><br><span class="line">rm <span class="string">"文件路径"</span></span><br><span class="line"><span class="comment"># 删除文件夹</span></span><br><span class="line">rm -R <span class="string">"文件夹路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----7、chmod-----</span></span><br><span class="line"><span class="comment"># 修改文件权限</span></span><br><span class="line">chmod 777 <span class="string">"文件路径"</span></span><br><span class="line"><span class="comment"># 修改文件夹权限</span></span><br><span class="line">chmod -R 777 <span class="string">"文件夹路径"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----8、ls-----</span></span><br><span class="line"><span class="comment"># 显示当前目录下所有文件信息</span></span><br><span class="line">ls</span><br><span class="line"><span class="comment"># 显示更详细的文件信息，包括隐藏文件</span></span><br><span class="line">ls -lah</span><br><span class="line"><span class="comment"># 显示符合条件的文件信息</span></span><br><span class="line">ls|grep <span class="string">"删选的字符串"</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># -----9、grep-----</span></span><br><span class="line"><span class="comment"># 查找某文件下包含某个字段的行号</span></span><br><span class="line"><span class="comment"># 举例：grep "data" *ts    //查找当前目录下后缀为ts的文件中包含"data"字段的行号</span></span><br><span class="line">grep <span class="string">"查询字段"</span> <span class="string">'文件'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----10、echo-----</span></span><br><span class="line"><span class="comment"># 打印出环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$SHELL</span></span><br><span class="line"><span class="comment"># 打印自定义字符</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"It is a test"</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>9、帮助指令-man</em></strong><br>man命令可查看指令帮助、配置文件帮助和编程帮助等信息<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印man指令信息</span></span><br><span class="line">man man</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>10、屏保设置-xset</em></strong><br>|           命令          |           功能           |<br>| ———————– | —————————- |<br>| xset s off              | 禁用屏幕保护           |<br>| xset s 3600 3600        | 设置空闲时间为1小时 |<br>| xset -dpms              | 关闭 DPMS                  |<br>| xset s off -dpms        | 禁用 DPMS 并阻止屏幕进入空闲 |<br>| xset dpms force on      | 立即打开屏幕        |<br>| xset dpms force off     | 立即关闭屏幕        |<br>| xset dpms force standby | 强制屏幕进入待命状态 |<br>| xset dpms force suspend | 强制屏幕进入暂停状态 |<br>| xset -q                 | 查询xset状态        |</p>
-<p><strong><em>11、超级用户-sudo/pkexec</em></strong><br>&emsp;&emsp;root用户和非root用户正常执行命令时，使用的PATH配置文件为 /etc/environment<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、sudo-----</span></span><br><span class="line"><span class="comment"># 非root用户，使用的PATH配置文件为 /etc/sudoers</span></span><br><span class="line">sudo <span class="string">'命令'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、pkexec-----</span></span><br><span class="line"><span class="comment"># pkexec 也能以管理员身份运行指令，但不依赖于 /etc/sudoers</span></span><br><span class="line"><span class="comment"># 如果不小心修改了 /etc/sudoers 文件权限，会导致无法正常使用sudo指令。但可以用pkexec修改回权限</span></span><br><span class="line">pkexec chomod 440 /etc/sudoers</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>12、文件实时打印-tail</em></strong><br>&emsp;&emsp;tail 命令可用于查看文件的内容，有一个常用的参数 -f 常用于查阅正在改变的日志文件。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实时打印日志文件</span></span><br><span class="line">tail -f <span class="string">'日志路径'</span></span><br></pre></td></tr></table></figure></p>
-<p><strong><em>13、压缩文件-zip/rar/tar/xz</em></strong><br><strong>zip</strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 压缩文件 ======</span></span><br><span class="line"><span class="comment">#将test.jpg和test.png压缩成一个zip包</span></span><br><span class="line">zip test.zip test.jpg test.png</span><br><span class="line"><span class="comment">#将所有.jpg的文件压缩成一个zip包</span></span><br><span class="line">zip test.zip *.jpg</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== 压缩目录 ======</span></span><br><span class="line"><span class="comment">#将文件夹test压缩成一个zip包</span></span><br><span class="line">zip -r test.zip <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======解压缩 ======</span></span><br><span class="line"><span class="comment">#将test.zip中的所有文件解压出来</span></span><br><span class="line">unzip test.zip</span><br><span class="line"><span class="comment">#把/home目录下面的mydata.zip解压到mydatabak目录里面</span></span><br><span class="line">unzip mydata.zip -d mydatabak</span><br></pre></td></tr></table></figure></p>
-<p><strong>rar</strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 压缩文件 ======</span></span><br><span class="line"><span class="comment"># 将test.jpg和test.png压缩成一个rar包</span></span><br><span class="line">rar a test.rar test.jpg test.png</span><br><span class="line"><span class="comment"># 将所有.jpg的文件压缩成一个rar包</span></span><br><span class="line">rar a test.rar *.jpg</span><br><span class="line"><span class="comment"># 将文件夹test压缩成一个rar包</span></span><br><span class="line">rar a test.rar <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======解压缩 ======</span></span><br><span class="line"><span class="comment"># 将test.rar中的所有文件解压出来</span></span><br><span class="line">unrar e test.rar</span><br></pre></td></tr></table></figure></p>
-<p><strong>tar</strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 压缩文件 ======</span></span><br><span class="line"><span class="comment"># --- tar ---</span></span><br><span class="line">tar -cvf xxx.tar <span class="string">'目录路径'</span></span><br><span class="line"><span class="comment"># --- tar.gz ---</span></span><br><span class="line"><span class="comment">#z参数表示gz压缩，v参数表示显示执行过程</span></span><br><span class="line">tar -zcvf xxx.tar.gz <span class="string">'目录路径'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======解压缩 ======</span></span><br><span class="line"><span class="comment"># --- tar ---</span></span><br><span class="line">tar -xvf xxx.tar</span><br><span class="line"><span class="comment"># --- tar.gz ---</span></span><br><span class="line">tar -zxvf xxx.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p><strong>xz</strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 压缩文件 ======</span></span><br><span class="line"><span class="comment"># --- xz ---</span></span><br><span class="line">xz -z <span class="string">'目录路径'</span></span><br><span class="line"><span class="comment"># --- tar.xz ---</span></span><br><span class="line"><span class="comment"># 用xz工具打包tar压缩包</span></span><br><span class="line">xz -z xxx.tar</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======解压缩 ======</span></span><br><span class="line"><span class="comment"># --- xz ---</span></span><br><span class="line">xz -d xxx.xz</span><br><span class="line"><span class="comment"># --- tar.xz ---</span></span><br><span class="line">xz -d xxx.tar.xz</span><br><span class="line">tar -xvf xxx.tar</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>14、挂载-mount</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 挂载 ======</span></span><br><span class="line"><span class="comment"># 最简单的挂载方式</span></span><br><span class="line">mount /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 读写权限的挂载方式</span></span><br><span class="line"><span class="comment"># '-w' 相当于 '-o rw' </span></span><br><span class="line">mount -w /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 重新挂载为可读写的方式</span></span><br><span class="line">mount -o remount,rw /mnt</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== 取消挂载 ======</span></span><br><span class="line">unmount /mnt</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>15、分区信息-df/fdisk/lsblk</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== df ======</span></span><br><span class="line"><span class="comment"># 侧重于文件系统磁盘信息</span></span><br><span class="line">df</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== fdisk ======</span></span><br><span class="line"><span class="comment"># 侧重于分区表信息</span></span><br><span class="line">fdisk</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== lsblk ======</span></span><br><span class="line"><span class="comment"># 侧重于逻辑磁盘信息</span></span><br><span class="line">lsblk</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>16、权限更改-chmod/chown/chroot</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== chmod ======</span></span><br><span class="line"><span class="comment"># 更改文件权限，语法为 'chmod abc file'</span></span><br><span class="line"><span class="comment"># 其中a,b,c各为一个数字，分别表示User、Group、及Other的权限:</span></span><br><span class="line"><span class="comment"># r=4，w=2，x=1</span></span><br><span class="line">chmod 777 file</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== chown ======</span></span><br><span class="line"><span class="comment"># 修改文件的拥有者与组</span></span><br><span class="line"><span class="comment"># 例如将文件 file1.txt 的拥有者设为 runoob，群体的使用者 runoobgroup :</span></span><br><span class="line">chown runoob:runoobgroup file1.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== chroot ======</span></span><br><span class="line"><span class="comment"># 改变根目录</span></span><br><span class="line">chroot /mnt/ls</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>17、创建用户-useradd</em></strong><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一般用户</span></span><br><span class="line">useradd tt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个系统用户</span></span><br><span class="line">useradd -r tt</span><br></pre></td></tr></table></figure></p>
-</div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/20/Linux内核开发-开发工具/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1386,11 +1256,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1423,10 +1297,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
             
             <div class="clearfix"></div>

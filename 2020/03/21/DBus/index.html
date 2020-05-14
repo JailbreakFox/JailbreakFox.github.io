@@ -18,7 +18,7 @@
 <meta property="og:locale" content="cn">
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/DBus框架.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/D-feet.png">
-<meta property="og:updated_time" content="2020-05-11T08:45:03.014Z">
+<meta property="og:updated_time" content="2020-05-14T07:37:39.004Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DBus">
 <meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。    0x01 DBus简介&amp;emsp;&amp;emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。121 运行机制2 重要ID">
@@ -200,7 +200,7 @@
 <li>Interface : 可理解为每个Object内的类成员。</li>
 <li>通信方式 : D-bus里面支持的通信方式有signal/method两种。前者其实就是广播(UDP,一对多的通信方式);后者则是一问一答(TCP，一对一的通信),这种方式有点像远程调用，Client APP1调用Server APP2的method并传递参数给这个method，获取到这个method返回的结果。</li>
 </ul>
-<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html" target="_blank" rel="noopener">参考教程</a>。</p>
+<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html" target="_blank" rel="noopener">参考教程</a><sup>[1]</sup>。</p>
 <ul>
 <li>Address : 用于标识DBus-daemon。当一个DBus-daemon运行以后，其他的app该怎么连接到这个DBus-daemon，靠的就是address。格式如/com/polkit/qt/example/dbus。</li>
 <li>BusName : 用于标志Application。当一个进程连接上DBus-daemon，就需要注册一个BusName方便其他进程找到自己。格式如com.polkit.qt.example.dbus。</li>
@@ -264,6 +264,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2020/05/14/仓库源管理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          仓库源管理
+        
+      </div>
+    </a>
   
   
     <a href="/2020/01/31/流媒体/" id="article-nav-older" class="article-nav-link-wrap">
@@ -445,11 +454,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -482,10 +495,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
             
             <div class="clearfix"></div>
