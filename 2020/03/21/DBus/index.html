@@ -18,7 +18,7 @@
 <meta property="og:locale" content="cn">
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/DBus框架.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/D-feet.png">
-<meta property="og:updated_time" content="2020-05-14T07:37:39.004Z">
+<meta property="og:updated_time" content="2020-05-15T07:55:46.830Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DBus">
 <meta name="twitter:description" content="0x00 引言&amp;emsp;&amp;emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。    0x01 DBus简介&amp;emsp;&amp;emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。121 运行机制2 重要ID">
@@ -226,7 +226,7 @@
 <li>接口名<br>org.bluez.audio.Manager.CreateDevice</li>
 <li>参数类型:参数值<br>byte:0x01 byte:0x02</li>
 </ul>
-<p><strong>dbus-monitor</strong><br>&emsp;&emsp;dbus-monitor用于监听消息总线或会话总线发送的消息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbus-monitor <span class="string">"type='signal', sender='org.gnome.TypingMonitor', interface='org.gnome.TypingMonitor'"</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>dbus-monitor</strong><br>&emsp;&emsp;dbus-monitor用于监听消息总线或会话总线发送的消息。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbus-monitor --system <span class="string">"type='signal', sender='org.gnome.TypingMonitor', interface='org.gnome.TypingMonitor'"</span></span><br></pre></td></tr></table></figure></p>
 <ul>
 <li>type<br>设置为信号signal，或者方法调用memthod_call</li>
 <li>sender<br>要监听的服务名</li>
@@ -458,15 +458,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
