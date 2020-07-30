@@ -381,7 +381,7 @@
 <p><strong><em>20、远程文件操作-scp/rsync</em></strong><br>&emsp;&emsp;scp用来做全量备份,每次都是完全拷贝,效率低下。rsync用来做增量备份,每次仅拷贝发生变化的文件,效率高。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scp传输本地文件到目标主机文件目录</span></span><br><span class="line">scp <span class="string">'本地文件目录'</span> root@172.16.1.31:<span class="string">'目标文件目录'</span></span><br><span class="line"><span class="comment"># scp传输目标主机文件目录到本地文件目录</span></span><br><span class="line">scp root@172.16.1.31:<span class="string">'目标文件目录'</span> <span class="string">'本地文件目录'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># rsync传输本地文件到目标主机文件目录</span></span><br><span class="line">rsync -avz <span class="string">'本地文件目录'</span> root@172.16.1.31:<span class="string">'目标文件目录'</span></span><br><span class="line"><span class="comment"># rsync传输目标主机文件目录到本地文件目录</span></span><br><span class="line">rsync -avz root@172.16.1.31:<span class="string">'目标文件目录'</span> <span class="string">'本地文件目录'</span></span><br></pre></td></tr></table></figure></p>
 <p><strong><em>21、读取转换数据-dd</em></strong><br>&emsp;&emsp;dd可从标准输入或文件中读取数据，根据指定的格式来转换数据，在输出到文件、设备或标准输出。比较典型的作用就是制作系统U盘:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dd制作系统U盘，bs参数代表同时设置读入/输出的块大小</span></span><br><span class="line">dd <span class="keyword">if</span>=<span class="string">'镜像文件路径'</span> of=<span class="string">'U盘路径'</span> bs=1440k</span><br></pre></td></tr></table></figure></p>
 <p><strong><em>22、历史终端命令-history</em></strong><br>&emsp;&emsp;能够列出终端使用的历史命令记录。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出历史3条命令</span></span><br><span class="line">histoty -3</span><br></pre></td></tr></table></figure></p>
-<h3 id="0x04-Linux系统日志系统"><a href="#0x04-Linux系统日志系统" class="headerlink" title="0x04 Linux系统日志系统"></a><em>0x04 Linux系统日志系统</em></h3><p><strong><em>常见日志文件解析</em></strong><br>| /var/log/message  | 系统启动后的信息和错误日志            |<br>| —————– | ————————————————– |<br>| /var/log/secure   | 与安全相关的日志信息                     |<br>| /var/log/maillog  | 与邮件相关的日志信息                     |<br>| /var/log/cron     | 与定时任务相关的日志信息               |<br>| /var/log/spooler  | 与UUCP和news设备相关的日志信息          |<br>| /var/log/boot.log | 守护进程启动和停止相关的日志消息   |<br>| /var/log/wtmp     | 永久记录每个用户登录、注销及系统的启动、停机的事件 |<br>| /var/run/utmp     | 记录当前正在登录系统的用户信息      |<br>| /var/log/btmp     | 记录失败的登录尝试信息                  |</p>
+<h3 id="0x04-Linux系统日志系统"><a href="#0x04-Linux系统日志系统" class="headerlink" title="0x04 Linux系统日志系统"></a><em>0x04 Linux系统日志系统</em></h3><p><strong><em>常见日志文件解析</em></strong><br>| /var/log/message  | 系统启动后的信息和错误日志            |<br>| —————– | ————————————————– |<br>| /var/log/secure   | 与安全相关的日志信息                     |<br>| /var/log/maillog  | 与邮件相关的日志信息                     |<br>| /var/log/cron     | 与定时任务相关的日志信息               |<br>| /var/log/spooler  | 与UUCP和news设备相关的日志信息          |<br>| /var/log/boot.log | 守护进程启动和停止相关的日志消息   |<br>| /var/log/wtmp     | 永久记录每个用户登录、注销及系统的启动、停机的事件 |<br>| /var/run/utmp     | 记录当前正在登录系统的用户信息      |<br>| /var/log/btmp     | 记录失败的登录尝试信息                  |<br>| ~/.xession-error  | 记录登录桌面失败的信息                  |</p>
 <p><strong><em>历史记录</em></strong><br>| last | grep reboot | 查看重启的命令 |<br>| —————— | —————- |<br>| history            | 历史终端操作 |<br>| history -c         | 删除历史终端操作 |</p>
 <p><strong><em>查看文件</em></strong><br>| tail -f /var/log/*   | 实时查看那个文件 |<br>| ——————– | —————- |<br>| cat /var/log/message | 查看那个文件 |</p>
 </div></div></div></div></div></div>
@@ -851,10 +851,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
@@ -863,7 +859,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,6 +879,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
@@ -895,15 +895,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
             
             <div class="clearfix"></div>
