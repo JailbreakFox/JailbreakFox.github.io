@@ -6,12 +6,12 @@ grammar_cjkRuby: true
 ---
 
 ### *0x00 引言*
-&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式。CR(Carriage Return) 代表回车，对应字符 '\r'；LF(Line Feed) 代表换行，对应字符 '\n'。
+&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式。CR(Carriage Return) 代表回车，对应字符 '\r'；LF(Line Feed) 代表换行，对应字符 '\n'。  
 &emsp;&emsp;不同操作系统会使用不同的换行方式，这也是导致我们传输文件时出现乱码的原因之一。目前主流的操作系统中，Windows使用的是CRLF, Unix系统(包括Linux, MacOS近些年的版本)使用的是LF。
 
-### *0x01 Git换行符*
-&emsp;&emsp;Git服务器使用的换行方式是LF。
-***1、换行符自动转换***
+### *0x01 Git换行符*  
+&emsp;&emsp;Git服务器使用的换行方式是LF。  
+***1、换行符自动转换***  
 &emsp;&emsp;由于要考虑操作系统区别，Git提供了一个"[换行符自动转换](https://blog.csdn.net/weixin_33275327/article/details/81485051)<sup>[1]</sup>"(AutoCRLF)功能，即当Windows用户向Git提交代码时，自动将CRLF格式转换为LF格式，当Windows用户拉代码时，又自动将代码转换为CRLF格式。  
 &emsp;&emsp;AutoCRLF使用方法如下：
 ```sh
