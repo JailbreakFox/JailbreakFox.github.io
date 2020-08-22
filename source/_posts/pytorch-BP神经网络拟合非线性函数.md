@@ -22,14 +22,21 @@ grammar_cjkRuby: true
 ***1 人工神经元***
 ***1.1 神经元模型***
 &emsp;&emsp;神经生理学和神经解剖学的研究结果表明，神经元是脑组织的基本单元，同时也是神经系统结构与功能的单位。人类大脑中的神经元互相连接，构成了一庞大复杂的网络，即生物神经网络。神经元在结构上是由细胞体、树突、轴突以及突触四个部分组成的。树突是一种管状延伸物，其作用是接受来自周围的神经冲击信息，相当于细胞的输入端，信息流从树突发出，经过细胞体，接着由轴突传出，轴突相当于细胞的输出端。突触是神经元之间通信的媒介，相当于是不同神经元之间的输入输出接口。
-<div align=center>![神经元1](神经元1.jpg)<div align=left>
+
+<div align=center>
+<img src="./神经元1.jpg" />
+<div align=left>  
 
 &emsp;&emsp;借鉴神经元的存在形式，神经元模型便应运而生。早在1943年，心理学家McCulloch和数学家W.Pitts就在分析总结神经元基本特性的基础上提出了MP模型，该模型经过不断改进后，形成了现在被广泛使用的BP神经元模型。人工神经元模型应具备三个要素：
 &emsp;&emsp;&emsp;&emsp;1）至少具备一组突触或连接，其连接强度常用表示，也可称之为权值；
 &emsp;&emsp;&emsp;&emsp;2）神经元的输出是由多个输入经过加权处理，并通过累加算法得到的；
 &emsp;&emsp;&emsp;&emsp;3）具备一个激励函数用于限制神经元的输出。激励函数的作用是将输出信号限制在一个范围内，通常设置值为[0,1]或[-1,1]。
 &emsp;&emsp;一个典型的人工神经元模型如下图所示：
-<div align=center>![神经元2](神经元2.jpg)<div align=left>
+
+<div align=center>
+<img src="./神经元2.jpg" />
+<div align=left>  
+
 &emsp;&emsp;其中$x_{j}\left ( j=1,2,\cdots ,N \right )$为输入信号,$w_{ij}$为连接权值，$\theta_{i}$为偏置量，$g\left( \cdot \right )$是激励函数，$y_{i}$是神经元的输出。输出与输入量的关系可用下式表示：
 $$y_{i}=g\left ( \sum_{j=1}^{N}w_{ij}x_{j}+\theta _{i} \right )$$
 
@@ -39,11 +46,19 @@ $$y_{i}=g\left ( \sum_{j=1}^{N}w_{ij}x_{j}+\theta _{i} \right )$$
 &emsp;&emsp;&emsp;&emsp;又称为S型函数，是神经网络中使用最多的激励函数，其表达式如下所示：
 $$g\left ( t \right )=\frac{1}{1+exp(-\alpha t)}$$
 &emsp;&emsp;&emsp;&emsp;式中的$\alpha$代表sigmoid函数的斜率参数，其曲线图如下所示：
-<div align=center>![激活函数1](激活函数1.jpg)<div align=left>
+
+<div align=center>
+<img src="./激活函数1.jpg" />
+<div align=left>  
+
 &emsp;&emsp;2）tanh函数
 &emsp;&emsp;&emsp;&emsp;tanh函数是将$\left ( -\infty ,+\infty  \right )$的数映射到$\left ( -1,1 \right )$之间，其表达式与图形如下所示：
 $$g\left ( t \right )=\frac{e^{t}-e^{-t}}{e^{t}+e^{-t}}$$
-<div align=center>![激活函数2](激活函数2.jpg)<div align=left>
+
+<div align=center>
+<img src="./激活函数2.jpg" />
+<div align=left>  
+
 &emsp;&emsp;&emsp;&emsp;tanh函数在零点附近很短一段区域内可看做线性的。由于tanh函数均值为0，因此弥补了sigmoid函数均值为0.5的缺点。tanh函数的缺点同sigmoid函数的第一个缺点一样，当t很大或很小时，$g^{'}\left ( t \right )$接近于0，会导致梯度很小，权重更新非常缓慢，即梯度消失问题。
 
 &emsp;&emsp;3）ReLU函数
@@ -52,12 +67,19 @@ $$g\left ( t \right )=\begin{cases}
 0 & t < 0 \\\
 t & t > 0 
 \end{cases}$$
-<div align=center>![激活函数3](激活函数3.jpg)<div align=left>
+
+<div align=center>
+<img src="./激活函数3.jpg" />
+<div align=left>  
+
 &emsp;&emsp;&emsp;&emsp;ReLU函数的优点是在输入为正数的时候，不存在梯度消失问题。且计算速度要快很多。ReLU函数只有线性关系，不管是前向传播还是反向传播，都比sigmod和tanh要快很多。ReLU函数的缺点是当输入为负时，梯度为0，会产生梯度消失问题。
 
 ***2 BP神经网络的结构与原理***
 &emsp;&emsp;神经网络模型是许多逻辑单元按照不同层级组织的网络，其每层的输出变量均为下一层的输入变量。最简单的神经网络一般包含三层，分别是输入层、隐含层以及输出层，如下图所示：
-<div align=center>![bp1](bp1.jpg)<div align=left>
+
+<div align=center>
+<img src="./bp1.jpg" />
+<div align=left>  
 
 &emsp;&emsp;图中第一层为输出层，第二层为隐含层，最后一层为输出层。$a_{i}^{j}$代表第j层的第i个激活单元，其中神经元$x_{0}$、$a_{0}^{\left ( 2 \right )}$均为偏置单元，$\theta ^{j}$代表权重矩阵。
 
@@ -79,7 +101,11 @@ $$J\left ( \theta  \right )=-\frac{1}{m}\left [ \sum_{i=1}^{m}\sum_{k=1}^{k}y^{(
 
 ***2.3 反向传播算法<sup>[5]</sup>***
 &emsp;&emsp;在得到前向传播以及代价函数的计算结果之后，需要将误差反向传播，以修改神经网络的权值。以隐含层至输出层的权值更新为例，将输出层神经元简化为下图：
-<div align=center>![bp2](bp2.jpg)<div align=left>
+
+<div align=center>
+<img src="./bp2.jpg" />
+<div align=left>  
+
 &emsp;&emsp;图中，$E_{o1}$为考虑代价函数得到的总误差，$T_{o1}$为目标输出值，$O_{o1}$为前向传播得到的输出值，$N_{o1}$为$O_{o1}$被激活前的值，h为隐藏层输出值，w为权值。则权值$w_{21}$对整体误差的影响可由链式法则得：
 $$\frac{\partial E_{o1}}{\partial w_{21}}=\frac{\partial E_{o1}}{\partial O_{o1}}\cdot \frac{\partial O_{o1}}{\partial N_{o1}}\cdot \frac{\partial N_{o1}}{\partial w_{21}}$$
 &emsp;&emsp;设学习速率为$\eta $，则$w_{21}$的更新权值$w_{21}^{+}$为：
@@ -272,7 +298,10 @@ for t in range(400):
     optimizer.step()        # apply gradients
 ```
 &emsp;&emsp;其输出的loss曲线图如下所示：
-<div align=center>![bp3](bp3.jpg)<div align=left>
+
+<div align=center>
+<img src="./bp3.jpg" />
+<div align=left>  
 
 ### *0x03 引用文献*
 [1]https://study.163.com/course/courseMain.htm?courseId=1004570029

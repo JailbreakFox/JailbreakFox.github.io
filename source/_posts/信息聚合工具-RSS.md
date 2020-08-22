@@ -16,10 +16,10 @@ tags: 工具， 信息聚合
 1 Windows FeedDemon
 ```
 
-***1、Windows FeedDemon***
+***1、Windows FeedDemon***  
 &emsp;&emsp;一款免费、轻量级的阅读器，网上的评价还是很好的，贴上它的[安装与使用](https://www.zhihu.com/question/19580096/answer/20490041)<sup>[1]</sup>。想要添加RSS源，可以采取多种办法:1)直接去网上找rss源;2)Easy to RSS插件，这是一款Chrome插件，能够直接识别可支持RSS协议的网址;3)一些寻找源的网址，在链接里有;4)RSS源生成项目。这些项目能够替没有RSS的网址生成RSS，比如Feed43、RSSHub等，将在下一章做重要介绍。
 
-### *0x02 RSS源生成项目*
+### *0x02 RSS源生成项目*  
 &emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。
 ```
 1 RSSHub
@@ -27,15 +27,17 @@ tags: 工具， 信息聚合
   1.2 添加源
 ```
 
-***1、RSSHub***
+***1、RSSHub***  
 &emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其[独立博客](https://docs.rsshub.app)<sup>[2]</sup>。
-***1.1、Docker部署***
-&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客[操作系统安装](https://jailbreakfox.github.io/2018/08/01/操作系统安装/)<sup>[3]</sup>。
-&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出[部署方式](https://docs.rsshub.app/install/#使用-docker-部署)<sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:
-&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。
-&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。
-&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。
-***1.2 添加源***
+
+***1.1、Docker部署***  
+&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客[操作系统安装](https://jailbreakfox.github.io/2018/08/01/操作系统安装/)<sup>[3]</sup>。  
+&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出[部署方式](https://docs.rsshub.app/install/#使用-docker-部署)<sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:  
+&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。  
+&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。  
+&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  
+
+***1.2 添加源***  
 &emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。
 &emsp;&emsp;根据[微信添加公众号(瓦斯来源)](https://docs.rsshub.app/social-media.html#微信)<sup>[5]</sup>，可以看到:
 ```

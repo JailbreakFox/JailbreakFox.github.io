@@ -1,15 +1,15 @@
 ---
 title: DBus
-tags: 计算机技术
 date: 2020-03-21 16:20:48
-grammar_cjkRuby: true
+tags: Linux 工具
 ---
 
 ### *0x00 引言*
 &emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。
+
 <div align=center>
-<img src="DBus框架.png" width = "700" height = "400" />
-<div align=left>
+<img src="./DBus框架.png" width = "700" height = "400" />
+<div align=left>  
 
 ### *0x01 DBus简介*
 &emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。
@@ -95,9 +95,10 @@ sudo apt-get install d-feet
 # 运行
 d-feet
 ```
+
 <div align=center>
-<img src="D-feet.png" width = "700" height = "400" />
-<div align=left>
+<img src="./D-feet.png" width = "700" height = "400" />
+<div align=left>  
 
 *2.2、dbus-send/dbus-monitor*  
 &emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。  

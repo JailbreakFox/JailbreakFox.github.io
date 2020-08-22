@@ -12,7 +12,11 @@ grammar_cjkRuby: true
 &emsp;&emsp;本文主要介绍在强化学习中使用最多的基础算法，即Q-learning。
 ### *0x01 Q-learning算法*
 &emsp;&emsp;q-learning算法<sup>[2]</sup>包含两个最主要的概念，即状态S（state）和动作A（action），每次通过选择动作更新状态时，要同时按照图中的最优值函数Q计算公式更新Q表。其中参数α称为学习率，其决定这次的误差有多少是要被学习的, 且α是一个小于1 的数。γ为折扣率，是对未来 reward 的衰减值，值在[0,1]选择。
-<div align=center>![q-learning](Q-learning.jpg)<div align=left>
+
+<div align=center>
+<img src="./Q-learning.jpg" />
+<div align=left>  
+
 &emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。
 &emsp;&emsp;在了解基础的算法以后，分析一个[实际问题](http://mnemstudio.org/path-finding-q-learning-tutorial.htm)<sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。
 ### *0x02 实例分析*
