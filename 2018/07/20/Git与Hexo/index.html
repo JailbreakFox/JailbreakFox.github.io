@@ -187,9 +187,9 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;记录一下我自己的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html">Git + Github搭建</a>细节，顺便记录Git、Hexo与MarkDown的相关知识。</p>
-<div align=center>
-<img src="git命令速查表.png" width = "700" height = "400" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/git命令速查表.png" width="700" height="400">
+<div align="left">
 
 <h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><em>0x01 Git</em></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">  1.4 添加远程仓库</span><br><span class="line">2 远程主仓库、远程分仓库与本地仓库</span><br><span class="line">  2.1 <span class="built_in">clone</span></span><br><span class="line">  2.2 fork</span><br><span class="line">  2.3 remote</span><br><span class="line">3 分支推送</span><br><span class="line">  3.1 add</span><br><span class="line">  3.2 commit</span><br><span class="line">  3.3 push</span><br><span class="line">4 分支更新</span><br><span class="line">  4.1 fetch</span><br><span class="line">  4.2 pull</span><br><span class="line">5 分支合并</span><br><span class="line">  5.1 rebase</span><br><span class="line">  5.2 merge</span><br><span class="line">6 解决冲突</span><br><span class="line">7 回溯</span><br><span class="line">  7.1 本地修改清理</span><br><span class="line">  7.2 查看历史</span><br><span class="line">  7.3 版本回溯</span><br><span class="line">8 打标签</span><br><span class="line">9 堆栈暂存</span><br><span class="line">10 清理历史记录</span><br><span class="line">11 问责</span><br><span class="line">12 提交拣取</span><br><span class="line">13 工作区代码管理</span><br><span class="line">14 常用操作命令</span><br></pre></td></tr></table></figure>
@@ -203,9 +203,9 @@
 <p><strong><em>2、远程主仓库、远程分仓库与本地仓库</em></strong><br>&emsp;&emsp;我们创建的git仓库都是寄存在github服务器的，因此远程主仓库就是指某一项目最早被保存在github服务器内的哪个版本。有的时候我们需要多人合作，因此需要将主仓库fork下来，用于自行修改，但也保存在github服务器内，这种仓库叫做远程分仓库。<br><em>2.1、clone</em><br>&emsp;&emsp;克隆远程仓库可以用如下命令：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设要克隆user1的myRepository仓库</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/user1/myRepository.git</span><br><span class="line"><span class="comment"># 给你的远程仓库取名，可以使用&quot;-o&quot;参数</span></span><br><span class="line">git <span class="built_in">clone</span> <span class="string">&quot;仓库地址&quot;</span> -o <span class="string">&quot;仓库名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程仓库clone下来默认的仓库名是 origin ，可以用如下方式查看</span></span><br><span class="line">git remote -v</span><br><span class="line"><span class="comment"># 输出如下</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (fetch)</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (push)</span></span><br><span class="line"><span class="comment"># 如果不喜欢这个名字，则可以删除重新添加</span></span><br><span class="line">git remote rm origin</span><br><span class="line">git remote add <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;仓库地址&quot;</span></span><br></pre></td></tr></table></figure>
 <p><em>2.2、fork</em><br>&emsp;&emsp;fork即所谓的派生远程主仓库，其过程如下图</p>
-<div align=center>
-<img src="fork.png" width = "550" height = "350" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/fork.png" width="550" height="350">
+<div align="left">
 
 <p><em>2.3、remote</em><br>&emsp;&emsp;本地仓库的分支维护，需要用到remote方法:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有分支信息</span></span><br><span class="line">git branch –a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前所有远程仓库名</span></span><br><span class="line">git remote -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看关于远程的一些信息</span></span><br><span class="line">git remote show <span class="string">&#x27;仓库名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果远程仓库已经删除了某些分支，但是本地仍然存在这些分支，可用以下命令删除干净</span></span><br><span class="line">git remote prune <span class="string">&#x27;仓库名&#x27;</span></span><br></pre></td></tr></table></figure>
@@ -216,9 +216,9 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 完整的推送代码</span></span><br><span class="line"><span class="comment"># git push &quot;远程主机名&quot; &quot;本地分支名&quot;:&quot;远程分支名&quot;</span></span><br><span class="line">git push origin master:master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以省略远程分支名</span></span><br><span class="line"><span class="comment"># 如果同名远程分支存在则推送到该分支；如果该远程分支不存在，则该远程分支会被新建</span></span><br><span class="line">git push origin master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果省略本地分支，则代表删除该名远程分支</span></span><br><span class="line">git push origin :master</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>4、分支拉取</em></strong><br>&emsp;&emsp;分支拉取方式由fetch与pull两种，他们的区别如下图:</p>
-<div align=center>
-<img src="分支拉取.jpg" width = "550" height = "250" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/分支拉取.jpg" width="550" height="250">
+<div align="left">
 
 <p><em>4.1、fetch</em><br>&emsp;&emsp;git fetch是将远程主机的最新内容拉到本地，用户在检查了以后决定是否合并到本地分支中。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#fetch更新，缺省参数相当于git fetch origin/master</span></span><br><span class="line">git fetch</span><br><span class="line"><span class="comment">#取回更新后，会返回一个FETCH_HEAD</span></span><br><span class="line"><span class="comment">#输入以下代码检查区别</span></span><br><span class="line">git <span class="built_in">log</span> -p FETCH_HEAD</span><br></pre></td></tr></table></figure>
@@ -227,16 +227,16 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pull更新，缺省参数相当于git pull origin/master</span></span><br><span class="line">git pull</span><br><span class="line"><span class="comment">#其实际运行过程相当于</span></span><br><span class="line"><span class="comment">#git fetch origin/master</span></span><br><span class="line"><span class="comment">#git merge FETCH_HEAD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整的拉取代码</span></span><br><span class="line"><span class="comment"># git pull &quot;远程主机名&quot; &quot;远程分支名&quot;:&quot;本地分支名&quot;</span></span><br><span class="line">git pull origin master:master</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>5、分支合并</em></strong><br>&emsp;&emsp;分支合并有rebase与merge两种方式。切记主分支内别用rebase，因为无法回溯到某个参与者提交的那次commit，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4079284dd970">查阅博客</a>，有一个<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48190059">网站</a>做了两者的使用实验。<br><em>5.1、rebase</em><br>&emsp;&emsp;rebase会把你当前分支的commit放到公共分支的最后面,所以叫变基。</p>
-<div align=center>
-<img src="rebase.jpg" width = "400" height = "200" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/rebase.jpg" width="400" height="200">
+<div align="left">
 
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rebase</span></span><br><span class="line">git pull --rebase <span class="string">&quot;远程主仓库&quot;</span> <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># push到自己的fork仓库</span></span><br><span class="line">git push <span class="string">&quot;远程fork仓库&quot;</span> <span class="string">&quot;分支名&quot;</span> -f</span><br></pre></td></tr></table></figure>
 
 <p><em>5.2、merge</em><br>&emsp;&emsp;merge 会把公共分支和你当前的commit合并在一起，形成一个新的commit提交。</p>
-<div align=center>
-<img src="merge.jpg" width = "400" height = "200" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/merge.jpg" width="400" height="200">
+<div align="left">
 
 <p><em>6、解决冲突</em><br>&emsp;&emsp;B站上有<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48278991">大佬</a>已经很详细地讲述了解决冲突的两种办法。<br><em>6.1、冲突文件内解决</em><br>&emsp;&emsp;解决冲突的时候可以先合并分支，这样如果两分支代码没有冲突就能直接合并，假如有冲突，就需要直接修改显示冲突的文件(其内部已经用一些符号显示冲突位置)。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先合并分支</span></span><br><span class="line">git rebase/merge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果分支有冲突，则修改显示所有冲突的文件</span></span><br><span class="line">git diff .</span><br><span class="line"><span class="comment"># 或者单独显示某个文件</span></span><br><span class="line">git diff <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"><span class="comment"># 又或者显示某个文件与某个hash下的该文件差异</span></span><br><span class="line">git diff <span class="string">&quot;hash&quot;</span> <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后继续之前的合并命令</span></span><br><span class="line">git rebase/merge --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure>
@@ -280,15 +280,15 @@
 
 <h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><em>0x04 Git与Hexo搭建博客</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Nodejs与npm安装</span><br><span class="line">3 Hexo安装与配置</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、Git安装与配置</em></strong><br>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
-<div align=center>
-<img src="博客仓库.png" width = "600" height = "500" />
-<div align=left>
+<div align="center">
+<img src="/2018/07/20/Git%E4%B8%8EHexo/博客仓库.png" width="600" height="500">
+<div align="left">
 
 <p><strong><em>2、Nodejs与npm安装</em></strong><br>&emsp;&emsp;Nodejs<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu16.04-LTS-sh/blob/master/Ubuntu16.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/Nodejs.sh">安装方法</a>这里就不再赘述;npm是一款包管理工具，安装方法也不再赘述。  </p>
 <p><strong><em>3、Hexo安装与配置</em></strong><br>&emsp;&emsp;在安装完Node.js与npm之后，就可以很方便地安装Hexo了:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装Hexo</span></span><br><span class="line">sudo npm install -g hexo</span><br><span class="line"></span><br><span class="line"><span class="comment">#将目标文件夹初始化为博客存放点</span></span><br><span class="line">sudo hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line">sudo chmod 777 -R 博客初始化文件夹</span><br><span class="line"></span><br><span class="line"><span class="comment">#直接三连，分别是清除、生成和部署</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#登录 http://localhost:4000/ 查看效果</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><strong><em>0x05 引用文献</em></strong></h3>
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><strong><em>0x05 引用文献</em></strong></h3></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -493,15 +493,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -521,10 +525,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -541,11 +541,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">

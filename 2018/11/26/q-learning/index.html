@@ -15,11 +15,13 @@
 <meta property="og:site_name" content="Jesse Tsui的博客">
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等[1]。&amp;emsp;&amp;emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。&amp;emsp;&amp;emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习">
 <meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2018/11/26/q-learning/Q-learning.jpg">
 <meta property="article:published_time" content="2018-11-26T12:41:00.000Z">
-<meta property="article:modified_time" content="2019-05-02T03:21:14.000Z">
+<meta property="article:modified_time" content="2020-08-22T02:30:35.465Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="强化学习，算法">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2018/11/26/q-learning/Q-learning.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -181,25 +183,22 @@
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等<sup>[1]</sup>。<br>&emsp;&emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。<br>&emsp;&emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习需要机器对给定的输入自行聚类。而强化学习则是机器主动做出试探动作，并根据环境的反馈来修改行为的学习方式。<br>&emsp;&emsp;本文主要介绍在强化学习中使用最多的基础算法，即Q-learning。</p>
 <h3 id="0x01-Q-learning算法"><a href="#0x01-Q-learning算法" class="headerlink" title="0x01 Q-learning算法"></a><em>0x01 Q-learning算法</em></h3><p>&emsp;&emsp;q-learning算法<sup>[2]</sup>包含两个最主要的概念，即状态S（state）和动作A（action），每次通过选择动作更新状态时，要同时按照图中的最优值函数Q计算公式更新Q表。其中参数α称为学习率，其决定这次的误差有多少是要被学习的, 且α是一个小于1 的数。γ为折扣率，是对未来 reward 的衰减值，值在[0,1]选择。</p>
-<div align=center>![q-learning](Q-learning.jpg)<div align=left>
-&emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。
-&emsp;&emsp;在了解基础的算法以后，分析一个[实际问题](http://mnemstudio.org/path-finding-q-learning-tutorial.htm)<sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。
-### *0x02 实例分析*
-&emsp;&emsp;现在分析一下[莫烦视频](https://www.bilibili.com/video/av16921335/?p=6)<sup>[4]</sup>中的代码段，[代码](https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py)<sup>[5]</sup>可从github上获得。该例子的内容，是移动一个圆点，使其学会以最快的速度从左侧移动至右侧。
+<div align="center">
+<img src="/2018/11/26/q-learning/Q-learning.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。<br>&emsp;&emsp;在了解基础的算法以后，分析一个<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">实际问题</a><sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。</p>
+<h3 id="0x02-实例分析"><a href="#0x02-实例分析" class="headerlink" title="0x02 实例分析"></a><em>0x02 实例分析</em></h3><p>&emsp;&emsp;现在分析一下<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">莫烦视频</a><sup>[4]</sup>中的代码段，<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">代码</a><sup>[5]</sup>可从github上获得。该例子的内容，是移动一个圆点，使其学会以最快的速度从左侧移动至右侧。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_q_table</span>(<span class="params">n_states, actions</span>):</span></span><br><span class="line">    table = pd.DataFrame(</span><br><span class="line">        np.zeros((n_states, len(actions))),</span><br><span class="line">        columns=actions,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> table</span><br></pre></td></tr></table></figure>
-&emsp;&emsp;函数build_q_table旨在新建一个6行2列的Q值表，行代表状态，列代表左右移动。
+<p>&emsp;&emsp;函数build_q_table旨在新建一个6行2列的Q值表，行代表状态，列代表左右移动。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choose_action</span>(<span class="params">state, q_table</span>):</span></span><br><span class="line">    state_actions = q_table.iloc[state, :]</span><br><span class="line">    <span class="keyword">if</span> (np.random.uniform() &gt; EPSILON) <span class="keyword">or</span> ((state_actions == <span class="number">0</span>).all()): </span><br><span class="line">        action_name = np.random.choice(ACTIONS)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        action_name = state_actions.idxmax()</span><br><span class="line">    <span class="keyword">return</span> action_name</span><br></pre></td></tr></table></figure>
-&emsp;&emsp;该例子采用ε-greedy策略来选择动作，choose_action即根据ε值选择下一步的实际动作，有90%的机率选择最大的Q值动作，其余10%的机率随机选择其他动作
+<p>&emsp;&emsp;该例子采用ε-greedy策略来选择动作，choose_action即根据ε值选择下一步的实际动作，有90%的机率选择最大的Q值动作，其余10%的机率随机选择其他动作</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_env_feedback</span>(<span class="params">S, A</span>):</span></span><br><span class="line">    <span class="keyword">if</span> A == <span class="string">&#x27;right&#x27;</span>: </span><br><span class="line">        <span class="keyword">if</span> S == N_STATES - <span class="number">2</span>:</span><br><span class="line">            S_ = <span class="string">&#x27;terminal&#x27;</span></span><br><span class="line">            R = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S + <span class="number">1</span></span><br><span class="line">            R = <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        R = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> S == <span class="number">0</span>:</span><br><span class="line">            S_ = S </span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S - <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> S_, R</span><br></pre></td></tr></table></figure>
-&emsp;&emsp;函数get_env_feedback的作用是假设按照已选择完成的动作行动，则下一状态的环境是否到达最左或最右，若是，则采取相应措施，若不是，则判断可安全执行。
+<p>&emsp;&emsp;函数get_env_feedback的作用是假设按照已选择完成的动作行动，则下一状态的环境是否到达最左或最右，若是，则采取相应措施，若不是，则判断可安全执行。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rl</span>():</span></span><br><span class="line">    q_table = build_q_table(N_STATES, ACTIONS)</span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> range(MAX_EPISODES):</span><br><span class="line">        step_counter = <span class="number">0</span></span><br><span class="line">        S = <span class="number">0</span></span><br><span class="line">        is_terminated = <span class="literal">False</span></span><br><span class="line">        update_env(S, episode, step_counter)</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> is_terminated:</span><br><span class="line"></span><br><span class="line">            A = choose_action(S, q_table)</span><br><span class="line">            S_, R = get_env_feedback(S, A) </span><br><span class="line">            q_predict = q_table.loc[S, A]</span><br><span class="line">            <span class="keyword">if</span> S_ != <span class="string">&#x27;terminal&#x27;</span>:</span><br><span class="line">                q_target = R + GAMMA * q_table.iloc[S_, :].max()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                q_target = R </span><br><span class="line">                is_terminated = <span class="literal">True</span> </span><br><span class="line"></span><br><span class="line">            q_table.loc[S, A] += ALPHA * (q_target - q_predict)</span><br><span class="line">            S = S_ </span><br><span class="line"></span><br><span class="line">            update_env(S, episode, step_counter+<span class="number">1</span>)</span><br><span class="line">            step_counter += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> q_table</span><br></pre></td></tr></table></figure>
-&emsp;&emsp;函数update_env是在搭建环境，这里不赘述。函数rl则是执行函数，循环做选择动作、判断环境、更新Q表以及实际运行动作的过程。
-### *0x03 引用文献*
-[1]强化学习方法及其应用研究
-[2]https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/
-[3]http://mnemstudio.org/path-finding-q-learning-tutorial.htm
-[4]https://www.bilibili.com/video/av16921335/?p=6
-[5]https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py 
+<p>&emsp;&emsp;函数update_env是在搭建环境，这里不赘述。函数rl则是执行函数，循环做选择动作、判断环境、更新Q表以及实际运行动作的过程。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]强化学习方法及其应用研究<br>[2]<a target="_blank" rel="noopener" href="https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/">https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/</a><br>[3]<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">http://mnemstudio.org/path-finding-q-learning-tutorial.htm</a><br>[4]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">https://www.bilibili.com/video/av16921335/?p=6</a><br>[5]<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py</a> </p>
+</div></div>
       
 
       
@@ -269,7 +268,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Q-learning%E7%AE%97%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">0x01 Q-learning算法</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Q-learning%E7%AE%97%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">0x01 Q-learning算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 实例分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">4.</span> <span class="toc-text">0x03 引用文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -404,15 +403,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -432,10 +435,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -452,11 +451,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">

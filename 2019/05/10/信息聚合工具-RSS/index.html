@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;RSS又称简易信息聚合协议，是基于XML标准并在互联网上被广泛采用的内容包装和投递协议。使用RSS订阅能更快地获取信息，网站提供RSS输出，有利于让用户获取网站内容的最新更新。&amp;emsp;&amp;emsp;目前获取信息的渠道日益增加，每种App都有各自的信息传达方式与推荐算法，虽然有益于日常刷段子，但是这也会导致获取信息的效率变低。RSS作为一种古老的信息订阅方式，">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-05-10T08:47:00.000Z">
-<meta property="article:modified_time" content="2019-05-10T11:21:12.000Z">
+<meta property="article:modified_time" content="2020-08-22T02:34:20.738Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="工具， 信息聚合">
 <meta name="twitter:card" content="summary">
@@ -187,7 +187,9 @@
 <h3 id="0x02-RSS源生成项目"><a href="#0x02-RSS源生成项目" class="headerlink" title="0x02 RSS源生成项目"></a><em>0x02 RSS源生成项目</em></h3><p>&emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RSSHub</span><br><span class="line">  1.1 Docker部署</span><br><span class="line">  1.2 添加源</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。<br>*<strong>1.1、Docker部署***<br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。<br>*</strong>1.2 添加源***<br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
+<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。</p>
+<p><strong><em>1.1、Docker部署</em></strong><br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  </p>
+<p><strong><em>1.2 添加源</em></strong><br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#举例: https:&#x2F;&#x2F;rsshub.app&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由: &#x2F;wechat&#x2F;wasi&#x2F;:id</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;但是我们添加源的时候并不是走rsshub.app这个域名的IP，而是应该走我们自己部署的Docker IP：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#注意别使用加密的https格式</span><br><span class="line">http:&#x2F;192.168.99.100:1200&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由ID可从瓦斯阅读对应的公众号下找到</span><br></pre></td></tr></table></figure>
@@ -398,15 +400,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -426,10 +432,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -446,11 +448,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">

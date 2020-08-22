@@ -200,72 +200,72 @@
 <p><strong><em>1、数组</em></strong><br>&emsp;&emsp;以数组方式存储的向量，在内存空间的存储形式是连续的，因此又称为静态连接。在C++中，其对应的类为std::vector。<br>&emsp;&emsp;相比于动态连接的链表，数组方式数据存储效率更高;缺点是当要在元素中间插入新元素时效率很低，因插入过程为将插入位置后续元素均后移再插入新元素。所以std::vector插入新元素时多为栈(下一章节)的方式，即push_back/emplace_back。</p>
 <p><strong><em>2、链表</em></strong><br>&emsp;&emsp;链表就像一个节点链，其中每个节点包含着数据和指向后续节点的指针，因此又称为动态连接。在C++中，其对应的类为std::list。<br>&emsp;&emsp;相比于静态连接的数组，链表在任意位置插入新元素的效率更高，因为新增元素时只需要修改上一元素指针指向及该元素指针指向;缺点是数据存储效率较低。所以当向量元素增删方式为队列(下一章节)时，元素之间的连接结构常用链表。</p>
 <p><strong><em>3、树</em></strong><br>&emsp;&emsp;假设现在需要维护关于一亿人口信息的数据库。如果用数组实现，虽然存储效率高，但是每修改一个用户信息，需要判断最多一亿次，且没插入数据将非常慢；如果用链表实现，虽然能够实现插入数据，但是每修改一个用户信息，仍然需要判断最多一亿次。<br>&emsp;&emsp;树是一种层次化结构，从文件系统、互联网域名系统和数据库<br>系统，一直到地球生态系统乃至人类社会系统，层次化特征以及层次结构均无所不在。<br>&emsp;&emsp;树的结构及各个部分名词如下，其中度表示该节点有多少个子节点:</p>
-<div align=center>
-<img src="./树.png" width = "450" height = "300" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/树.png" width="450" height="300">
+<div align="left">  
 
 <p><strong><em>3.1、搜索树</em></strong><br><strong><em>3.1.1、二叉树</em></strong><br>&emsp;&emsp;所谓二叉树的概念是指，所有的节点其子节点小于等于2的树。<br>**<em>3.1.2、平衡二叉树**</em><br>&emsp;&emsp;现在想想我们的目标，是希望尽可能用更少的搜索次数在树内搜索到目标，那么等价于树的深度尽可能小。假如有数组[1,2,3]，则可生成如下图所示五种树，最后一种的搜索速度最快:</p>
-<div align=center>
-<img src="./平衡二叉树.png" width = "700" height = "150" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/平衡二叉树.png" width="700" height="150">
+<div align="left">  
 
 <p><strong><em>3.1.3、AVL树</em></strong><br>&emsp;&emsp;所谓AVL树，是指所有节点的左右子树高度差不大于1的树。<br>&emsp;&emsp;AVL优点是查询速度非常快(平衡性好);缺点是每个节点都需要存储一个int型数据(-1,0,1)，用于表达左右子树的高度差，且旋转频次更高。AVL多用于数据库。</p>
 <p><strong><em>3.2、高级搜索树</em></strong><br>&emsp;&emsp;通过对任何一条从根到叶子的简单路径上各个节点的颜色进行约束，确保没有一条路径会比其他路径长2倍，因而是近似平衡的。所以相对于严格要求平衡的AVL树来说，它的旋转保持平衡次数较少。用于搜索时，插入删除次数多的情况下我们就用红黑树来取代AVL。<br>&emsp;&emsp;实际应用中，C++ STL(map、set)均基于红黑树。其原理可能较为难理解，具体介绍看<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av45909616?from=search&seid=17043173083215253621">视频</a><sup>[1]</sup>。红黑树举例如下图:</p>
-<div align=center>
-<img src="./红黑树.jpg" width = "350" height = "250" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/红黑树.jpg" width="350" height="250">
+<div align="left">  
 
 <p>&emsp;&emsp;红黑树必须满足如下性质:1)根节点必须为黑色;2)父子节点不能同为红色;3)从根节点出发到任意叶子节点，黑色节点数量必须一致。</p>
 <p><strong><em>4、图</em></strong><br>&emsp;&emsp;树是一种层次化结构，可以方便地用来描述种属关系。但是现实世界中，很多问题并不是这种从根往下衍生的关系，比如社交网络或者运输网络等，这时图的作用即可体现。<br>**<em>4.1、图论**</em><br>&emsp;&emsp;图论是数学的一个分支，它以图为研究对象。图论中的图是由若干给定的点及连接两点的线所构成的图形，这种图形通常用来描述某些事物之间的某种特定关系，用点代表事物，用连接两点的线表示相应两个事物间具有这种关系。<br>以下内容摘自<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av88139911?from=search&seid=15931070673176572409">视频</a><sup>[2]</sup>。</p>
 <p><strong><em>4.1.1、基本概念</em></strong><br><strong>1) 有向图与无向图</strong><br>&emsp;&emsp;无方向的图为无向图，有方向的图为有向图，其中圆圈称为”结点”，连接线称为”边”:</p>
-<div align=center>
-<img src="./有向图与无向图.png" width = "400" height = "250" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/有向图与无向图.png" width="400" height="250">
+<div align="left">  
 
 <p><strong>2) 简单图与多重图</strong><br>&emsp;&emsp;如下图所示，结点v1有一两端重合的边e1，即为”环”;结点v2、v3之间有两条边，即为”多重边”。既没有环也没有重边的图称为”简单图”;含多重边的图称为”多重图”。</p>
-<div align=center>
-<img src="./简单图与多重图.png" width = "500" height = "300" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/简单图与多重图.png" width="500" height="300">
+<div align="left">  
 
 <p><strong>3) 完全图与赋权图</strong><br>&emsp;&emsp;任意两顶点都相邻的简单图称为”完全图”，如果给其边上加权重，则称为”多重图”。</p>
-<div align=center>
-<img src="./完全图与赋权图.png" width = "500" height = "250" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/完全图与赋权图.png" width="500" height="250">
+<div align="left">  
 
 <p><strong><em>4.1.2、图的矩阵表示</em></strong><br><strong>1) 邻接矩阵</strong><br>$$A=\left ( a_{ij}\right )_{n\times n}$$  </p>
 <p>$$a_{ij}=\begin{cases}<br>1 &amp; v_iv_j \in E \\<br>0 &amp; v_iv_j \notin E<br>\end{cases}$$</p>
-<div align=center>
-<img src="./邻接矩阵.png" width = "600" height = "400" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/邻接矩阵.png" width="600" height="400">
+<div align="left">  
 
 <p><strong>2) 权矩阵</strong><br>$$A=\left ( a_{ij}\right )_{n\times n}$$  </p>
 <p>$$a_{ij}=\begin{cases}<br>F(v_iv_j) &amp; v_iv_j \in E \\<br>0 &amp; i=j \\<br>\infty &amp; v_iv_j \in E<br>\end{cases}$$</p>
-<div align=center>
-<img src="./权矩阵.png" width = "600" height = "400" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/权矩阵.png" width="600" height="400">
+<div align="left">  
 
 <p><strong><em>5、哈希表</em></strong><br>&emsp;&emsp;除了树和图，还有一种寻址容易，插入删除也容易的数据结构<a target="_blank" rel="noopener" href="https://blog.csdn.net/yyyljw/article/details/80903391">哈希表</a><sup>[3]</sup>，哈希表也叫散列表，是根据关键码值(key)而直接进行访问的数据结构。<br>**<em>5.1、基本概念**</em><br>&emsp;&emsp;哈希表实质上就是一个元素为链表的数组，而原来数组下标更改为了key，其计算方法是通过某种算法将hash值转换得到，这种算法叫做”散列法”，其对应的映射函数叫做”散列函数”，存放记录的数组叫做”散列表”。</p>
-<div align=center>
-<img src="./哈希表.png" width = "600" height = "400" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/哈希表.png" width="600" height="400">
+<div align="left">  
 
 <p><strong><em>5.2、散列法</em></strong><br>&emsp;&emsp;散列法有:除法散列法、平方散列法、斐波那契(Fibonacci)散列法。</p>
 <h3 id="0x02-容器适配器-向量元素特殊增删方式"><a href="#0x02-容器适配器-向量元素特殊增删方式" class="headerlink" title="0x02 容器适配器-向量元素特殊增删方式"></a><em>0x02 容器适配器-向量元素特殊增删方式</em></h3><p>&emsp;&emsp;在数组或链表中，向量元素的增删除了任意选定需要增删的元素之外，还有两种常用的特殊增删方式。即栈和队列，前者可描述为元素”后进先出”，而后者可描述为元素”先进先出”。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 栈</span><br><span class="line">2 队列</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、栈</em></strong><br>&emsp;&emsp;以栈的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量末尾的元素。因此栈的元素增删可形象地描述为”后进先出”，可参考如下图:</p>
-<div align=center>
-<img src="./栈操作.png" width = "400" height = "250" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/栈操作.png" width="400" height="250">
+<div align="left">  
 &emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有栈功能的容器，其类名为std::stack。stack容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  
 
 <p><strong><em>2、队列</em></strong><br>&emsp;&emsp;以队列的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量首部的元素。因此栈的元素增删可形象地描述为”先进先出”，可参考如下图:</p>
-<div align=center>
-<img src="./队列操作.png" width = "400" height = "250" />
-<div align=left>  
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/队列操作.png" width="400" height="250">
+<div align="left">  
 &emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有队列功能的容器，其类名为std::queue。queue容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  
 
 <h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621">https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621</a><br>[2]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409">https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/yyyljw/article/details/80903391">https://blog.csdn.net/yyyljw/article/details/80903391</a></p>
-
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -470,15 +470,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -498,10 +502,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -518,11 +518,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
