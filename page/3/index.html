@@ -154,20 +154,20 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-操作系统安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装（待完成）</a>
+      <a class="article-title" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">环境配置-机器学习(待完成)</a>
     </h1>
   
 
         
-        <a href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/" class="archive-article-date">
-  	<time datetime="2018-08-01T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-01</time>
+        <a href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2019-05-16T13:37:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-16</time>
 </a>
         
         
@@ -175,135 +175,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 很多时候需要自己安装操作系统，比如重装系统、装双系统等等情况，这里将记录操作系统安装的相关内容。</p>
-<h3 id="0x01-自制系统U盘"><a href="#0x01-自制系统U盘" class="headerlink" title="0x01 自制系统U盘"></a><em>0x01 自制系统U盘</em></h3><p>&emsp;&emsp;使用U盘制作系统盘是种廉价且方便的方法，网上有许多教程，具体方法可分为两种，第一种是<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/ab69b2706bbb1a2ca7189f2d.html">PE安装</a><sup>[1]</sup>，第二种是<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/5225f26b0bb45fe6fa0908bc.html">ISO写入</a>。前者更加可靠，且系统U盘仍有一部分可以当作U盘来使用，且一个U盘可以放多种系统。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 PE制作系统U盘</span><br><span class="line">  1.1 微PE制作Windows系统U盘</span><br><span class="line">  1.2 微PE+FbinstTool制作多系统U盘</span><br><span class="line">2 ISO烧制系统U盘</span><br></pre></td></tr></table></figure>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 机器学习常用库TensorFlow和PyTorch，为避免忘记开发环境的配置，这里记录一下。</p>
+<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes的安装教程</a>为例，解释如何配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 DeepFakes</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、PE制作系统U盘</em></strong><br><strong><em>1.1、微PE安装Win</em></strong><br>&emsp;&emsp;PE(Windows Preinstallation Environment)，是Windows的预安装环境，可以理解为一种占用很小存储量的系统。由于本身就是Windows的原装系统，所以实际上只是对Win系统的安装友好，这里以安装Win10系统为例，安装过程可查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html">百度经验</a>。<br>&emsp;&emsp;1)安装PE工具，并用其格式化U盘。PE工具优点在于，体积小但是功能齐全，没有植入广告和垃圾软件，下载链接在上述经验<sup>[1]</sup>里。<br>&emsp;&emsp;2)从<a target="_blank" rel="noopener" href="http://mirrors.aliyun.com/ubuntu-releases/14.04/">阿里云镜像</a><sup>[2]</sup>上下载对应的.iso文件，并将其放入U盘。<br>&emsp;&emsp;OK！系统U盘已制作完成，接下去可以选择依赖于U盘的单个系统重装或是双系统安装。<br>&emsp;&emsp;这里有几点需要注意:1)微PE格式化U盘以后生成两个盘符，其中一个用来存放PE系统，另一个较大的盘用来存放想安装的系统ISO或者GHOST，两者均可在PE系统桌面下直接安装;2)可以直接去PE系统桌面下进行盘符分区，也可以直接在旧的系统下分区(这里只是方便没有系统的电脑分区)。<br>**<em>1.1、PE+FbinstTool制作多系统U盘**</em><br>&emsp;&emsp;由于PE系统桌面本身是无法直接安装Ubuntu的，因此我们需要借用另一个工具-FbinstTool。该工具实际上与微PE类似，只不过实际操作过程有点区别，我们只需要安装一遍就能理解。这里以4G内存U盘PE方法制作Ubuntu14.04为例，具体的操作过程可参见为数不多的一篇<a target="_blank" rel="noopener" href="https://www.cnblogs.com/acbingo/p/4515240.html">博文</a>，我们用到的工具实质上为微PE+FbinstTool，前者用来格式化U盘并加入一个基础的PE系统(与上一节一致)，而后者就可以直接放在U盘下依靠一个名为grldr(类似于Cmakelist)的文件被系统识别，它负责告诉系统我的U盘里包含了哪些系统。根据博客里的指导，我们先看下U盘非PE盘符下的文件结构：</p>
-<div align="center">![FbinstTool1](FbinstTool1.png)<div align="left">
-<div align="center">![FbinstTool2](FbinstTool2.png)<div align="left">
-&emsp;&emsp;可知，我把Ubuntu14.04的ISO文件放在了目录G:/ISO下，另外两个文件initrd与vmlinuz.efi是从镜像文件里拿出来的，具体位置看博客，原因似乎是FbinstTool需要调用，那么接下来看看FbinstTool的配置文件grldr究竟在说些什么：
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#不用管这两行了</span><br><span class="line">default 0</span><br><span class="line">timeout 60</span><br><span class="line">#Auto方式启动PE，启动PE的方式也不用管了</span><br><span class="line">title Windows PE (Auto)</span><br><span class="line">find --set-root --ignore-floppies &#x2F;wepe&#x2F;wepemenu.ini || find --set-root --ignore-floppies &#x2F;wepe.iso</span><br><span class="line">configfile &#x2F;wepe&#x2F;wepemenu.ini || map &#x2F;wepe.iso (0xff) &amp;&amp; map --hook &amp;&amp; chainloader (0xff)</span><br><span class="line">#EFI方式启动PE，可删</span><br><span class="line">title Windows PE (From EFI)</span><br><span class="line">errorcheck off</span><br><span class="line">find --set-root --ignore-floppies &#x2F;wepe&#x2F;wepemenu.ini &amp;&amp; configfile &#x2F;wepe&#x2F;wepemenu.ini</span><br><span class="line">errorcheck on</span><br><span class="line">#UD方式启动PE，可删</span><br><span class="line">title Windows PE (From UD)</span><br><span class="line">errorcheck off</span><br><span class="line">map (ud)&#x2F;wepe.iso (0xff)</span><br><span class="line">map --hook</span><br><span class="line">chainloader (0xff)</span><br><span class="line">errorcheck on</span><br><span class="line">#关键在这儿，引入名为Ubuntu14.04的系统，且指明重要文件的位置</span><br><span class="line">title Ubuntu14.04</span><br><span class="line">find --set-root &#x2F;ISO&#x2F;ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">kernel &#x2F;ISO&#x2F;vmlinuz.efi boot&#x3D;casper iso-scan&#x2F;filename&#x3D;&#x2F;ISO&#x2F;ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">initrd &#x2F;ISO&#x2F;initrd</span><br><span class="line">boot</span><br><span class="line">#为了制作多系统U盘可以仿照上面一条的方法自行添加</span><br></pre></td></tr></table></figure>
-&emsp;&emsp;OK！说了这么多，U盘已经制作完了，接下来要装单系统或是双系统，可接下去看：
+<p><strong><em>1、Win10环境下安装</em></strong><br><strong><em>1.1、Anaconda安装</em></strong><br>&emsp;&emsp; Anaconda是一个开源的包、环境管理器，它的优势在于能够配置不同版本python环境，同时集成一键安装各种依赖包和IDE等常用工具，其中包括我们常用的Git、VSCode等软件，所以以后装机的时候完全可以先装一个Anaconda，再用它去管理我们的常用开发工具。<br>&emsp;&emsp;其安装方式较简单，查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/0202781124ef4a1bcc9ce5cd.html">百度经验</a>，注意事项如下：<br>&emsp;&emsp;1)右键管理员权限方式打开安装包;<br>&emsp;&emsp;2)个人计算机还是勾选Just Me;<br>&emsp;&emsp;3)取消勾选Add Anaconda to my PATH environment variable。由于该项勾选后，后续需要卸载Anaconda时，将需要手动删除很多路径，因此推荐在安装完毕后自己手动添加环境变量(其实就是系统的链接库查询路径)。<br>&emsp;&emsp;安装完成后，根据需要<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jpfss/p/8608204.html">手动添加环境变量</a>，目的就是为了在CMD或PowerShell环境下识别Conda指令，但实际上也没有必要，原因如下：<br>&emsp;&emsp;1)我们通常情况下会使用Anaconda自带的终端环境Anaconda Powershell Prompt，这不会产生任何错误;<br>&emsp;&emsp;2)就算按上述手动添加环境变量，在CMD或PowerShell环境下还是不能使用”conda activate”或”conda deactivate”命令，还需要在终端运行”conda init”指令，该指令是用来初始化终端和Anaconda环境链接关系的;<br>&emsp;&emsp;3)就算运行“conda init”指令了，CMD变得可以使用”conda activate”或”conda deactivate”命令，但是PowerShell仍然不行，还需要借用<a target="_blank" rel="noopener" href="http://yuhao.me/zai-powershellzhong-shi-yong-condade-activate.html">其他的技术</a>，我已经踩坑这里就别试了，这个方法用完之后，在我的CMD里添加了初始化运行环境，不知道怎么删(类似于Ubuntu下的/.bashrc)，导致每次打开终端都会显示一段错误提示。<br>&emsp;&emsp;总结，不改配置环境也行，使用Anaconda自带的终端环境Anaconda Powershell Prompt，且在后续我会介绍怎么配置VSCode内运行Prompt。<br>&emsp;&emsp;若要添加环境变量，如下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Anaconda3为安装目录</span></span><br><span class="line">\Anaconda3</span><br><span class="line">\Anaconda3\Scripts</span><br><span class="line">\Anaconda3\Library\bin</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.2、Anaconda环境生成</em></strong><br>&emsp;&emsp;Anaconda最大的优势就在于能配置多个Python环境，而由于TensorFlow不同版本只能运行在指定Python版本下，比如这里我们就需要Python3.6的环境，那么就使用Anaconda生成一个独立的环境(注意，每个环境都有自己独立的开发工具，比如就算在base环境下安装了Git，那么在新环境下仍然重新安装)。具体操作流程查阅<a target="_blank" rel="noopener" href="https://www.cnblogs.com/W-Yentl/p/7783933.html">博文</a>，这里简单码一下代码：  </p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先打开Anaconda Prompt</span></span><br><span class="line"><span class="comment">#添加配置清华源</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --set show_channel_urls yes</span><br><span class="line"><span class="comment">#直接添加一个环境，取名为faceswap，且依赖于Python3.6</span></span><br><span class="line">conda create -n faceswap python=<span class="number">3.6</span></span><br><span class="line"><span class="comment">#启动该环境</span></span><br><span class="line">conda activate faceswap</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。<br>*<strong>1.3、Git和VSCode安装***<br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone DeepFakes，VSCode用来搭建编译环境。<br>*</strong>1.4、DeepFakes***<br>&emsp;&emsp;由于本教程是以DeepFakes软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone DeepFakes，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习，<strong>且必须选用对应算力的CUDA与CUDNN，否则报错</strong>)。<br>具体安装方式如下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.6、VSCode配置</em></strong><br>&emsp;&emsp;VSCode应该是目前用过最节简的IDE了，体积小，运行快，可自动添加各种插件还开源。如果总是使用Anaconda Prompt或者从Anaconda Navigator运行环境则稍显麻烦，这里简述一下如何将Anaconda环境外安装的VSCode链接至Anaconda并搭建自己的环境。<br>&emsp;&emsp;1)首先下载依赖包-Python;<br>&emsp;&emsp;2)选择File-Preferences-Settings，键入python.python Path，修改路径为/Anaconda3/python.exe，即根目录下的python可执行文件;<br>&emsp;&emsp;3)此时在IDE内打开任意.py文件，IDE左下角便可以选择使用哪个版本Python，点击选择我们在1.2节中搭建环境的Python3.6版本;<br>&emsp;&emsp;4)键入快捷键”CTRL + ~”，打开终端界面，默认使用PowerShell(前面介绍过，使用该终端并不能activate环境)，但是应该会提示更换Prompt版本终端，更改之后就相当于一款内置于VSCode的Anaconda Prompt了。</p>
+<h3 id="0x02-PyTorch环境配置"><a href="#0x02-PyTorch环境配置" class="headerlink" title="0x02 PyTorch环境配置"></a><em>0x02 PyTorch环境配置</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、PyTorch安装</span><br><span class="line">2、PyCharm安装</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 PyTorch安装</em></strong><br>&emsp;&emsp;PyTorch基于Ubuntu16.04配置环境。  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先安装pip3</span></span><br><span class="line">sudo apt-get install python3-pip</span><br><span class="line"><span class="comment">#更新pip3版本</span></span><br><span class="line">sudo pip3 install --upgrade pip</span><br><span class="line"><span class="comment">#去官网 https://pytorch.org 查安装代码(根据个人系统情况)</span></span><br><span class="line">pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html</span><br><span class="line"><span class="comment">#安装numpy</span></span><br><span class="line">pip3 install --upgrade numpy</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x02-单系统重装"><a href="#0x02-单系统重装" class="headerlink" title="0x02 单系统重装"></a><em>0x02 单系统重装</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 进入BIOS的方式</span><br><span class="line">2 Windows 10系统重装</span><br><span class="line">  2.1 方案一：重置此电脑</span><br><span class="line">  2.2 方案二：使用微PE制作的Windows系统U盘</span><br><span class="line">3 任意系统重装</span><br><span class="line">  3.1 使用微PE+FbinstTool制作的多系统U盘</span><br><span class="line">4 Ubuntu系统相关</span><br><span class="line">  4.1 Ubuntu系统磁盘分配推荐</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、进入BIOS的方式</em></strong><br>品牌电脑进入BIOS的按键一般如下：</p>
-<div align="center">![BIOS进入按键](BIOS进入按键.jpg)<div align="left">
-
-<p><strong><em>2、Windows 10系统重装</em></strong><br><strong><em>2.1、方案一：重置此电脑</em></strong><br>&emsp;&emsp;Windows 10较人性化的一点就是自带系统重装功能，关于Win10重置电脑的资料可直接查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/b0b63dbf310d2f4a49307071.html">百度经验</a><sup>[3]</sup>。<br>&emsp;&emsp;这边需要注意的两点是:1)重置电脑可以选择只重置盘符C或者全部盘符清理（相当于完全重装电脑）;2)如果盘符C的空间不足，则会直接报错，并提示增加C盘空间再重置，假如没报错在重置的时候也会出错，所以要保证C盘剩余容量大于10G（个人经验）。<br>**<em>2.2、方案二：使用微PE制作的Windows系统U盘**</em><br>&emsp;&emsp;这里以安装Win10系统为例，安装过程可查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html">百度经验</a>。</p>
-<p><strong><em>3、任意系统重装</em></strong><br><strong><em>3.1、使用微PE+FbinstTool制作的多系统U盘</em></strong><br>&emsp;&emsp;(1)直接U盘方式启动，先运行Auto PE，进入PE系统后设置盘符，由于安装单系统，所以格式化所有盘符;<br>&emsp;&emsp;(2)重启，并以title名为 Ubuntu14.04 U盘进入方法启动，可以看到进入了一个Ubuntu系统桌面，但是桌面上还有两个文件，其中一个是Install Ubuntu14.04，按步骤安装即可;<br>&emsp;&emsp;(3)安装完成，重启进入BIOS，并将U盘启动后移，继续重启即可运行Ubuntu系统。</p>
-<p><strong><em>4、Ubuntu系统相关</em></strong><br><strong><em>4.1、Ubuntu系统磁盘分配推荐</em></strong><br>&emsp;&emsp;磁盘分配即系统使用过程中硬盘空间的资源合理配置，这里记录一下比较适合的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/116970u/p/10487452.html">分配方法</a>，下面以128G工控机为例。<br>&emsp;&emsp;首先，介绍各挂载点作用：</p>
-<table>
-<thead>
-<tr>
-<th>挂载点</th>
-<th>分区类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/</td>
-<td>主分区</td>
-<td>用于存放系统，相当于windows的C盘，15G即可</td>
-</tr>
-<tr>
-<td>/home</td>
-<td>逻辑分区</td>
-<td>用户存储数据用，要尽可能大</td>
-</tr>
-<tr>
-<td>/boot</td>
-<td>主分区</td>
-<td>引导分区，大小设置为480M</td>
-</tr>
-<tr>
-<td>swap</td>
-<td>逻辑分区</td>
-<td>相当于电脑内存，大小设置为电脑内存大小(2/4/8/16G)</td>
-</tr>
-</tbody></table>
-<p>&emsp;&emsp;给出高级用户Desktop版本的分配建议：</p>
-<table>
-<thead>
-<tr>
-<th>挂载点</th>
-<th>装置</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/</td>
-<td>/dev/hda1</td>
-<td>15G</td>
-</tr>
-<tr>
-<td>/home</td>
-<td>/dev/hda2</td>
-<td>最大的剩余空间</td>
-</tr>
-<tr>
-<td>/boot</td>
-<td>/dev/hda3</td>
-<td>480MB左右</td>
-</tr>
-<tr>
-<td>swap</td>
-<td>/dev/hda5</td>
-<td>大约内存大小(建议至少512MB)</td>
-</tr>
-</tbody></table>
-<p>&emsp;&emsp;高级用户Server版本的分配建议：</p>
-<table>
-<thead>
-<tr>
-<th>挂载点</th>
-<th>装置</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/</td>
-<td>/dev/hda1</td>
-<td>15G</td>
-</tr>
-<tr>
-<td>/home</td>
-<td>/dev/hda2</td>
-<td>最大的剩余空间</td>
-</tr>
-<tr>
-<td>/boot</td>
-<td>/dev/hda3</td>
-<td>480MB左右</td>
-</tr>
-<tr>
-<td>swap</td>
-<td>/dev/hda5</td>
-<td>大约内存大小(建议至少512MB)</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>/dev/hda6</td>
-<td>视服务器功能决定大小</td>
-</tr>
-</tbody></table>
-<div align="center">![swap](swap.png)<div align="left">
-<div align="center">![boot](boot.png)<div align="left">
-<div align="center">![home](home.png)<div align="left">
-<div align="center">![root](root.png)<div align="left">
-
-<h3 id="0x03-双系统安装"><a href="#0x03-双系统安装" class="headerlink" title="0x03 双系统安装"></a><em>0x03 双系统安装</em></h3><p>&emsp;&emsp;出于工作的需要，有时候需要用到Ubuntu系统，这里讲一下在Win10系统上安装Ubuntu14.04系统方法。<br>&emsp;&emsp;1)制作系统U盘。这已在第一章中讲过，可回头去看如何制作。<br>&emsp;&emsp;2)给Win10分区。为了方便给第二系统腾出空间，需要先给该系统分出一个盘符，具体的分区方法查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3d69c551233c56f0ce02d759.html">百度经验</a>。<br>&emsp;&emsp;3)BIOS选择U盘启动项。每台电脑情况都不一样，而且和当前系统也有关系，比如我的Y430P机身侧面有一个NAVO键可直接进入BIOS，其他电脑见第二章1节。</p>
-<h3 id="0x04-Windows-10子系统"><a href="#0x04-Windows-10子系统" class="headerlink" title="0x04 Windows 10子系统"></a><em>0x04 Windows 10子系统</em></h3><h3 id="0x05-虚拟机"><a href="#0x05-虚拟机" class="headerlink" title="0x05 虚拟机"></a><em>0x05 虚拟机</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 VirtualBox安装Kali</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、VirtualBox安装Kali</em></strong><br>&emsp;&emsp;VirtualBox 是一款开源虚拟机软件，在Docker中被默认使用。Kali是一款用于信息安全的操作系统，具体的安装流程可看<a target="_blank" rel="noopener" href="https://blog.csdn.net/JaydenWang5310/article/details/78104472">博客</a></p>
-<h3 id="0x06-Docker容器技术"><a href="#0x06-Docker容器技术" class="headerlink" title="0x06 Docker容器技术"></a><em>0x06 Docker容器技术</em></h3><p>&emsp;&emsp;Docker容器技术与虚拟机一样，是在当前系统下使用其他系统软件的方法，但它更方便快捷，占用体积更小，运行目标程序只需要拥有一个配置好环境的镜像文件即可。关于Docker可以参考<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-hello-world.html">教程</a>。另外比较重要的一点是Docker所使用的<a target="_blank" rel="noopener" href="https://blog.51cto.com/11880730/2115614">四种网络连接方式</a>，比较幸运的是其默认使用桥接模式，方便信息安全方面的技术研究。<br>&emsp;&emsp;如教程所示，Win10专业版有较方便的安装方法，但是普通版本的Win10安装Docker还有许多坑在那儿。这里讲一讲Win10安装Docker的步骤<br>&emsp;&emsp;1)从<a target="_blank" rel="noopener" href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/">阿里云镜像</a>种下载最新的Docker toolbox，这个ce版本在Win10上是支持的。<br>&emsp;&emsp;2)安装下载文件，git可以选用自己以前安装的，所以不用下载，只需在安装完成后，右键Docker Quickstart Terminal属性，并修改目标git的bash.exe路径即可。<br>&emsp;&emsp;3)右键管理员方式启动Docker Quickstart Terminal，发现程序一直<a target="_blank" rel="noopener" href="https://blog.csdn.net/dhaiuda/article/details/81975550">卡死在boot2docker.iso的下载</a>，只需按链接里的方法即可解决，原因就是没有翻墙，也可以ss开启全局模式下载。<br>&emsp;&emsp;4)每次运行都需要右键管理员模式运行。</p>
-<h3 id="0x07-软件安装脚本与镜像制作"><a href="#0x07-软件安装脚本与镜像制作" class="headerlink" title="0x07 软件安装脚本与镜像制作"></a><em>0x07 软件安装脚本与镜像制作</em></h3><p>&emsp;&emsp;由于各种原因，经常需要在不同的电脑上安装不同的系统，但是每次重装以后都会导致需要重新安装软件以及修改配置，为了节约时间，这里提出两种解决办法:1)软件安装脚本编写。即将各个软件的下载步骤写成脚本文件，一键安装;2)镜像制作。即将已经配置好的系统生成一个镜像，并使用U盘安装，也被称为非纯净系统。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 软件安装脚本</span><br><span class="line">  1.1 Ubuntu14.04安装脚本</span><br><span class="line">2 镜像制作</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、软件安装脚本</em></strong><br><strong><em>1.1、Ubuntu14.04安装脚本</em></strong><br>&emsp;&emsp;由于工作需要，该系统下的软件安装脚本，本人已在git上屯了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh">仓库</a>，并会不时地维护，如果想加入的小伙伴可以Fork一下。</p>
-<p><strong><em>2、镜像制作</em></strong><br>&emsp;&emsp;</p>
-<h3 id="0x08-引用文献"><a href="#0x08-引用文献" class="headerlink" title="0x08 引用文献"></a><em>0x08 引用文献</em></h3></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+<p><strong><em>2 PyCharm安装</em></strong><br>&emsp;&emsp;PyCharm安装，用于编写python程序的IDE，具体安装方式查阅Ubuntu16.04配置sh包。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
       
 
       
@@ -316,7 +206,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技巧</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">配置</a>
         		</li>
       		
 		</ul>
@@ -326,7 +216,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
         </p>
       
 
@@ -356,20 +246,20 @@
 
 
   
-    <article id="post-Git与Hexo" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-信息聚合工具-RSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/20/Git%E4%B8%8EHexo/">Git与Hexo</a>
+      <a class="article-title" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">信息聚合工具-RSS</a>
     </h1>
   
 
         
-        <a href="/2018/07/20/Git%E4%B8%8EHexo/" class="archive-article-date">
-  	<time datetime="2018-07-20T12:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
+        <a href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/" class="archive-article-date">
+  	<time datetime="2019-05-10T08:47:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-10</time>
 </a>
         
         
@@ -377,109 +267,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;记录一下我自己的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html">Git + Github搭建</a>细节，顺便记录Git、Hexo与MarkDown的相关知识。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/git命令速查表.png" width="700" height="400">
-<div align="left">
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;RSS又称简易信息聚合协议，是基于XML标准并在互联网上被广泛采用的内容包装和投递协议。使用RSS订阅能更快地获取信息，网站提供RSS输出，有利于让用户获取网站内容的最新更新。<br>&emsp;&emsp;目前获取信息的渠道日益增加，每种App都有各自的信息传达方式与推荐算法，虽然有益于日常刷段子，但是这也会导致获取信息的效率变低。RSS作为一种古老的信息订阅方式，却在信息横流的今天，将被赋予更深远的意义。<br>&emsp;&emsp;我认为其优势在于:1)高效率获取信息，并整合信息的能力。只要添加你需要的源，就能代替繁杂而重复的打开App，查阅订阅信息的过程;2)自定义信息弹窗。做到深处，可以尝试将获得的信息弹窗给手机或电脑，这对于有时效性的新闻来说是很重要的特性;3)自定义信息筛选功能。有时候我们需要自己喜欢的筛选信息方式，但是通常我们都是被别人的推荐算法所固定，然而用RSS的方法我们能获取更多的信息掌控权。<br>&emsp;&emsp;当然凡事都有两面性，RSS也有自身的缺陷:1)可扩展性差。毕竟所有的信息源都是自己设定的，而很多App能够依赖自己的算法推荐新的关注对象;2)不适用于深度阅读。挑选优质的信息源其实是很复杂的过程，如果单靠自己重新设计一个筛选优质信息的算法将花费大量的精力;3)不适用于减压阅读。有创意的或比较欢快的新颖视频、文章来源特性就是多样，这与RSS的固定订阅背道而行。<br>&emsp;&emsp;总结来说，RSS适合于添加固定的优质信息源，并以自定义的方式筛选目标信息。</p>
+<h3 id="0x01-RSS阅读器"><a href="#0x01-RSS阅读器" class="headerlink" title="0x01 RSS阅读器"></a><em>0x01 RSS阅读器</em></h3><p>&emsp;&emsp;作为一种比较成熟的技术，其实市面上是有很多实现获取RSS的工具，通常也被称为RSS阅读器。当然，针对不同的平台，有不同的产品。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Windows FeedDemon</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><em>0x01 Git</em></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">  1.4 添加远程仓库</span><br><span class="line">2 远程主仓库、远程分仓库与本地仓库</span><br><span class="line">  2.1 <span class="built_in">clone</span></span><br><span class="line">  2.2 fork</span><br><span class="line">  2.3 remote</span><br><span class="line">3 分支推送</span><br><span class="line">  3.1 add</span><br><span class="line">  3.2 commit</span><br><span class="line">  3.3 push</span><br><span class="line">4 分支更新</span><br><span class="line">  4.1 fetch</span><br><span class="line">  4.2 pull</span><br><span class="line">5 分支合并</span><br><span class="line">  5.1 rebase</span><br><span class="line">  5.2 merge</span><br><span class="line">6 解决冲突</span><br><span class="line">7 回溯</span><br><span class="line">  7.1 本地修改清理</span><br><span class="line">  7.2 查看历史</span><br><span class="line">  7.3 版本回溯</span><br><span class="line">8 打标签</span><br><span class="line">9 堆栈暂存</span><br><span class="line">10 清理历史记录</span><br><span class="line">11 问责</span><br><span class="line">12 提交拣取</span><br><span class="line">13 工作区代码管理</span><br><span class="line">14 常用操作命令</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、配置</em></strong><br><em>1.1、用户与邮箱</em></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">&quot;your name&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;your email&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
-<p><em>1.2、CRLF与LF</em><br>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式，具体设置方式请查阅<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/08/29/CRLF%E4%B8%8ELF/">CRLF与LF</a>。  </p>
-<p><em>1.3、SSH key</em><br>&emsp;&emsp;由于Git使用过程中直接传输帐号密码会不太安全，另外也很不方便(每次使用都要输帐号密码)，因此可以考虑为Git帐号添加SSH key。  </p>
-<p><em>1.4、添加远程仓库</em><br>&emsp;&emsp;默认clone下来的库，其名称均为origin，如果想重新给远程仓库起名字，则用以下代码:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote add &lt;仓库名&gt; &lt;仓库地址&gt;</span><br><span class="line"><span class="comment">#举例</span></span><br><span class="line">git remote add upstream git@github.com:wuhan2020/wuhan2020.git</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Windows FeedDemon</em></strong><br>&emsp;&emsp;一款免费、轻量级的阅读器，网上的评价还是很好的，贴上它的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">安装与使用</a><sup>[1]</sup>。想要添加RSS源，可以采取多种办法:1)直接去网上找rss源;2)Easy to RSS插件，这是一款Chrome插件，能够直接识别可支持RSS协议的网址;3)一些寻找源的网址，在链接里有;4)RSS源生成项目。这些项目能够替没有RSS的网址生成RSS，比如Feed43、RSSHub等，将在下一章做重要介绍。</p>
+<h3 id="0x02-RSS源生成项目"><a href="#0x02-RSS源生成项目" class="headerlink" title="0x02 RSS源生成项目"></a><em>0x02 RSS源生成项目</em></h3><p>&emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RSSHub</span><br><span class="line">  1.1 Docker部署</span><br><span class="line">  1.2 添加源</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、远程主仓库、远程分仓库与本地仓库</em></strong><br>&emsp;&emsp;我们创建的git仓库都是寄存在github服务器的，因此远程主仓库就是指某一项目最早被保存在github服务器内的哪个版本。有的时候我们需要多人合作，因此需要将主仓库fork下来，用于自行修改，但也保存在github服务器内，这种仓库叫做远程分仓库。<br><em>2.1、clone</em><br>&emsp;&emsp;克隆远程仓库可以用如下命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设要克隆user1的myRepository仓库</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/user1/myRepository.git</span><br><span class="line"><span class="comment"># 给你的远程仓库取名，可以使用&quot;-o&quot;参数</span></span><br><span class="line">git <span class="built_in">clone</span> <span class="string">&quot;仓库地址&quot;</span> -o <span class="string">&quot;仓库名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程仓库clone下来默认的仓库名是 origin ，可以用如下方式查看</span></span><br><span class="line">git remote -v</span><br><span class="line"><span class="comment"># 输出如下</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (fetch)</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (push)</span></span><br><span class="line"><span class="comment"># 如果不喜欢这个名字，则可以删除重新添加</span></span><br><span class="line">git remote rm origin</span><br><span class="line">git remote add <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;仓库地址&quot;</span></span><br></pre></td></tr></table></figure>
-<p><em>2.2、fork</em><br>&emsp;&emsp;fork即所谓的派生远程主仓库，其过程如下图</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/fork.png" width="550" height="350">
-<div align="left">
+<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。</p>
+<p><strong><em>1.1、Docker部署</em></strong><br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  </p>
+<p><strong><em>1.2 添加源</em></strong><br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#举例: https:&#x2F;&#x2F;rsshub.app&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由: &#x2F;wechat&#x2F;wasi&#x2F;:id</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;但是我们添加源的时候并不是走rsshub.app这个域名的IP，而是应该走我们自己部署的Docker IP：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#注意别使用加密的https格式</span><br><span class="line">http:&#x2F;192.168.99.100:1200&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由ID可从瓦斯阅读对应的公众号下找到</span><br></pre></td></tr></table></figure>
 
-<p><em>2.3、remote</em><br>&emsp;&emsp;本地仓库的分支维护，需要用到remote方法:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有分支信息</span></span><br><span class="line">git branch –a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前所有远程仓库名</span></span><br><span class="line">git remote -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看关于远程的一些信息</span></span><br><span class="line">git remote show <span class="string">&#x27;仓库名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果远程仓库已经删除了某些分支，但是本地仍然存在这些分支，可用以下命令删除干净</span></span><br><span class="line">git remote prune <span class="string">&#x27;仓库名&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">https://www.zhihu.com/question/19580096/answer/20490041</a><br>[2]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">https://docs.rsshub.app</a><br>[3]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">https://jailbreakfox.github.io/2018/08/01/操作系统安装/</a><br>[4]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">https://docs.rsshub.app/install/#使用-docker-部署</a><br>[5]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">https://docs.rsshub.app/social-media.html#微信</a></p>
 
-<p><strong><em>3、分支推送</em></strong><br><em>3.2、commit</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -m参数可直接打提交名</span></span><br><span class="line">git commit -m <span class="string">&quot;提交名&quot;</span></span><br><span class="line"><span class="comment"># 追加提交</span></span><br><span class="line"><span class="comment"># 如果远程仓库已经push了一次提交，然而并不满意又不想分成两次提交，--amend参数可在此次提交之上追加一次提交，并将两次提交合并。</span></span><br><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
-<p><em>3.3、push</em><br>&emsp;&emsp;向远程仓库推送本地仓库的代码，用如下命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 完整的推送代码</span></span><br><span class="line"><span class="comment"># git push &quot;远程主机名&quot; &quot;本地分支名&quot;:&quot;远程分支名&quot;</span></span><br><span class="line">git push origin master:master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以省略远程分支名</span></span><br><span class="line"><span class="comment"># 如果同名远程分支存在则推送到该分支；如果该远程分支不存在，则该远程分支会被新建</span></span><br><span class="line">git push origin master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果省略本地分支，则代表删除该名远程分支</span></span><br><span class="line">git push origin :master</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、分支拉取</em></strong><br>&emsp;&emsp;分支拉取方式由fetch与pull两种，他们的区别如下图:</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/分支拉取.jpg" width="550" height="250">
-<div align="left">
-
-<p><em>4.1、fetch</em><br>&emsp;&emsp;git fetch是将远程主机的最新内容拉到本地，用户在检查了以后决定是否合并到本地分支中。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#fetch更新，缺省参数相当于git fetch origin/master</span></span><br><span class="line">git fetch</span><br><span class="line"><span class="comment">#取回更新后，会返回一个FETCH_HEAD</span></span><br><span class="line"><span class="comment">#输入以下代码检查区别</span></span><br><span class="line">git <span class="built_in">log</span> -p FETCH_HEAD</span><br></pre></td></tr></table></figure>
-
-<p><em>4.2、pull</em><br>&emsp;&emsp;git pull是将远程主机的最新内容拉下来后直接合并，即：git pull = git fetch + git merge，这样可能会产生冲突，需要手动解决。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pull更新，缺省参数相当于git pull origin/master</span></span><br><span class="line">git pull</span><br><span class="line"><span class="comment">#其实际运行过程相当于</span></span><br><span class="line"><span class="comment">#git fetch origin/master</span></span><br><span class="line"><span class="comment">#git merge FETCH_HEAD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整的拉取代码</span></span><br><span class="line"><span class="comment"># git pull &quot;远程主机名&quot; &quot;远程分支名&quot;:&quot;本地分支名&quot;</span></span><br><span class="line">git pull origin master:master</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>5、分支合并</em></strong><br>&emsp;&emsp;分支合并有rebase与merge两种方式。切记主分支内别用rebase，因为无法回溯到某个参与者提交的那次commit，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4079284dd970">查阅博客</a>，有一个<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48190059">网站</a>做了两者的使用实验。<br><em>5.1、rebase</em><br>&emsp;&emsp;rebase会把你当前分支的commit放到公共分支的最后面,所以叫变基。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/rebase.jpg" width="400" height="200">
-<div align="left">
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rebase</span></span><br><span class="line">git pull --rebase <span class="string">&quot;远程主仓库&quot;</span> <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># push到自己的fork仓库</span></span><br><span class="line">git push <span class="string">&quot;远程fork仓库&quot;</span> <span class="string">&quot;分支名&quot;</span> -f</span><br></pre></td></tr></table></figure>
-
-<p><em>5.2、merge</em><br>&emsp;&emsp;merge 会把公共分支和你当前的commit合并在一起，形成一个新的commit提交。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/merge.jpg" width="400" height="200">
-<div align="left">
-
-<p><em>6、解决冲突</em><br>&emsp;&emsp;B站上有<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48278991">大佬</a>已经很详细地讲述了解决冲突的两种办法。<br><em>6.1、冲突文件内解决</em><br>&emsp;&emsp;解决冲突的时候可以先合并分支，这样如果两分支代码没有冲突就能直接合并，假如有冲突，就需要直接修改显示冲突的文件(其内部已经用一些符号显示冲突位置)。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先合并分支</span></span><br><span class="line">git rebase/merge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果分支有冲突，则修改显示所有冲突的文件</span></span><br><span class="line">git diff .</span><br><span class="line"><span class="comment"># 或者单独显示某个文件</span></span><br><span class="line">git diff <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"><span class="comment"># 又或者显示某个文件与某个hash下的该文件差异</span></span><br><span class="line">git diff <span class="string">&quot;hash&quot;</span> <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后继续之前的合并命令</span></span><br><span class="line">git rebase/merge --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果分支有双方修改的冲突</span></span><br><span class="line"><span class="comment"># 可以选择全部接收对方的修改</span></span><br><span class="line">git checkout --theirs</span><br><span class="line"><span class="comment"># 也可以全部接收自己的修改</span></span><br><span class="line">git checkout --ours</span><br></pre></td></tr></table></figure>
-
-<p><em>6.2、补丁文件显示冲突</em><br>&emsp;&emsp;打补丁的方法比前面一种显得更加简洁，在合并之前，先测试被合并分支打的patch。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到被合并的分支</span></span><br><span class="line"><span class="comment"># 制作一个补丁,N表示生成几个patch,默认是一笔commit一个patch</span></span><br><span class="line"><span class="comment"># &quot;-N&quot;代表需要打的补丁数量，默认为1</span></span><br><span class="line">git format-patch -N</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到需要合并的分支</span></span><br><span class="line"><span class="comment"># 打上补丁，PATCH_NAME为上步操作得到的patch名</span></span><br><span class="line">git am PATCH_NAME</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果存在冲突，则会显示冲突补丁文件名</span></span><br><span class="line"><span class="comment"># 强制应用补丁，假如冲突补丁文件名为&quot;.git/rebase-apply/0001&quot;</span></span><br><span class="line"><span class="comment"># 如果有冲突，则会显示出冲突内容</span></span><br><span class="line">git apply --reject PATCH_NAME</span><br><span class="line"><span class="comment"># 可以打开冲突结果文件查看冲突内容</span></span><br><span class="line">vim <span class="string">&quot;冲突文件名&quot;</span>.rej</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以用Vim打开此patch，并对比着修改冲突，Vim命令如下</span></span><br><span class="line">:e PATCH_NAME</span><br></pre></td></tr></table></figure>
-
-<p><em>7、回溯</em><br><em>7.1、本地修改清理</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 放弃本地所有修改，代码与远程master一致</span></span><br><span class="line">git fetch origin</span><br><span class="line">git checkout master</span><br><span class="line">git reset --hard origin/master</span><br><span class="line">```  </span><br><span class="line">*7.2、查看历史*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 每个提交在一行内显示</span></span><br><span class="line">git <span class="built_in">log</span> --oneline</span><br><span class="line"><span class="comment"># 在所有提交日志中搜索包含 [homepage] 的提交</span></span><br><span class="line">git <span class="built_in">log</span> --all --grep=<span class="string">&#x27;homepage&#x27;</span></span><br><span class="line"><span class="comment"># 获取某人的提交日志</span></span><br><span class="line">git <span class="built_in">log</span> --author=<span class="string">&quot;xuyanghe&quot;</span></span><br><span class="line">```  </span><br><span class="line">*7.3、本地版本回溯*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 获取所有操作历史</span></span><br><span class="line">git reflog</span><br><span class="line"><span class="comment"># 重置到相应提交，回退一个版本</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line"><span class="comment"># 或者重置到某一提交版本</span></span><br><span class="line">git reset --hard <span class="string">&quot;提交的哈希值&quot;</span></span><br><span class="line">```  </span><br><span class="line">*7.4、远程版本回溯*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 将版本回退提交到远程仓库</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line">git push --force</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">*8、打标签*  </span><br><span class="line">&amp;emsp;&amp;emsp;版本号用于标记比较特殊的版本:</span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 列出所有tag</span></span><br><span class="line">git tag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为当前代码添加一个tag</span></span><br><span class="line">git tag <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 添加带备注的tag，-a参数后面跟tag名和提交的哈希值，-m参数后面跟tag备注</span></span><br><span class="line">git tag -a <span class="string">&quot;tag名&quot;</span> <span class="string">&quot;提交的哈希值&quot;</span> -m <span class="string">&quot;tag备注&quot;</span></span><br><span class="line"><span class="comment"># 删除某个分支</span></span><br><span class="line">git tag -d <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示某一tag下的备注信息</span></span><br><span class="line">git show <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送某个标签</span></span><br><span class="line">git push <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 推送所有标签</span></span><br><span class="line">git push origin --tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到某个标签下的代码</span></span><br><span class="line">git checkout <span class="string">&quot;tag名&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>9、堆栈暂存</em><br>&emsp;&emsp;stash命令可以将修改的内容保存至堆栈区:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 保存至堆栈</span></span><br><span class="line">git stash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出堆栈中所有的存储内容</span></span><br><span class="line">git stash list</span><br><span class="line"><span class="comment"># 显示堆栈中某次存储内容</span></span><br><span class="line">git stash show stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(同时删除stash中的存储内容)</span></span><br><span class="line"><span class="comment"># 默认得到栈顶的存储</span></span><br><span class="line">git stash pop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(不删除stash中的存储内容)</span></span><br><span class="line">git stash apply stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 丢弃堆栈中某个存储内容</span></span><br><span class="line">git stash drop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 丢弃堆栈中所有存储内容</span></span><br><span class="line">git stash clear</span><br></pre></td></tr></table></figure>
-
-<p><em>10、清理历史记录</em><br>&emsp;&emsp;.git文件会记录所有的提交历史，删除所有提交记录，可采用如下措施:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.删除.git</span></span><br><span class="line">rm -rf .git/</span><br><span class="line"><span class="comment"># 2.重新添加.git</span></span><br><span class="line">git init</span><br><span class="line"><span class="comment"># 3.缓存所有文件</span></span><br><span class="line">git add .</span><br><span class="line"><span class="comment"># 4.提交跟踪过的文件</span></span><br><span class="line">git commit -m <span class="string">&quot;add all again&quot;</span></span><br><span class="line"><span class="comment"># 5.添加远程仓库链接</span></span><br><span class="line">git remote add orgin <span class="string">&quot;远程仓库名&quot;</span></span><br><span class="line"><span class="comment"># 6.强制提交到远程master分支</span></span><br><span class="line">git push -f orgin master:master</span><br></pre></td></tr></table></figure>
-
-<p><em>11、问责</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询某个文件的修改历史事件</span></span><br><span class="line">git blame <span class="string">&quot;文件名&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>12、提交拣取</em><br>&emsp;&emsp;如果在B分支内想获取A分支的某些提交，则可以使用commit拣取 cherry-pick :</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询A分支下的某个提交hash值</span></span><br><span class="line"><span class="comment"># 例如查询结果为 0dedsaf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到B分支下</span></span><br><span class="line">git cherry-pick <span class="string">&quot;提交的hash值(0dedsaf)&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>13、工作区代码管理</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加已被跟踪文件的修改到这次commit中</span></span><br><span class="line">git add .</span><br><span class="line">git add <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 放弃此次已被跟踪文件的修改</span></span><br><span class="line">git checkout .</span><br><span class="line">git checkout <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理未被跟踪的所有文件及文件夹</span></span><br><span class="line">git clean -df</span><br></pre></td></tr></table></figure>
-
-<p><em>14、常用操作命令</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建分支</span></span><br><span class="line">git branch <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># 删除分支</span></span><br><span class="line">git branch -D <span class="string">&quot;分支名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换分支</span></span><br><span class="line">git checkout <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># 创建并切换分支</span></span><br><span class="line">git checkout -b <span class="string">&quot;分支名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前分支，&quot;-a&quot;参数能显示尽量具体的分支内容</span></span><br><span class="line">git branch -a</span><br><span class="line"><span class="comment"># 更加详细的分支信息</span></span><br><span class="line">git show-branch -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看提交历史</span></span><br><span class="line">git <span class="built_in">log</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看历史提交信息</span></span><br><span class="line">git show <span class="string">&quot;提交hash值&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-MarkDown"><a href="#0x02-MarkDown" class="headerlink" title="0x02 MarkDown"></a><em>0x02 MarkDown</em></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux-Atom下部署MarkDown</span><br><span class="line">  1.1 下载MarkDown代码增强</span><br><span class="line">  1.2</span><br><span class="line">2 MarkDown基本语法</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-Hexo及主题"><a href="#0x03-Hexo及主题" class="headerlink" title="0x03 Hexo及主题"></a><em>0x03 Hexo及主题</em></h3><p>&emsp;&emsp;Hexo提供了快速方便的一键部署功能，让您只需一条命令就能将网站部署到服务器上。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Hexo命令</span><br><span class="line">2 主题与配置</span><br><span class="line">  2.1 Yilia</span><br><span class="line">    2.1.1 安装与配置</span><br><span class="line">    2.1.2</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、Hexo命令</em></strong><br>&emsp;&emsp;这里记录几个Hexo常用的命令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---新建一个网站---</span></span><br><span class="line"><span class="comment">#如果没有设置文件夹爱，Hexo 默认在目前的文件夹建立网站</span></span><br><span class="line">hexo init [folder]</span><br><span class="line"></span><br><span class="line"><span class="comment">#---新建一篇文章---</span></span><br><span class="line">hexo new <span class="string">&quot;文章名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---效果测试三连---</span></span><br><span class="line"><span class="comment">#清除缓存文件</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="comment">#生成网站静态文件</span></span><br><span class="line"><span class="comment">#hexo generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="comment">#启动本地服务器</span></span><br><span class="line"><span class="comment">#hexo server</span></span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#---自动生成网站静态文件，并部署到设定的仓库---</span></span><br><span class="line"><span class="comment">#hexo deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、主题与配置</em></strong><br>&emsp;&emsp;这里写一些我自己用的主题，以及其配置。<br><em>2.1、Yilia</em><br><em>2.1.1、安装与配置</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---安装Yilia---</span></span><br><span class="line"><span class="comment">#并将其放入theme/文件夹下</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/litten/hexo-theme-yilia.git</span><br><span class="line"><span class="comment">#---配置主题为Yilia---</span></span><br><span class="line"><span class="comment">#修改hexo根目录下的_config.yml为theme: yilia</span></span><br><span class="line"><span class="comment">#---修改Yilia的配置---</span></span><br><span class="line"><span class="comment">#修改themes/Yilia/_config.yml</span></span><br><span class="line"><span class="comment">#包括样式、图片等私人订制内容。如果有图片，放到/source/assets/下</span></span><br></pre></td></tr></table></figure>
-
-
-<h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><em>0x04 Git与Hexo搭建博客</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Nodejs与npm安装</span><br><span class="line">3 Hexo安装与配置</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、Git安装与配置</em></strong><br>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/博客仓库.png" width="600" height="500">
-<div align="left">
-
-<p><strong><em>2、Nodejs与npm安装</em></strong><br>&emsp;&emsp;Nodejs<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu16.04-LTS-sh/blob/master/Ubuntu16.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/Nodejs.sh">安装方法</a>这里就不再赘述;npm是一款包管理工具，安装方法也不再赘述。  </p>
-<p><strong><em>3、Hexo安装与配置</em></strong><br>&emsp;&emsp;在安装完Node.js与npm之后，就可以很方便地安装Hexo了:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装Hexo</span></span><br><span class="line">sudo npm install -g hexo</span><br><span class="line"></span><br><span class="line"><span class="comment">#将目标文件夹初始化为博客存放点</span></span><br><span class="line">sudo hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line">sudo chmod 777 -R 博客初始化文件夹</span><br><span class="line"></span><br><span class="line"><span class="comment">#直接三连，分别是清除、生成和部署</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#登录 http://localhost:4000/ 查看效果</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><strong><em>0x05 引用文献</em></strong></h3></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -492,7 +296,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">工具， 信息聚合</a>
         		</li>
       		
 		</ul>
@@ -502,7 +306,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/20/Git%E4%B8%8EHexo/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">展开全文 >></a>
         </p>
       
 
@@ -532,20 +336,20 @@
 
 
   
-    <article id="post-博客伊始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-远程系统工具-SSH与VCN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/05/%E5%8D%9A%E5%AE%A2%E4%BC%8A%E5%A7%8B/">博客伊始</a>
+      <a class="article-title" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">远程系统工具-SSH与VNC</a>
     </h1>
   
 
         
-        <a href="/2018/07/05/%E5%8D%9A%E5%AE%A2%E4%BC%8A%E5%A7%8B/" class="archive-article-date">
-  	<time datetime="2018-07-05T12:07:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
+        <a href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/" class="archive-article-date">
+  	<time datetime="2019-05-08T02:26:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-08</time>
 </a>
         
         
@@ -553,9 +357,53 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-博客伊始"><a href="#0x00-博客伊始" class="headerlink" title="0x00 博客伊始"></a><em>0x00 博客伊始</em></h3><p>&emsp;&emsp;其实很早之前就有写博客的想法，但是一直苦于不知道如何选择博客平台，所以迟迟没能静下心来研究这方面的内容。<br>&emsp;&emsp;由于最近<a target="_blank" rel="noopener" href="https://eyeular.github.io/">卞神</a>向我推荐了hexo，我才第一次真正地去了解如何搭建自己的博客平台。在这里先记录一下我对hexo的粗略见解。</p>
-<h3 id="0x01-Hexo和jekyll"><a href="#0x01-Hexo和jekyll" class="headerlink" title="0x01 Hexo和jekyll"></a><em>0x01 Hexo和jekyll</em></h3><p>&emsp;&emsp;事实上，这两个都是开发个人博客的架构，只不过jekyll对windows并没这么友好（不明真相的我由于一直在意一款theme而折腾了半天）。所以最后还是暂且先使用hexo了，theme什么的骚操作就留给以后去linux系统研究吧。<br>&emsp;&emsp;附上链接<a target="_blank" rel="noopener" href="https://blog.csdn.net/Hoshea_chx/article/details/78826689">使用hexo+github搭建自己的个人博客</a>。里面也介绍了找theme的网址。ps：目前git上最火theme的当属<a target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">Next</a>了</p>
-<h3 id="0x02-欣赏的theme"><a href="#0x02-欣赏的theme" class="headerlink" title="0x02 欣赏的theme"></a><em>0x02 欣赏的theme</em></h3><p>&emsp;&emsp;这里推荐几个theme，第一个就是基于3-jekyll的<a target="_blank" rel="noopener" href="https://github.com/suyan/suyan.github.io">有条理的主题</a>，另外一个是<a target="_blank" rel="noopener" href="http://blog.minfive.com/">skapp</a></p>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;SSH(Secure Shell)又称为安全外壳协议，是目前较可靠且专为<em>远程登录会话</em>和其他<em>网络服务</em>提供安全性的协议，由于其加密而实现的安全特性，已经开始代替telnet、ftp、rlogin、rsh和rcp等传统协议。SSH主要被用来实现远程命令行控制，但是也有远程桌面的功能，然而在可视化方面没有VNC应用广泛。<br>&emsp;&emsp;VNC(Virtual Network Console)又称为虚拟网络控制台，它是一款基于UNIX和Linux操作系统的免费的开源软件。</p>
+<h3 id="0x01-SSH协议工具OpenSSH"><a href="#0x01-SSH协议工具OpenSSH" class="headerlink" title="0x01 SSH协议工具OpenSSH"></a><em>0x01 SSH协议工具OpenSSH</em></h3><p>&emsp;&emsp;OpenSSH是SSH协议的免费开源实现，这里介绍一下其在Ubuntu系统下的安装、使用以及一些实用技巧。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">2 SSH可视化</span><br><span class="line">3 root方式登录</span><br><span class="line">4 免密远程登陆</span><br><span class="line">5 免密远程拷贝</span><br><span class="line">6 远程拷贝</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、安装与使用</em></strong><br>&emsp;&emsp;Ubuntu默认安装SSH的client端但没有安装server端，因此输入以下命令进行安装：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br><span class="line">#或者直接全部安装，毕竟也不大</span><br><span class="line">sudo apt-get install openssh</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这边注意一点，新安装的OpenSSH默认是不能用root访问的，需要<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">修改配置文件</a><sup>[1]</sup>，这里就不详细解释了（<em>留坑</em>）。<br>&emsp;&emsp;安装完成后便可以直接连接目标机器：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh (账户名)@(目标IP)</span><br><span class="line">#举栗子</span><br><span class="line">ssh MyComp@<span class="number">192</span>.<span class="number">168</span>.<span class="number">112</span>.<span class="number">130</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后根据需要填入该账号的密码即可登陆。</p>
+<p><strong><em>2、SSH可视化</em></strong><br><strong><em>3、root方式登录</em></strong><br><strong><em>4、免密远程登陆</em></strong><br><strong><em>5、免密远程拷贝</em></strong>  </p>
+<p><strong><em>6、远程拷贝</em></strong><br>&emsp;&emsp;使用工具scp能够远程拷贝文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在终端环境下运行</span></span><br><span class="line"><span class="comment"># scp &quot;远程机用户名&quot;@&quot;远程机IP&quot;:&quot;拷贝文件路径&quot; &quot;目标路径&quot;</span></span><br><span class="line">scp root@www.runoob.com:/home/root/others/music /home/space/music/1.mp3  </span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-VNC"><a href="#0x02-VNC" class="headerlink" title="0x02 VNC"></a><em>0x02 VNC</em></h3><p>&emsp;&emsp;VNC包括以下四个命令：vncserver，vncviewer，vncpasswd，和vncconnect，大多数情况下用户只需要其中的两个命令：<em>vncserver</em>和<em>vncviewer</em>。另外，和SSH一样，实际上有很多软件都能实现VNC，包括vncserver和vncviewer都有各自的实现软件，关键之处就在于选对安装包，避免踩到多余的坑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">  1.1 Windows平台-RealVNCserver</span><br><span class="line">  1.2 Ubuntu-RealVNCserver</span><br><span class="line">  1.3 Ubuntu-vnc4server</span><br><span class="line">    1.3.1 vnc4server安装与配置</span><br><span class="line">    1.3.2 vnc4server使用</span><br><span class="line">    1.3.3 vnc4server自启动</span><br><span class="line">  1.4 Ubuntu-x11vnc</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、安装与使用</em></strong><br><strong><em>1.1、Windows平台-RealVNCserver</em></strong><br>&emsp;&emsp;在Windows平台下，使用<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">RealVNC官网</a><sup>[2]</sup>的VNCserver和VNCviewer即可，其安装教程可参考<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">百度经验</a><sup>[3]</sup>。唯一与教程不同的地方是，server和viewer都需要登陆注册的邮箱，实际上和teamviewer差不多了。</p>
+<p><strong><em>1.2、Ubuntu-RealVNCserver</em></strong><br>&emsp;&emsp;RealVNCviewer是目前用过的VNCvierver软件里最好用的，因此这里的所有教程均使用RealVNCviewer。而server端则有多种选择，这里使用RealVNCserver。<br>&emsp;&emsp;发现RealVNCserver在Ubuntu里的安装不需要登陆邮箱，可以直接输入Lisence，而且RealVNCviewer也不需要和服务端登陆一个邮箱（可能是该公司对于Linux版本还做的不是很完善），这里写一下安装过程。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#从RealVNC官网下载Linux版本的RealVNCserver，在安装目录下打开终端并安装deb包</span><br><span class="line">sudo dpkg -i 包名称</span><br><span class="line">#安装好之后，还需要继续输入命令vnclicense –add vnc的秘钥，密钥可去网上找</span><br><span class="line">sudo vnclicense -add WHJRK-UXY7V-Q34M9-CZU8L-<span class="number">8</span>KGFA</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;至此安装完成，然后需要对服务端的电脑做一些<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">配置</a><sup>[4]</sup>，可根据上述链接做配置。另外，注意客户端连接时在服务端会弹出允许远程桌面的窗口，点击允许才能继续。<br>&emsp;&emsp;虽然这种方法安装简单，但是存在很多问题:1)客户端的界面和服务端的界面是共用的，类似于QQ的远程桌面;2)配置过程麻烦，且登陆的时候在服务端还需要点允许;3)存在卡顿问题，即在客户端看视频的时候帧数很低;4)<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">卸载方法</a><sup>[5]</sup>很繁杂。</p>
+<p><strong><em>1.3、Ubuntu-vnc4server</em></strong><br><strong><em>1.3.1 vnc4server安装与配置</em></strong><br>&emsp;&emsp;相比于1.2节的服务端，现在要介绍一种优点更多的方法，即直接用apt-get的方式来安装。其安装过程可<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">查阅教程</a><sup>[6]</sup>，由于这种方式的重要性，这里也重复叙述一遍安装过程。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#apt-get方式安装vncserver</span><br><span class="line">sudo apt-get install vnc4server</span><br><span class="line">#安装gnome（linux的一种图形桌面环境）</span><br><span class="line">sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal</span><br><span class="line">#为当前用户创建密码（也可以不创建，在之后开启server的时候会询问）</span><br><span class="line">vncpasswd</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;至此，安装完成，开始修改配置，所有的配置文件均在<del>/.vnc隐藏文件夹下（需要先运行vncserver一次才会生成，<em>如果实在不知道怎么建，就现在命令行执行vncserver</em>），但是我们不使用非流程化的操作，还是自己去创建该文件夹，在</del>/.vnc目录下新建xstartup文件（配置文件），其内容如下（这里有两个方案，第一种是亲自试验过可以的，第二种跑起来很卡）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案一&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line">  </span><br><span class="line">[ -x &#x2F;etc&#x2F;vnc&#x2F;xstartup ] &amp;&amp; exec &#x2F;etc&#x2F;vnc&#x2F;xstartup  </span><br><span class="line">[ -r $HOME&#x2F;.Xresources ] &amp;&amp; xrdb $HOME&#x2F;.Xresources  </span><br><span class="line">xsetroot -solid grey  </span><br><span class="line">vncconfig -iconic &amp;  </span><br><span class="line">  </span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnome-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp; </span><br><span class="line"></span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案二&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line"></span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnmoe-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp;  </span><br><span class="line">vncconfig &amp;  </span><br><span class="line">startlxde &amp;  </span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ibus-daemon -d &amp;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后一步，添加配置文件的可执行权限：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#为xstartup文件添加可执行权限</span><br><span class="line">chmod +x ~/.vnc/xstartup</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.3.2 vnc4server使用</em></strong><br>(1)开启服务端<br>&emsp;&emsp;在终端下直接运行下述命令，~/.vnc目录下会出现.log和.pid两个文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#直接生成pid为1的远程桌面端口</span><br><span class="line">vncserver :1</span><br><span class="line">#新增一个远程桌面端口，pid累加</span><br><span class="line">vncserver</span><br><span class="line">#如果需要指定客户端的屏幕大小，可以使用-geometry参数指定，使用方式为（例如指定屏幕大小为1920*1080）：</span><br><span class="line">vncserver -geometry 1920x1080 :1  </span><br></pre></td></tr></table></figure>
+<p>(2)客户端访问<br>&emsp;&emsp;客户端访问实际上除了RealVNCviewer，还有其他的方式比如xvnc4viewer，只不过前者是界面比较友好的GUI软件，而后者是命令行形式（其实后者是和vnc4server配对，前者和RealVNCviewer配对）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用RealVNCviewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#这种方法和1.1节以及1.2节一致，只不过不需要登陆邮箱，直接输入IP:1</span><br><span class="line">192.168.112.130:1</span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用xvnc4viewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#如果客户端是ubuntu系统，可以使用xvnc4viewer软件，但是这种是命令行模式的，先安装</span><br><span class="line">sudo apt-get install xvnc4viewer</span><br><span class="line">#启动vncviewer软件，连接服务端</span><br><span class="line">vncviewer IP:1  </span><br></pre></td></tr></table></figure>
+<p>(3)关闭服务端<br>vncserver -kill :1 </p>
+<p><strong><em>1.3.3、vnc4server自启动</em></strong><br>&emsp;&emsp;首先确保vnc server已经装好，在/etc文件夹下，新建vncserver文件夹，在vncserver文件夹下新增两个文件startvnc.py和startvnc.sh。<br>(1)startvnc.py</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys  </span><br><span class="line"><span class="keyword">import</span> os  </span><br><span class="line">user=[<span class="string">&quot;k40&quot;</span>,<span class="string">&quot;wcg&quot;</span>,<span class="string">&quot;szh&quot;</span>,<span class="string">&quot;zf&quot;</span>,<span class="string">&quot;yry&quot;</span>,<span class="string">&quot;lxy&quot;</span>,<span class="string">&quot;llp&quot;</span>] <span class="comment">#不同账户的用户名，port按这个顺序依次是1到7，如：k40即port 1  </span></span><br><span class="line">i = <span class="number">1</span>  </span><br><span class="line">depth = <span class="string">&quot;16&quot;</span>  </span><br><span class="line">geometry = <span class="string">&quot;1024x900&quot;</span>  <span class="comment">#分辨率  </span></span><br><span class="line">name = <span class="string">&quot;vncserver&quot;</span>  </span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> user:  </span><br><span class="line">    options = <span class="string">&quot;-name %s -depth %s -geometry %s :%d&quot;</span> % (name, depth, geometry, i)  </span><br><span class="line">    print(options)  </span><br><span class="line">    i = i + <span class="number">1</span>  </span><br><span class="line">    cmd = <span class="string">&quot;su %s -c &#x27;/usr/bin/vncserver %s&#x27;&quot;</span> % (name, options)  </span><br><span class="line">    print(cmd)  </span><br><span class="line">    os.system(cmd)</span><br></pre></td></tr></table></figure>
+<p>(2)startvnc.sh:</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/bash  </span></span><br><span class="line">python /etc/vncserver/startvnc.py  </span><br><span class="line">exit <span class="number">0</span> </span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;运行.sh，然后重启电脑。</p>
+<p><strong><em>1.4、Ubuntu-x11vnc</em></strong><br>&emsp;&emsp;vnc4server确实能用，且特点是宿主机界面不跟随客户机(可以黑？)，但是配置真的很烦。还有一种方法和1.2节中的Ubuntu-RealVNCserver效果一样，但是帧率似乎高了一些，并且我自己也写了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">脚本</a><sup>[7]</sup>，直接运行即可且是开机自启动，但是注意:1)运行过程中需要输入希望配置的密码;2)运行结束会reboot。</p>
+<h3 id="0x03-TeamViewer"><a href="#0x03-TeamViewer" class="headerlink" title="0x03 TeamViewer"></a><em>0x03 TeamViewer</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Ubuntu平台</span><br><span class="line">  1.1 安装TeamViewer</span><br><span class="line">  1.2 设置开机自启动以及登录密码</span><br><span class="line">  1.3 设置局域网联接</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.1、安装TeamViewer</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">教程介绍</a><sup>[8]</sup>，去<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">teamviewer官网</a><sup>[9]</sup>下载最新版的teamviewer for linux。  </p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb</span><br><span class="line"><span class="comment">#安装失败，修复依赖关系  </span></span><br><span class="line">sudo apt-get install -f  </span><br><span class="line"><span class="comment">#重新安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb  </span><br></pre></td></tr></table></figure>
+<p><strong><em>1.2、设置开机自启动以及登录密码</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">教程介绍</a><sup>[10]</sup>。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#停止teamviewer  </span></span><br><span class="line">teamviewer –daemon stop  </span><br><span class="line"><span class="comment">#给conf文件添加权限  </span></span><br><span class="line">sudo chmod <span class="number">777</span> /opt/teamviewer/config/<span class="keyword">global</span>.conf  </span><br><span class="line"><span class="comment">#打开conf文件  </span></span><br><span class="line">gedit /opt/teamviewer/config/<span class="keyword">global</span>.conf</span><br><span class="line"><span class="comment">#在conf文件最后添加一段命令  </span></span><br><span class="line">EulaAccepted = <span class="number">1</span>  </span><br><span class="line">EulaAcceptedRevision = <span class="number">6</span>  </span><br><span class="line"><span class="comment">#打开teamviewer  </span></span><br><span class="line">teamviewer –daemon start  </span><br><span class="line"><span class="comment">#修改teamviewer登录密码  </span></span><br><span class="line">sudo teamviewer –passwd <span class="number">123456</span></span><br><span class="line"><span class="comment">#记录teamviewer ID，方便登录的时候输入  </span></span><br><span class="line">teamviewer –info <span class="keyword">print</span> id</span><br><span class="line"><span class="comment">#设置开机启动(不操作到这一步，配置重启后就会消失)  </span></span><br><span class="line">sudo systemctl enable teamviewerd.service  </span><br><span class="line"><span class="comment">#(如果想不开启开机自启动)  </span></span><br><span class="line">sudo systemctl disable teamviewerd.service</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.3、设置局域网联接</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">教程介绍</a><sup>[11]</sup>。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#option-&gt;常规-&gt;网络设置-&gt;呼入的LAN连接-&gt;选择accept</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">https://blog.csdn.net/xiao_yuanjl/article/details/79147314</a><br>[2]<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">https://www.realvnc.com/en</a><br>[3]<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html</a><br>[4]<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">http://www.cnblogs.com/xuliangxing/p/7642650.html</a><br>[5]<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04</a><br>[6]<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">https://blog.csdn.net/linuxshine/article/details/79972786</a><br>[7]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04配置sh包/x11vnc.sh</a><br>[8]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">https://blog.csdn.net/qq_38451119/article/details/81369043</a><br>[9]<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">https://www.teamviewer.com/zhcn/download/linux/</a><br>[10]<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">https://blog.csdn.net/box172506/article/details/88016732</a><br>[11]<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">https://blog.csdn.net/moshiyaofei/article/details/86431188</a>  </p>
 
       
 
@@ -564,11 +412,22 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">远程桌面， 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/05/%E5%8D%9A%E5%AE%A2%E4%BC%8A%E5%A7%8B/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">展开全文 >></a>
         </p>
       
 
@@ -600,7 +459,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+      <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -722,7 +581,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -730,7 +589,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
