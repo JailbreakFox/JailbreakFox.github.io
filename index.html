@@ -280,7 +280,7 @@
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。</p>
 <div align=center>
-<img src="./DBus框架.png" width = "700" height = "400" />
+<img src="./DBus/DBus框架.png" width = "700" height = "400" />
 <div align=left>
 
 <h3 id="0x01-DBus简介"><a href="#0x01-DBus简介" class="headerlink" title="0x01 DBus简介"></a><em>0x01 DBus简介</em></h3><p>&emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。</p>
@@ -315,7 +315,7 @@
 <p><em>2、DBus状态分析工具</em><br>&emsp;&emsp;DBus运行过程中，需要用调试工具观察运行状态，这里介绍两种工具，分别是D-feet以及dbus_send/dbus_monitor。<br><em>2.1、D-feet</em><br>&emsp;&emsp;D-feet是Red Hat公司研发的DBus调试工具。当你准备用DBus来写你的程序时，D-feet是非常用的，它可以显示service提供的所有对象、信号、和方法，另外还可以通过它实现方法调用。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装D-feet</span></span><br><span class="line">sudo apt-get install d-feet</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">d-feet</span><br></pre></td></tr></table></figure>
 <div align=center>
-<img src="./D-feet.png" width = "700" height = "400" />
+<img src="./DBus/D-feet.png" width = "700" height = "400" />
 <div align=left>
 
 <p><em>2.2、dbus-send/dbus-monitor</em><br>&emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。<br><strong>dbus-send</strong><br>&emsp;&emsp;dbus-send是dbus提供的一个工具程序，用来向dbus维护的消息总线或会话总线发送消息。</p>
@@ -1393,11 +1393,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
