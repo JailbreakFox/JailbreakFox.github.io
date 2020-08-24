@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN1.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN2.jpg">
 <meta property="article:published_time" content="2018-12-30T12:41:00.000Z">
-<meta property="article:modified_time" content="2020-08-22T02:25:23.593Z">
+<meta property="article:modified_time" content="2020-08-24T03:29:31.413Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="视觉，入门">
 <meta name="twitter:card" content="summary">
@@ -194,8 +194,10 @@
 <p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像识别的内容。</p>
 <h3 id="0x01-图像识别之图像分类"><a href="#0x01-图像识别之图像分类" class="headerlink" title="0x01 图像识别之图像分类"></a><em>0x01 图像识别之图像分类</em></h3><p>&emsp;&emsp;图像分类，根据各自在图像信息中所反映的不同特征，把不同类别的目标区分开来的图像处理方法。它利用计算机对图像进行定量分析，把图像或图像中的每个像元或区域划归为若干个类别中的某一种，以代替人的视觉判读。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 神经网络基础</span><br><span class="line">2 卷积神经网络(CNN)</span><br><span class="line">  2.1 CNN基本层</span><br><span class="line">  2.2 AlexNet</span><br><span class="line">  2.3 VGG</span><br><span class="line">  2.4 Inception V1-&gt;V4</span><br><span class="line">  2.5 ResNet-&gt;ResNeXt</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、神经网络基础</em></strong><br>&emsp;&emsp;神经网络是机器学习领域中常使用的一种学习方法，具体内容可参考吴恩达教授的<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">机器学习课程</a><sup>[2]</sup>。</p>
-<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。<br>**<em>2.1、CNN基本层**</em><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
+<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。</p>
+<p><strong><em>2.1、CNN基本层</em></strong><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
 <div align="center">
 <img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN1.jpg">
 <div align="left">  
@@ -212,6 +214,7 @@
 
 <h3 id="0x02-图像识别之物体检测"><a href="#0x02-图像识别之物体检测" class="headerlink" title="0x02 图像识别之物体检测"></a><em>0x02 图像识别之物体检测</em></h3><p>&emsp;&emsp;物体检测是计算机视觉中的经典问题之一，其任务是用框去标出图像中物体的位置，并给出物体的类别。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 区域卷积神经网络R-CNN</span><br><span class="line">2 SPP-Net网络</span><br><span class="line">3 Fast R-CNN</span><br><span class="line">4 Faster R-CNN</span><br><span class="line">5 R-FCN</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、区域卷积神经网络R-CNN</em></strong><br>&emsp;&emsp;这种网络的内部状态可以展示动态时序行为。不同于前馈神经网络的是，RNN可以利用它内部的记忆来处理任意时序的输入序列，这让它可以更容易处理如不分段的手写识别、语音识别等。<br>&emsp;&emsp;RNN物体检测具体过程为输入图片$\rightarrow $区域截取$\rightarrow $手工提取特征$\rightarrow $分类器分类，相应的过程图如下：</p>
 <div align="center">
 <img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN1.jpg">
@@ -431,7 +434,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -439,7 +442,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">

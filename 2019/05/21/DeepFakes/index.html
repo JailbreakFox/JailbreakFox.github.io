@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到源码。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的博文内介绍过。&amp;emsp;&amp;emsp;这里主要说明一下该项目原理以及开发环境内的">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-05-21T01:52:15.000Z">
-<meta property="article:modified_time" content="2019-05-22T08:53:06.000Z">
+<meta property="article:modified_time" content="2020-08-24T03:23:32.614Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="视觉，应用， AI">
 <meta name="twitter:card" content="summary">
@@ -184,7 +184,8 @@
 <h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。<br>**<em>1.1、谷歌图批量下载片**</em><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
+<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。  </p>
+<p><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;胡歌&quot;</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;刘亦菲&quot;</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
 <p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：</p>
@@ -193,7 +194,8 @@
 <p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。<br>**<em>4.1、图片转换人脸**</em><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
+<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。  </p>
+<p><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
 <h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
@@ -405,7 +407,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -413,7 +415,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">

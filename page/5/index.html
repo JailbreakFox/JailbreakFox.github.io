@@ -183,15 +183,20 @@
 <p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
 <h3 id="0x01-显著性检测"><a href="#0x01-显著性检测" class="headerlink" title="0x01 显著性检测"></a><em>0x01 显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
 <h3 id="0x02-图像分割之物体分割"><a href="#0x02-图像分割之物体分割" class="headerlink" title="0x02 图像分割之物体分割"></a><em>0x02 图像分割之物体分割</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 前景背景分割</span><br><span class="line">  1.1 Graph Cuts分割</span><br><span class="line">  1.2 GrabCut分割</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。<br>*<strong>1.1、Graph Cuts分割***<br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">博文</a><sup>[2]</sup>。<br>*</strong>1.2、GrabCut分割***<br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
+
+<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。</p>
+<p><strong><em>1.1、Graph Cuts分割</em></strong><br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">博文</a><sup>[2]</sup>。</p>
+<p><strong><em>1.2、GrabCut分割</em></strong><br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
 <h3 id="0x03-图像分割之语义分割"><a href="#0x03-图像分割之语义分割" class="headerlink" title="0x03 图像分割之语义分割"></a><em>0x03 图像分割之语义分割</em></h3><p>&emsp;&emsp;不但要做一张图片上的物体分割，且要理解、识别各个物体的内容。<br>&emsp;&emsp;语义分割的用处有机器人视觉和场景理解、辅助/自动驾驶、医学X光等。<br>&emsp;&emsp;在2015年之前的语义分割用的算法是手工特征+图模型（CRF）。从2015年开始，便运用深度神经网络模型：<br>&emsp;&emsp;&emsp;&emsp;1）改进的CNN。传统CNN存在一些问题。<br>&emsp;&emsp;&emsp;&emsp;2）全卷积网络/FCN(Fully Convolutional Networks)。所有层都是卷积层，能够解决降采样后的低分辨率问题。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 全卷积网络&#x2F;FCN</span><br><span class="line">  1.1 卷积化</span><br><span class="line">  1.2 反卷积</span><br><span class="line">  1.3 跳层结构</span><br><span class="line">2 DeepLab全卷积网络</span><br><span class="line">  2.1 DCNN-孔算法</span><br><span class="line">  2.2 DCNN-Atrous空间金字塔池化</span><br><span class="line">  2.3 全连接CRF</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、全卷积网络</em></strong><br>&emsp;&emsp;全卷积网络具有三个重要的操作：<br>&emsp;&emsp;&emsp;&emsp;1）卷积化。即将所有的全连接层转换成卷积层，适应任意的尺寸输入，并输出低分辨率的图片。<br>&emsp;&emsp;&emsp;&emsp;2）<strong>反卷积</strong>。将低分辨率的图片进行上采样，输出同分辨率的分割图片。<br>&emsp;&emsp;&emsp;&emsp;3）跳层结构。精化分割图片。<br>&emsp;&emsp;全卷积网络的构架图例如下所示：</p>
 <div align="center">
 <img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN4.jpg">
 <div align="left">  
 
-<p><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a><sup>[3]</sup>。<br>*<strong><em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</p>
+<p><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a><sup>[3]</sup>。</p>
+<p>*<strong><em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</p>
 <div align="center">
 <img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN1.jpg">
 <div align="left">  
@@ -309,8 +314,10 @@
 <p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像识别的内容。</p>
 <h3 id="0x01-图像识别之图像分类"><a href="#0x01-图像识别之图像分类" class="headerlink" title="0x01 图像识别之图像分类"></a><em>0x01 图像识别之图像分类</em></h3><p>&emsp;&emsp;图像分类，根据各自在图像信息中所反映的不同特征，把不同类别的目标区分开来的图像处理方法。它利用计算机对图像进行定量分析，把图像或图像中的每个像元或区域划归为若干个类别中的某一种，以代替人的视觉判读。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 神经网络基础</span><br><span class="line">2 卷积神经网络(CNN)</span><br><span class="line">  2.1 CNN基本层</span><br><span class="line">  2.2 AlexNet</span><br><span class="line">  2.3 VGG</span><br><span class="line">  2.4 Inception V1-&gt;V4</span><br><span class="line">  2.5 ResNet-&gt;ResNeXt</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、神经网络基础</em></strong><br>&emsp;&emsp;神经网络是机器学习领域中常使用的一种学习方法，具体内容可参考吴恩达教授的<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">机器学习课程</a><sup>[2]</sup>。</p>
-<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。<br>**<em>2.1、CNN基本层**</em><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
+<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。</p>
+<p><strong><em>2.1、CNN基本层</em></strong><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
 <div align="center">
 <img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN1.jpg">
 <div align="left">  
@@ -327,6 +334,7 @@
 
 <h3 id="0x02-图像识别之物体检测"><a href="#0x02-图像识别之物体检测" class="headerlink" title="0x02 图像识别之物体检测"></a><em>0x02 图像识别之物体检测</em></h3><p>&emsp;&emsp;物体检测是计算机视觉中的经典问题之一，其任务是用框去标出图像中物体的位置，并给出物体的类别。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 区域卷积神经网络R-CNN</span><br><span class="line">2 SPP-Net网络</span><br><span class="line">3 Fast R-CNN</span><br><span class="line">4 Faster R-CNN</span><br><span class="line">5 R-FCN</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、区域卷积神经网络R-CNN</em></strong><br>&emsp;&emsp;这种网络的内部状态可以展示动态时序行为。不同于前馈神经网络的是，RNN可以利用它内部的记忆来处理任意时序的输入序列，这让它可以更容易处理如不分段的手写识别、语音识别等。<br>&emsp;&emsp;RNN物体检测具体过程为输入图片$\rightarrow $区域截取$\rightarrow $手工提取特征$\rightarrow $分类器分类，相应的过程图如下：</p>
 <div align="center">
 <img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN1.jpg">
@@ -650,7 +658,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -658,7 +666,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">

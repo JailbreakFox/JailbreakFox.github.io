@@ -184,7 +184,8 @@
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#新建build目录，用来储存编译结果，否则会很乱</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line">#进入build目录</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">#开始生成makefile</span><br><span class="line">cmake ..</span><br><span class="line">#使用makefile编译程序</span><br><span class="line">make</span><br><span class="line">#安装程序，即在目标位置生成可执行程序以及对库文件做操作等</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
 <p><strong><em>1.3、Ubuntu搜索路径方式</em></strong><br>&emsp;&emsp;编译之后的可执行程序在其他电脑上无法运行，实质上最关键的问题就在于新的操作系统环境下，程序不知道去什么地方寻找依赖库。Ubuntu系统默认的<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">.so库搜索方式</a><sup>[6]</sup>根据优先级依次为:1)-L;2)/usr/lib;3)/lib;4)LIBRARY_PATH。<br>&emsp;&emsp;第二三种方法，系统只会该目录下的文件，而不会遍历文件夹，若要识别文件夹下的文件，还需要修改/etc/ld.so.conf，并调用ldconfig命令，这里不再深究。<br>&emsp;&emsp;主要讲的是最后一种方法，修改LIBRARY_PATH，其实就是我们熟知的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">修改环境变量</a><sup>[7]</sup>，所以ROS也是这样，要执行rospack find就需要添加环境变量（该文件实质上是命令行每次开启时执行的一段命令，所以这样修改环境变量来运行程序的方法必须是使用./程序，双击的话就无法运行，除非新建一个快捷方式并指定优先运行一段export），那么可以采用：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向/.bashrc中填入搜索路径</span><br><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。<br>**<em>1.5、可执行程序链接库批量处理**</em><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
+<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。</p>
+<p><strong><em>1.5、可执行程序链接库批量处理</em></strong><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span>、在build文件夹下新建脚本test.sh</span><br><span class="line">#<span class="number">2</span>、在test.sh中添加语句</span><br><span class="line">chk_lock_test=$( ldd $<span class="number">1</span> | awk &#x27;&#123;<span class="keyword">if</span> (match($<span class="number">3</span>,&quot;/&quot;))&#123; <span class="built_in">print</span> $<span class="number">3</span>&#125;&#125;&#x27; )</span><br><span class="line">cp -L -n $chk_lock_test $<span class="number">2</span></span><br><span class="line">#<span class="number">3</span>、给脚本一个权限，使其可移动所有文件</span><br><span class="line">sudo chmod <span class="number">777</span> test.sh</span><br><span class="line">#<span class="number">4</span>、脚本目录下执行命令，</span><br><span class="line"> ./test.sh 可执行程序目录 目标目录</span><br></pre></td></tr></table></figure>
 <p><strong><em>2、CMake编译可移植程序方案</em></strong><br><strong><em>2.1、方案一：添加环境变量</em></strong><br>&emsp;&emsp;具体思路为:1)可执行程序链接库批量处理至CmakeList.txt根目录下;2)CMake将批量处理得到的动态链接库install至目标文件夹下;3)在目标机器的~/.bashrc文件中添加第二步链接库install所在路径;<br>&emsp;&emsp;思路其实非常简单，但是关键的难点在于链接库取得的技巧，这里有必要叙述一下。第一点为取得可执行程序的所有动态链接库，第二点为分析取得所有未被ldd出来的动态链接库。<br>&emsp;&emsp;难点一已经在1.5节中指出，难点二这里以取得Qt所有动态链接库为例展开讨论。实现上述三个步骤以后，我们修改LIBRARY_PATH参数，在可执行程序根目录下输入命令行：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br><span class="line">#<span class="built_in">cd</span>到可执行程序根目录下，运行程序</span><br><span class="line">./程序名称</span><br></pre></td></tr></table></figure>
@@ -291,17 +292,21 @@
 <h3 id="0x01-智能体操控行为"><a href="#0x01-智能体操控行为" class="headerlink" title="0x01 智能体操控行为"></a><em>0x01 智能体操控行为</em></h3><p>&emsp;&emsp; 操控行为就像赋予智能体自主行动能力一样，使其按照一定的逻辑规则<sup>[2]</sup>来运动，这种行为的感知类似于真实的生物，是有范围且较小的。而A*寻路则是一种寻找最优解的方法，前提是对个体来说，在个体与目标之间的路况是全部已知的，目的是寻找最短路径并避开障碍物，最后到达目标。对于仿真大型群体，前者效率更高，且行为更真实和优美。而在仿真少量个体行为时，后者更具即使策略意义。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 个体行为操控</span><br><span class="line">  1.1 靠近与离开</span><br><span class="line">  1.2 抵达</span><br><span class="line">  1.3 追逐与逃避</span><br><span class="line">  1.4 随机徘徊</span><br><span class="line">  1.5 路径跟随</span><br><span class="line">  1.6 避开障碍</span><br><span class="line">2 群体行为操控</span><br><span class="line">  2.1 分离</span><br><span class="line">  2.2 队列</span><br><span class="line">  2.3 聚集</span><br></pre></td></tr></table></figure>
 
-<p> <strong><em>1、个体行为操控</em></strong><br> <strong><em>1.1、靠近与离开</em></strong><br>&emsp;&emsp; 靠近过程是指给智能体一个理想情况下指向目标的预期速度向量，并施加力，实时改变速度至预期速度向量。而离开过程恰恰相反，是指给智能体一个理想情况下远离目标的预期速度向量。二者的具体过程看下图：</p>
+<p> <strong><em>1、个体行为操控</em></strong>  </p>
+<p> <strong><em>1.1、靠近与离开</em></strong><br>&emsp;&emsp; 靠近过程是指给智能体一个理想情况下指向目标的预期速度向量，并施加力，实时改变速度至预期速度向量。而离开过程恰恰相反，是指给智能体一个理想情况下远离目标的预期速度向量。二者的具体过程看下图：</p>
 <div align="center">
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/靠近与离开.png">
 <div align="left">  
 
-<p>&emsp;&emsp; 从图中可见，靠近(寻找)的预期速度向量为当前速度向量与靠近(寻找)遥控力向量之差，其变化速度可在操控力向量前加系数。而离开的预期速度向量为当前速度向量与离开遥控力向量之差。<br>*<strong>1.2、抵达***<br> &emsp;&emsp; 抵达行为与靠近的差别在于，前者的预期速度向量将随着智能体与目标之间的距离而改变，并且可是设置减速半径，当智能体在半径之外，便采取靠近的全速模式，当在半径内时，速度随距离减小而减小至零。<br>*</strong>1.3、追逐与逃避***<br>&emsp;&emsp;追逐与靠近的不同点是目标为移动物体，为了达到追逐的目的，需要分两种情况：1)目标运动的速度方向与智能体速度方向夹角小于20°，这种情况下直接采取靠近算法；2)夹角大于20°，这种情况下说明智能体并不是面对目标，所以要像猎豹追鹿一样预测时间<em>T</em>之后的目标位置，并对预测点采取靠近算法，如下左图所示：</p>
+<p>&emsp;&emsp; 从图中可见，靠近(寻找)的预期速度向量为当前速度向量与靠近(寻找)遥控力向量之差，其变化速度可在操控力向量前加系数。而离开的预期速度向量为当前速度向量与离开遥控力向量之差。  </p>
+<p><strong><em>1.2、抵达</em></strong><br> &emsp;&emsp; 抵达行为与靠近的差别在于，前者的预期速度向量将随着智能体与目标之间的距离而改变，并且可是设置减速半径，当智能体在半径之外，便采取靠近的全速模式，当在半径内时，速度随距离减小而减小至零。</p>
+<p><strong><em>1.3、追逐与逃避</em></strong><br>&emsp;&emsp;追逐与靠近的不同点是目标为移动物体，为了达到追逐的目的，需要分两种情况：1)目标运动的速度方向与智能体速度方向夹角小于20°，这种情况下直接采取靠近算法；2)夹角大于20°，这种情况下说明智能体并不是面对目标，所以要像猎豹追鹿一样预测时间<em>T</em>之后的目标位置，并对预测点采取靠近算法，如下左图所示：</p>
 <div align="center">
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/追逐与逃避.png">
 <div align="left">  
 
-<p>&emsp;&emsp;该预测时间<em>T</em>设定为与两者距离成正比，与两者速度成反比。夹角的计算方法，如上右图，可采用两个单位向量的点积求解。<br>&emsp;&emsp;逃避过程相对简单，不用像追逐一样考虑两种情况，只需要预测追逐者时间<em>T</em>之后的位置，该预测时间可设定为常数，或者与两者距离成正比(当然不应该去设置与速度之间成反比，这样子怕是永远追不上？)。<br>**<em>1.4、随机徘徊**</em><br>&emsp;&emsp;随机徘徊是让智能体产生有真实感的随机移动，比如巡逻的士兵与惬意吃草的牛羊。如果使用隔时间分配任意目标点的方法，会使行为看起来不真实，类似会突然掉头。Craig Reynolds<sup>[3]</sup>在1999年发表的一篇文献解决了该问题，他采用左下图所示方法，在一个圆周上生成目标点，且随时间更新位置，智能体采用靠近算法接近目标，当达到位置时重新生成圆周并反复该过程。最终生成由下图所示行动轨迹。</p>
+<p>&emsp;&emsp;该预测时间<em>T</em>设定为与两者距离成正比，与两者速度成反比。夹角的计算方法，如上右图，可采用两个单位向量的点积求解。<br>&emsp;&emsp;逃避过程相对简单，不用像追逐一样考虑两种情况，只需要预测追逐者时间<em>T</em>之后的位置，该预测时间可设定为常数，或者与两者距离成正比(当然不应该去设置与速度之间成反比，这样子怕是永远追不上？)。</p>
+<p><strong><em>1.4、随机徘徊</em></strong><br>&emsp;&emsp;随机徘徊是让智能体产生有真实感的随机移动，比如巡逻的士兵与惬意吃草的牛羊。如果使用隔时间分配任意目标点的方法，会使行为看起来不真实，类似会突然掉头。Craig Reynolds<sup>[3]</sup>在1999年发表的一篇文献解决了该问题，他采用左下图所示方法，在一个圆周上生成目标点，且随时间更新位置，智能体采用靠近算法接近目标，当达到位置时重新生成圆周并反复该过程。最终生成由下图所示行动轨迹。</p>
 <div align="center">
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/随机徘徊.png">
 <div align="left">  
@@ -325,15 +330,19 @@
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/雷达.png">
 <div align="left">  
 
-<p><strong><em>2.1、分离</em></strong><br>&emsp;&emsp;分离就是避免个体在局部过于拥挤而产生的操控力，如上图所示黑色三角形所表示的智能体通过雷达扫描附近有三个白三角表示的邻居，先求出某个邻居对智能体的排斥力方向单位向量，即$\frac{r}{\left | r \right |}$，而排斥力的大小与距离成反比，因此排斥力应为$\frac{r}{\left | r \right | ^{2}}$，最后将所有邻居的操控力相加即为总的分离操控力。<br>*<strong>2.2、队列***<br>&emsp;&emsp;队列就是朝向附近同伴平均朝向的操控力，图中显示黑色三角形头部的灰线为其当前速度，黑线代表所有邻居速度方向的平均值，则队列操控力即为黑线与灰线的插值向量。<br>*</strong>2.3、聚集***<br>&emsp;&emsp;聚集就是向附近同伴的平均位置移动的操控力，图中四个邻居连接的黑点即为他们的平均值，从智能体指向黑色小点的向量即为聚集操控力。</p>
+<p><strong><em>2.1、分离</em></strong><br>&emsp;&emsp;分离就是避免个体在局部过于拥挤而产生的操控力，如上图所示黑色三角形所表示的智能体通过雷达扫描附近有三个白三角表示的邻居，先求出某个邻居对智能体的排斥力方向单位向量，即$\frac{r}{\left | r \right |}$，而排斥力的大小与距离成反比，因此排斥力应为$\frac{r}{\left | r \right | ^{2}}$，最后将所有邻居的操控力相加即为总的分离操控力。</p>
+<p><strong><em>2.2、队列</em></strong><br>&emsp;&emsp;队列就是朝向附近同伴平均朝向的操控力，图中显示黑色三角形头部的灰线为其当前速度，黑线代表所有邻居速度方向的平均值，则队列操控力即为黑线与灰线的插值向量。<br>**<em>2.3、聚集**</em><br>&emsp;&emsp;聚集就是向附近同伴的平均位置移动的操控力，图中四个邻居连接的黑点即为他们的平均值，从智能体指向黑色小点的向量即为聚集操控力。</p>
 <h3 id="0x02-A星寻路"><a href="#0x02-A星寻路" class="headerlink" title="0x02 A星寻路"></a><em>0x02 A星寻路</em></h3><p>&emsp;&emsp; 寻找最优路径是让智能体显得更聪明的方法，A*寻路就是一种寻找最短路径并避开障碍物的算法，相比于操控行为，需要提前知道地图上的各个节点以及每个点的代价值，占用cpu强度大，因此更适合于控制少量且高智商的智能体。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 导航图网格划分方式</span><br><span class="line">  1.1 单元导航图</span><br><span class="line">  1.2 可视点导航图</span><br><span class="line">  1.3 导航网格</span><br><span class="line">2 A*寻路算法</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、导航图网格划分方式</em></strong><br>&emsp;&emsp; A*寻路网格划分方式通常有3种：基于单元的导航图、基于可视点的导航图与导航网格。现在的游戏中，广泛使用的方式是利用导航网格寻路，再靠设计师手工放置躲藏点、埋伏点进行战术决策。此三种导航图划分如下图：</p>
 <div align="center">
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路方式.png">
 <div align="left">  
 
-<p><strong><em>1.1、单元导航图</em></strong><br>&emsp;&emsp; 这种方法是将游戏地图划分为多个正方形或六边形单元组成的规则网络。如果划分格数过大会导致难得到好的路径，格数过小则需要储存大量节点，且影响cpu效率。并不算是一种很好的分割方法。<br>*<strong>1.2、可视点导航图***<br>&emsp;&emsp; 可视点导航图又称路点图，是依靠场景设计者在场景中手动设置一些两点之间可见的路径点(不可见的话，就可能会跨障碍物，这样的路径是不可选取的)。这种方法的<strong>优点</strong>是灵活性强，场景设计者可根据自己的想法选择掩护、伏击位置，同时增加相应的位置信息(与路径代价相关的位置信息，在选择路径时要用到)。这种方法的<strong>缺点</strong>是：1)手工放置路径点很繁琐。尤其是在地图巨大的情况下；2)难以表示出实际的二维行走区域。如图中所示标的点位通常在墙边缘，而实际行走应该是在路中央；3)存在严重的组合爆炸问题。由于是人工布置点，因此点数无法控制精确，大量的点位将导致路径组合数爆炸。<br>&emsp;&emsp; 综上所述，场景设计师通常依靠可视点导航图来手工放置躲藏点、埋伏点等特殊点位进行战术决策。<br>*</strong>1.3、导航网络***<br>&emsp;&emsp; 导航网络用多边形来分割场景，从图中可以观察到，此种方法分割的路径点数量远远少于单元导航图，且路径点为各多边形的中心点，这将大大减轻cpu的压力。使用这种分割方法要注意的是，如果智能体完全按照路径点来行走，如图中灰线所示就显得很笨拙，人的真实行为应当是类似于黑线所示，这类问题称为路径的<strong>平滑</strong>，unity3D的A* Pathfinding Project已经包含了相关的后处理功能。<br>&emsp;&emsp; 综上所述，场景设计师通常使用这种方法来分割场景，但其缺点是生成导航网格需要较长时间。</p>
+<p><strong><em>1.1、单元导航图</em></strong><br>&emsp;&emsp; 这种方法是将游戏地图划分为多个正方形或六边形单元组成的规则网络。如果划分格数过大会导致难得到好的路径，格数过小则需要储存大量节点，且影响cpu效率。并不算是一种很好的分割方法。</p>
+<p><strong><em>1.2、可视点导航图</em></strong><br>&emsp;&emsp; 可视点导航图又称路点图，是依靠场景设计者在场景中手动设置一些两点之间可见的路径点(不可见的话，就可能会跨障碍物，这样的路径是不可选取的)。这种方法的<strong>优点</strong>是灵活性强，场景设计者可根据自己的想法选择掩护、伏击位置，同时增加相应的位置信息(与路径代价相关的位置信息，在选择路径时要用到)。这种方法的<strong>缺点</strong>是：1)手工放置路径点很繁琐。尤其是在地图巨大的情况下；2)难以表示出实际的二维行走区域。如图中所示标的点位通常在墙边缘，而实际行走应该是在路中央；3)存在严重的组合爆炸问题。由于是人工布置点，因此点数无法控制精确，大量的点位将导致路径组合数爆炸。<br>&emsp;&emsp; 综上所述，场景设计师通常依靠可视点导航图来手工放置躲藏点、埋伏点等特殊点位进行战术决策。</p>
+<p><strong><em>1.3、导航网络</em></strong><br>&emsp;&emsp; 导航网络用多边形来分割场景，从图中可以观察到，此种方法分割的路径点数量远远少于单元导航图，且路径点为各多边形的中心点，这将大大减轻cpu的压力。使用这种分割方法要注意的是，如果智能体完全按照路径点来行走，如图中灰线所示就显得很笨拙，人的真实行为应当是类似于黑线所示，这类问题称为路径的<strong>平滑</strong>，unity3D的A* Pathfinding Project已经包含了相关的后处理功能。<br>&emsp;&emsp; 综上所述，场景设计师通常使用这种方法来分割场景，但其缺点是生成导航网格需要较长时间。</p>
 <p><strong><em>2、A星寻路算法</em></strong><br>&emsp;&emsp;A星寻路算法即一种使智能体寻找最短路径并避开障碍物的算法，先引入四个术语：1)代价。代价是在寻路过程中节点之间的消耗值，由设计师定义，例如时间、能量、金钱等等。2)目标估计。由于从当前节点到目标节点的代价无法计算(因为路径未知)，则需要一种算法来估算该代价值，比如单元导航图就可以计算两节点之间的相对(x+y)值；3)节点属性。在A星算法中，每个节点都必须包含3个属性值，分别是g-从起始节点到当前节点的总代价，h-目标估计，f=g+h。4)Open表与Closed表。前者所记录的节点表示已经计算节点属性且没被单独拿出来计算其周围所有单元节点属性的节点，而后者记录的节点表示已经计算节点属性且已经被单独拿出来计算其周围所有单元节点属性的节点。A星算法具体运作过程如下gif图所示： </p>
 <div align="center">
 <img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路.png">
@@ -422,7 +431,10 @@
 
 <p>&emsp;&emsp;在经过图像分割得到图像内各个物体的标签之后，需要对物体之间的关系做出描述，即图像描述(图说)。</p>
 <h3 id="0x01-深度语言模型"><a href="#0x01-深度语言模型" class="headerlink" title="0x01 深度语言模型"></a><em>0x01 深度语言模型</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 递归神经网络RNN</span><br><span class="line">  1.1 时序后向传播(BPTT)</span><br><span class="line">  1.2 朴素Vanilla-RNN</span><br><span class="line">2 LSTM长短时记忆模型</span><br><span class="line">3 LSTM变种</span><br><span class="line">4 GRU门限递归单元</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、递归神经网络RNN</em></strong><br>&emsp;&emsp;RNN包括两类，分别是时间递归神经网络(Recurrent Neural Network)和结构递归神经网络(Recursive Neural Network)，常用的是前者。<br>*<strong>1.1、时序后向传播(BPTT)***<br>&emsp;&emsp;RNN其优化算法采用时序后向传播(BPTT)，是传统后向传播(BP)在时间序列上的扩展。<br>*</strong>1.2、朴素Vanilla-RNN***<br>&emsp;&emsp;这种网络，其$t-1$时刻的隐层状态会参与t时刻输出的计算，但是具有严重的梯度消失问题。</p>
+
+<p><strong><em>1、递归神经网络RNN</em></strong><br>&emsp;&emsp;RNN包括两类，分别是时间递归神经网络(Recurrent Neural Network)和结构递归神经网络(Recursive Neural Network)，常用的是前者。</p>
+<p><strong><em>1.1、时序后向传播(BPTT)</em></strong><br>&emsp;&emsp;RNN其优化算法采用时序后向传播(BPTT)，是传统后向传播(BP)在时间序列上的扩展。</p>
+<p><strong><em>1.2、朴素Vanilla-RNN</em></strong><br>&emsp;&emsp;这种网络，其$t-1$时刻的隐层状态会参与t时刻输出的计算，但是具有严重的梯度消失问题。</p>
 <p>*<strong><em>2、LSTM长短时记忆模型</em></strong><br>&emsp;&emsp;能够有效捕捉长时记忆，其有1个记忆神经元和3个控制门神经元，分别是输入门、忘记门以及输出门。LSTM记忆原理可阅读<a target="_blank" rel="noopener" href="https://blog.csdn.net/u011746554/article/details/75005139">博文</a><sup>[2]</sup>，其结构图如下图所示：</p>
 <div align="center">
 <img src="/2019/01/16/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E6%8F%8F%E8%BF%B0/LSTM1.jpg">
@@ -437,8 +449,10 @@
 <p>&emsp;&emsp;比较LSTM与GRU两种模型，LSTM有如下特点：<br>&emsp;&emsp;&emsp;&emsp;1）模型复杂，参数多，拟合能力强<br>&emsp;&emsp;&emsp;&emsp;2）数据要求：大规模、复杂度高<br>&emsp;&emsp;GRU有如下特点：<br>&emsp;&emsp;&emsp;&emsp;1）模型精简，参数少，拟合能力相对弱<br>&emsp;&emsp;&emsp;&emsp;2）适用于偏小规模、不是很复杂的数据</p>
 <h3 id="0x02-图说模型"><a href="#0x02-图说模型" class="headerlink" title="0x02 图说模型"></a><em>0x02 图说模型</em></h3><p>&emsp;&emsp;所谓图说模型就是输入一张图片，并输出客观描述图片内容的句子。<br>&emsp;&emsp;该过程是将视觉内容转化为语言内容，传统的计算机视觉(CV)是对图片的理解，而现在自然语言处理领域(NLP)是对语言的理解。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简介</span><br><span class="line">2 DNN框架</span><br><span class="line">  2.1 Show and tell模型</span><br><span class="line">  2.2 Show，attend and tell(SAT)模型</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、简介</em></strong><br>&emsp;&emsp;传统的分段处理策略流程为：<br>&emsp;&emsp;&emsp;&emsp;1）图片内容-&gt;文本标签<br>&emsp;&emsp;&emsp;&emsp;2）文本标签-&gt;描述语句<br>&emsp;&emsp;其优势是能够滤除干扰信息，模块化的结构以及直接使用CV与NLP研究成果，但是劣势是第一步的错误判断会影响第二布的语言推理。<br>&emsp;&emsp;新的点对点策略流程为：<br>&emsp;&emsp;&emsp;&emsp;1）将图片(利用CNN)与文本(利用one-hot)映射到同一共享空间下<br>&emsp;&emsp;&emsp;&emsp;2）图片特征-&gt;语言描述<br>&emsp;&emsp;其优势是图片与文本能同时训练，劣势是黑箱严重。</p>
-<p><strong><em>2、DNN框架</em></strong><br>&emsp;&emsp;点对点策略就是DNN框架，其包含了三个部分：<br>&emsp;&emsp;&emsp;&emsp;1）CNN：图片理解。比如VGG、ResNet、GoogLeNet<br>&emsp;&emsp;&emsp;&emsp;2）RNN：语言理解及生成。比如LSTM、GRU<br>&emsp;&emsp;&emsp;&emsp;3）特殊功能模块。Attention<br>**<em>2.1、Show and tell模型**</em><br>&emsp;&emsp;最简单的模型，其组成部分为CNN+LSTM，其结构如下图所示：</p>
+<p><strong><em>2、DNN框架</em></strong><br>&emsp;&emsp;点对点策略就是DNN框架，其包含了三个部分：<br>&emsp;&emsp;&emsp;&emsp;1）CNN：图片理解。比如VGG、ResNet、GoogLeNet<br>&emsp;&emsp;&emsp;&emsp;2）RNN：语言理解及生成。比如LSTM、GRU<br>&emsp;&emsp;&emsp;&emsp;3）特殊功能模块。Attention</p>
+<p><strong><em>2.1、Show and tell模型</em></strong><br>&emsp;&emsp;最简单的模型，其组成部分为CNN+LSTM，其结构如下图所示：</p>
 <div align="center">
 <img src="/2019/01/16/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E6%8F%8F%E8%BF%B0/DNN1.jpg">
 <div align="left">  
@@ -622,7 +636,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,7 +644,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">

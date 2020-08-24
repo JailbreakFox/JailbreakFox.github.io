@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp&#x2F;.h&#x2F;.so&#x2F;.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等[1]。但再深一层次地说，">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-04-29T12:41:00.000Z">
-<meta property="article:modified_time" content="2020-03-26T14:57:10.000Z">
+<meta property="article:modified_time" content="2020-08-24T03:25:40.101Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术，编译工具">
 <meta name="twitter:card" content="summary">
@@ -188,7 +188,8 @@
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#新建build目录，用来储存编译结果，否则会很乱</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line">#进入build目录</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">#开始生成makefile</span><br><span class="line">cmake ..</span><br><span class="line">#使用makefile编译程序</span><br><span class="line">make</span><br><span class="line">#安装程序，即在目标位置生成可执行程序以及对库文件做操作等</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
 <p><strong><em>1.3、Ubuntu搜索路径方式</em></strong><br>&emsp;&emsp;编译之后的可执行程序在其他电脑上无法运行，实质上最关键的问题就在于新的操作系统环境下，程序不知道去什么地方寻找依赖库。Ubuntu系统默认的<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">.so库搜索方式</a><sup>[6]</sup>根据优先级依次为:1)-L;2)/usr/lib;3)/lib;4)LIBRARY_PATH。<br>&emsp;&emsp;第二三种方法，系统只会该目录下的文件，而不会遍历文件夹，若要识别文件夹下的文件，还需要修改/etc/ld.so.conf，并调用ldconfig命令，这里不再深究。<br>&emsp;&emsp;主要讲的是最后一种方法，修改LIBRARY_PATH，其实就是我们熟知的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">修改环境变量</a><sup>[7]</sup>，所以ROS也是这样，要执行rospack find就需要添加环境变量（该文件实质上是命令行每次开启时执行的一段命令，所以这样修改环境变量来运行程序的方法必须是使用./程序，双击的话就无法运行，除非新建一个快捷方式并指定优先运行一段export），那么可以采用：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向/.bashrc中填入搜索路径</span><br><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。<br>**<em>1.5、可执行程序链接库批量处理**</em><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
+<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。</p>
+<p><strong><em>1.5、可执行程序链接库批量处理</em></strong><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span>、在build文件夹下新建脚本test.sh</span><br><span class="line">#<span class="number">2</span>、在test.sh中添加语句</span><br><span class="line">chk_lock_test=$( ldd $<span class="number">1</span> | awk &#x27;&#123;<span class="keyword">if</span> (match($<span class="number">3</span>,&quot;/&quot;))&#123; <span class="built_in">print</span> $<span class="number">3</span>&#125;&#125;&#x27; )</span><br><span class="line">cp -L -n $chk_lock_test $<span class="number">2</span></span><br><span class="line">#<span class="number">3</span>、给脚本一个权限，使其可移动所有文件</span><br><span class="line">sudo chmod <span class="number">777</span> test.sh</span><br><span class="line">#<span class="number">4</span>、脚本目录下执行命令，</span><br><span class="line"> ./test.sh 可执行程序目录 目标目录</span><br></pre></td></tr></table></figure>
 <p><strong><em>2、CMake编译可移植程序方案</em></strong><br><strong><em>2.1、方案一：添加环境变量</em></strong><br>&emsp;&emsp;具体思路为:1)可执行程序链接库批量处理至CmakeList.txt根目录下;2)CMake将批量处理得到的动态链接库install至目标文件夹下;3)在目标机器的~/.bashrc文件中添加第二步链接库install所在路径;<br>&emsp;&emsp;思路其实非常简单，但是关键的难点在于链接库取得的技巧，这里有必要叙述一下。第一点为取得可执行程序的所有动态链接库，第二点为分析取得所有未被ldd出来的动态链接库。<br>&emsp;&emsp;难点一已经在1.5节中指出，难点二这里以取得Qt所有动态链接库为例展开讨论。实现上述三个步骤以后，我们修改LIBRARY_PATH参数，在可执行程序根目录下输入命令行：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br><span class="line">#<span class="built_in">cd</span>到可执行程序根目录下，运行程序</span><br><span class="line">./程序名称</span><br></pre></td></tr></table></figure>
@@ -422,7 +423,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -430,7 +431,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">

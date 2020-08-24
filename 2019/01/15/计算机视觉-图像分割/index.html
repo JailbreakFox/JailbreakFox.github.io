@@ -25,7 +25,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN7.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN8.jpg">
 <meta property="article:published_time" content="2019-01-15T12:41:00.000Z">
-<meta property="article:modified_time" content="2020-08-22T02:26:02.384Z">
+<meta property="article:modified_time" content="2020-08-24T03:28:55.643Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="视觉，入门">
 <meta name="twitter:card" content="summary">
@@ -197,15 +197,20 @@
 <p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
 <h3 id="0x01-显著性检测"><a href="#0x01-显著性检测" class="headerlink" title="0x01 显著性检测"></a><em>0x01 显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
 <h3 id="0x02-图像分割之物体分割"><a href="#0x02-图像分割之物体分割" class="headerlink" title="0x02 图像分割之物体分割"></a><em>0x02 图像分割之物体分割</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 前景背景分割</span><br><span class="line">  1.1 Graph Cuts分割</span><br><span class="line">  1.2 GrabCut分割</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。<br>*<strong>1.1、Graph Cuts分割***<br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">博文</a><sup>[2]</sup>。<br>*</strong>1.2、GrabCut分割***<br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
+
+<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。</p>
+<p><strong><em>1.1、Graph Cuts分割</em></strong><br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">博文</a><sup>[2]</sup>。</p>
+<p><strong><em>1.2、GrabCut分割</em></strong><br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
 <h3 id="0x03-图像分割之语义分割"><a href="#0x03-图像分割之语义分割" class="headerlink" title="0x03 图像分割之语义分割"></a><em>0x03 图像分割之语义分割</em></h3><p>&emsp;&emsp;不但要做一张图片上的物体分割，且要理解、识别各个物体的内容。<br>&emsp;&emsp;语义分割的用处有机器人视觉和场景理解、辅助/自动驾驶、医学X光等。<br>&emsp;&emsp;在2015年之前的语义分割用的算法是手工特征+图模型（CRF）。从2015年开始，便运用深度神经网络模型：<br>&emsp;&emsp;&emsp;&emsp;1）改进的CNN。传统CNN存在一些问题。<br>&emsp;&emsp;&emsp;&emsp;2）全卷积网络/FCN(Fully Convolutional Networks)。所有层都是卷积层，能够解决降采样后的低分辨率问题。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 全卷积网络&#x2F;FCN</span><br><span class="line">  1.1 卷积化</span><br><span class="line">  1.2 反卷积</span><br><span class="line">  1.3 跳层结构</span><br><span class="line">2 DeepLab全卷积网络</span><br><span class="line">  2.1 DCNN-孔算法</span><br><span class="line">  2.2 DCNN-Atrous空间金字塔池化</span><br><span class="line">  2.3 全连接CRF</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>1、全卷积网络</em></strong><br>&emsp;&emsp;全卷积网络具有三个重要的操作：<br>&emsp;&emsp;&emsp;&emsp;1）卷积化。即将所有的全连接层转换成卷积层，适应任意的尺寸输入，并输出低分辨率的图片。<br>&emsp;&emsp;&emsp;&emsp;2）<strong>反卷积</strong>。将低分辨率的图片进行上采样，输出同分辨率的分割图片。<br>&emsp;&emsp;&emsp;&emsp;3）跳层结构。精化分割图片。<br>&emsp;&emsp;全卷积网络的构架图例如下所示：</p>
 <div align="center">
 <img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN4.jpg">
 <div align="left">  
 
-<p><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a><sup>[3]</sup>。<br>*<strong><em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</p>
+<p><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a><sup>[3]</sup>。</p>
+<p>*<strong><em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</p>
 <div align="center">
 <img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN1.jpg">
 <div align="left">  
@@ -450,7 +455,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -458,7 +463,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
