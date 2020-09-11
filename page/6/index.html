@@ -154,6 +154,142 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-pytorch-BP神经网络拟合非线性函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">pytorch-BP神经网络拟合非线性函数</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/" class="archive-article-date">
+  	<time datetime="2018-12-12T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-12</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;神经网络是机器学习中常用的一种方法，而BP神经网络在近些年是运用极为广泛的一种，如<a target="_blank" rel="noopener" href="https://study.163.com/course/courseMain.htm?courseId=1004570029">吴恩达课程</a><sup>[1]</sup>所涉及的神经网络方面的课程便是用的BP神经网络。由于近期刚接触pytorch，以及毕设上的需要，尝试写一篇有关用pytorch和BP神经网络对非线性函数进行拟合的文章。</p>
+<h3 id="0x01-BP神经网络的概念与原理"><a href="#0x01-BP神经网络的概念与原理" class="headerlink" title="0x01 BP神经网络的概念与原理"></a><em>0x01 BP神经网络的概念与原理</em></h3><p>&emsp;&emsp;BP(back propagation)神经网络最初是1986年由Rumelhart和McClelland提出的概念，其是一种按照误差逆向传播算法训练的多层前馈神经网络，也是目前应用最广泛的神经网络<sup>[2]</sup>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 人工神经元</span><br><span class="line">  1.1 神经元模型</span><br><span class="line">  1.2 激活函数</span><br><span class="line">2 BP神经网络的结构与原理</span><br><span class="line">  2.1 前向传播算法</span><br><span class="line">  2.2 代价函数</span><br><span class="line">  2.3 反向传播算法</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 人工神经元</em></strong><br><strong><em>1.1 神经元模型</em></strong><br>&emsp;&emsp;神经生理学和神经解剖学的研究结果表明，神经元是脑组织的基本单元，同时也是神经系统结构与功能的单位。人类大脑中的神经元互相连接，构成了一庞大复杂的网络，即生物神经网络。神经元在结构上是由细胞体、树突、轴突以及突触四个部分组成的。树突是一种管状延伸物，其作用是接受来自周围的神经冲击信息，相当于细胞的输入端，信息流从树突发出，经过细胞体，接着由轴突传出，轴突相当于细胞的输出端。突触是神经元之间通信的媒介，相当于是不同神经元之间的输入输出接口。</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/神经元1.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;借鉴神经元的存在形式，神经元模型便应运而生。早在1943年，心理学家McCulloch和数学家W.Pitts就在分析总结神经元基本特性的基础上提出了MP模型，该模型经过不断改进后，形成了现在被广泛使用的BP神经元模型。人工神经元模型应具备三个要素：<br>&emsp;&emsp;&emsp;&emsp;1）至少具备一组突触或连接，其连接强度常用表示，也可称之为权值；<br>&emsp;&emsp;&emsp;&emsp;2）神经元的输出是由多个输入经过加权处理，并通过累加算法得到的；<br>&emsp;&emsp;&emsp;&emsp;3）具备一个激励函数用于限制神经元的输出。激励函数的作用是将输出信号限制在一个范围内，通常设置值为[0,1]或[-1,1]。<br>&emsp;&emsp;一个典型的人工神经元模型如下图所示：</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/神经元2.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;其中$x_{j}\left ( j=1,2,\cdots ,N \right )$为输入信号,$w_{ij}$为连接权值，$\theta_{i}$为偏置量，$g\left( \cdot \right )$是激励函数，$y_{i}$是神经元的输出。输出与输入量的关系可用下式表示：<br>$$y_{i}=g\left ( \sum_{j=1}^{N}w_{ij}x_{j}+\theta _{i} \right )$$</p>
+<p><strong><em>1.2 激活函数</em></strong><br>&emsp;&emsp;激励函数$g\left ( \cdot  \right )$有多种选择，常用的基本激励函数有以下几种<sup>[3]</sup>：<br>&emsp;&emsp;1）sigmoid函数<br>&emsp;&emsp;&emsp;&emsp;又称为S型函数，是神经网络中使用最多的激励函数，其表达式如下所示：<br>$$g\left ( t \right )=\frac{1}{1+exp(-\alpha t)}$$<br>&emsp;&emsp;&emsp;&emsp;式中的$\alpha$代表sigmoid函数的斜率参数，其曲线图如下所示：</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/激活函数1.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;2）tanh函数<br>&emsp;&emsp;&emsp;&emsp;tanh函数是将$\left ( -\infty ,+\infty  \right )$的数映射到$\left ( -1,1 \right )$之间，其表达式与图形如下所示：<br>$$g\left ( t \right )=\frac{e^{t}-e^{-t}}{e^{t}+e^{-t}}$$</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/激活函数2.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;&emsp;&emsp;tanh函数在零点附近很短一段区域内可看做线性的。由于tanh函数均值为0，因此弥补了sigmoid函数均值为0.5的缺点。tanh函数的缺点同sigmoid函数的第一个缺点一样，当t很大或很小时，$g^{‘}\left ( t \right )$接近于0，会导致梯度很小，权重更新非常缓慢，即梯度消失问题。</p>
+<p>&emsp;&emsp;3）ReLU函数<br>&emsp;&emsp;&emsp;&emsp;ReLU函数又称为修正线性单元（Rectified Linear Unit），是一种分段线性函数，其弥补了sigmoid函数以及tanh函数的梯度消失问题。ReLU函数的公式以及图形如下：<br>$$g\left ( t \right )=\begin{cases}<br>0 &amp; t &lt; 0 \<br>t &amp; t &gt; 0<br>\end{cases}$$</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/激活函数3.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;&emsp;&emsp;ReLU函数的优点是在输入为正数的时候，不存在梯度消失问题。且计算速度要快很多。ReLU函数只有线性关系，不管是前向传播还是反向传播，都比sigmod和tanh要快很多。ReLU函数的缺点是当输入为负时，梯度为0，会产生梯度消失问题。</p>
+<p><strong><em>2 BP神经网络的结构与原理</em></strong><br>&emsp;&emsp;神经网络模型是许多逻辑单元按照不同层级组织的网络，其每层的输出变量均为下一层的输入变量。最简单的神经网络一般包含三层，分别是输入层、隐含层以及输出层，如下图所示：</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/bp1.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;图中第一层为输出层，第二层为隐含层，最后一层为输出层。$a_{i}^{j}$代表第j层的第i个激活单元，其中神经元$x_{0}$、$a_{0}^{\left ( 2 \right )}$均为偏置单元，$\theta ^{j}$代表权重矩阵。</p>
+<p><strong><em>2.1 前向传播算法</em></strong><br>对应上图可以得到激活单元与输出的表达式:<br>$$a_{1}^{\left ( 2 \right )}=g\left ( \theta_{10}^{(1)}x_{0}+\theta_{11}^{(1)}x_{1}+\theta_{12}^{(1)}x_{2}+\theta_{13}^{(1)}x_{3}  \right )$$<br>$$a_{2}^{\left ( 2 \right )}=g\left ( \theta_{20}^{(1)}x_{0}+\theta_{21}^{(1)}x_{1}+\theta_{22}^{(1)}x_{2}+\theta_{23}^{(1)}x_{3}  \right )$$<br>$$a_{3}^{\left ( 2 \right )}=g\left ( \theta_{30}^{(1)}x_{0}+\theta_{31}^{(1)}x_{1}+\theta_{32}^{(1)}x_{2}+\theta_{33}^{(1)}x_{3}  \right )$$<br>$$h_{\theta }\left ( x \right )=g\left ( \theta_{10}^{(2)}a_{0}^{(2)}+\theta_{11}^{(2)}a_{1}^{(2)}+\theta_{12}^{(2)}a_{2}^{(2)}+\theta_{13}^{(2)}a_{3}^{(2)}  \right )$$<br>&emsp;&emsp;当给定神经网络一组输入值，便能根据上述公式推导出输出，这种从左到右的算法称为前向传播算法。</p>
+<p><strong><em>2.2 代价函数<sup>[4]</sup></em></strong><br>&emsp;&emsp;假设有训练样本(x, y)，模型为h，参数为。且$h\left ( \theta  \right )=\theta ^{T}x$，其中$\theta ^{T}$表示$\theta$的转置。<br>&emsp;&emsp;任何能够衡量模型预测值$h\left ( \theta  \right )$与真实值y之差的函数都可以称为代价函数，若有多个样本，则将所有代价函数的取值求平均值，记作$J\left ( \theta  \right )$。<br>&emsp;&emsp;在逻辑回归中，最常用的代价函数是交叉熵，其表达式如下：<br>$$J\left ( \theta  \right )=-\frac{1}{m}\left [ \sum_{i=1}^{m}y^{(i)}logh_{\theta}(x^{(i)})+(1-y^{(i)})log(1-h_{\theta}(x^{(i)})) \right ]+\frac{\lambda }{2m}\sum_{j=1}^{n}\theta_{j}^{2}$$<br>&emsp;&emsp;神经网络的代价函数与逻辑回归的代价函数非常相似：<br>$$J\left ( \theta  \right )=-\frac{1}{m}\left [ \sum_{i=1}^{m}\sum_{k=1}^{k}y^{(i)}logh_{\theta }(x^{(i)})+(1-y^{(i)})log(1-h_{\theta }(x^{(i)})) \right ]+\frac{\lambda }{2m}\sum_{l=1}^{L-1}\sum_{i=1}^{s_{l}}\sum_{j=1}^{s_{l}+1}\left ( \Theta_{ji}^{(1)} \right )^{2}$$</p>
+<p><strong><em>2.3 反向传播算法<sup>[5]</sup></em></strong><br>&emsp;&emsp;在得到前向传播以及代价函数的计算结果之后，需要将误差反向传播，以修改神经网络的权值。以隐含层至输出层的权值更新为例，将输出层神经元简化为下图：</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/bp2.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;图中，$E_{o1}$为考虑代价函数得到的总误差，$T_{o1}$为目标输出值，$O_{o1}$为前向传播得到的输出值，$N_{o1}$为$O_{o1}$被激活前的值，h为隐藏层输出值，w为权值。则权值$w_{21}$对整体误差的影响可由链式法则得：<br>$$\frac{\partial E_{o1}}{\partial w_{21}}=\frac{\partial E_{o1}}{\partial O_{o1}}\cdot \frac{\partial O_{o1}}{\partial N_{o1}}\cdot \frac{\partial N_{o1}}{\partial w_{21}}$$<br>&emsp;&emsp;设学习速率为$\eta $，则$w_{21}$的更新权值$w_{21}^{+}$为：<br>$$w_{21}^{+}=w_{21}-\eta \cdot \frac{\partial E_{o1}}{\partial w_{21}}$$</p>
+<h3 id="0x02-代码实例"><a href="#0x02-代码实例" class="headerlink" title="0x02 代码实例"></a><em>0x02 代码实例</em></h3><p><strong><em>拟合线性函数</em></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">x1 = torch.unsqueeze(torch.linspace(<span class="number">2</span>, <span class="number">4</span>, <span class="number">100</span>), dim=<span class="number">1</span>)</span><br><span class="line">x2 = x1</span><br><span class="line">x = torch.zeros(<span class="number">10000</span>,<span class="number">2</span>)</span><br><span class="line">x0 = x</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">10000</span>):</span><br><span class="line">    j1 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    j2 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    x0[i][<span class="number">0</span>] = x1[j1]</span><br><span class="line">    x0[i][<span class="number">1</span>] = x2[j2]</span><br><span class="line"></span><br><span class="line">x3 = x0[:,<span class="number">0</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x4 = x0[:,<span class="number">1</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">y = <span class="number">1</span>/x3+<span class="number">1</span>/x4</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">torch.nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, n_feature, n_hidden, n_output</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.hidden1 = torch.nn.Linear(n_feature, n_hidden)   <span class="comment"># hidden layer</span></span><br><span class="line">        self.hidden2 = torch.nn.Linear(n_hidden, n_hidden)</span><br><span class="line">        self.predict = torch.nn.Linear(n_hidden, n_output)   <span class="comment"># output layer</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = F.relu(self.hidden1(x))      <span class="comment"># activation function for hidden layer</span></span><br><span class="line">        x = F.relu(self.hidden2(x))</span><br><span class="line">        x = self.predict(x)             <span class="comment"># linear output</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = Net(n_feature=<span class="number">2</span>, n_hidden=<span class="number">10</span>,n_output=<span class="number">1</span>)     <span class="comment"># define the network</span></span><br><span class="line">print(net)  <span class="comment"># net architecture</span></span><br><span class="line"></span><br><span class="line">optimizer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.2</span>)</span><br><span class="line">loss_func = torch.nn.MSELoss()  <span class="comment"># this is for regression mean squared loss</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">200</span>):</span><br><span class="line">    prediction = net(x)     <span class="comment"># input x and predict based on x</span></span><br><span class="line"></span><br><span class="line">    loss = loss_func(prediction, y)     <span class="comment"># must be (1. nn output, 2. target)</span></span><br><span class="line"></span><br><span class="line">    optimizer.zero_grad()   <span class="comment"># clear gradients for next train</span></span><br><span class="line">    loss.backward()         <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">    optimizer.step()        <span class="comment"># apply gradients</span></span><br><span class="line"> </span><br><span class="line">print(net(torch.Tensor([<span class="number">3</span>,<span class="number">3</span>])))</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>拟合非线性函数</em></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">x1_0 = torch.unsqueeze(torch.linspace(<span class="number">-10</span>, <span class="number">10</span>, <span class="number">1000</span>), dim=<span class="number">1</span>)</span><br><span class="line">x2_0 = x1_0</span><br><span class="line">x3_0 = x1_0</span><br><span class="line">x4_0 = x1_0</span><br><span class="line">x5 = <span class="number">1</span></span><br><span class="line">x7_0 = torch.unsqueeze(torch.linspace(<span class="number">-0.785</span>, <span class="number">0.785</span>, <span class="number">100</span>), dim=<span class="number">1</span>)</span><br><span class="line">x8_0 = x7_0</span><br><span class="line">x9_0 = x7_0</span><br><span class="line">x10_0 = x7_0</span><br><span class="line"></span><br><span class="line">kd1 = <span class="number">1.2</span></span><br><span class="line">kp1 = <span class="number">0.8</span></span><br><span class="line">k1 = <span class="number">-2</span></span><br><span class="line">g = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">x = torch.zeros(<span class="number">10000</span>,<span class="number">8</span>)</span><br><span class="line">x0 = x</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">10000</span>):</span><br><span class="line">    j1 = random.randint(<span class="number">0</span>,<span class="number">999</span>)</span><br><span class="line">    j2 = random.randint(<span class="number">0</span>,<span class="number">999</span>)</span><br><span class="line">    j3 = random.randint(<span class="number">0</span>,<span class="number">999</span>)</span><br><span class="line">    j4 = random.randint(<span class="number">0</span>,<span class="number">999</span>)</span><br><span class="line">    j5 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    j6 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    j7 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    j8 = random.randint(<span class="number">0</span>,<span class="number">99</span>)</span><br><span class="line">    x0[i][<span class="number">0</span>] = x1_0[j1]</span><br><span class="line">    x0[i][<span class="number">1</span>] = x2_0[j2]</span><br><span class="line">    x0[i][<span class="number">2</span>] = x3_0[j3]</span><br><span class="line">    x0[i][<span class="number">3</span>] = x4_0[j4]</span><br><span class="line">    x0[i][<span class="number">4</span>] = x7_0[j5]</span><br><span class="line">    x0[i][<span class="number">5</span>] = x8_0[j6]</span><br><span class="line">    x0[i][<span class="number">6</span>] = x9_0[j7]</span><br><span class="line">    x0[i][<span class="number">7</span>] = x10_0[j8]</span><br><span class="line"></span><br><span class="line">x1 = x0[:,<span class="number">0</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x2 = x0[:,<span class="number">1</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x3 = x0[:,<span class="number">2</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x4 = x0[:,<span class="number">3</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x7 = x0[:,<span class="number">4</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x8 = x0[:,<span class="number">5</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x9 = x0[:,<span class="number">6</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line">x10 = x0[:,<span class="number">7</span>].unsqueeze(<span class="number">0</span>).t()</span><br><span class="line"></span><br><span class="line">y = -torch.cos(x7)*(kd1*(-x2)+kp1*(-x1)-k1*x8)/(x5*torch.cos(x9))+<span class="number">2</span>*torch.sin(x9)*x8*x10/torch.cos(x9)-g*torch.sin(x7)/(x5*torch.cos(x9))</span><br><span class="line"><span class="comment">#print(torch.cos(x9))</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">torch.nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, n_feature, n_hidden, n_output</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.hidden1 = torch.nn.Linear(n_feature, n_hidden)   <span class="comment"># hidden layer</span></span><br><span class="line">        self.hidden2 = torch.nn.Linear(n_hidden, n_hidden)</span><br><span class="line">        self.predict = torch.nn.Linear(n_hidden, n_output)   <span class="comment"># output layer</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = F.relu(self.hidden1(x))      <span class="comment"># activation function for hidden layer</span></span><br><span class="line">        x = F.relu(self.hidden2(x))</span><br><span class="line">        x = self.predict(x)             <span class="comment"># linear output</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = Net(n_feature=<span class="number">8</span>, n_hidden=<span class="number">50</span>,n_output=<span class="number">1</span>)     <span class="comment"># define the network</span></span><br><span class="line"><span class="comment">#print(net)  # net architecture</span></span><br><span class="line"></span><br><span class="line">optimizer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.0015</span>)  <span class="comment">#decrease the lenrning rate.</span></span><br><span class="line">loss_func = torch.nn.MSELoss()  <span class="comment"># this is for regression mean squared loss</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">400</span>):</span><br><span class="line">    prediction = net(x)     <span class="comment"># input x and predict based on x</span></span><br><span class="line"></span><br><span class="line">    loss = loss_func(prediction, y)     <span class="comment"># must be (1. nn output, 2. target)</span></span><br><span class="line"></span><br><span class="line">    optimizer.zero_grad()   <span class="comment"># clear gradients for next train</span></span><br><span class="line">    loss.backward()         <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">    optimizer.step()        <span class="comment"># apply gradients</span></span><br><span class="line"> </span><br><span class="line">print(net(torch.Tensor([<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])))</span><br><span class="line">print(loss)</span><br><span class="line"></span><br><span class="line"><span class="comment">#检验神经网络计算结果准确性</span></span><br><span class="line">x_1=<span class="number">1</span></span><br><span class="line">x_2=<span class="number">1</span></span><br><span class="line">x_3=<span class="number">0</span></span><br><span class="line">x_4=<span class="number">0</span></span><br><span class="line">x_5=<span class="number">1</span></span><br><span class="line">x_7=<span class="number">0</span></span><br><span class="line">x_8=<span class="number">0</span></span><br><span class="line">x_9=<span class="number">0</span></span><br><span class="line">x_10=<span class="number">0</span></span><br><span class="line">y_ = -math.cos(x_7)*(kd1*(-x_2)+kp1*(-x_1)-k1*x_8)/(x_5*math.cos(x_9))+<span class="number">2</span>*math.sin(x_9)*x_8*x_10/math.cos(x_9)-g*math.sin(x_7)/(x_5*math.cos(x_9))</span><br><span class="line">print(y_)</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>使用visdom绘制loss曲线<sup>[6]</sup></em></strong><br>&emsp;&emsp;为了实时生成拟合的loss曲线图，有必要使用visdom视图工具，安装和运行方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install visdom  #cmd安装</span><br><span class="line"></span><br><span class="line">python -m visdom.server  #启动交互网页</span><br><span class="line"></span><br><span class="line">http:&#x2F;&#x2F;localhost:8097&#x2F;  #网页启动</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;可视化损失函数在代码中加入如下内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> visdom <span class="keyword">import</span> Visdom</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">vis = Visdom(env=<span class="string">&#x27;my_wind&#x27;</span>)<span class="comment">#设置环境窗口的名称是&#x27;my_wind&#x27;,如果不设置名称就在main中</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">400</span>):</span><br><span class="line">    x_loss = torch.Tensor([t])</span><br><span class="line">    </span><br><span class="line">    prediction = net(x)     <span class="comment"># input x and predict based on x</span></span><br><span class="line"></span><br><span class="line">    loss = loss_func(prediction, y1)     <span class="comment"># must be (1. nn output, 2. target)</span></span><br><span class="line">    </span><br><span class="line">    vis.line(X=x_loss,Y=loss.unsqueeze(<span class="number">0</span>),win=<span class="string">&#x27;polynomial&#x27;</span>,update=<span class="string">&#x27;append&#x27;</span> <span class="keyword">if</span> t&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    optimizer.zero_grad()   <span class="comment"># clear gradients for next train</span></span><br><span class="line">    loss.backward()         <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">    optimizer.step()        <span class="comment"># apply gradients</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;其输出的loss曲线图如下所示：</p>
+<div align="center">
+<img src="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/bp3.jpg">
+<div align="left">  
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://study.163.com/course/courseMain.htm?courseId=1004570029">https://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[2]《神经网络的研究及应用》<br>[3]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lliuye/p/9486500.html">https://www.cnblogs.com/lliuye/p/9486500.html</a><br>[4]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Belter/p/6653773.html%EF%BC%9Futm_source=itdadao&amp;utm_medium=referral">https://www.cnblogs.com/Belter/p/6653773.html？utm_source=itdadao&amp;utm_medium=referral</a><br>[5]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/charlotte77/p/5629865.html">https://www.cnblogs.com/charlotte77/p/5629865.html</a><br>[6]<a target="_blank" rel="noopener" href="http://www.rrcun.com/it/LXX516/article/details/79019328">http://www.rrcun.com/it/LXX516/article/details/79019328</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch，神经网络，机器学习</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-计算机视觉基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -382,97 +518,6 @@
 
 
   
-    <article id="post-q-learning" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/26/q-learning/">Q-learning算法</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等<sup>[1]</sup>。<br>&emsp;&emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。<br>&emsp;&emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习需要机器对给定的输入自行聚类。而强化学习则是机器主动做出试探动作，并根据环境的反馈来修改行为的学习方式。<br>&emsp;&emsp;本文主要介绍在强化学习中使用最多的基础算法，即Q-learning。</p>
-<h3 id="0x01-Q-learning算法"><a href="#0x01-Q-learning算法" class="headerlink" title="0x01 Q-learning算法"></a><em>0x01 Q-learning算法</em></h3><p>&emsp;&emsp;q-learning算法<sup>[2]</sup>包含两个最主要的概念，即状态S（state）和动作A（action），每次通过选择动作更新状态时，要同时按照图中的最优值函数Q计算公式更新Q表。其中参数α称为学习率，其决定这次的误差有多少是要被学习的, 且α是一个小于1 的数。γ为折扣率，是对未来 reward 的衰减值，值在[0,1]选择。</p>
-<div align="center">
-<img src="/2018/11/26/q-learning/Q-learning.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。<br>&emsp;&emsp;在了解基础的算法以后，分析一个<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">实际问题</a><sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。</p>
-<h3 id="0x02-实例分析"><a href="#0x02-实例分析" class="headerlink" title="0x02 实例分析"></a><em>0x02 实例分析</em></h3><p>&emsp;&emsp;现在分析一下<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">莫烦视频</a><sup>[4]</sup>中的代码段，<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">代码</a><sup>[5]</sup>可从github上获得。该例子的内容，是移动一个圆点，使其学会以最快的速度从左侧移动至右侧。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_q_table</span>(<span class="params">n_states, actions</span>):</span></span><br><span class="line">    table = pd.DataFrame(</span><br><span class="line">        np.zeros((n_states, len(actions))),</span><br><span class="line">        columns=actions,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> table</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数build_q_table旨在新建一个6行2列的Q值表，行代表状态，列代表左右移动。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choose_action</span>(<span class="params">state, q_table</span>):</span></span><br><span class="line">    state_actions = q_table.iloc[state, :]</span><br><span class="line">    <span class="keyword">if</span> (np.random.uniform() &gt; EPSILON) <span class="keyword">or</span> ((state_actions == <span class="number">0</span>).all()): </span><br><span class="line">        action_name = np.random.choice(ACTIONS)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        action_name = state_actions.idxmax()</span><br><span class="line">    <span class="keyword">return</span> action_name</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;该例子采用ε-greedy策略来选择动作，choose_action即根据ε值选择下一步的实际动作，有90%的机率选择最大的Q值动作，其余10%的机率随机选择其他动作</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_env_feedback</span>(<span class="params">S, A</span>):</span></span><br><span class="line">    <span class="keyword">if</span> A == <span class="string">&#x27;right&#x27;</span>: </span><br><span class="line">        <span class="keyword">if</span> S == N_STATES - <span class="number">2</span>:</span><br><span class="line">            S_ = <span class="string">&#x27;terminal&#x27;</span></span><br><span class="line">            R = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S + <span class="number">1</span></span><br><span class="line">            R = <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        R = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> S == <span class="number">0</span>:</span><br><span class="line">            S_ = S </span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S - <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> S_, R</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数get_env_feedback的作用是假设按照已选择完成的动作行动，则下一状态的环境是否到达最左或最右，若是，则采取相应措施，若不是，则判断可安全执行。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rl</span>():</span></span><br><span class="line">    q_table = build_q_table(N_STATES, ACTIONS)</span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> range(MAX_EPISODES):</span><br><span class="line">        step_counter = <span class="number">0</span></span><br><span class="line">        S = <span class="number">0</span></span><br><span class="line">        is_terminated = <span class="literal">False</span></span><br><span class="line">        update_env(S, episode, step_counter)</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> is_terminated:</span><br><span class="line"></span><br><span class="line">            A = choose_action(S, q_table)</span><br><span class="line">            S_, R = get_env_feedback(S, A) </span><br><span class="line">            q_predict = q_table.loc[S, A]</span><br><span class="line">            <span class="keyword">if</span> S_ != <span class="string">&#x27;terminal&#x27;</span>:</span><br><span class="line">                q_target = R + GAMMA * q_table.iloc[S_, :].max()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                q_target = R </span><br><span class="line">                is_terminated = <span class="literal">True</span> </span><br><span class="line"></span><br><span class="line">            q_table.loc[S, A] += ALPHA * (q_target - q_predict)</span><br><span class="line">            S = S_ </span><br><span class="line"></span><br><span class="line">            update_env(S, episode, step_counter+<span class="number">1</span>)</span><br><span class="line">            step_counter += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> q_table</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数update_env是在搭建环境，这里不赘述。函数rl则是执行函数，循环做选择动作、判断环境、更新Q表以及实际运行动作的过程。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]强化学习方法及其应用研究<br>[2]<a target="_blank" rel="noopener" href="https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/">https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/</a><br>[3]<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">http://mnemstudio.org/path-finding-q-learning-tutorial.htm</a><br>[4]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">https://www.bilibili.com/video/av16921335/?p=6</a><br>[5]<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py</a> </p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">强化学习，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/26/q-learning/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
@@ -625,6 +670,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
@@ -633,15 +682,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
