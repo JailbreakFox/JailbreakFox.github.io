@@ -210,7 +210,66 @@
 <img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/执行器原理.png" width="300" height="200">
 <div align="left">  
 
-<h1 id="0x02-事务隔离"><a href="#0x02-事务隔离" class="headerlink" title="0x02 事务隔离"></a>0x02 事务隔离</h1></div></div></div></div></div></div>
+<h1 id="0x02-日志系统"><a href="#0x02-日志系统" class="headerlink" title="0x02 日志系统"></a>0x02 日志系统</h1><p>&emsp;&emsp;日志模块分为redo log与binlog。两种模块配合的方式称为WAL(Write-Ahead Logging)技术。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/粉板.png">
+<div align="left">
+
+<p>两种日志有以下区别</p>
+<ul>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
+</ul>
+<p><strong><em>redo log记录原理</em></strong>  </p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/redolog内存空间.png">
+<div align="left">
+
+<p>&emsp;&emsp;redo log的内存空间是固定的。write pos与check point 之间是可写入部分，如果可写入空间不足，则清除一部分日志，并将check point后移。有了redo log，InnoDB就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为crash-safe</p>
+<p><strong><em>update语句执行流程</em></strong><br>&emsp;&emsp;update语句是比较典型的sql语句，能帮助我们理解日志记录的流程。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/update语句执行流程.png">
+<div align="left">
+
+<p>两段式提交<br>&emsp;&emsp;图表中的最后三步，被称为”两段式提交”，其实就是:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.写入redo <span class="built_in">log</span></span><br><span class="line">2.写入binlog</span><br><span class="line">3.commit</span><br></pre></td></tr></table></figure>
+
+<p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>1.事务基本要素（ACID）</p>
+<ul>
+<li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
+<li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
+<li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
+<li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
+</ul>
+<p>2.事务的并发问题</p>
+<ul>
+<li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
+<li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
+<li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
+</ul>
+<p>3.MySQL事务隔离级别</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
+<div align="left">
+
+<p>下面解释下四个事务隔离级别的意义:</p>
+<ul>
+<li>读未提交: 一个事务还未提交，它的变更就能被别的事务看到</li>
+<li>读提交: 一个事务提交后，它的变更才能被别的事务看到</li>
+<li>可重复读: 一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
+<li>串行化: 对于同一行记录，”写”会加”写锁”，”读”会加”读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行</li>
+</ul>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别1.png">
+<div align="left">
+
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
+<div align="left"></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
