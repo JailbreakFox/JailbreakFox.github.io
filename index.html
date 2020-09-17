@@ -238,20 +238,20 @@
 <p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
 
-<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>1.事务基本要素（ACID）</p>
+<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>**<em>事务隔离的基础**</em><br>1).事务基本要素（ACID）</p>
 <ul>
 <li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
 <li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
 <li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
 <li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
 </ul>
-<p>2.事务的并发问题</p>
+<p>2).事务的并发问题</p>
 <ul>
 <li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
 <li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
 <li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
 </ul>
-<p>3.MySQL事务隔离级别</p>
+<p>3).MySQL事务隔离级别</p>
 <div align="center">
 <img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
 <div align="left">
@@ -269,7 +269,20 @@
 
 <div align="center">
 <img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
-<div align="left"></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+<div align="left">
+
+<p><strong><em>事务隔离的实现</em></strong><br>&emsp;&emsp;在 MySQL 中，每条记录在更新的时候都会同时记录一条回滚操作。同一条记录在系统中可以存在多个版本，这就是数据库的多版本并发控制（MVCC），也因此实现了事务隔离。当没有事务需要用到这些回滚日志的时候，回滚日志会被删除。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离的实现.png">
+<div align="left">
+
+<p><strong><em>事务的启动方式</em></strong><br>1).尽量避免使用长事务<br>&emsp;&emsp;长事务意味着系统里面会存在很老的read-view。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
+<p>2).事务启动要注意的点</p>
+<ul>
+<li>set autocommit=0，这个命令会将这个线程的自动提交关掉。有些客户端连接框架会默认连接成功后先执行一个 set autocommit=0 的命令。这就导致接下来的查询都在事务中，如果是长连接，就导致了意外的长事务</li>
+<li>显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback</li>
+</ul>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
