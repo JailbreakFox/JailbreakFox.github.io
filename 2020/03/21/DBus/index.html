@@ -18,7 +18,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/DBus框架.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/21/DBus/D-feet.png">
 <meta property="article:published_time" content="2020-03-21T08:20:48.000Z">
-<meta property="article:modified_time" content="2020-08-22T02:08:41.564Z">
+<meta property="article:modified_time" content="2020-09-17T07:41:49.363Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux 工具">
 <meta name="twitter:card" content="summary">
@@ -224,7 +224,7 @@
 <div align="left">  
 
 <p><em>2.2、dbus-send/dbus-monitor</em><br>&emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。<br><strong>dbus-send</strong><br>&emsp;&emsp;dbus-send是dbus提供的一个工具程序，用来向dbus维护的消息总线或会话总线发送消息。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">dbus-send [--system | --session] --<span class="built_in">type</span>=[method_call | signal] --<span class="built_in">print</span>-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值</span><br><span class="line"></span><br><span class="line"><span class="comment"># 举例</span></span><br><span class="line">dbus-send --system --<span class="built_in">type</span>=method_call --<span class="built_in">print</span>-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">dbus-send [--system | --session] --<span class="built_in">type</span>=[method_call | signal] --<span class="built_in">print</span>-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值</span><br><span class="line"></span><br><span class="line"><span class="comment"># 举例1</span></span><br><span class="line">dbus-send --system --<span class="built_in">type</span>=method_call --<span class="built_in">print</span>-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02</span><br><span class="line"><span class="comment"># 举例2-获取property值</span></span><br><span class="line"><span class="comment"># 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll</span></span><br><span class="line">dbus-send --system --<span class="built_in">print</span>-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:<span class="string">&quot;org.freedesktop.Accounts.User&quot;</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>–system / –session<br>将命令发向系统总线或会话总线  </li>
 <li>–type<br>设置为信号signal，或者方法调用memthod_call</li>
