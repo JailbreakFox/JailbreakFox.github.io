@@ -522,7 +522,9 @@
 <p><em>2.4、qdbus –literal</em><br>&emsp;&emsp;可用该方法更改session的属性，比如修改背景图片: </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qdbus --literal com.deepin.wm /com/deepin/wm com.deepin.wm.ChangeCurrentWorkspaceBackground <span class="string">&quot;图片地址&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
+<h3 id="0x04-GSettings配置"><a href="#0x04-GSettings配置" class="headerlink" title="0x04 GSettings配置"></a><em>0x04 GSettings配置</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件路径</span></span><br><span class="line"><span class="comment"># /usr/share/glib-2.0/schemas/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出所有schema</span></span><br><span class="line">gsettings list-schemas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找某个schema下的所有key</span></span><br><span class="line">gsettings list-keys <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某个schema下某个key的值,假如要获取priority</span></span><br><span class="line">gsettings get <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> priority</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置某个schema下某个key的值,假如要设置active</span></span><br><span class="line">gsettings <span class="built_in">set</span> <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> active <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
 </div></div></div></div>
       
 
@@ -724,11 +726,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
