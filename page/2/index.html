@@ -154,6 +154,146 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DBus" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/03/21/DBus/">DBus</a>
+    </h1>
+  
+
+        
+        <a href="/2020/03/21/DBus/" class="archive-article-date">
+  	<time datetime="2020-03-21T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。</p>
+<div align="center">
+<img src="/2020/03/21/DBus/DBus框架.png" width="700" height="400">
+<div align="left">  
+
+<h3 id="0x01-DBus简介"><a href="#0x01-DBus简介" class="headerlink" title="0x01 DBus简介"></a><em>0x01 DBus简介</em></h3><p>&emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 运行机制</span><br><span class="line">2 重要ID</span><br></pre></td></tr></table></figure>
+<p><em>1、运行机制</em>  </p>
+<ul>
+<li>DBus-daemon : 运行一个DBus-daemon就是创建了一条通信的总线Bus。总线分为 系统总线(system daemon)/会话总线(session daemon) 两类，例如Ubuntu系统开启时会自动拉起一个系统总线和会话总线。</li>
+<li>Connection : 当一个进程(Application)连接到Bus总线上面时，就产生了连接(Connection)。</li>
+<li>Application : 每个进程即为一个Application。DBus能实现进程间通信，且其实现是基于socket的，因此总有一个等待连接的Server APP，以及一个主动连接的Client APP。</li>
+<li>Object : 可理解为程序员希望用DBus实现的进程间通信类。</li>
+<li>Interface : 可理解为每个Object内的类成员。</li>
+<li>通信方式 : D-bus里面支持的通信方式有signal/method两种。前者其实就是广播(UDP,一对多的通信方式);后者则是一问一答(TCP，一对一的通信),这种方式有点像远程调用，Client APP1调用Server APP2的method并传递参数给这个method，获取到这个method返回的结果。</li>
+</ul>
+<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">参考教程</a><sup>[1]</sup>。</p>
+<ul>
+<li>Address : 用于标识DBus-daemon。当一个DBus-daemon运行以后，其他的app该怎么连接到这个DBus-daemon，靠的就是address。格式如/com/polkit/qt/example/dbus。</li>
+<li>BusName : 用于标志Application。当一个进程连接上DBus-daemon，就需要注册一个BusName方便其他进程找到自己。格式如com.polkit.qt.example.dbus。</li>
+<li>Object Path : 用于标识Object类。当Client APP1的Object要跟Server APP2的Object通信时，就要告诉DBus-daemon目标的Object Path。格式如/com/polkit/qt/example/dbus。</li>
+<li>Interface name : 用于标志Object类成员。格式如com.polkit.qt.example.dbus。</li>
+<li>Member name : 用于标志通信类型信息。无特殊格式。</li>
+</ul>
+<h3 id="0x02-QDBus简介"><a href="#0x02-QDBus简介" class="headerlink" title="0x02 QDBus简介"></a><em>0x02 QDBus简介</em></h3><p>&emsp;&emsp;Qt有DBus的具体实现库，即QDBus。QDBus可参考QtLearning/QDbus里的实现代码，具体使用方式如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用命令qdbuscpp2xml生成dbus.h的xml文件</span></span><br><span class="line"><span class="comment"># dbus类为客户端用来调用服务端的接口</span></span><br><span class="line">qdbuscpp2xml dbus.h -A -o com.polkit.qt.example.dbus.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-DBus工具"><a href="#0x03-DBus工具" class="headerlink" title="0x03 DBus工具"></a><em>0x03 DBus工具</em></h3><p>&emsp;&emsp;下面介绍一些用来生成DBus或查看DBus运行状态的工具。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 QDBus文件生成工具</span><br><span class="line">  1.1 qdbuscpp2xml</span><br><span class="line">  1.2 qdbusxml2cpp</span><br><span class="line">2 DBus状态分析工具</span><br><span class="line">  2.1 D-feet</span><br><span class="line">  2.2 dbus-send&#x2F;dbus-monitor</span><br><span class="line">  2.3 busctl</span><br><span class="line">  2.4 qdbus --literal</span><br></pre></td></tr></table></figure>
+<p><em>1、QDBus文件生成工具</em><br>&emsp;&emsp;如上一章所示，QDBus的进程间通信类实现需要先根据该类生成xml文件，再根据xml生成用于Server APP的adaptor以及用于Client APP的interface。<br><em>1.1、qdbuscpp2xml</em><br>&emsp;&emsp;qdbuscpp2xml会解析QObject派生类的C++头文件或是源文件，生成DBus的内省xml文件。qdbuscpp2xml会区分函数的输入输出，如果参数声明为const则会是输入，否则可能会被当作输出。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qdbuscpp2xml使用语法如下：</span></span><br><span class="line">qdbuscpp2xml [options...] [files...]</span><br><span class="line"><span class="comment"># Options参数如下：</span></span><br><span class="line"><span class="comment"># -p|-s|-m：只解析脚本化的属性、信号、方法(槽函数)</span></span><br><span class="line"><span class="comment"># -P|-S|-M：解析所有的属性、信号、方法(槽函数) </span></span><br><span class="line"><span class="comment"># -a：输出所有的脚本化内容，等价于-psm </span></span><br><span class="line"><span class="comment"># -A：输出所有的内容，等价于-PSM    </span></span><br><span class="line"><span class="comment"># -o filename：输出内容到filename文件</span></span><br></pre></td></tr></table></figure>
+<p><em>1.2、qdbusxml2cpp</em><br>&emsp;&emsp;qdbusxml2cpp能根据上一节生成的xml文件生成用于Server APP的adaptor以及用于Client APP的interface。  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractAdaptor的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractInterface的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<p><em>2、DBus状态分析工具</em><br>&emsp;&emsp;DBus运行过程中，需要用调试工具观察运行状态，这里介绍两种工具，分别是D-feet以及dbus_send/dbus_monitor。<br><em>2.1、D-feet</em><br>&emsp;&emsp;D-feet是Red Hat公司研发的DBus调试工具。当你准备用DBus来写你的程序时，D-feet是非常用的，它可以显示service提供的所有对象、信号、和方法，另外还可以通过它实现方法调用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装D-feet</span></span><br><span class="line">sudo apt-get install d-feet</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">d-feet</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/2020/03/21/DBus/D-feet.png" width="700" height="400">
+<div align="left">  
+
+<p><em>2.2、dbus-send/dbus-monitor</em><br>&emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。<br><strong>dbus-send</strong><br>&emsp;&emsp;dbus-send是dbus提供的一个工具程序，用来向dbus维护的消息总线或会话总线发送消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">dbus-send [--system | --session] --<span class="built_in">type</span>=[method_call | signal] --<span class="built_in">print</span>-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值</span><br><span class="line"></span><br><span class="line"><span class="comment"># 举例1</span></span><br><span class="line">dbus-send --system --<span class="built_in">type</span>=method_call --<span class="built_in">print</span>-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02</span><br><span class="line"><span class="comment"># 举例2-获取property值</span></span><br><span class="line"><span class="comment"># 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll</span></span><br><span class="line">dbus-send --system --<span class="built_in">print</span>-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:<span class="string">&quot;org.freedesktop.Accounts.User&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>–system / –session<br>将命令发向系统总线或会话总线  </li>
+<li>–type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>–print-reply<br>打印返回结果</li>
+<li>–dest<br>服务名</li>
+<li>对象路径<br>/org/bluez/audio</li>
+<li>接口名<br>org.bluez.audio.Manager.CreateDevice</li>
+<li>参数类型:参数值<br>byte:0x01 byte:0x02</li>
+</ul>
+<p><strong>dbus-monitor</strong><br>&emsp;&emsp;dbus-monitor用于监听消息总线或会话总线发送的消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbus-monitor --system <span class="string">&quot;type=&#x27;signal&#x27;, sender=&#x27;org.gnome.TypingMonitor&#x27;, interface=&#x27;org.gnome.TypingMonitor&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>sender<br>要监听的服务名</li>
+<li>interface<br>要监听的对象路径</li>
+</ul>
+<p><em>2.3、busctl</em><br>&emsp;&emsp;busctl set-property能够用来设置dbus的参数</p>
+<p><em>2.4、qdbus –literal</em><br>&emsp;&emsp;可用该方法更改session的属性，比如修改背景图片: </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qdbus --literal com.deepin.wm /com/deepin/wm com.deepin.wm.ChangeCurrentWorkspaceBackground <span class="string">&quot;图片地址&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-GSettings配置"><a href="#0x04-GSettings配置" class="headerlink" title="0x04 GSettings配置"></a><em>0x04 GSettings配置</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件路径</span></span><br><span class="line"><span class="comment"># /usr/share/glib-2.0/schemas/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出所有schema</span></span><br><span class="line">gsettings list-schemas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找某个schema下的所有key</span></span><br><span class="line">gsettings list-keys <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某个schema下某个key的值,假如要获取priority</span></span><br><span class="line">gsettings get <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> priority</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置某个schema下某个key的值,假如要设置active</span></span><br><span class="line">gsettings <span class="built_in">set</span> <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> active <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/03/21/DBus/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -349,158 +489,9 @@
 
 
   
-    <article id="post-设计模式-创建型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式-创建型模式</a>
-    </h1>
-  
-
-        
-        <a href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2019-07-17T10:28:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-17</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">设计模式-可复用的面向对象软件元素</a><sup>[1]</sup>，以及<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">菜鸟教程</a><sup>[2]</sup>上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。</p>
-<h3 id="0x01-创建型模式"><a href="#0x01-创建型模式" class="headerlink" title="0x01 创建型模式"></a><em>0x01 创建型模式</em></h3><p>&emsp;&emsp;这种设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式，而不是使用new运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 工厂模式（Factory Pattern）</span><br><span class="line">2 抽象工厂模式（Abstract Factory Pattern）</span><br><span class="line">3 单例模式（Singleton Pattern）</span><br><span class="line">  3.1 懒汉式</span><br><span class="line">    3.1.1 加锁的懒汉式</span><br><span class="line">    3.1.2 内部静态变量的懒汉式</span><br><span class="line">  3.2 饿汉式</span><br><span class="line">4 建造者模式（Builder Pattern）</span><br><span class="line">5 原型模式（Prototype Pattern）</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、工厂模式</em></strong><br>&emsp;&emsp;设计一个工厂类，专门用来创建对象，根据用户的需求创建不同种类的对象。<br>&emsp;&emsp;假设有一个工厂能生产出A、B两种产品，当客户需要产品的时候要告诉工厂是A产品还是B产品。具体实现代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Factory.cpp : 定义控制台应用程序的入口点。</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product_A</span> :</span> <span class="keyword">public</span> Product</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Product_A&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product_B</span> :</span> <span class="keyword">public</span> Product</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Product_B&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Product* <span class="title">Create</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (i)</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Product_A;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Product_B;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Factory *factory = <span class="keyword">new</span> Factory();</span><br><span class="line">    factory-&gt;Create(<span class="number">1</span>)-&gt;show();</span><br><span class="line">    factory-&gt;Create(<span class="number">2</span>)-&gt;show();</span><br><span class="line">    system(<span class="string">&quot;pause&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;从上述代码可以看出，一个工厂为Product，其生产的两种产品分别为其继承类Product_A与Product_B，工厂类Factory实现了用户选择生产哪种产品的接口。</p>
-<p><strong><em>2、抽象工厂模式</em></strong><br>&emsp;&emsp;抽象工厂模式是抽象工厂模式的升级版，现考虑一种情况，假设目前A产品中有A1和A2两种型号，B产品中有B1和B2两种型号，那么工厂模式就失效了（实际上引入两个参数不是也能解决这个问题么，这边假设就如他说的失效了吧。。），那么我们就需要两个工厂类，分别来生产A、B产品。具体实现代码如下：  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;    </span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义抽象类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product1</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义具体类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_A1</span> :</span><span class="keyword">public</span> product1  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product A1&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_B1</span> :</span><span class="keyword">public</span> product1  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product B1&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义抽象类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product2</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义具体类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_A2</span> :</span><span class="keyword">public</span> product2  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product A2&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_B2</span> :</span><span class="keyword">public</span> product2  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product B2&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> product1 *<span class="title">creat1</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> product2 *<span class="title">creat2</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FactoryA</span> :</span><span class="keyword">public</span> Factory  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function">product1 *<span class="title">creat1</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_A1(); &#125;  </span><br><span class="line">    <span class="function">product2 *<span class="title">creat2</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_A2(); &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FactoryB</span> :</span><span class="keyword">public</span> Factory  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function">product1 *<span class="title">creat1</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_B1(); &#125;  </span><br><span class="line">    <span class="function">product2 *<span class="title">creat2</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_B2(); &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    FactoryA *factoryA = <span class="keyword">new</span> FactoryA();  </span><br><span class="line">    factoryA-&gt;creat1()-&gt;show();  </span><br><span class="line">    factoryA-&gt;creat2()-&gt;show();  </span><br><span class="line">  </span><br><span class="line">    FactoryB *factoryB = <span class="keyword">new</span> FactoryB();  </span><br><span class="line">    factoryB-&gt;creat1()-&gt;show();  </span><br><span class="line">    factoryB-&gt;creat2()-&gt;show();  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;从上述代码可见，实际上就是将工厂类Factory作为并新生成两个继承类FactoryA、FactoryB，分别用它们来控制生产A、B产品，且每个产品拥有自己的子型号产品product_A1、product_A2、product_B1、product_B2。</p>
-<p><strong><em>3、单例模式</em></strong><br>&emsp;&emsp;所谓<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/69eef7651667">单例模式</a><sup>[3]</sup>的设计目的就是保证:1)确保一个类只有一个实例被建立;2)提供一个访问它的全局访问点。<br>&emsp;&emsp;该模式有两种实现方法：懒汉式与饿汉式。<br>&emsp;&emsp;当<em>访问量较小</em>的时候，采用懒汉式（个人推测耗用cpu少），以时间换空间。当有<em>多线程存在</em>时（即实例访问量较大），或者线程较多的情况下，优先采用饿汉式，以空间换时间。<br>**<em>3.1、懒汉式**</em><br>&emsp;&emsp;该方法的技巧在于初始化时定义一个静态变量，且生成对象的时候采用该类的生成接口，每次调用都需要提前判断是否已被实例化，代码如下：  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                p = <span class="keyword">new</span> CSingleton();</span><br><span class="line">                <span class="keyword">return</span> p;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;可见一旦调用GetInstance函数，即能实例化对象。这种方式在单线程的情况下是可靠的，但如果程序是多线程的话<em>有可能会重复构造</em>（比如两个线程同时进入if(p == NULL)）。  </p>
-<p><strong><em>3.1.1 加锁的懒汉式</em></strong><br>&emsp;&emsp;那么如何解决上述遇到的重复构造问题呢，实际上加个锁即可，代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                mutex.lock();</span><br><span class="line">                <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                    p = <span class="keyword">new</span> CSingleton();</span><br><span class="line">                    <span class="keyword">return</span> p;</span><br><span class="line">                &#125;</span><br><span class="line">                mutex.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;该方案也存在劣势，即会导致程序运行速度减慢，所以说懒汉式比较适用于访问量较小的情况。  </p>
-<p><strong><em>3.1.2、内部静态变量的懒汉式</em></strong><br>&emsp;&emsp;还有一种方法也能解决重复构造的问题，且没有像加锁那样的减速缺点，但是需要在C++11及之后的版本使用，否则可能会导致多次构造函数调用。这种方法即以静态变量的方式实例化对象，这样就不会重复实例化了，代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">static</span> CSingleton s;</span><br><span class="line">            <span class="keyword">return</span> &amp;s;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3.2、饿汉式</em></strong><br>&emsp;&emsp;饿汉式是指在类加载的时候即new出该类对象，代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">        CSingleton* CSingleton::p = <span class="keyword">new</span> CSingleton;</span><br><span class="line">&#125;;</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">***<span class="number">4</span>、建造者模式***  </span><br><span class="line">&amp;emsp;&amp;emsp;所谓[建造者模式](https:<span class="comment">//blog.csdn.net/wuzhekai1985/article/details/6667467)&lt;sup&gt;[4]&lt;/sup&gt;就是将一个复杂对象的构建与他的表示分离，这里采用《大话设计模式》中举的例子-建造小人来描述这种模式，代码如下：</span></span><br><span class="line">```c++</span><br><span class="line">class Builder  </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildHead() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildBody() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildLeftArm()&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildRightArm() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildLeftLeg() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> BuildRightLeg() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造瘦人</span></span><br><span class="line">class ThinBuilder : <span class="keyword">public</span> Builder</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">void</span> BuildHead() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin body&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildBody() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin head&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildLeftArm() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin leftarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildRightArm() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin rightarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildLeftLeg() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin leftleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildRightLeg() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin rightleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造胖人</span></span><br><span class="line">class FatBuilder : <span class="keyword">public</span> Builder</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">void</span> BuildHead() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat body&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildBody() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat head&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildLeftArm() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat leftarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildRightArm() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat rightarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildLeftLeg() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat leftleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="keyword">void</span> BuildRightLeg() &#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat rightleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造的指挥官</span></span><br><span class="line">class Director  </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Builder *m_pBuilder;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Director(Builder *builder) &#123; m_pBuilder = builder; &#125;</span><br><span class="line">    <span class="keyword">void</span> Create()&#123;</span><br><span class="line">        m_pBuilder-&gt;BuildHead();</span><br><span class="line">        m_pBuilder-&gt;BuildBody();</span><br><span class="line">        m_pBuilder-&gt;BuildLeftArm();</span><br><span class="line">        m_pBuilder-&gt;BuildRightArm();</span><br><span class="line">        m_pBuilder-&gt;BuildLeftLeg();</span><br><span class="line">        m_pBuilder-&gt;BuildRightLeg();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//用户的建造方式：</span></span><br><span class="line"><span class="keyword">int</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    FatBuilder thin;</span><br><span class="line">    Director director(&amp;thin);</span><br><span class="line">    director.Create();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;从main文件可以看出，当用户想捏小人的时候，不需要自己去寻找胖人或者瘦人的继承类，只需要调用指挥官的类，而想捏的小人只需当参数传入即可。  </p>
-<p><strong><em>5、原型模式</em></strong><br>&emsp;&emsp;同一个类可以被多次实例化，但是这样构造出来的对象都是一模一样的，无论是出于对每个对象的把控或是内存分配都不利。使用<a target="_blank" rel="noopener" href="https://blog.csdn.net/cabinriver/article/details/8895372/">原型模式</a><sup>[5]</sup>，可以在实例化的时候微微修改参数，从而复制出一个与原型类似的对象，代码如下：</p>
-<pre><code class="c++">
-#include &lt;cstdio&gt;
-
-//接口
-class CPrototype
-&#123;
-public:
-    CPrototype()&#123;&#125;
-    virtual ~CPrototype()&#123;&#125;
-
-    virtual CPrototype* Clone() = 0;
-&#125;;
-
-//实现
-class CConcretePrototype : public CPrototype
-&#123;
-public:
-    CConcretePrototype():m_counter(0)&#123;&#125;
-    virtual ~CConcretePrototype()&#123;&#125;
-
-    //拷贝构造函数
-    CConcretePrototype(const CConcretePrototype&amp; rhs)
-    &#123;
-        m_counter = rhs.m_counter + 1;
-    &#125;
-
-    //复制自身
-    virtual CPrototype* Clone()
-    &#123;
-        //调用拷贝构造函数
-        return new CConcretePrototype(*this);
-    &#125;
-
-private:
-    int m_counter;
-&#125;;
-
- //用户的复制方式：
-int main(int argc, char **argv)
-&#123;
-    //生成对像
-    CPrototype* conProA = new CConcretePrototype();
-    //复制自身
-    CPrototype* conProB = conProA-&gt;Clone();
-
-    delete conProA;
-    delete conProB;
-
-    return 0;
-&#125;</code></pre>
-<p>&emsp;&emsp;从上述代码可以看出，实质上就是在该CConcretePrototype内部写了两个构造函数，一个是原型的构造函数，另一个是复制体的构造函数，当用户需要复制原型时，只需调用clone函数。</p>
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a><br>[3]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/69eef7651667">https://www.jianshu.com/p/69eef7651667</a><br>[4]<a target="_blank" rel="noopener" href="https://blog.csdn.net/wuzhekai1985/article/details/6667467">https://blog.csdn.net/wuzhekai1985/article/details/6667467</a><br>[5]<a target="_blank" rel="noopener" href="https://blog.csdn.net/cabinriver/article/details/8895372/">https://blog.csdn.net/cabinriver/article/details/8895372/</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -634,6 +625,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -646,11 +641,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
