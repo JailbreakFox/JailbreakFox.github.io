@@ -108,8 +108,11 @@ d-feet
 # 使用方法
 dbus-send [--system | --session] --type=[method_call | signal] --print-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值
 
-# 举例
+# 举例1
 dbus-send --system --type=method_call --print-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02
+# 举例2-获取property值
+# 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll
+dbus-send --system --print-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:"org.freedesktop.Accounts.User"
 ```
 - --system / --session  
 将命令发向系统总线或会话总线  
@@ -147,5 +150,23 @@ dbus-monitor --system "type='signal', sender='org.gnome.TypingMonitor', interfac
 qdbus --literal com.deepin.wm /com/deepin/wm com.deepin.wm.ChangeCurrentWorkspaceBackground "图片地址"
 ```
 
-### *0x04 引用文献*
+### *0x04 GSettings配置*
+```sh
+# 配置文件路径
+# /usr/share/glib-2.0/schemas/
+
+# 列出所有schema
+gsettings list-schemas
+
+# 查找某个schema下的所有key
+gsettings list-keys "org.gnome.settings-daemon.plugins.keyboard"
+
+# 查看某个schema下某个key的值,假如要获取priority
+gsettings get "org.gnome.settings-daemon.plugins.keyboard" priority
+
+# 设置某个schema下某个key的值,假如要设置active
+gsettings set "org.gnome.settings-daemon.plugins.keyboard" active false
+```
+
+### *0x05 引用文献*
 [1]https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html

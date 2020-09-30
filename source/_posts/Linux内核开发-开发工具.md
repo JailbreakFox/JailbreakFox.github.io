@@ -221,6 +221,11 @@ dmesg -T -d
 20 远程文件操作-scp/rsync
 21 读取转换数据-dd
 22 历史终端命令-history
+23 终端代理-proxychains
+24 打开文件-xdg-open
+25 用户信息-who/loginctl
+26 密码过期设置-chage
+27 环境变量-export/locale/env
 ```
 ***1、日志读取-journalctl***  
 &emsp;&emsp;在Systemd出现之前，Linux系统及各应用的日志都是分别管理的，Systemd开始统一管理了所有Unit的启动日志，这样带来的好处就是可以只用一个 journalctl命令，查看所有内核和应用的日志。
@@ -304,6 +309,9 @@ ps -ef | grep "进程名片段"
 # ------ ps aux ------
 # 是用BSD的格式来显示
 ps aux | grep "进程名片段"
+
+# 还能使用pstree打印进程树
+pstree
 ```
 
 ***5、杀死进程-kill/killall/pkill***  
@@ -660,7 +668,16 @@ rsync -avz root@172.16.1.31:'目标文件目录' '本地文件目录'
 &emsp;&emsp;dd可从标准输入或文件中读取数据，根据指定的格式来转换数据，在输出到文件、设备或标准输出。比较典型的作用就是制作系统U盘:  
 ```sh
 # dd制作系统U盘，bs参数代表同时设置读入/输出的块大小
-dd if='镜像文件路径' of='U盘路径' bs=1440k
+dd if='.img镜像文件路径' of='U盘路径' bs=1440k
+
+# dd还能磁盘克隆
+dd if=/dev/sda of=/dev/sdb
+
+# dd制作镜像
+dd if=/dev/sda of=~/disk.img
+
+# 观察dd制作镜像进度
+watch -n 5 killall -USR1 dd
 ```
 
 ***22、历史终端命令-history***  
@@ -668,6 +685,97 @@ dd if='镜像文件路径' of='U盘路径' bs=1440k
 ```sh
 # 列出历史3条命令
 histoty -3
+```
+
+***23、终端代理-proxychains***  
+
+***24 打开文件-xdg-open***  
+```sh
+xdg-open '文件路径'
+```
+
+***25 用户信息-who/loginctl***  
+```sh
+# who查看当前用户
+who
+w
+
+# loginctl查看所有用户
+loginctl -a
+```
+
+***26 密码过期设置-chage***  
+```sh
+# 用法  chage [选项] 用户名
+# -m：密码可更改的最小天数。为零时代表任何时候都可以更改密码。
+# -M：密码保持有效的最大天数。
+# -w：用户密码到期前，提前收到警告信息的天数。
+# -E：帐号到期的日期。过了这天，此帐号将不可用。
+# -d：上一次更改的日期。
+# -i：停滞时期。如果一个密码已过期这些天，那么此帐号将不可用。
+# -l：例出当前的设置。由非特权用户来确定他们的密码或帐号何时过期。
+```
+
+***27 环境变量-export/locale/env***  
+&emsp;&emsp;环境变量分为系统级变量和用户级环境变量。关于系统级变量的配置文件如下:  
+```sh
+# /etc/profile
+# 在系统启动后第一个用户登录时运行
+# 并从/etc/profile.d目录的配置文件中搜集shell的设置
+# 使用该文件配置的环境变量将应用于登录到系统的每一个用户。
+
+# /etc/bashrc（Ubuntu和Debian中是/etc/bash.bashrc）
+# 在 bash shell 打开时运行(注意，只针对bash shell)，修改该文件配置的环境变量将会影响所有用户使用的bash shell。
+
+# /etc/environment
+# 在系统启动时运行，用于配置与系统运行相关但与用户无关的环境变量
+# 修改该文件配置的环境变量将影响全局。
+```
+关于用户级变量的配置文件如下:  
+```sh
+# ~/.profile（推荐首选）
+# 当用户登录时执行，每个用户都可以使用该文件来配置专属于自己使用的shell信息
+
+# ~/.bashrc（不推荐）
+当用户登录时以及每次打开新的shell时该文件都将被读取
+不推荐在这里配置用户专用的环境变量，因为每开一个shell，该文件都会被读取一次，效率肯定受影响
+
+
+# ~/.bash_profile 或 ~./bash_login - 
+如果有其中的一个文件存在的话, 当启动的是一个 登录shell时，Bash 会执行该文件而不会执行~/.profile
+如果两个文件都存在的话，Bash 将会优先执行~/.bash_profile 而不是~/.bash_login
+然而, 默认情况下，这些文件不会影响图形会话
+
+# ~/.bash_logout
+当每次退出系统(退出bash shell)时执行该文件
+
+# 总结
+一般情况下，Linux加载环境变量配置文件的执行顺序为
+==> /etc/profile
+==> ~/.bash_profile | ~/.bash_login | ~/.profile
+==> ~/.bashrc
+==> /etc/bashrc
+==> ~/.bash_logout
+```
+下面解释下，各个修改配置文件的命令和方法:  
+```sh
+# export
+# 该命令用于设置或显示环境变量。但是export 的效力仅限于该次登陆操作
+# 如果想每次登录都拥有该环境变量，则需在对应配置文件内添加上述命令，配置文件作用看上面描述
+export PATH="$PATH:/opt/bin"
+
+# locale
+# 用于打印用户语言相关的环境变量
+locale
+
+# set
+# 用于打印所有本地环境变量
+set
+# env
+# 用于打印用户所有的环境变量
+env
+# export -p用于显示当前所有环境变量
+export -p
 ```
 
 ### *0x04 Linux系统日志系统*

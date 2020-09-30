@@ -11,6 +11,7 @@ grammar_cjkRuby: true
 
 ### *0x01 Git换行符*  
 &emsp;&emsp;Git服务器使用的换行方式是LF。  
+
 ***1、换行符自动转换***  
 &emsp;&emsp;由于要考虑操作系统区别，Git提供了一个"[换行符自动转换](https://blog.csdn.net/weixin_33275327/article/details/81485051)<sup>[1]</sup>"(AutoCRLF)功能，即当Windows用户向Git提交代码时，自动将CRLF格式转换为LF格式，当Windows用户拉代码时，又自动将代码转换为CRLF格式。  
 &emsp;&emsp;AutoCRLF使用方法如下：
