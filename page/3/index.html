@@ -154,6 +154,114 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">流媒体</a>
+    </h1>
+  
+
+        
+        <a href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/" class="archive-article-date">
+  	<time datetime="2020-01-31T03:16:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-31</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。<br>&emsp;&emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务器获取视频的技术。<br>&emsp;&emsp;由于流媒体服务器需要公网IP，这里直接使用阿里云服务器。  </p>
+<h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a><em>0x01 环境搭建</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 流媒体服务器</span><br><span class="line">  1.1 云服务器搭建</span><br><span class="line">  1.2 srs部署</span><br><span class="line">2 OBS推流部署</span><br><span class="line">3 VLC拉流部署</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 流媒体服务器</em></strong><br><strong><em>1.1 云服务器搭建</em></strong><br>&emsp;&emsp;这里用的是<a target="_blank" rel="noopener" href="https://www.aliyun.com/">阿里云服务器</a><sup>[1]</sup>，由于考虑到只是测试使用，因此买了一款1核2G，1Mbps的服务器。运行远程主机以后，记得<strong>添加安全组并开启1935端口</strong>，因为后面的srs需要用到该端口来交互信息。<br>&emsp;&emsp;值得注意的是，阿里云已经为用户提供了直播控制台，也就是说没必要自己部署流媒体服务器，但是由于要收费，我们这里还是部署开源的框架。  </p>
+<p><strong><em>1.2 srs部署</em></strong><br>&emsp;&emsp;流媒体服务器目前有很多优秀的开源框架，知乎上也有对比不同框架的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">文章</a><sup>[2]</sup>，这里我们选用srs。  </p>
+<div align="center">
+<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/流媒体开源框架.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;从上图可以看到，srs部署在Ubuntu下，网上有很多<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">技术博客</a><sup>[3]</sup>已经具体介绍了其安装方式:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先去Git上clone</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ossrs/srs.git</span><br><span class="line"><span class="built_in">cd</span> srs/trunk</span><br><span class="line"><span class="comment">#配置</span></span><br><span class="line">./configure</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line">make</span><br><span class="line"><span class="comment">#开启服务，第一次需要输入</span></span><br><span class="line">./objs/srs -c conf/srs.conf</span><br><span class="line"><span class="comment">#以后只需要输入 ./etc/init.d/srs start</span></span><br><span class="line"><span class="comment">#关闭服务为./etc/init.d/srs stop</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2 OBS推流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是OBS，非常好用快速，该软件可从<a target="_blank" rel="noopener" href="https://obsproject.com/">官网</a><sup>[4]</sup>免费下载。第一次使用，需要修改一些关键设置:<br>&emsp;&emsp;1)推流设置<br>&emsp;&emsp;这是最重要的设置内容，拉流的时候需要用到该地址。  </p>
+<div align="center">
+<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs推流.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;推流地址的设置格式如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户名</span></span><br><span class="line">rtmp://你的ip/你喜欢的url</span><br><span class="line"><span class="comment">#串流密钥(适用于开源框架，不适用于阿里云的直播控制台)</span></span><br><span class="line">你喜欢的任意字符串</span><br><span class="line"><span class="comment">#上述两者合起来就是你的流地址</span></span><br><span class="line"><span class="comment">#例如rtmp://11.11.11.11/xyh/tiancai</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;2)输出设置<br>&emsp;&emsp;这个设置关系到你直播内容的清晰度、流量使用量等，设置方法可以参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">B站大佬的教程</a><sup>[5]</sup>。  </p>
+<div align="center">
+<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs输出.png">
+<div align="left">  
+
+<p>&emsp;&emsp;x264是一个开源的H.264/MPEG-4 AVC视频编码函数库(不明觉厉就选它)。CBR是以恒定比特率方式进行编码(具体内容请自行查阅，由于服务器流量少，只能给500 Kbps)。CPU使用预设可根据自己电脑配置做调整。  </p>
+<p>&emsp;&emsp;3)视频设置<br>&emsp;&emsp;基础分辨率为电脑的分辨率，输出分辨率为拉流端的分辨率，如果流媒体服务器流量小，可以选择较小的输出分辨率。FPS值为刷新频率，普通人人眼能识别的帧率只需25帧，这里给30帧，也是为了考虑流量问题。  </p>
+<div align="center">
+<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs视频.png">
+<div align="left">  
+
+<p>&emsp;&emsp;设置完成后，只需要点击”开始推流”即可。</p>
+<p><strong><em>3 VLC拉流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是VLC，PC端也可以从官网上直接下载，安卓端可以从APKPure下载。下载完成后在”串流”菜单中输入 1.2 节中设置的流地址，就能连上流媒体服务器，进行拉流动作。</p>
+<h3 id="0x02-常见问题"><a href="#0x02-常见问题" class="headerlink" title="0x02 常见问题"></a><em>0x02 常见问题</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 黑屏</span><br></pre></td></tr></table></figure>
+<p><strong><em>1 黑屏</em></strong><br>&emsp;&emsp;OBS推流时，设置”显示器捕获”与”窗口捕获”，打开以后显示黑屏。有多种问题源，因此有多种解决方法，常见原因参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">B站up主教程</a><sup>[6]</sup>。<br>&emsp;&emsp;我的电脑原因可能是obs渲染采用的是集成显卡，解决方法查阅<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">贴吧</a><sup>[7]</sup>。Windows10 设置，系统，显示，最下边图形设置。图形性能首选项里边，经典应用，浏览添加OBS应用程序，OBS选项设置为节能（反正我的节能是集成图形输出，设置完毕之后就可以用）。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.aliyun.com/">https://www.aliyun.com</a><br>[2]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">https://www.zhihu.com/question/31160392/answer/256141081</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">https://blog.csdn.net/lmj623565791/article/details/77937483</a><br>[4]<a target="_blank" rel="noopener" href="https://obsproject.com/">https://obsproject.com</a><br>[5]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">https://www.bilibili.com/video/av52560685</a><br>[6]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">https://www.bilibili.com/video/av65194185</a><br>[7]<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">http://tieba.baidu.com/p/6364329041</a></p>
+</div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具，流</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -390,99 +498,6 @@ int main(int argc, char **argv)
 
 
   
-    <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/21/DeepFakes/">DeepFakes(未完成)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
-  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
-<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
-<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。  </p>
-<p><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;胡歌&quot;</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;刘亦菲&quot;</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
-<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。  </p>
-<p><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/21/DeepFakes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -643,11 +658,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -664,10 +683,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
             
             <div class="clearfix"></div>
