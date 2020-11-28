@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2020-09-27T07:42:14.476Z">
+<meta property="article:modified_time" content="2020-11-28T07:47:07.714Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -208,7 +208,7 @@
 <p><strong><em>16. /sys</em></strong><br>&ensp;&ensp;/sys 是一个虚拟目录(类似 /proc 和 /dev)，并且包含了远程连接设备的信息。<br>&ensp;&ensp;比如可以通过修改文件 /sys/devices/pci0000:00/0000:00:02.0/drm/card1/card1-eDP-1/intel_backlight/brightness 改变屏幕亮度。不要轻易改动 /sys 目录。</p>
 <p><strong><em>17. /tmp</em></strong><br>&ensp;&ensp;/tmp 包含正在运行的应用程序生成的临时文件。文件和目录经常包含应用程序当前不需要但以后可能需要的数据。</p>
 <p><strong><em>18. /var</em></strong><br>&ensp;&ensp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。</p>
-</div></div>
+<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd:            <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br></pre></td></tr></table></figure></div></div>
       
 
       
@@ -278,7 +278,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">0x01 目录结构</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">0x01 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">3.</span> <span class="toc-text">0x02 常用目录</span></a></li></ol>
                     </div>
                 </span>
             </div>
