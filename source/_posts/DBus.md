@@ -113,6 +113,8 @@ dbus-send --system --type=method_call --print-reply --dest=org.bluez /org/bluez/
 # 举例2-获取property值
 # 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll
 dbus-send --system --print-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:"org.freedesktop.Accounts.User"
+# 举例3-观察property值改变
+dbus-monitor interface=org.freedesktop.DBus.Properties,path=/com/deepin/dde/daemon/Launcher,member=PropertiesChanged
 ```
 - --system / --session  
 将命令发向系统总线或会话总线  

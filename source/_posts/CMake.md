@@ -143,9 +143,13 @@ set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)
 #这里将install路径设置为build
 cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../build/ ..
 ```
-&emsp;&emsp;这里依旧分享一个小技巧，使用指令readelf可以查看某一可执行程序的RPATH：
-```cmd
-readelf -d 程序名
+&emsp;&emsp;这里依旧分享两个小技巧
+```sh
+# 使用指令readelf可以查看某一可执行程序的RPATH
+readelf -d '程序路径'
+
+# 使用ldd可查看某一可执行程序的链接库
+ldd '程序路径'
 ```
 ***2.4、方案四：CMake静态编译***  
 &emsp;&emsp;除了上述三种调控动态链接库位置与链接的方式之外，我们还可以用CMake实现静态编译，即将三方库的动态链接库或者静态链接库加上自己的程序编译在一起，得到不需要外接库的可执行程序，在1.1节之中已经分析过了这种程序的优缺点（小型项目还好，一旦做大型项目，不但编译慢而且运行的电脑也会被大量占用空间）。目前该方式只在网上搜索到设置CMake设置静态编译的一段命令：
@@ -158,8 +162,9 @@ set(CMAKE_CXX_FLAGS "-static ${CMAKE_CXX_FLAGS}")
 &emsp;&emsp;由于链接库路径选择的重要性，这一章节着重分析一下Linux链接库选择路径顺序及其修改方式。
 ```
 1 Linux动态库选择顺序
-2 如何修改Qt链接库路径
-3 CMake链接库三要素*
+2 Linux如何添加链接库搜索路径
+3 如何修改Qt链接库路径
+4 CMake链接库三要素*
 ```
 ***1、Linux 动态库选择顺序***  
 ```sh
@@ -178,7 +183,32 @@ set(CMAKE_CXX_FLAGS "-static ${CMAKE_CXX_FLAGS}")
     3./usr/local/include
 ```
 
-***2、如何修改Qt链接库路径***  
+***2、Linux如何添加链接库搜索路径***
+```sh
+# ===== 方案一 =====
+# 首先找到.so或.a文件所在路径
+# 比如/home/uos/Desktop/test.so
+
+# 修改搜索路径，在如下文件中添加链接库所在路径
+sudo vim /etc/ld.so.conf
+# 添加/home/uos/Desktop/
+# 或者在/etc/ld.so.conf.d/文件夹下新建.conf文件
+
+# 使修改生效
+sudo /sbin/ldconfig
+
+# ===== 方案二 =====
+# LD_LIBRARY_PATH是Linux环境变量名
+# 主要用于指定查找链接库时除默认路径外的其他路径
+export LD_LIBRARY_PATH=/home/uos/Desktop/
+
+# ===== 方案三 =====
+# 在CMakeLists.txt文件中添加rpath的搜索路径
+FIND_LIBRARY(MY_LIB NAMES libMathFunctions.so PATHS /home/uos/Desktop)
+TARGET_LINK_LIBRARYS(${CMAKE_PROJECT_NAME} ${MY_LIB})
+```
+
+***3、如何修改Qt链接库路径***  
 &emsp;&emsp;为了少踩编译中或编译后的坑，请注意以下事项:  
 ```sh
 1.编译Qt、DTK 的生产目录，一定不要设置在 /usr 目录，这样非常容易桌面系统崩溃
@@ -205,20 +235,55 @@ set(CMAKE_CXX_FLAGS "-static ${CMAKE_CXX_FLAGS}")
     2.使用ldd + 程序名（库名） 可以看到依赖库
 ```
 
-***3*、CMake链接库三要素***
+***4*、CMake链接库三要素***
 - .so / .o 文件
 - 库头文件
 - 环境变量
 
+### *0x03 CMake常用变量*
+```sh
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+# 设置自动生成moc文件,AUTOMOC打开可以省去QT5_WRAP_CPP命令
+SET(CMAKE_AUTOMOC ON)
+# 设置自动生成ui.h文件,AUTOUIC打开可以省去QT5_WRAP_UI命令
+SET(CMAKE_AUTOUIC ON)
+# 设置c++编译属性  https://blog.csdn.net/rheostat/article/details/19811407
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -g -Wall -pthread -Wl,--as-need -fPIE -Wl,-E")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
+# 设置CMake模块寻找路径  CMAKE_SOURCE_DIR代表该CMakeLists.txt文件路径
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
-### *0x03 CMake学习中获得优质且繁杂的资源*
+# 龙芯系统
+IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi")
+ENDIF()
+
+# 如果不是Debug模式.
+# EXECUTE_PROCESS(COMMAND <一句shell命令> WORKING_DIRECTORY <这句shell命令执行的工作目录>)
+IF (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+
+    # generate qm
+    EXECUTE_PROCESS(COMMAND bash "translate_generation.sh"
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+ENDIF ()
+
+# 设置编译类型
+SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
+```
+
+### *0x04 CMake学习中获得优质且繁杂的资源*
 &emsp;&emsp;[CMake中调用Qt模块](https://www.jianshu.com/p/7eeb6f79a275)<sup>[11]</sup>  
 &emsp;&emsp;[CMake中add_library include_library以及target_link_libraries区别](https://blog.csdn.net/bigdog_1027/article/details/79113342)<sup>[12]</sup>  
 &emsp;&emsp;[CMake构建动态、静态库](https://www.cnblogs.com/zhoug2020/p/5904206.html)<sup>[13]</sup>  
 &emsp;&emsp;[CMake的一些变量](https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html)<sup>[14]</sup>  
 &emsp;&emsp;[CMake跨平台编译以及静态编译](https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html)<sup>[15]</sup>
 
-### *0x04 引用文献*
+### *0x05 引用文献*
 [1]https://blog.csdn.net/caowei880123/article/details/52497550
 [2]https://cmake.org/cmake-tutorial
 [3]https://www.hahack.com/codes/cmake

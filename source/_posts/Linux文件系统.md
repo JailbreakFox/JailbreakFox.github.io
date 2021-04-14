@@ -97,3 +97,23 @@ tree -L 1 /
 
 ***18. /var***  
 &ensp;&ensp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。
+
+### *0x02 常用目录*
+```sh
+# 已有的shell查看
+cat /etc/shells
+
+# 用户的配置文件
+/etc/passwd:            # 用户的配置文件， 保存用户账户的基本信息
+/etc/shadow             # 用户影子口令文件
+/etc/group              # 用户组配置文件
+/etc/gshadow            # 用户组的影子文件
+/etc/default/useradd    # 使用useradd添加用户时需要调用的一个默认的配置文件
+/etc/login.defs         # 定义创建用户时需要的一些用户的配置文件
+/etc/skel/              # 存放新用户配置文件的目录
+/etc/systemd/           # Linux下一种init软件 systemd的配置文件夹
+/etc/lightdm/           # 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹
+
+# cmake存放.cmake文件的位置
+/usr/share/'cmake-version'/Modules
+```
