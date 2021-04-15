@@ -655,7 +655,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 压缩文件 ======</span></span><br><span class="line"><span class="comment"># --- xz ---</span></span><br><span class="line">xz -z <span class="string">&#x27;目录路径&#x27;</span></span><br><span class="line"><span class="comment"># --- tar.xz ---</span></span><br><span class="line"><span class="comment"># 用xz工具打包tar压缩包</span></span><br><span class="line">xz -z xxx.tar</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======解压缩 ======</span></span><br><span class="line"><span class="comment"># --- xz ---</span></span><br><span class="line">xz -d xxx.xz</span><br><span class="line"><span class="comment"># --- tar.xz ---</span></span><br><span class="line">xz -d xxx.tar.xz</span><br><span class="line">tar -xvf xxx.tar</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>14、挂载-mount</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 挂载 ======</span></span><br><span class="line"><span class="comment"># 最简单的挂载方式</span></span><br><span class="line">mount /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 读写权限的挂载方式</span></span><br><span class="line"><span class="comment"># &#x27;-w&#x27; 相当于 &#x27;-o rw&#x27; </span></span><br><span class="line">mount -w /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 重新挂载为可读写的方式</span></span><br><span class="line">mount -o remount,rw /mnt</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== 取消挂载 ======</span></span><br><span class="line">unmount /mnt</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== 挂载 ======</span></span><br><span class="line"><span class="comment"># 最简单的挂载方式</span></span><br><span class="line">mount /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 读写权限的挂载方式</span></span><br><span class="line"><span class="comment"># &#x27;-w&#x27; 相当于 &#x27;-o rw&#x27; </span></span><br><span class="line">mount -w /dev/hda1 /mnt</span><br><span class="line"><span class="comment"># 重新挂载为可读写的方式</span></span><br><span class="line">mount -o remount,rw /mnt</span><br><span class="line"><span class="comment"># Linux系统挂载局域网中Windows文件</span></span><br><span class="line"><span class="comment"># 先在文件夹的属性中开启共享文件夹</span></span><br><span class="line"><span class="comment"># 然后在Linux环境中新建需要挂载的文件夹</span></span><br><span class="line">mount -t cifs -o username=,password=,rw //192.168.*.*/<span class="string">&#x27;共享文件夹名&#x27;</span> /<span class="string">&#x27;挂载位置&#x27;</span></span><br><span class="line"><span class="comment"># ====== 取消挂载 ======</span></span><br><span class="line">unmount /mnt</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>15、分区信息-df/fdisk/lsblk/blkid</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ====== df ======</span></span><br><span class="line"><span class="comment"># 列出文件系统磁盘占用情况</span></span><br><span class="line">df -h</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== fdisk ======</span></span><br><span class="line"><span class="comment"># 列出磁盘分区</span></span><br><span class="line">fdisk -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># ====== lsblk/blkid ======</span></span><br><span class="line"><span class="comment"># 列出所有可用块设备信息</span></span><br><span class="line"><span class="comment"># 还能看到对应磁盘的挂载点</span></span><br><span class="line">lsblk</span><br><span class="line"><span class="comment"># 查看挂载的详细信息，能输出挂载UID</span></span><br><span class="line">blkid</span><br></pre></td></tr></table></figure>
@@ -1053,15 +1053,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1069,7 +1065,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1078,10 +1082,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
