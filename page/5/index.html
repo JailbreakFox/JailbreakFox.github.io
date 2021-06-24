@@ -154,6 +154,96 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-信息聚合工具-RSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">信息聚合工具-RSS</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/" class="archive-article-date">
+  	<time datetime="2019-05-10T08:47:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-10</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;RSS又称简易信息聚合协议，是基于XML标准并在互联网上被广泛采用的内容包装和投递协议。使用RSS订阅能更快地获取信息，网站提供RSS输出，有利于让用户获取网站内容的最新更新。<br>&emsp;&emsp;目前获取信息的渠道日益增加，每种App都有各自的信息传达方式与推荐算法，虽然有益于日常刷段子，但是这也会导致获取信息的效率变低。RSS作为一种古老的信息订阅方式，却在信息横流的今天，将被赋予更深远的意义。<br>&emsp;&emsp;我认为其优势在于:1)高效率获取信息，并整合信息的能力。只要添加你需要的源，就能代替繁杂而重复的打开App，查阅订阅信息的过程;2)自定义信息弹窗。做到深处，可以尝试将获得的信息弹窗给手机或电脑，这对于有时效性的新闻来说是很重要的特性;3)自定义信息筛选功能。有时候我们需要自己喜欢的筛选信息方式，但是通常我们都是被别人的推荐算法所固定，然而用RSS的方法我们能获取更多的信息掌控权。<br>&emsp;&emsp;当然凡事都有两面性，RSS也有自身的缺陷:1)可扩展性差。毕竟所有的信息源都是自己设定的，而很多App能够依赖自己的算法推荐新的关注对象;2)不适用于深度阅读。挑选优质的信息源其实是很复杂的过程，如果单靠自己重新设计一个筛选优质信息的算法将花费大量的精力;3)不适用于减压阅读。有创意的或比较欢快的新颖视频、文章来源特性就是多样，这与RSS的固定订阅背道而行。<br>&emsp;&emsp;总结来说，RSS适合于添加固定的优质信息源，并以自定义的方式筛选目标信息。</p>
+<h3 id="0x01-RSS阅读器"><a href="#0x01-RSS阅读器" class="headerlink" title="0x01 RSS阅读器"></a><em>0x01 RSS阅读器</em></h3><p>&emsp;&emsp;作为一种比较成熟的技术，其实市面上是有很多实现获取RSS的工具，通常也被称为RSS阅读器。当然，针对不同的平台，有不同的产品。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Windows FeedDemon</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、Windows FeedDemon</em></strong><br>&emsp;&emsp;一款免费、轻量级的阅读器，网上的评价还是很好的，贴上它的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">安装与使用</a><sup>[1]</sup>。想要添加RSS源，可以采取多种办法:1)直接去网上找rss源;2)Easy to RSS插件，这是一款Chrome插件，能够直接识别可支持RSS协议的网址;3)一些寻找源的网址，在链接里有;4)RSS源生成项目。这些项目能够替没有RSS的网址生成RSS，比如Feed43、RSSHub等，将在下一章做重要介绍。</p>
+<h3 id="0x02-RSS源生成项目"><a href="#0x02-RSS源生成项目" class="headerlink" title="0x02 RSS源生成项目"></a><em>0x02 RSS源生成项目</em></h3><p>&emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RSSHub</span><br><span class="line">  1.1 Docker部署</span><br><span class="line">  1.2 添加源</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。</p>
+<p><strong><em>1.1、Docker部署</em></strong><br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  </p>
+<p><strong><em>1.2 添加源</em></strong><br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#举例: https:&#x2F;&#x2F;rsshub.app&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由: &#x2F;wechat&#x2F;wasi&#x2F;:id</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;但是我们添加源的时候并不是走rsshub.app这个域名的IP，而是应该走我们自己部署的Docker IP：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#注意别使用加密的https格式</span><br><span class="line">http:&#x2F;192.168.99.100:1200&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由ID可从瓦斯阅读对应的公众号下找到</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">https://www.zhihu.com/question/19580096/answer/20490041</a><br>[2]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">https://docs.rsshub.app</a><br>[3]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">https://jailbreakfox.github.io/2018/08/01/操作系统安装/</a><br>[4]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">https://docs.rsshub.app/install/#使用-docker-部署</a><br>[5]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">https://docs.rsshub.app/social-media.html#微信</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">工具， 信息聚合</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-远程系统工具-SSH与VCN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -404,149 +494,9 @@
 
 
   
-    <article id="post-游戏AI-智能体行动系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/">游戏AI-智能体行动系统</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
-  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 游戏AI和学术意义上的AI不同，后者尝试靠智能算法去优化或解决问题，而前者则是指在借助智能算法来改变NPC的思考和行为方式，从而让玩家感受到机器人的智能。本文将从几方面探讨游戏AI<sup>[1]</sup>：1)智能体的思考系统，包括有限状态机FSM、行为树与模糊逻辑等；2）智能体的感知系统，负责感知周围环境，并为思考和行动系统提供基础信息；3）智能体的行动系统，包括操控行为、A*寻路以及导航网络等；4）智能体的战略系统，即群集行为。<br>&emsp;&emsp;游戏中的AI角色行为一直处于感知-思考-行动的无限循环之中。本文主要研究智能体的行动系统，原文的游戏引擎采用unity3D，这里不介绍代码，代码请看原文献。智能体AI架构如下图所示：</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/AI架构.png">
-<div align="left">  
-
-<h3 id="0x01-智能体操控行为"><a href="#0x01-智能体操控行为" class="headerlink" title="0x01 智能体操控行为"></a><em>0x01 智能体操控行为</em></h3><p>&emsp;&emsp; 操控行为就像赋予智能体自主行动能力一样，使其按照一定的逻辑规则<sup>[2]</sup>来运动，这种行为的感知类似于真实的生物，是有范围且较小的。而A*寻路则是一种寻找最优解的方法，前提是对个体来说，在个体与目标之间的路况是全部已知的，目的是寻找最短路径并避开障碍物，最后到达目标。对于仿真大型群体，前者效率更高，且行为更真实和优美。而在仿真少量个体行为时，后者更具即使策略意义。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 个体行为操控</span><br><span class="line">  1.1 靠近与离开</span><br><span class="line">  1.2 抵达</span><br><span class="line">  1.3 追逐与逃避</span><br><span class="line">  1.4 随机徘徊</span><br><span class="line">  1.5 路径跟随</span><br><span class="line">  1.6 避开障碍</span><br><span class="line">2 群体行为操控</span><br><span class="line">  2.1 分离</span><br><span class="line">  2.2 队列</span><br><span class="line">  2.3 聚集</span><br></pre></td></tr></table></figure>
-
-<p> <strong><em>1、个体行为操控</em></strong>  </p>
-<p> <strong><em>1.1、靠近与离开</em></strong><br>&emsp;&emsp; 靠近过程是指给智能体一个理想情况下指向目标的预期速度向量，并施加力，实时改变速度至预期速度向量。而离开过程恰恰相反，是指给智能体一个理想情况下远离目标的预期速度向量。二者的具体过程看下图：</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/靠近与离开.png">
-<div align="left">  
-
-<p>&emsp;&emsp; 从图中可见，靠近(寻找)的预期速度向量为当前速度向量与靠近(寻找)遥控力向量之差，其变化速度可在操控力向量前加系数。而离开的预期速度向量为当前速度向量与离开遥控力向量之差。  </p>
-<p><strong><em>1.2、抵达</em></strong><br> &emsp;&emsp; 抵达行为与靠近的差别在于，前者的预期速度向量将随着智能体与目标之间的距离而改变，并且可是设置减速半径，当智能体在半径之外，便采取靠近的全速模式，当在半径内时，速度随距离减小而减小至零。</p>
-<p><strong><em>1.3、追逐与逃避</em></strong><br>&emsp;&emsp;追逐与靠近的不同点是目标为移动物体，为了达到追逐的目的，需要分两种情况：1)目标运动的速度方向与智能体速度方向夹角小于20°，这种情况下直接采取靠近算法；2)夹角大于20°，这种情况下说明智能体并不是面对目标，所以要像猎豹追鹿一样预测时间<em>T</em>之后的目标位置，并对预测点采取靠近算法，如下左图所示：</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/追逐与逃避.png">
-<div align="left">  
-
-<p>&emsp;&emsp;该预测时间<em>T</em>设定为与两者距离成正比，与两者速度成反比。夹角的计算方法，如上右图，可采用两个单位向量的点积求解。<br>&emsp;&emsp;逃避过程相对简单，不用像追逐一样考虑两种情况，只需要预测追逐者时间<em>T</em>之后的位置，该预测时间可设定为常数，或者与两者距离成正比(当然不应该去设置与速度之间成反比，这样子怕是永远追不上？)。</p>
-<p><strong><em>1.4、随机徘徊</em></strong><br>&emsp;&emsp;随机徘徊是让智能体产生有真实感的随机移动，比如巡逻的士兵与惬意吃草的牛羊。如果使用隔时间分配任意目标点的方法，会使行为看起来不真实，类似会突然掉头。Craig Reynolds<sup>[3]</sup>在1999年发表的一篇文献解决了该问题，他采用左下图所示方法，在一个圆周上生成目标点，且随时间更新位置，智能体采用靠近算法接近目标，当达到位置时重新生成圆周并反复该过程。最终生成由下图所示行动轨迹。</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/随机徘徊.png">
-<div align="left">  
-
-<p><strong><em>1.5、路径跟随</em></strong><br>&emsp;&emsp;路径跟随常常会用在赛车游戏中，它需要智能体按照某条指定路径运动，最简单的实现方法就是在一条路径上选取路点，让智能体做靠近算法，达到一个路点再朝向下一个。为了增加运动的平滑与多变，这里引入路点的半径，即当智能体接触到半径，就当作其已经到达该路点。如下图所示，不同的路点半径会导致运动过程变化。</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/路径跟随.png">
-<div align="left">  
-
-<p><strong><em>1.6、避开障碍</em></strong><br>&emsp;&emsp;智能体在朝着目标方向移动的时候，可能会在路上遇到障碍物，如果没有察觉到就会产生碰撞，为了躲避障碍物，我们在智能体速度方向上添加两个向量ahead、ahead2，如左下图所示。当任何一个向量在障碍物半径内时，都会给智能体施加一个如由下图所示的躲避力。至于为什么加两个视觉向量的原因，是当智能体的远视角开始躲避障碍物时，近视角可能会碰到另一个障碍物，那么躲避优先级就改变为更近的障碍物。</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/避开障碍.png">
-<div align="left">  
-
-<p><strong><em>2、群体行为操控</em></strong><br>&emsp;&emsp;相比与A*寻路，操控行为最大的优势就是在做群体行为操控时展现出的真实感。在研究相关算法之前，先引入两个先导知识<sup>[3]</sup>：1)组行为。是指群体中的个体之间相互交互的一些操控力规则，主要有分离、队列和聚集三种行为。2)雷达。个体要实现决定使用哪些操控力的前提是检测附近的AI角色，这种侦测行为与雷达相似。</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/组行为.png">
-<div align="left">  
-
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/雷达.png">
-<div align="left">  
-
-<p><strong><em>2.1、分离</em></strong><br>&emsp;&emsp;分离就是避免个体在局部过于拥挤而产生的操控力，如上图所示黑色三角形所表示的智能体通过雷达扫描附近有三个白三角表示的邻居，先求出某个邻居对智能体的排斥力方向单位向量，即$\frac{r}{\left | r \right |}$，而排斥力的大小与距离成反比，因此排斥力应为$\frac{r}{\left | r \right | ^{2}}$，最后将所有邻居的操控力相加即为总的分离操控力。</p>
-<p><strong><em>2.2、队列</em></strong><br>&emsp;&emsp;队列就是朝向附近同伴平均朝向的操控力，图中显示黑色三角形头部的灰线为其当前速度，黑线代表所有邻居速度方向的平均值，则队列操控力即为黑线与灰线的插值向量。<br>**<em>2.3、聚集**</em><br>&emsp;&emsp;聚集就是向附近同伴的平均位置移动的操控力，图中四个邻居连接的黑点即为他们的平均值，从智能体指向黑色小点的向量即为聚集操控力。</p>
-<h3 id="0x02-A星寻路"><a href="#0x02-A星寻路" class="headerlink" title="0x02 A星寻路"></a><em>0x02 A星寻路</em></h3><p>&emsp;&emsp; 寻找最优路径是让智能体显得更聪明的方法，A*寻路就是一种寻找最短路径并避开障碍物的算法，相比于操控行为，需要提前知道地图上的各个节点以及每个点的代价值，占用cpu强度大，因此更适合于控制少量且高智商的智能体。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 导航图网格划分方式</span><br><span class="line">  1.1 单元导航图</span><br><span class="line">  1.2 可视点导航图</span><br><span class="line">  1.3 导航网格</span><br><span class="line">2 A*寻路算法</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、导航图网格划分方式</em></strong><br>&emsp;&emsp; A*寻路网格划分方式通常有3种：基于单元的导航图、基于可视点的导航图与导航网格。现在的游戏中，广泛使用的方式是利用导航网格寻路，再靠设计师手工放置躲藏点、埋伏点进行战术决策。此三种导航图划分如下图：</p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路方式.png">
-<div align="left">  
-
-<p><strong><em>1.1、单元导航图</em></strong><br>&emsp;&emsp; 这种方法是将游戏地图划分为多个正方形或六边形单元组成的规则网络。如果划分格数过大会导致难得到好的路径，格数过小则需要储存大量节点，且影响cpu效率。并不算是一种很好的分割方法。</p>
-<p><strong><em>1.2、可视点导航图</em></strong><br>&emsp;&emsp; 可视点导航图又称路点图，是依靠场景设计者在场景中手动设置一些两点之间可见的路径点(不可见的话，就可能会跨障碍物，这样的路径是不可选取的)。这种方法的<strong>优点</strong>是灵活性强，场景设计者可根据自己的想法选择掩护、伏击位置，同时增加相应的位置信息(与路径代价相关的位置信息，在选择路径时要用到)。这种方法的<strong>缺点</strong>是：1)手工放置路径点很繁琐。尤其是在地图巨大的情况下；2)难以表示出实际的二维行走区域。如图中所示标的点位通常在墙边缘，而实际行走应该是在路中央；3)存在严重的组合爆炸问题。由于是人工布置点，因此点数无法控制精确，大量的点位将导致路径组合数爆炸。<br>&emsp;&emsp; 综上所述，场景设计师通常依靠可视点导航图来手工放置躲藏点、埋伏点等特殊点位进行战术决策。</p>
-<p><strong><em>1.3、导航网络</em></strong><br>&emsp;&emsp; 导航网络用多边形来分割场景，从图中可以观察到，此种方法分割的路径点数量远远少于单元导航图，且路径点为各多边形的中心点，这将大大减轻cpu的压力。使用这种分割方法要注意的是，如果智能体完全按照路径点来行走，如图中灰线所示就显得很笨拙，人的真实行为应当是类似于黑线所示，这类问题称为路径的<strong>平滑</strong>，unity3D的A* Pathfinding Project已经包含了相关的后处理功能。<br>&emsp;&emsp; 综上所述，场景设计师通常使用这种方法来分割场景，但其缺点是生成导航网格需要较长时间。</p>
-<p><strong><em>2、A星寻路算法</em></strong><br>&emsp;&emsp;A星寻路算法即一种使智能体寻找最短路径并避开障碍物的算法，先引入四个术语：1)代价。代价是在寻路过程中节点之间的消耗值，由设计师定义，例如时间、能量、金钱等等。2)目标估计。由于从当前节点到目标节点的代价无法计算(因为路径未知)，则需要一种算法来估算该代价值，比如单元导航图就可以计算两节点之间的相对(x+y)值；3)节点属性。在A星算法中，每个节点都必须包含3个属性值，分别是g-从起始节点到当前节点的总代价，h-目标估计，f=g+h。4)Open表与Closed表。前者所记录的节点表示已经计算节点属性且没被单独拿出来计算其周围所有单元节点属性的节点，而后者记录的节点表示已经计算节点属性且已经被单独拿出来计算其周围所有单元节点属性的节点。A星算法具体运作过程如下gif图所示： </p>
-<div align="center">
-<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路.png">
-<div align="left">  
-
-<p>&emsp;&emsp;A星寻路算法的具体流程如下：1)计算起始点的节点属性，并将其归入Open表；2)计算起始点附近所有单元节点属性，并将起始点归入Closed表，邻近点归入Open表；3)从邻近点搜索f值最小的点，并重复1、2两条过程。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；4)从所有Open表节点中寻找f值最小的点，并无限重复1、2、4三条过程，直到终止点被加入Open表。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；5)导出运动箭头记录的最优路径。<br>&emsp;&emsp;实际上A星寻路算法与人类择优过程很类似，我们总是能算未来几步路，并据此选择当前情况下最优的方案，但由于我们以为自己与目标之间一马平川，所以有许多障碍离得太远也就忽视了，当我们碰壁失败了，才会总结出这条路不通的结论，于是我们就更新观念，认为当初应该选择哪条路将更快，这时就更新了那条初始道路的节点属性，如此往复循环，最后我们能够明白哪条路才是真正的最优解。虽然这种方法看起来很笨，但是在未知障碍的情况下应该算是较好的策略了。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]unity3D人工智能编程精粹<br>[2]<a target="_blank" rel="noopener" href="https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model">https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model</a><br>[3]<a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf</a></p>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">游戏设计，游戏AI，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -684,6 +634,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -692,15 +650,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -708,7 +658,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -716,11 +666,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">

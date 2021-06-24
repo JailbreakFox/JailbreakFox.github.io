@@ -154,6 +154,119 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-计算机视觉-图像识别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" class="archive-article-date">
+  	<time datetime="2018-12-30T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/计算机视觉1.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像识别的内容。</p>
+<h3 id="0x01-图像识别之图像分类"><a href="#0x01-图像识别之图像分类" class="headerlink" title="0x01 图像识别之图像分类"></a><em>0x01 图像识别之图像分类</em></h3><p>&emsp;&emsp;图像分类，根据各自在图像信息中所反映的不同特征，把不同类别的目标区分开来的图像处理方法。它利用计算机对图像进行定量分析，把图像或图像中的每个像元或区域划归为若干个类别中的某一种，以代替人的视觉判读。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 神经网络基础</span><br><span class="line">2 卷积神经网络(CNN)</span><br><span class="line">  2.1 CNN基本层</span><br><span class="line">  2.2 AlexNet</span><br><span class="line">  2.3 VGG</span><br><span class="line">  2.4 Inception V1-&gt;V4</span><br><span class="line">  2.5 ResNet-&gt;ResNeXt</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、神经网络基础</em></strong><br>&emsp;&emsp;神经网络是机器学习领域中常使用的一种学习方法，具体内容可参考吴恩达教授的<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">机器学习课程</a><sup>[2]</sup>。</p>
+<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。</p>
+<p><strong><em>2.1、CNN基本层</em></strong><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN1.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;&emsp;&emsp;举个例子，若输入图片为32$\times $32$\times $3，卷积核为5$\times $5$\times $3，且卷积核数量为6，且不补零，则输出特征为28$\times $28$\times $6。可见输出特征厚度只与卷积核数量有关。<br>&emsp;&emsp;&emsp;&emsp;CNN卷积层的非线性激活函数：sigmoid或是ReLU，可参考<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">pytorch-BP神经网络拟合非线性函数</a><sup>[4]</sup>。<br>&emsp;&emsp;2）CNN池化层：<br>&emsp;&emsp;&emsp;&emsp;池化层的作用是进行特征融合，降维。计算方式有最大化池化与平均值池化，以前者为例，操作过程如下图所示：</p>
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN2.jpg">
+<div align="left">  
+
+<p>&emsp;&emsp;3）CNN全连接层：<br>&emsp;&emsp;&emsp;&emsp;全连接层作用是分类，可以理解为就是普通的神经网络，其具体操作过程参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/gyh_420/article/details/78569225">对于全连接层的理解</a><sup>[5]</sup>。<br>&emsp;&emsp;4）CNN-Softmax层：<br>&emsp;&emsp;&emsp;&emsp;softmax层作用是将全连接层的实数向量压缩到（0,1），即为概率。实质为指数归一化函数，其公式如下：</p>
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN3.jpg">
+<div align="left">  
+
+<h3 id="0x02-图像识别之物体检测"><a href="#0x02-图像识别之物体检测" class="headerlink" title="0x02 图像识别之物体检测"></a><em>0x02 图像识别之物体检测</em></h3><p>&emsp;&emsp;物体检测是计算机视觉中的经典问题之一，其任务是用框去标出图像中物体的位置，并给出物体的类别。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 区域卷积神经网络R-CNN</span><br><span class="line">2 SPP-Net网络</span><br><span class="line">3 Fast R-CNN</span><br><span class="line">4 Faster R-CNN</span><br><span class="line">5 R-FCN</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、区域卷积神经网络R-CNN</em></strong><br>&emsp;&emsp;这种网络的内部状态可以展示动态时序行为。不同于前馈神经网络的是，RNN可以利用它内部的记忆来处理任意时序的输入序列，这让它可以更容易处理如不分段的手写识别、语音识别等。<br>&emsp;&emsp;RNN物体检测具体过程为输入图片$\rightarrow $区域截取$\rightarrow $手工提取特征$\rightarrow $分类器分类，相应的过程图如下：</p>
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN1.jpg">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN2.jpg">
+<div align="left">  
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">http://www.chinahadoop.cn/course/916</a><br>[2]<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">http://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[3]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin</a>)<br>[4]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/</a><br>[5]<a target="_blank" rel="noopener" href="https://blog.csdn.net/gyh_420/article/details/78569225">https://blog.csdn.net/gyh_420/article/details/78569225</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-pytorch-BP神经网络拟合非线性函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -421,106 +534,9 @@
 
 
   
-    <article id="post-RBF神经网络" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">RBF神经网络</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="archive-article-date">
-  	<time datetime="2018-12-04T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-04</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Powell在1985年提出了多变量插值的径向基函数（RBF）方法；1988年，Broomhead和Lowe首先将RBF应用于自适应神经网络的设计中，从而构成了RBF神经网络；1990年，Poggi和Girosi发表两篇论文，将正则化理论应用于RBF神经网络。其特点是结构简单、训练简洁、学习收敛速度快、能够以任意精度逼近任意连续函数<sup>[1]</sup>。</p>
-<h3 id="0x01-RBF神经网络基本结构"><a href="#0x01-RBF神经网络基本结构" class="headerlink" title="0x01 RBF神经网络基本结构"></a><em>0x01 RBF神经网络基本结构</em></h3><p>&emsp;&emsp; 与BP神经网络类似，径向基神经网络是一种含三层神经元的前馈神经网络，分别是输入层、隐含层以及输出层，其基本结构如下图所示<sup>[2]</sup> ：</p>
-<div align="center">
-<img src="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/RBF1.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;RBF网络的基本思想是：用RBF作为隐单元的“基”构成隐含层空间，这样就可以将输入矢量直接映射到隐空间，而不需要通过权连接。当RBF的中心点确定以后，这种映射关系也就确定了。而隐含层空间到输出空间的映射是线性的，即网络的输出是隐单元输出的线性加权和，此处的权即为网络可调参数。其中，隐含层的作用是把向量从低维度的p映射到高维度的h，这样低维度线性不可分的情况到高维度就可以变得线性可分了，主要就是核函数的思想。这样，网络由输入到输出的映射是非线性的，而网络输出对可调参数而言却又是线性的。网络的权就可由线性方程组直接解出，从而大大加快学习速度并避免局部极小问题。<br>&emsp;&emsp; 第一层:输入层。与BP神经网络输入层含义相同，为输入向量X。<br>&emsp;&emsp; 第二层:隐含层。网络中仅有的隐含层，作用是实现输入空间到隐含空间的非线性变换，这种变换是通过隐含节点的径向基函数实现的。该层即RBF与BP神经网络区别所在，与BP神经网络的激活函数（sigmoid函数）不同，RBF神经网络的激活函数一般取以下三种<sup>[1]</sup>：<br>&emsp;&emsp;&emsp;&emsp;1）高斯函数：<br>$$\varphi \left ( x \right )=exp\left ( -\frac{x^{T}x}{\sigma ^{2}} \right )$$<br>&emsp;&emsp;&emsp;&emsp;2）逆多二次函数：<br>$$\varphi \left ( x \right )=\frac{1}{\left ( x^{T}x+\sigma ^{2} \right )^{\frac{1}{2}}}$$<br>&emsp;&emsp;&emsp;&emsp;3）反射sigmoid函数：<br>$$\varphi \left ( x \right )=\left ( 1+exp\left ( \frac{x^{T}x}{\sigma ^{2}} \right ) \right )^{-1}$$<br>&emsp;&emsp;其中最常用的径向基函数是高斯核函数：<br>$$\varphi \left ( x,u_{i} \right )=exp\left ( -\frac{\left | x-u_{i} \right |^{2}}{2\sigma_{i} ^{2}} \right ), , , i=1,2,\cdots ,n$$<br>&emsp;&emsp;式中，$u_{i}$表示神经元i的核函数中心向量；$\sigma _ {i}$表示核函数的宽度参数，控制核函数的径向作用范围。<br>&emsp;&emsp;第三层:输出层。隐含层到输出层为线性映射：<br>$$y=\sum_{i=1}^{n}w_{i} \varphi \left ( x,u_{i} \right )+b$$<br>&emsp;&emsp;式中，$w_{i} $为权重，b为偏置。</p>
-<h3 id="0x01-RBF神经网络学习算法-3"><a href="#0x01-RBF神经网络学习算法-3" class="headerlink" title="0x01 RBF神经网络学习算法[3]"></a><em>0x01 RBF神经网络学习算法<sup>[3]</sup></em></h3><p>&emsp;&emsp;在上一节中提到的高斯核函数为隐含层的网络结构如下图所示：</p>
-<div align="center">
-<img src="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/RBF2.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;学习算法的整个流程可以大致如下图：</p>
-<div align="center">
-<img src="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/RBF3.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;其算法过程具体描述为：<br>&emsp;&emsp;&emsp;&emsp;1）利用K-means算法寻找核函数中心向量$u_{i}$<br>&emsp;&emsp;&emsp;&emsp;2）利用KNN计算核函数宽度参数$\sigma _ {i}$<br>&emsp;&emsp;&emsp;&emsp;3）利用最小二乘法求得权重$w_{i} $<br>&emsp;&emsp;（可以看到该过程让人一头雾水..)后来有人提出了lazy RBF，又称为固定法，即定义隐含单元的径向基函数的中心向量是固定值，具体过程可用下图表示：</p>
-<div align="center">
-<img src="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/RBF4.jpg">
-<div align="left">  
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]神经网络控制与MATLAB仿真<br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinking/p/9349695.html">https://www.cnblogs.com/pinking/p/9349695.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weiwei9363/article/details/72808496">https://blog.csdn.net/weiwei9363/article/details/72808496</a></p>
-</div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">机器学习，神经网络，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/04/RBF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -658,6 +674,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -666,15 +690,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -682,7 +698,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -690,11 +706,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">

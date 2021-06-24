@@ -6,17 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2018/7 | Jesse Tsui的博客</title>
+  <title>deb与rpm打包 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/archives/2018/07/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。 0x01 rpm打包&amp;emsp;&amp;emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。 12345671 环境搭建2 基础知识构建  2.1 rpm打包文件结构  2.2 rpm目录路径宏  2.3 rpm常用路径宏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="deb与rpm打包">
+<meta property="og:url" content="http://yoursite.com/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。 0x01 rpm打包&amp;emsp;&amp;emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。 12345671 环境搭建2 基础知识构建  2.1 rpm打包文件结构  2.2 rpm目录路径宏  2.3 rpm常用路径宏">
 <meta property="og:locale">
+<meta property="article:published_time" content="2021-06-24T02:17:29.000Z">
+<meta property="article:modified_time" content="2021-06-24T03:17:38.270Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术，打包工具">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
@@ -152,87 +154,137 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-deb与rpm打包" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/20/Git%E4%B8%8EHexo/" class="archive-article-date">
-  	<time datetime="2018-07-20T12:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/07/20/Git%E4%B8%8EHexo/">Git与Hexo</a>
+    <h1 class="article-title" itemprop="name">
+      deb与rpm打包
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" class="archive-article-date">
+  	<time datetime="2021-06-24T02:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。</p>
+<h3 id="0x01-rpm打包"><a href="#0x01-rpm打包" class="headerlink" title="0x01 rpm打包"></a><em>0x01 rpm打包</em></h3><p>&emsp;&emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; 这里以centos7为rpm打包平台，具体的环境配置已经在仓库里面，可以自行<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">查阅资料</a>。  </p>
+<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、rpm打包文件结构</em></strong><br>&emsp;&emsp; rpmdev-setuptree命令由工具rpmdevtools提供，可以直接在/root/rpmbuild/目录下生成rpm打包所需的目录结构。下面具体描述各个文件夹的作用:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tree /root/rpmbuild</span><br><span class="line">rpmbuild</span><br><span class="line">├── SOURCES    <span class="comment"># 源码路径</span></span><br><span class="line">├── BUILD      <span class="comment"># 源码编译路径</span></span><br><span class="line">├── SPECS      <span class="comment"># rpm生成规则存放路径</span></span><br><span class="line">├── RPMS       <span class="comment"># rpm包生成路径</span></span><br><span class="line">└── SRPMS      <span class="comment"># rpm源码包生成路径</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>SOURCES - 如果是用源码打包，则只需要将源码的tar.gz文件存放于此即可;</li>
+<li>BUILD - rpmbuild工具会自行将SOURCES目录中的源码在此处解压，该文件无需手动修改，具体编译方法需要在SPECS下的.spec文件中描述;</li>
+<li>SPECS - 需要人工操作的只有该文件夹，里面可以存放各种rpm打包规则的.spec文件，后面详细介绍;</li>
+<li>RPMS - 当打包完成，会在此处生成release与debug版的.rpm包;</li>
+<li>SRPMS - 当打包完成，会在此处生成源码.rpm包;</li>
+<li>*BUILDROOT - 该目录是在SPECS打包过程中自动生成的，其重要性是最后打完的包需要安装的文件及其路径都以该目录为模板。  </li>
+</ul>
+<p><strong><em>2.2、rpm目录路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><br>| 目录                     | 宏代码         | 用途                                         |<br>|————————–|—————-|———————————————-|<br>| /root/rpmbuild/SOURCES   | %_sourcedir    | 保存源码包（如 .tar 包）和所有 patch 补丁    |<br>| /root/rpmbuild/BUILD     | %_builddir     | 源码包被解压至此，并在该目录的子目录完成编译 |<br>| /root/rpmbuild/BUILDROOT | %_buildrootdir | 保存 %install 阶段安装的文件                 |<br>| /root/rpmbuild/SPECS     | %_specdir      | 保存 RPM 包配置（.spec）文件                 |<br>| /root/rpmbuild/RPMS      | %_rpmdir       | 生成/保存二进制 RPM 包                       |<br>| /root/rpmbuild/SRPMS     | %_srcrpmdir    | 生成/保存源码 RPM 包(SRPM)                   |</p>
+<p><strong><em>2.3、rpm常用路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><br>| 路径                                                    | 宏                 |<br>|———————————————————|——————–|<br>| /etc                                                    | %{_sysconfdir}     |<br>| /usr                                                    | %{_prefix}         |<br>| %{_prefix}                                              | %{_exec_prefix}    |<br>| %{_exec_prefix}/bin                                     | %{_bindir}         |<br>| %{_exec_prefix}/%{_lib}                                 | %{_libdir}         |<br>| %{_exec_prefix}/libexec                                 | %{_libexecdir}     |<br>| %{_exec_prefix}/sbin                                    | %{_sbindir}        |<br>| /var/lib                                                | %{_sharedstatedir} |<br>| %{_prefix}/share                                        | %{_datarootdir}    |<br>| %{_datarootdir}                                         | %{_datadir}        |<br>| %{_prefix}/include                                      | %{_includedir}     |<br>| /usr/share/info                                         | %{_infodir}        |<br>| /usr/share/man                                          | %{_mandir}         |<br>| /var                                                    | %{_localstatedir}  |<br>| %{_sysconfdir}/rc.d/init.d                              | %{_initddir}       |<br>| /var                                                    | %{_var}            |<br>| %{_var}/tmp                                             | %{_tmppath}        |<br>| /usr                                                    | %{_usr}            |<br>| %{_usr}/src                                             | %{_usrsrc}         |<br>| lib (lib64 on 64bit multilib systems)                   | %{_lib}            |<br>| %{_datadir}/doc                                         | %{_docdir}         |<br>| %{_buildrootdir}/%{name}-%{version}-%{release}.%{_arch} | %{buildroot}       |<br>| %{buildroot}                                            | $RPM_BUILD_ROOT    |</p>
+<p><strong><em>3、源码打包方法</em></strong><br>&emsp;&emsp; SPECS撰写方法参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">文献</a>，这里以最后实现的一个rpm项目打包为例。首先要在/root/rpmbuild/SPECS/目录下新建一个.spec文件，并且内部需要实现一些字段，下面解释各个部分的作用:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目名</span></span><br><span class="line">name: CTest</span><br><span class="line"><span class="comment"># 项目版本</span></span><br><span class="line">Version: 1.0</span><br><span class="line"><span class="comment"># 发布序列号</span></span><br><span class="line">Release: 1%&#123;?dist&#125;</span><br><span class="line"><span class="comment"># 概要</span></span><br><span class="line">Summary: The <span class="string">&quot;CTest&quot;</span> program from GNU</span><br><span class="line">Summary(zh_CN):  GNU <span class="string">&quot;Hello World&quot;</span> 程序</span><br><span class="line"><span class="comment"># 开源协议</span></span><br><span class="line">License: GPLv3+</span><br><span class="line"><span class="comment"># 源代码路径，即放在SOURCES目录下的tar包名</span></span><br><span class="line">Source0: %&#123;name&#125;.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介</span></span><br><span class="line">%description</span><br><span class="line">The <span class="string">&quot;CTest&quot;</span> program</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介中文</span></span><br><span class="line">%description -l zh_CN</span><br><span class="line"><span class="string">&quot;CTest&quot;</span> 程序</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装前执行的脚本</span></span><br><span class="line">%prep</span><br><span class="line"><span class="comment"># 作用: 将解压后的源码重命名为/root/rpmbuild/BUILD/CTest/</span></span><br><span class="line">%setup -n CTest</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装后执行的脚本</span></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载前执行的脚本</span></span><br><span class="line">%preun</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载后执行的脚本</span></span><br><span class="line">%postun</span><br><span class="line"></span><br><span class="line"><span class="comment"># build默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line">%build</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make %&#123;?_smp_mflags&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># install默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line"><span class="comment"># 开始把软件安装到虚拟的根目录中，正规写法应该是在MakeFile里面些install</span></span><br><span class="line"><span class="comment"># 虚拟根目录即 /root/rpmbuild/BUILDROOT/’包名‘</span></span><br><span class="line"><span class="comment"># 可以用宏 $RPM_BUILD_ROOT 或 %&#123;buildroot&#125; 代替</span></span><br><span class="line">%install</span><br><span class="line">mkdir -p %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cp CTest %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line"><span class="comment"># !!files默认 cd /root/rpmbuild/BUILDROOT/&#x27;包名&#x27;/ 目录下</span></span><br><span class="line"><span class="comment"># %defattr(文件权限,用户名,组名,目录权限),其中&#x27;-&#x27;表示默认权限</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%&#123;_bindir&#125;/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变更日志</span></span><br><span class="line">%changelog</span><br><span class="line">* Sun MAY 4 2021 Your Name &lt;youremail@xxx.xxx&gt; - 1.0</span><br><span class="line">- Update to 1.0</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、非源码打包方法</em></strong><br>&emsp;&emsp; 如果无源码，只有一些已经编译完成的链接库与可执行文件，则可以借用打包机制，跳过编译步骤，直接将需要打入rpm包的文件拷贝到/root/rpmbuild/BUILDROOT/目录下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line">mkdir -p %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">cp -r <span class="string">&#x27;要存放的文件夹&#x27;</span> %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%<span class="string">&#x27;需要打包的路径&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，打包工具</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/05/%E5%8D%9A%E5%AE%A2%E4%BC%8A%E5%A7%8B/" class="archive-article-date">
-  	<time datetime="2018-07-05T12:07:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-05</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">单元测试工具</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/07/05/%E5%8D%9A%E5%AE%A2%E4%BC%8A%E5%A7%8B/">博客伊始</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-rpm%E6%89%93%E5%8C%85"><span class="toc-number">2.</span> <span class="toc-text">0x01 rpm打包</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -257,8 +309,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
