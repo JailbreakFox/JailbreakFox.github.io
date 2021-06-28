@@ -347,7 +347,9 @@
 <li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
 <li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
 </ul>
-<p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; </p>
+<p><strong><em>1、环境搭建</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、deb打包文件结构</em></strong><br>&emsp;&emsp; 在已有tar.gz包的情况下(无论里面放源码还是编译生成后文件，自动生成debian目录只需要得到tar包名字)，可以使用dh_make工具自动生成debian目录(具体方法在下面几节)。下面具体描述debian文件夹各文件的作用:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># deb源码打包示例项目的最终结构如下</span></span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">│       ├── changelog</span><br><span class="line">│       ├── compat</span><br><span class="line">│       ├── control</span><br><span class="line">│       ├── rules</span><br><span class="line">│       └── <span class="built_in">source</span></span><br><span class="line">│           └── format</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># debian目录是自动生成的，初始生成结构如下</span></span><br><span class="line"><span class="comment"># 需要注意dpkg-buildpackage指令使用小写debian</span></span><br><span class="line"><span class="comment"># dpkg-deb指令使用大写DEBIAN文件夹</span></span><br><span class="line">debian/</span><br><span class="line">├── changelog          <span class="comment"># 包的更新历史，后面可以使用dch -i指令修改</span></span><br><span class="line">├── compat             <span class="comment"># 包的兼容性，与debian policy版本有关</span></span><br><span class="line">├── control            <span class="comment"># 包的描述信息</span></span><br><span class="line">├── copyright          <span class="comment"># 包的版权信息</span></span><br><span class="line">├── ctest.cron.d.ex</span><br><span class="line">├── ctest.default.ex</span><br><span class="line">├── ctest.doc-base.EX</span><br><span class="line">├── ctest-docs.docs</span><br><span class="line">├── init.d.ex</span><br><span class="line">├── manpage.1.ex</span><br><span class="line">├── manpage.sgml.ex</span><br><span class="line">├── manpage.xml.ex</span><br><span class="line">├── menu.ex</span><br><span class="line">├── postinst.ex        <span class="comment"># 安装后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── postrm.ex          <span class="comment"># 卸载后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── preinst.ex         <span class="comment"># 安装前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── prerm.ex           <span class="comment"># 卸载前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── README.Debian</span><br><span class="line">├── README.source</span><br><span class="line">├── rules              <span class="comment"># 包的编译方法</span></span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">│   └── format         <span class="comment"># 包的版本</span></span><br><span class="line">└── watch.ex           <span class="comment"># 包的升级链接，使用前去掉.ex后缀</span></span><br></pre></td></tr></table></figure>
 
@@ -873,7 +875,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -881,7 +883,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -901,11 +903,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -913,11 +915,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
