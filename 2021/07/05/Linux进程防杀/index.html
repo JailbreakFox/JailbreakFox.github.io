@@ -6,17 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Jesse Tsui的博客</title>
+  <title>Linux进程防杀 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/page/5/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;本文主要研究Linux下如果防止进程被kill的方法。&amp;emsp;&amp;emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。&amp;emsp;&amp;emsp;当 kill 被调用时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux进程防杀">
+<meta property="og:url" content="http://yoursite.com/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;本文主要研究Linux下如果防止进程被kill的方法。&amp;emsp;&amp;emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。&amp;emsp;&amp;emsp;当 kill 被调用时">
 <meta property="og:locale">
+<meta property="article:published_time" content="2021-07-05T09:22:14.000Z">
+<meta property="article:modified_time" content="2021-07-06T06:11:28.804Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术，Linux">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
@@ -152,55 +154,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Linux进程防杀" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">环境配置-机器学习(待完成)</a>
+    <h1 class="article-title" itemprop="name">
+      Linux进程防杀
     </h1>
   
 
         
-        <a href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2019-05-16T13:37:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-16</time>
+        <a href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/" class="archive-article-date">
+  	<time datetime="2021-07-05T09:22:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-05</time>
 </a>
         
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 机器学习常用库TensorFlow和PyTorch，为避免忘记开发环境的配置，这里记录一下。</p>
-<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes的安装教程</a>为例，解释如何配置。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 DeepFakes</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;本文主要研究Linux下如果防止进程被kill的方法。<br>&emsp;&emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。<br>&emsp;&emsp;当 kill 被调用时，这一切都发生在内核中。如果要实现进程防杀，只有使内核代码介于发送信号的进程和接收信号的进程之间。<br>&emsp;&emsp;Linux系统下，要实现系统防杀可以从<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">两个角度</a>考虑，控制接收kill流程与控制被kill进程的状态。</p>
+<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 其他方法</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、Win10环境下安装</em></strong>  </p>
-<p><strong><em>1.1、Anaconda安装</em></strong><br>&emsp;&emsp; Anaconda是一个开源的包、环境管理器，它的优势在于能够配置不同版本python环境，同时集成一键安装各种依赖包和IDE等常用工具，其中包括我们常用的Git、VSCode等软件，所以以后装机的时候完全可以先装一个Anaconda，再用它去管理我们的常用开发工具。<br>&emsp;&emsp;其安装方式较简单，查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/0202781124ef4a1bcc9ce5cd.html">百度经验</a>，注意事项如下：<br>&emsp;&emsp;1)右键管理员权限方式打开安装包;<br>&emsp;&emsp;2)个人计算机还是勾选Just Me;<br>&emsp;&emsp;3)取消勾选Add Anaconda to my PATH environment variable。由于该项勾选后，后续需要卸载Anaconda时，将需要手动删除很多路径，因此推荐在安装完毕后自己手动添加环境变量(其实就是系统的链接库查询路径)。<br>&emsp;&emsp;安装完成后，根据需要<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jpfss/p/8608204.html">手动添加环境变量</a>，目的就是为了在CMD或PowerShell环境下识别Conda指令，但实际上也没有必要，原因如下：<br>&emsp;&emsp;1)我们通常情况下会使用Anaconda自带的终端环境Anaconda Powershell Prompt，这不会产生任何错误;<br>&emsp;&emsp;2)就算按上述手动添加环境变量，在CMD或PowerShell环境下还是不能使用”conda activate”或”conda deactivate”命令，还需要在终端运行”conda init”指令，该指令是用来初始化终端和Anaconda环境链接关系的;<br>&emsp;&emsp;3)就算运行“conda init”指令了，CMD变得可以使用”conda activate”或”conda deactivate”命令，但是PowerShell仍然不行，还需要借用<a target="_blank" rel="noopener" href="http://yuhao.me/zai-powershellzhong-shi-yong-condade-activate.html">其他的技术</a>，我已经踩坑这里就别试了，这个方法用完之后，在我的CMD里添加了初始化运行环境，不知道怎么删(类似于Ubuntu下的/.bashrc)，导致每次打开终端都会显示一段错误提示。<br>&emsp;&emsp;总结，不改配置环境也行，使用Anaconda自带的终端环境Anaconda Powershell Prompt，且在后续我会介绍怎么配置VSCode内运行Prompt。<br>&emsp;&emsp;若要添加环境变量，如下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Anaconda3为安装目录</span></span><br><span class="line">\Anaconda3</span><br><span class="line">\Anaconda3\Scripts</span><br><span class="line">\Anaconda3\Library\bin</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、LD_PRELOAD注入程序</em></strong><br>&emsp;&emsp;这里主要叙述的是<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD注入程序</a>这个方法。如果杀手进程是链接动态库的，就可以通过修改LD_PRELOAD(是个环境变量，用于动态库的加载)注入拒绝杀死指定PID的代码，并替换 kill 系统调用(您可能需要对 tkill或pkill执行相同的操作，具体取决于杀手实际发送信号的方式)。<br>**<em>1.1、简单使用**</em><br>&emsp;&emsp;首先写一个任意生成十个数字random.cpp文件(注意进程可以用.cpp或.c做后缀):</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  srand(time(<span class="literal">NULL</span>));</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">while</span>(i--) <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,rand()%<span class="number">100</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc random.cpp -o random</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后写一个用于注入为动态库的源文件unrandom.c文件(*注意进程不可以用.cpp做后缀，必须用.c，原因未知):</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rand</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic unrandom.c -o unrandom.so</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后执行如下命令，发现生成随机数均为42，且已经链接到unrandom.so上了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ldd random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so</span><br><span class="line">$ ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">ldd random</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1.2、Anaconda环境生成</em></strong><br>&emsp;&emsp;Anaconda最大的优势就在于能配置多个Python环境，而由于TensorFlow不同版本只能运行在指定Python版本下，比如这里我们就需要Python3.6的环境，那么就使用Anaconda生成一个独立的环境(注意，每个环境都有自己独立的开发工具，比如就算在base环境下安装了Git，那么在新环境下仍然重新安装)。具体操作流程查阅<a target="_blank" rel="noopener" href="https://www.cnblogs.com/W-Yentl/p/7783933.html">博文</a>，这里简单码一下代码：  </p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先打开Anaconda Prompt</span></span><br><span class="line"><span class="comment">#添加配置清华源</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --set show_channel_urls yes</span><br><span class="line"><span class="comment">#直接添加一个环境，取名为faceswap，且依赖于Python3.6</span></span><br><span class="line">conda create -n faceswap python=<span class="number">3.6</span></span><br><span class="line"><span class="comment">#启动该环境</span></span><br><span class="line">conda activate faceswap</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。  </p>
-<p><strong><em>1.3、Git和VSCode安装</em></strong><br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone DeepFakes，VSCode用来搭建编译环境。  </p>
-<p><strong><em>1.4、DeepFakes</em></strong><br>&emsp;&emsp;由于本教程是以DeepFakes软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone DeepFakes，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.2、防止递归调用</em></strong><br>&emsp;&emsp;假如我们要封装一个open函数的动态库，很明显open函数将被递归调用:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int open(const char *pathname, int flags)&#123;</span><br><span class="line">  <span class="built_in">return</span> open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们将使用dlfcn.h的dlsym函数来解决递归问题，修改后的注入源码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE <span class="comment">// 指示编译器启用一些非标准</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数指针</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*orig_open_f_type)</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags, ...)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 此处可加注入的程序</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;The victim used open(...) to access &#x27;%s&#x27;!!!\n&quot;</span>, pathname); </span><br><span class="line"></span><br><span class="line">    orig_open_f_type orig_open;</span><br><span class="line">    <span class="comment">// RTLD_DEFAULT是在当前库中查找函数，而RTLD_NEXT则是在当前库之后查找第一次出现的函数</span></span><br><span class="line">    orig_open = (orig_open_f_type)dlsym(RTLD_NEXT, <span class="string">&quot;open&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> orig_open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectopen.c -o injectopen.so -ldl</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;新建一个调用open()函数的.cpp源文件:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">2</span> != argc) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: ./opener + &#x27;file path&#x27; \n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    errno = <span class="number">0</span>;</span><br><span class="line">    fd = <span class="built_in">open</span>(argv[<span class="number">1</span>], O_RDONLY | O_CREAT, S_IRWXU);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">-1</span> == fd) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() failed with error [%s]\n&quot;</span>,strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() Successful.\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc opener.cpp -o opener</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注入与不注入动态库的输出结果如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注入动态库</span></span><br><span class="line">$ ./opener test.md</span><br><span class="line">open() Successful.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不注入动态库</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/inspect_open.so ./opener test.md</span><br><span class="line">The victim used open(...) to access <span class="string">&#x27;test.md&#x27;</span>!!!</span><br><span class="line">open() Successful.</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习，<strong>且必须选用对应算力的CUDA与CUDNN，否则报错</strong>)。<br>具体安装方式如下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.3、进程防杀示例</em></strong><br>&emsp;&emsp;接下来记录一个完整的<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">防杀示例</a>，能够记录下杀手进程终端、杀手进程、被杀进程的详细信息。首先，实现注入进程的源码injectkill.c :</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*KILL)</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TMP_BUF_SIZE 256</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 获取进程命令行参数 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_cmd_by_pid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[TMP_BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">snprintf</span>(buf, TMP_BUF_SIZE, <span class="string">&quot;/proc/%d/cmdline&quot;</span>, pid);</span><br><span class="line">    FILE* fp = fopen(buf, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, TMP_BUF_SIZE);</span><br><span class="line">    <span class="keyword">size_t</span> ret = fread(cmd, <span class="number">1</span>, TMP_BUF_SIZE - <span class="number">1</span>, fp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; ret != <span class="number">0</span> &amp;&amp; i &lt; ret - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cmd[i] == <span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">            cmd[i] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(fp);</span><br><span class="line">    cmd[TMP_BUF_SIZE - <span class="number">1</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kill</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> KILL orign_kill = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收kill命令的进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_des[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(pid, buf_des);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取当前进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_org[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getpid(), buf_org);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取父进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_porg[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getppid(), buf_porg);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hook kill(sig:%d): [%s(%d) -&gt; %s(%d)] -&gt; [%s(%d)]\n&quot;</span>,</span><br><span class="line">           sig, buf_porg, getppid(), buf_org, getpid(), buf_des, pid);</span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span>(!orign_kill)</span><br><span class="line">        orign_kill = (KILL)dlsym(RTLD_NEXT, <span class="string">&quot;kill&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> orign_kill(pid, sig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectkill.c -o injectkill.so -ldl</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;为了验证kill注入程序有起到作用，需要先写一个被杀的进程killed.cpp:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_handler</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signo == SIGINT)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;received SIGINT\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signal(SIGINT, sig_handler) == SIG_ERR)</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\ncan&#x27;t catch SIGINT\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc killed.cpp -o killed</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后来验证一下注入效果:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行被杀进程</span></span><br><span class="line">$ ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察被杀进程PID</span></span><br><span class="line">$ ps -ef |grep killed</span><br><span class="line">xyh        9169   8440  0 13:53 pts/8    00:00:00 ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行kill / pkill / tkill方法</span></span><br><span class="line"><span class="comment"># 可观察到杀手进程是bash(9118)下运行的kill(9173)，被杀进程是killed(9169)</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/injectkill.so /bin/<span class="built_in">kill</span> 9169</span><br><span class="line">hook <span class="built_in">kill</span>(sig:15): [-bash(9118) -&gt; /bin/<span class="built_in">kill</span> 9169(9173)] -&gt; [./killed(9169)]</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1.6、VSCode配置</em></strong><br>&emsp;&emsp;VSCode应该是目前用过最节简的IDE了，体积小，运行快，可自动添加各种插件还开源。如果总是使用Anaconda Prompt或者从Anaconda Navigator运行环境则稍显麻烦，这里简述一下如何将Anaconda环境外安装的VSCode链接至Anaconda并搭建自己的环境。<br>&emsp;&emsp;1)首先下载依赖包-Python;<br>&emsp;&emsp;2)选择File-Preferences-Settings，键入python.python Path，修改路径为/Anaconda3/python.exe，即根目录下的python可执行文件;<br>&emsp;&emsp;3)此时在IDE内打开任意.py文件，IDE左下角便可以选择使用哪个版本Python，点击选择我们在1.2节中搭建环境的Python3.6版本;<br>&emsp;&emsp;4)键入快捷键”CTRL + ~”，打开终端界面，默认使用PowerShell(前面介绍过，使用该终端并不能activate环境)，但是应该会提示更换Prompt版本终端，更改之后就相当于一款内置于VSCode的Anaconda Prompt了。</p>
-<h3 id="0x02-PyTorch环境配置"><a href="#0x02-PyTorch环境配置" class="headerlink" title="0x02 PyTorch环境配置"></a><em>0x02 PyTorch环境配置</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、PyTorch安装</span><br><span class="line">2、PyCharm安装</span><br></pre></td></tr></table></figure>
+<p><strong><em>2、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
+<h3 id="0x02-控制被kill进程状态"><a href="#0x02-控制被kill进程状态" class="headerlink" title="0x02 控制被kill进程状态"></a><em>0x02 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简单的Unix权限</span><br><span class="line">2 基础知识构建</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、简单的Unix权限</em></strong><br>&emsp;&emsp;引用 Linux 上的 kill(2) 手册页：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一个进程要有发送信号的权限，它要么是有root用户（Linux下：在目标进程的用户命名空间中具有CAP_KILL能力），要么发送进程的真实或有效用户ID必须等于真实或保存的目标进程的 <span class="built_in">set</span>-user-ID。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">以与杀手进程不同的用户身份运行被杀死的进程（假设杀手不是以 root 身份运行）</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1 PyTorch安装</em></strong><br>&emsp;&emsp;PyTorch基于Ubuntu16.04配置环境。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先安装pip3</span></span><br><span class="line">sudo apt-get install python3-pip</span><br><span class="line"><span class="comment">#更新pip3版本</span></span><br><span class="line">sudo pip3 install --upgrade pip</span><br><span class="line"><span class="comment">#去官网 https://pytorch.org 查安装代码(根据个人系统情况)</span></span><br><span class="line">pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html</span><br><span class="line"><span class="comment">#安装numpy</span></span><br><span class="line">pip3 install --upgrade numpy</span><br></pre></td></tr></table></figure>
+<p><strong><em>2、Linux安全模块</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LSM 可以（至少对 Smack、SELinux 和 apparmor 可以）过滤可能向什么发送信号的内容。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">使用 LSM。 例如，当使用 Smack（以 security=smack 作为内核参数启动）时，为受害进程设置不同的标签就足以让其他进程无法看到它，更不用说杀死它了。</span><br><span class="line">sudo zsh -c <span class="string">&#x27;echo unkillable &gt; /proc/self/attr/current &amp;&amp; exec sleep 1000&#x27;</span></span><br><span class="line">上述操作会在unkillable域中运行 sleep（名称可以是任何东西，关键是目前没有定义的规则允许以任何方式干扰该域），甚至以相同 uid 运行的进程也无法杀死它，root用户也一样。</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2 PyCharm安装</em></strong><br>&emsp;&emsp;PyCharm安装，用于编写python程序的IDE，具体安装方式查阅Ubuntu16.04配置sh包。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+<p><strong><em>3、一些进程对杀戮免疫</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Linux上id为1（init）的进程就是这种情况。其他子命名空间的根进程也不受其命名空间中其他进程发送的信号的影响。内核任务也不受信号影响。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line"><span class="comment"># 以终端为例</span></span><br><span class="line">$ sudo unshare -p --fork --mount-proc zsh</span><br><span class="line">$ <span class="built_in">kill</span> -s KILL <span class="string">&quot;$$&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、内核检测机制(未仔细研究)</em></strong><br>&emsp;&emsp;还有类似于 SystemTap 使用的内核检测机制，它允许您影响内核的行为，在这里可以用来劫持信号传递。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SystemTap 可以在这里使用。 但是请注意，您需要内核符号（Debian 上的 linux-image-&lt;version&gt;-dbgsym）才能使用它，并且 SystemTap 或您的 stap 脚本将挂钩的内部内核函数可能会发生变化。 所以可能不是最稳定的选择。 Guru 模式也应该小心使用（不要尝试做任何太花哨的事情）。</span><br><span class="line">使用 stap，您可以在正在运行的内核中的不同点注入代码。 例如，您可以挂钩处理 <span class="built_in">kill</span>() 或 tkill() 系统调用的内核函数，并告诉它当 pid 是您的受害者时将信号更改为 0（无害）。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;sys_kill&quot;) &#123; if ($pid == 12345) $sig = 0; &#125;&#x27;</span></span><br><span class="line">（这里对于任何信号，如果您只想覆盖 SIGKILL，您也可以检查 <span class="variable">$sig</span> == 9）。 现在，当使用 tkill() 或使用受害者的进程组 ID 调用 <span class="built_in">kill</span>() 时，这不起作用，因此我们需要扩展它。 这不包括信号由内核本身发送的情况。</span><br><span class="line">但是我们也可以查看内核代码，看看我们是否可以在内核检查发送信号权限的地方钩住自己。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">           if (@entry($t-&gt;pid) == 12345) $return = -1; &#125;&#x27;</span></span><br><span class="line">我们返回 -1 (-EPERM) ，当请求的 pid 是我们目标的 pid 时（这里以 12345 为例），它还有一个好处是让杀手知道它的 <span class="built_in">kill</span>() 失败了。</span><br><span class="line">~$ sleep 1000 &amp;</span><br><span class="line">[1] 8508</span><br><span class="line">~$ sudo stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($t-&gt;pid) == &#x27;</span><span class="string">&quot;$!&quot;</span><span class="string">&#x27;) $return = -1; &#125;&#x27;</span> &amp;</span><br><span class="line">[2] 8510</span><br><span class="line">~$ <span class="built_in">kill</span> -s KILL 8508</span><br><span class="line"><span class="built_in">kill</span>: <span class="built_in">kill</span> 8508 failed: operation not permitted</span><br><span class="line">它也适用于内核自行发送信号的某些情况，但不是全部。 为此，我们需要深入到内核代码中进行信号传递的最底层函数：__send_signal()（至少在当前版本的 Linux 内核中）。</span><br><span class="line">一种方法是挂钩 __send_signal() 在开始时调用的 prepare_signal() 函数（如果返回 0 则退出）；</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;prepare_signal&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($p-&gt;pid) == 12345) $return = 0; &#125;&#x27;</span></span><br><span class="line">然后，只要该 stap 进程存在，pid 12345 将是不可杀死的。</span><br><span class="line">请注意，内核通常假设 SIGKILL 会起作用，因此在某些极端情况下，上述内容可能会产生意想不到的副作用（例如，如果 oom-killer 继续选择无法杀死的受害者，则它会变得无效）。</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1] <a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process</a><br>[2]<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">https://www.52coder.net/post/ld-preload</a></p>
+
       
 
       
@@ -213,7 +246,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">配置</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
         		</li>
       		
 		</ul>
@@ -222,16 +255,24 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">deb与rpm打包</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -246,228 +287,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-信息聚合工具-RSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">信息聚合工具-RSS</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/" class="archive-article-date">
-  	<time datetime="2019-05-10T08:47:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-10</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;RSS又称简易信息聚合协议，是基于XML标准并在互联网上被广泛采用的内容包装和投递协议。使用RSS订阅能更快地获取信息，网站提供RSS输出，有利于让用户获取网站内容的最新更新。<br>&emsp;&emsp;目前获取信息的渠道日益增加，每种App都有各自的信息传达方式与推荐算法，虽然有益于日常刷段子，但是这也会导致获取信息的效率变低。RSS作为一种古老的信息订阅方式，却在信息横流的今天，将被赋予更深远的意义。<br>&emsp;&emsp;我认为其优势在于:1)高效率获取信息，并整合信息的能力。只要添加你需要的源，就能代替繁杂而重复的打开App，查阅订阅信息的过程;2)自定义信息弹窗。做到深处，可以尝试将获得的信息弹窗给手机或电脑，这对于有时效性的新闻来说是很重要的特性;3)自定义信息筛选功能。有时候我们需要自己喜欢的筛选信息方式，但是通常我们都是被别人的推荐算法所固定，然而用RSS的方法我们能获取更多的信息掌控权。<br>&emsp;&emsp;当然凡事都有两面性，RSS也有自身的缺陷:1)可扩展性差。毕竟所有的信息源都是自己设定的，而很多App能够依赖自己的算法推荐新的关注对象;2)不适用于深度阅读。挑选优质的信息源其实是很复杂的过程，如果单靠自己重新设计一个筛选优质信息的算法将花费大量的精力;3)不适用于减压阅读。有创意的或比较欢快的新颖视频、文章来源特性就是多样，这与RSS的固定订阅背道而行。<br>&emsp;&emsp;总结来说，RSS适合于添加固定的优质信息源，并以自定义的方式筛选目标信息。</p>
-<h3 id="0x01-RSS阅读器"><a href="#0x01-RSS阅读器" class="headerlink" title="0x01 RSS阅读器"></a><em>0x01 RSS阅读器</em></h3><p>&emsp;&emsp;作为一种比较成熟的技术，其实市面上是有很多实现获取RSS的工具，通常也被称为RSS阅读器。当然，针对不同的平台，有不同的产品。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Windows FeedDemon</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、Windows FeedDemon</em></strong><br>&emsp;&emsp;一款免费、轻量级的阅读器，网上的评价还是很好的，贴上它的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">安装与使用</a><sup>[1]</sup>。想要添加RSS源，可以采取多种办法:1)直接去网上找rss源;2)Easy to RSS插件，这是一款Chrome插件，能够直接识别可支持RSS协议的网址;3)一些寻找源的网址，在链接里有;4)RSS源生成项目。这些项目能够替没有RSS的网址生成RSS，比如Feed43、RSSHub等，将在下一章做重要介绍。</p>
-<h3 id="0x02-RSS源生成项目"><a href="#0x02-RSS源生成项目" class="headerlink" title="0x02 RSS源生成项目"></a><em>0x02 RSS源生成项目</em></h3><p>&emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RSSHub</span><br><span class="line">  1.1 Docker部署</span><br><span class="line">  1.2 添加源</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。</p>
-<p><strong><em>1.1、Docker部署</em></strong><br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  </p>
-<p><strong><em>1.2 添加源</em></strong><br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#举例: https:&#x2F;&#x2F;rsshub.app&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由: &#x2F;wechat&#x2F;wasi&#x2F;:id</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;但是我们添加源的时候并不是走rsshub.app这个域名的IP，而是应该走我们自己部署的Docker IP：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#注意别使用加密的https格式</span><br><span class="line">http:&#x2F;192.168.99.100:1200&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由ID可从瓦斯阅读对应的公众号下找到</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">https://www.zhihu.com/question/19580096/answer/20490041</a><br>[2]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">https://docs.rsshub.app</a><br>[3]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">https://jailbreakfox.github.io/2018/08/01/操作系统安装/</a><br>[4]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">https://docs.rsshub.app/install/#使用-docker-部署</a><br>[5]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">https://docs.rsshub.app/social-media.html#微信</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">工具， 信息聚合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%8E%A7%E5%88%B6%E6%8E%A5%E6%94%B6kill%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">0x01 控制接收kill流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%8E%A7%E5%88%B6%E8%A2%ABkill%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="toc-number">3.</span> <span class="toc-text">0x02 控制被kill进程状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">4.</span> <span class="toc-text">0x03 引用文献</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-远程系统工具-SSH与VCN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">远程系统工具-SSH与VNC</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/" class="archive-article-date">
-  	<time datetime="2019-05-08T02:26:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-08</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;SSH(Secure Shell)又称为安全外壳协议，是目前较可靠且专为<em>远程登录会话</em>和其他<em>网络服务</em>提供安全性的协议，由于其加密而实现的安全特性，已经开始代替telnet、ftp、rlogin、rsh和rcp等传统协议。SSH主要被用来实现远程命令行控制，但是也有远程桌面的功能，然而在可视化方面没有VNC应用广泛。<br>&emsp;&emsp;VNC(Virtual Network Console)又称为虚拟网络控制台，它是一款基于UNIX和Linux操作系统的免费的开源软件。</p>
-<h3 id="0x01-SSH协议工具OpenSSH"><a href="#0x01-SSH协议工具OpenSSH" class="headerlink" title="0x01 SSH协议工具OpenSSH"></a><em>0x01 SSH协议工具OpenSSH</em></h3><p>&emsp;&emsp;OpenSSH是SSH协议的免费开源实现，这里介绍一下其在Ubuntu系统下的安装、使用以及一些实用技巧。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">2 SSH可视化</span><br><span class="line">3 root方式登录</span><br><span class="line">4 免密远程登陆</span><br><span class="line">5 免密远程拷贝</span><br><span class="line">6 远程拷贝</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、安装与使用</em></strong><br>&emsp;&emsp;Ubuntu默认安装SSH的client端但没有安装server端，因此输入以下命令进行安装：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br><span class="line">#或者直接全部安装，毕竟也不大</span><br><span class="line">sudo apt-get install openssh</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这边注意一点，新安装的OpenSSH默认是不能用root访问的，需要<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">修改配置文件</a><sup>[1]</sup>，这里就不详细解释了（<em>留坑</em>）。<br>&emsp;&emsp;安装完成后便可以直接连接目标机器：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh (账户名)@(目标IP)</span><br><span class="line">#举栗子</span><br><span class="line">ssh MyComp@<span class="number">192</span>.<span class="number">168</span>.<span class="number">112</span>.<span class="number">130</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后根据需要填入该账号的密码即可登陆。</p>
-<p><strong><em>2、SSH可视化</em></strong><br><strong><em>3、root方式登录</em></strong><br><strong><em>4、免密远程登陆</em></strong><br><strong><em>5、免密远程拷贝</em></strong>  </p>
-<p><strong><em>6、远程拷贝</em></strong><br>&emsp;&emsp;使用工具scp能够远程拷贝文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在终端环境下运行</span></span><br><span class="line"><span class="comment"># scp &quot;远程机用户名&quot;@&quot;远程机IP&quot;:&quot;拷贝文件路径&quot; &quot;目标路径&quot;</span></span><br><span class="line">scp root@www.runoob.com:/home/root/others/music /home/space/music/1.mp3  </span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-VNC"><a href="#0x02-VNC" class="headerlink" title="0x02 VNC"></a><em>0x02 VNC</em></h3><p>&emsp;&emsp;VNC包括以下四个命令：vncserver，vncviewer，vncpasswd，和vncconnect，大多数情况下用户只需要其中的两个命令：<em>vncserver</em>和<em>vncviewer</em>。另外，和SSH一样，实际上有很多软件都能实现VNC，包括vncserver和vncviewer都有各自的实现软件，关键之处就在于选对安装包，避免踩到多余的坑。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">  1.1 Windows平台-RealVNCserver</span><br><span class="line">  1.2 Ubuntu-RealVNCserver</span><br><span class="line">  1.3 Ubuntu-vnc4server</span><br><span class="line">    1.3.1 vnc4server安装与配置</span><br><span class="line">    1.3.2 vnc4server使用</span><br><span class="line">    1.3.3 vnc4server自启动</span><br><span class="line">  1.4 Ubuntu-x11vnc</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、安装与使用</em></strong><br><strong><em>1.1、Windows平台-RealVNCserver</em></strong><br>&emsp;&emsp;在Windows平台下，使用<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">RealVNC官网</a><sup>[2]</sup>的VNCserver和VNCviewer即可，其安装教程可参考<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">百度经验</a><sup>[3]</sup>。唯一与教程不同的地方是，server和viewer都需要登陆注册的邮箱，实际上和teamviewer差不多了。</p>
-<p><strong><em>1.2、Ubuntu-RealVNCserver</em></strong><br>&emsp;&emsp;RealVNCviewer是目前用过的VNCvierver软件里最好用的，因此这里的所有教程均使用RealVNCviewer。而server端则有多种选择，这里使用RealVNCserver。<br>&emsp;&emsp;发现RealVNCserver在Ubuntu里的安装不需要登陆邮箱，可以直接输入Lisence，而且RealVNCviewer也不需要和服务端登陆一个邮箱（可能是该公司对于Linux版本还做的不是很完善），这里写一下安装过程。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#从RealVNC官网下载Linux版本的RealVNCserver，在安装目录下打开终端并安装deb包</span><br><span class="line">sudo dpkg -i 包名称</span><br><span class="line">#安装好之后，还需要继续输入命令vnclicense –add vnc的秘钥，密钥可去网上找</span><br><span class="line">sudo vnclicense -add WHJRK-UXY7V-Q34M9-CZU8L-<span class="number">8</span>KGFA</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;至此安装完成，然后需要对服务端的电脑做一些<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">配置</a><sup>[4]</sup>，可根据上述链接做配置。另外，注意客户端连接时在服务端会弹出允许远程桌面的窗口，点击允许才能继续。<br>&emsp;&emsp;虽然这种方法安装简单，但是存在很多问题:1)客户端的界面和服务端的界面是共用的，类似于QQ的远程桌面;2)配置过程麻烦，且登陆的时候在服务端还需要点允许;3)存在卡顿问题，即在客户端看视频的时候帧数很低;4)<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">卸载方法</a><sup>[5]</sup>很繁杂。</p>
-<p><strong><em>1.3、Ubuntu-vnc4server</em></strong><br><strong><em>1.3.1 vnc4server安装与配置</em></strong><br>&emsp;&emsp;相比于1.2节的服务端，现在要介绍一种优点更多的方法，即直接用apt-get的方式来安装。其安装过程可<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">查阅教程</a><sup>[6]</sup>，由于这种方式的重要性，这里也重复叙述一遍安装过程。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#apt-get方式安装vncserver</span><br><span class="line">sudo apt-get install vnc4server</span><br><span class="line">#安装gnome（linux的一种图形桌面环境）</span><br><span class="line">sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal</span><br><span class="line">#为当前用户创建密码（也可以不创建，在之后开启server的时候会询问）</span><br><span class="line">vncpasswd</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;至此，安装完成，开始修改配置，所有的配置文件均在<del>/.vnc隐藏文件夹下（需要先运行vncserver一次才会生成，<em>如果实在不知道怎么建，就现在命令行执行vncserver</em>），但是我们不使用非流程化的操作，还是自己去创建该文件夹，在</del>/.vnc目录下新建xstartup文件（配置文件），其内容如下（这里有两个方案，第一种是亲自试验过可以的，第二种跑起来很卡）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案一&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line">  </span><br><span class="line">[ -x &#x2F;etc&#x2F;vnc&#x2F;xstartup ] &amp;&amp; exec &#x2F;etc&#x2F;vnc&#x2F;xstartup  </span><br><span class="line">[ -r $HOME&#x2F;.Xresources ] &amp;&amp; xrdb $HOME&#x2F;.Xresources  </span><br><span class="line">xsetroot -solid grey  </span><br><span class="line">vncconfig -iconic &amp;  </span><br><span class="line">  </span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnome-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp; </span><br><span class="line"></span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案二&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line"></span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnmoe-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp;  </span><br><span class="line">vncconfig &amp;  </span><br><span class="line">startlxde &amp;  </span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ibus-daemon -d &amp;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后一步，添加配置文件的可执行权限：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#为xstartup文件添加可执行权限</span><br><span class="line">chmod +x ~/.vnc/xstartup</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.3.2 vnc4server使用</em></strong><br>(1)开启服务端<br>&emsp;&emsp;在终端下直接运行下述命令，~/.vnc目录下会出现.log和.pid两个文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#直接生成pid为1的远程桌面端口</span><br><span class="line">vncserver :1</span><br><span class="line">#新增一个远程桌面端口，pid累加</span><br><span class="line">vncserver</span><br><span class="line">#如果需要指定客户端的屏幕大小，可以使用-geometry参数指定，使用方式为（例如指定屏幕大小为1920*1080）：</span><br><span class="line">vncserver -geometry 1920x1080 :1  </span><br></pre></td></tr></table></figure>
-<p>(2)客户端访问<br>&emsp;&emsp;客户端访问实际上除了RealVNCviewer，还有其他的方式比如xvnc4viewer，只不过前者是界面比较友好的GUI软件，而后者是命令行形式（其实后者是和vnc4server配对，前者和RealVNCviewer配对）。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用RealVNCviewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#这种方法和1.1节以及1.2节一致，只不过不需要登陆邮箱，直接输入IP:1</span><br><span class="line">192.168.112.130:1</span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用xvnc4viewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#如果客户端是ubuntu系统，可以使用xvnc4viewer软件，但是这种是命令行模式的，先安装</span><br><span class="line">sudo apt-get install xvnc4viewer</span><br><span class="line">#启动vncviewer软件，连接服务端</span><br><span class="line">vncviewer IP:1  </span><br></pre></td></tr></table></figure>
-<p>(3)关闭服务端<br>vncserver -kill :1 </p>
-<p><strong><em>1.3.3、vnc4server自启动</em></strong><br>&emsp;&emsp;首先确保vnc server已经装好，在/etc文件夹下，新建vncserver文件夹，在vncserver文件夹下新增两个文件startvnc.py和startvnc.sh。<br>(1)startvnc.py</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys  </span><br><span class="line"><span class="keyword">import</span> os  </span><br><span class="line">user=[<span class="string">&quot;k40&quot;</span>,<span class="string">&quot;wcg&quot;</span>,<span class="string">&quot;szh&quot;</span>,<span class="string">&quot;zf&quot;</span>,<span class="string">&quot;yry&quot;</span>,<span class="string">&quot;lxy&quot;</span>,<span class="string">&quot;llp&quot;</span>] <span class="comment">#不同账户的用户名，port按这个顺序依次是1到7，如：k40即port 1  </span></span><br><span class="line">i = <span class="number">1</span>  </span><br><span class="line">depth = <span class="string">&quot;16&quot;</span>  </span><br><span class="line">geometry = <span class="string">&quot;1024x900&quot;</span>  <span class="comment">#分辨率  </span></span><br><span class="line">name = <span class="string">&quot;vncserver&quot;</span>  </span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> user:  </span><br><span class="line">    options = <span class="string">&quot;-name %s -depth %s -geometry %s :%d&quot;</span> % (name, depth, geometry, i)  </span><br><span class="line">    print(options)  </span><br><span class="line">    i = i + <span class="number">1</span>  </span><br><span class="line">    cmd = <span class="string">&quot;su %s -c &#x27;/usr/bin/vncserver %s&#x27;&quot;</span> % (name, options)  </span><br><span class="line">    print(cmd)  </span><br><span class="line">    os.system(cmd)</span><br></pre></td></tr></table></figure>
-<p>(2)startvnc.sh:</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/bash  </span></span><br><span class="line">python /etc/vncserver/startvnc.py  </span><br><span class="line">exit <span class="number">0</span> </span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;运行.sh，然后重启电脑。</p>
-<p><strong><em>1.4、Ubuntu-x11vnc</em></strong><br>&emsp;&emsp;vnc4server确实能用，且特点是宿主机界面不跟随客户机(可以黑？)，但是配置真的很烦。还有一种方法和1.2节中的Ubuntu-RealVNCserver效果一样，但是帧率似乎高了一些，并且我自己也写了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">脚本</a><sup>[7]</sup>，直接运行即可且是开机自启动，但是注意:1)运行过程中需要输入希望配置的密码;2)运行结束会reboot。</p>
-<h3 id="0x03-TeamViewer"><a href="#0x03-TeamViewer" class="headerlink" title="0x03 TeamViewer"></a><em>0x03 TeamViewer</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Ubuntu平台</span><br><span class="line">  1.1 安装TeamViewer</span><br><span class="line">  1.2 设置开机自启动以及登录密码</span><br><span class="line">  1.3 设置局域网联接</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.1、安装TeamViewer</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">教程介绍</a><sup>[8]</sup>，去<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">teamviewer官网</a><sup>[9]</sup>下载最新版的teamviewer for linux。  </p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb</span><br><span class="line"><span class="comment">#安装失败，修复依赖关系  </span></span><br><span class="line">sudo apt-get install -f  </span><br><span class="line"><span class="comment">#重新安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb  </span><br></pre></td></tr></table></figure>
-<p><strong><em>1.2、设置开机自启动以及登录密码</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">教程介绍</a><sup>[10]</sup>。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#停止teamviewer  </span></span><br><span class="line">teamviewer –daemon stop  </span><br><span class="line"><span class="comment">#给conf文件添加权限  </span></span><br><span class="line">sudo chmod <span class="number">777</span> /opt/teamviewer/config/<span class="keyword">global</span>.conf  </span><br><span class="line"><span class="comment">#打开conf文件  </span></span><br><span class="line">gedit /opt/teamviewer/config/<span class="keyword">global</span>.conf</span><br><span class="line"><span class="comment">#在conf文件最后添加一段命令  </span></span><br><span class="line">EulaAccepted = <span class="number">1</span>  </span><br><span class="line">EulaAcceptedRevision = <span class="number">6</span>  </span><br><span class="line"><span class="comment">#打开teamviewer  </span></span><br><span class="line">teamviewer –daemon start  </span><br><span class="line"><span class="comment">#修改teamviewer登录密码  </span></span><br><span class="line">sudo teamviewer –passwd <span class="number">123456</span></span><br><span class="line"><span class="comment">#记录teamviewer ID，方便登录的时候输入  </span></span><br><span class="line">teamviewer –info <span class="keyword">print</span> id</span><br><span class="line"><span class="comment">#设置开机启动(不操作到这一步，配置重启后就会消失)  </span></span><br><span class="line">sudo systemctl enable teamviewerd.service  </span><br><span class="line"><span class="comment">#(如果想不开启开机自启动)  </span></span><br><span class="line">sudo systemctl disable teamviewerd.service</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.3、设置局域网联接</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">教程介绍</a><sup>[11]</sup>。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#option-&gt;常规-&gt;网络设置-&gt;呼入的LAN连接-&gt;选择accept</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">https://blog.csdn.net/xiao_yuanjl/article/details/79147314</a><br>[2]<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">https://www.realvnc.com/en</a><br>[3]<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html</a><br>[4]<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">http://www.cnblogs.com/xuliangxing/p/7642650.html</a><br>[5]<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04</a><br>[6]<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">https://blog.csdn.net/linuxshine/article/details/79972786</a><br>[7]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04配置sh包/x11vnc.sh</a><br>[8]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">https://blog.csdn.net/qq_38451119/article/details/81369043</a><br>[9]<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">https://www.teamviewer.com/zhcn/download/linux/</a><br>[10]<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">https://blog.csdn.net/box172506/article/details/88016732</a><br>[11]<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">https://blog.csdn.net/moshiyaofei/article/details/86431188</a>  </p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">远程桌面， 工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -492,8 +337,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
