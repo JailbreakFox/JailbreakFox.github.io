@@ -227,7 +227,7 @@ lsof -i:22      # 查看某个端口的使用情况
 15 分区信息-df/fdisk/lsblk/blkid
 16 权限更改-chmod/chown/chroot/chattr/getfacl+setfacl
 17 用户管理-useradd/userdel/usermod/groups
-18 二进制文件分析-file/ldd/ltrace/strace/hexdump/strings
+18 二进制文件分析-file/ldd/ltrace/strace/hexdump/strings/readelf/nm
 19 日志保存-sosreport
 20 远程文件操作-scp/rsync
 21 读取转换数据-dd
@@ -238,7 +238,7 @@ lsof -i:22      # 查看某个端口的使用情况
 26 密码过期设置-chage
 27 环境变量-export/locale/env
 28 编辑器-gedit/dedit
-29 反汇编-objdump/strings
+29 反汇编-objdump/strings/nm
 30 电源指令-poweroff/shutdown/reboot/Hibernate/suspend/logout/rtcwake
 31 键鼠输入事件监听-libinput
 32 窗口查看进程-xprop
@@ -247,6 +247,9 @@ lsof -i:22      # 查看某个端口的使用情况
 35 ssh免密码登录
 36 计划任务-cron
 37 网络配置-nmcli
+38 驱动管理-insmod/rmmod/lsmod
+39 命令行运行时间-time
+40 md5校验 - md5sum
 ```
 ***1、日志读取-journalctl***  
 &emsp;&emsp;在Systemd出现之前，Linux系统及各应用的日志都是分别管理的，Systemd开始统一管理了所有Unit的启动日志，这样带来的好处就是可以只用一个 journalctl命令，查看所有内核和应用的日志。
@@ -651,7 +654,10 @@ mount /dev/hda1 /mnt
 mount -w /dev/hda1 /mnt
 # 重新挂载为可读写的方式
 mount -o remount,rw /mnt
-
+# Linux系统挂载局域网中Windows文件
+# 先在文件夹的属性中开启共享文件夹
+# 然后在Linux环境中新建需要挂载的文件夹
+mount -t cifs -o username=,password=,rw //192.168.*.*/'共享文件夹名' /'挂载位置'
 # ====== 取消挂载 ======
 unmount /mnt
 ```
@@ -749,7 +755,7 @@ groups '用户名'
 cat /etc/passwd
 ```
 
-***18、二进制文件分析-file/ldd/ltrace/strace/hexdump/strings***  
+***18、二进制文件分析-file/ldd/ltrace/strace/hexdump/strings/readelf/nm***  
 &emsp;&emsp;参考[良许的文章](https://os.51cto.com/art/202005/616628.htm)，用 /bin/pwd 程序为例:
 ```sh
 # -----1、file-----
@@ -776,6 +782,15 @@ hexdump -C /bin/pwd | head
 # -----6、strings-----
 # strings 命令可以用来打印二进制文件中可显示的字符
 strings /bin/pwd | head 
+
+# -----7、readelf-----
+# 一般用于查看ELF格式的文件信息，可以用来都RPATH
+readelf -d '可执行程序路径'
+
+# -----8、nm-----
+# 可以列举出该目标中定义的符合要求的符号，包括外部引入的、内部定义的、动态的...
+# 也可以添加参数使nm同时打印行号、文件名等相关信息。
+nm -D '二进制或链接库路径'
 ```
 
 ***19、日志保存-sosreport***  
@@ -936,6 +951,10 @@ objdump -T -C '.so/.a/可执行程序路径'
 
 # 在对象文件或二进制文件中查找可打印的字符串 - strings
 strings '.so/.a/可执行程序路径'
+
+# nm可以列举出该目标中定义的符合要求的符号，包括外部引入的、内部定义的、动态的...
+# 也可以添加参数使nm同时打印行号、文件名等相关信息。
+nm -D '二进制或链接库路径'
 ```
 
 ***30、电源指令-poweroff/shutdown/reboot/Hibernate/suspend/logout/rtcwake***  
@@ -1092,6 +1111,33 @@ systemctl restart NetworkManager
 # 临时配置网络IP地址
 # 用这个方法恢复 nmcli c down '连接配置名'，再次up
 ifconfig '连接配置名' 192.168.200.201/24
+```
+
+***38、驱动管理-insmod/rmmod/lsmod***  
+```sh
+# insmod - 加载驱动
+insmod "驱动路径"
+
+# rmmod - 卸载驱动
+rmmod "驱动名"
+
+# lsmod - 打印驱动信息
+lsmod |grep "驱动关键字"
+```
+
+***39、命令行运行时间-time***
+```sh
+# 查看命令行运行一条程序花费的时间
+# time + "执行的命令"
+time ping 10.10.10.10
+# 以秒为单位显示
+time -p ping 10.10.10.10
+```
+
+***40 md5校验 - md5sum***
+```sh
+# 查看文件是否被更改，其实只需要看它的md5值就行
+md5sum '文件路径'
 ```
 
 ### *0x04 Linux系统日志系统*

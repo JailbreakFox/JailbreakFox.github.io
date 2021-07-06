@@ -200,12 +200,34 @@ sudo /sbin/ldconfig
 # ===== 方案二 =====
 # LD_LIBRARY_PATH是Linux环境变量名
 # 主要用于指定查找链接库时除默认路径外的其他路径
-export LD_LIBRARY_PATH=/home/uos/Desktop/
+export LD_LIBRARY_PATH="链接库路径":$LD_LIBRARY_PATH
 
 # ===== 方案三 =====
 # 在CMakeLists.txt文件中添加rpath的搜索路径
+# 方法一：针对某个链接库的rpath
 FIND_LIBRARY(MY_LIB NAMES libMathFunctions.so PATHS /home/uos/Desktop)
 TARGET_LINK_LIBRARYS(${CMAKE_PROJECT_NAME} ${MY_LIB})
+
+# 方法二：针对项目的rpath
+# 注意该方法必须先设置安装路径及安装配置，且在make install后生效
+SET(CMAKE_INSTALL_PREFIX "安装路径")
+install(TARGETS MyLib
+        EXPORT MyLibTargets 
+        LIBRARY DESTINATION lib  # 动态库安装路径
+        ARCHIVE DESTINATION lib  # 静态库安装路径
+        RUNTIME DESTINATION bin  # 可执行文件安装路径
+        PUBLIC_HEADER DESTINATION include  # 头文件安装路径
+        )
+#修改安装执行程序的库链接路径
+set(CMAKE_INSTALL_RPATH 目标路径)
+#保证只针对当前的target进行make install的时候RPATH的写入了
+set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)
+
+# 方法三：针对各种编译版本的rpath
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb,-rpath=./libs")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3,-rpath=./libs")
+# ！！当然也可以使用相对路径，这个方法最推荐，-Wl代表用逗号添加参数
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -Wl,-rpath,./")
 ```
 
 ***3、如何修改Qt链接库路径***  
@@ -242,7 +264,10 @@ TARGET_LINK_LIBRARYS(${CMAKE_PROJECT_NAME} ${MY_LIB})
 
 ### *0x03 CMake常用变量*
 ```sh
+# 在CMake3.1之后设置编译器使用c++11的方法
+# 此版本之前，可以使用 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 SET(CMAKE_CXX_STANDARD 11)
+
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 # 设置自动生成moc文件,AUTOMOC打开可以省去QT5_WRAP_CPP命令
 SET(CMAKE_AUTOMOC ON)
@@ -274,6 +299,15 @@ ENDIF ()
 SET(CMAKE_BUILD_TYPE "Release")
 SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
+
+# 设置编译器
+#告知当前使用的是交叉编译方式，必须配置
+SET(CMAKE_SYSTEM_NAME Linux)
+#指定编译工具，一定要设置
+#或交叉编译器使用绝对地址
+SET(CMAKE_C_COMPILER "arm-linux-gcc")
+#指定C++交叉编译器
+SET(CMAKE_CXX_COMPILER "arm-linux-g++")
 ```
 
 ### *0x04 CMake学习中获得优质且繁杂的资源*
