@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;本文主要研究Linux下如果防止进程被kill的方法。&amp;emsp;&amp;emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。&amp;emsp;&amp;emsp;当 kill 被调用时">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-07-05T09:22:14.000Z">
-<meta property="article:modified_time" content="2021-07-08T02:09:07.291Z">
+<meta property="article:modified_time" content="2021-07-08T02:50:56.289Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术，Linux">
 <meta name="twitter:card" content="summary">
@@ -182,7 +182,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;本文主要研究Linux下如果防止进程被kill的方法。<br>&emsp;&emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。<br>&emsp;&emsp;当 kill 被调用时，这一切都发生在内核中。如果要实现进程防杀，只有使内核代码介于发送信号的进程和接收信号的进程之间。<br>&emsp;&emsp;Linux系统下，要实现系统防杀可以从<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">两个角度</a><sup>[1]</sup>考虑，控制接收kill流程与控制被kill进程的状态。</p>
-<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 其他方法</span><br></pre></td></tr></table></figure>
+<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 sys_kill劫持</span><br><span class="line">3 其他方法</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、LD_PRELOAD注入程序</em></strong><br>&emsp;&emsp;这里主要叙述的是<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD注入程序</a><sup>[2]</sup>这个方法。如果杀手进程是链接动态库的，就可以通过修改LD_PRELOAD(是个环境变量，用于动态库的加载)注入拒绝杀死指定PID的代码，并替换 kill 系统调用(您可能需要对 tkill或pkill执行相同的操作，具体取决于杀手实际发送信号的方式)。  </p>
 <p><strong><em>1.1、简单使用</em></strong><br>&emsp;&emsp;首先写一个任意生成十个数字random.cpp文件(注意进程可以用.cpp或.c做后缀):</p>
@@ -218,9 +218,12 @@
 <p>&emsp;&emsp;然后进行编译:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc killed.cpp -o killed</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;最后来验证一下注入效果:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行被杀进程</span></span><br><span class="line">$ ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察被杀进程PID</span></span><br><span class="line">$ ps -ef |grep killed</span><br><span class="line">xyh        9169   8440  0 13:53 pts/8    00:00:00 ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行kill / pkill / tkill方法</span></span><br><span class="line"><span class="comment"># 可观察到杀手进程是bash(9118)下运行的kill(9173)，被杀进程是killed(9169)</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/injectkill.so /bin/<span class="built_in">kill</span> 9169</span><br><span class="line">hook <span class="built_in">kill</span>(sig:15): [-bash(9118) -&gt; /bin/<span class="built_in">kill</span> 9169(9173)] -&gt; [./killed(9169)]</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行被杀进程</span></span><br><span class="line">$ ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察被杀进程PID</span></span><br><span class="line">$ ps -ef |grep killed</span><br><span class="line">xyh        9169   8440  0 13:53 pts/8    00:00:00 ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行kill / pkill / tkill方法</span></span><br><span class="line"><span class="comment"># 可观察到杀手进程是bash(9118)下运行的kill(9173)，被杀进程是killed(9169)</span></span><br><span class="line"><span class="comment"># 注意这里必须调用/bin/kill，而不是直接运行kill(这是使用bash内建kill程序)</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/injectkill.so /bin/<span class="built_in">kill</span> 9169</span><br><span class="line">hook <span class="built_in">kill</span>(sig:15): [-bash(9118) -&gt; /bin/<span class="built_in">kill</span> 9169(9173)] -&gt; [./killed(9169)]</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
+<p><strong><em>2、sys_kill劫持</em></strong><br>&emsp;&emsp;LD_PRELOAD方法本质是劫持用户态的kill，但是仍然有些<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10312787/setting-the-ld-preload-environment-variable-for-commands-run-without-typing-the">不足的地方</a>，比如当用户直接调用kill就无法劫持了。如果想验证两者区别，可以用以下方法分析，两者输出是不同的因此不是同一个进程:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 内建kill</span></span><br><span class="line">$ <span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin目录下的kill程序</span></span><br><span class="line">$ /bin/<span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想要shell关闭内建kill，可以用enable来禁止使用内建kill</span></span><br><span class="line"><span class="built_in">enable</span> -n <span class="built_in">kill</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
 <h3 id="0x02-控制被kill进程状态"><a href="#0x02-控制被kill进程状态" class="headerlink" title="0x02 控制被kill进程状态"></a><em>0x02 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简单的Unix权限</span><br><span class="line">2 基础知识构建</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、简单的Unix权限</em></strong><br>&emsp;&emsp;引用 Linux 上的 kill(2) 手册页：</p>
@@ -441,11 +444,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -457,15 +460,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -477,7 +484,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -485,15 +496,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
