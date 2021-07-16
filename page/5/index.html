@@ -156,6 +156,99 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/21/DeepFakes/">DeepFakes(未完成)</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
+  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
+<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
+<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。  </p>
+<p><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;胡歌&quot;</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;刘亦菲&quot;</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
+<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。  </p>
+<p><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/21/DeepFakes/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -345,127 +438,6 @@
 
 
   
-    <article id="post-远程系统工具-SSH与VCN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">远程系统工具-SSH与VNC</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/" class="archive-article-date">
-  	<time datetime="2019-05-08T02:26:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-08</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;SSH(Secure Shell)又称为安全外壳协议，是目前较可靠且专为<em>远程登录会话</em>和其他<em>网络服务</em>提供安全性的协议，由于其加密而实现的安全特性，已经开始代替telnet、ftp、rlogin、rsh和rcp等传统协议。SSH主要被用来实现远程命令行控制，但是也有远程桌面的功能，然而在可视化方面没有VNC应用广泛。<br>&emsp;&emsp;VNC(Virtual Network Console)又称为虚拟网络控制台，它是一款基于UNIX和Linux操作系统的免费的开源软件。</p>
-<h3 id="0x01-SSH协议工具OpenSSH"><a href="#0x01-SSH协议工具OpenSSH" class="headerlink" title="0x01 SSH协议工具OpenSSH"></a><em>0x01 SSH协议工具OpenSSH</em></h3><p>&emsp;&emsp;OpenSSH是SSH协议的免费开源实现，这里介绍一下其在Ubuntu系统下的安装、使用以及一些实用技巧。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">2 SSH可视化</span><br><span class="line">3 root方式登录</span><br><span class="line">4 免密远程登陆</span><br><span class="line">5 免密远程拷贝</span><br><span class="line">6 远程拷贝</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、安装与使用</em></strong><br>&emsp;&emsp;Ubuntu默认安装SSH的client端但没有安装server端，因此输入以下命令进行安装：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br><span class="line">#或者直接全部安装，毕竟也不大</span><br><span class="line">sudo apt-get install openssh</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这边注意一点，新安装的OpenSSH默认是不能用root访问的，需要<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">修改配置文件</a><sup>[1]</sup>，这里就不详细解释了（<em>留坑</em>）。<br>&emsp;&emsp;安装完成后便可以直接连接目标机器：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh (账户名)@(目标IP)</span><br><span class="line">#举栗子</span><br><span class="line">ssh MyComp@<span class="number">192</span>.<span class="number">168</span>.<span class="number">112</span>.<span class="number">130</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后根据需要填入该账号的密码即可登陆。</p>
-<p><strong><em>2、SSH可视化</em></strong><br><strong><em>3、root方式登录</em></strong><br><strong><em>4、免密远程登陆</em></strong><br><strong><em>5、免密远程拷贝</em></strong>  </p>
-<p><strong><em>6、远程拷贝</em></strong><br>&emsp;&emsp;使用工具scp能够远程拷贝文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在终端环境下运行</span></span><br><span class="line"><span class="comment"># scp &quot;远程机用户名&quot;@&quot;远程机IP&quot;:&quot;拷贝文件路径&quot; &quot;目标路径&quot;</span></span><br><span class="line">scp root@www.runoob.com:/home/root/others/music /home/space/music/1.mp3  </span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-VNC"><a href="#0x02-VNC" class="headerlink" title="0x02 VNC"></a><em>0x02 VNC</em></h3><p>&emsp;&emsp;VNC包括以下四个命令：vncserver，vncviewer，vncpasswd，和vncconnect，大多数情况下用户只需要其中的两个命令：<em>vncserver</em>和<em>vncviewer</em>。另外，和SSH一样，实际上有很多软件都能实现VNC，包括vncserver和vncviewer都有各自的实现软件，关键之处就在于选对安装包，避免踩到多余的坑。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 安装与使用</span><br><span class="line">  1.1 Windows平台-RealVNCserver</span><br><span class="line">  1.2 Ubuntu-RealVNCserver</span><br><span class="line">  1.3 Ubuntu-vnc4server</span><br><span class="line">    1.3.1 vnc4server安装与配置</span><br><span class="line">    1.3.2 vnc4server使用</span><br><span class="line">    1.3.3 vnc4server自启动</span><br><span class="line">  1.4 Ubuntu-x11vnc</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、安装与使用</em></strong><br><strong><em>1.1、Windows平台-RealVNCserver</em></strong><br>&emsp;&emsp;在Windows平台下，使用<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">RealVNC官网</a><sup>[2]</sup>的VNCserver和VNCviewer即可，其安装教程可参考<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">百度经验</a><sup>[3]</sup>。唯一与教程不同的地方是，server和viewer都需要登陆注册的邮箱，实际上和teamviewer差不多了。</p>
-<p><strong><em>1.2、Ubuntu-RealVNCserver</em></strong><br>&emsp;&emsp;RealVNCviewer是目前用过的VNCvierver软件里最好用的，因此这里的所有教程均使用RealVNCviewer。而server端则有多种选择，这里使用RealVNCserver。<br>&emsp;&emsp;发现RealVNCserver在Ubuntu里的安装不需要登陆邮箱，可以直接输入Lisence，而且RealVNCviewer也不需要和服务端登陆一个邮箱（可能是该公司对于Linux版本还做的不是很完善），这里写一下安装过程。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#从RealVNC官网下载Linux版本的RealVNCserver，在安装目录下打开终端并安装deb包</span><br><span class="line">sudo dpkg -i 包名称</span><br><span class="line">#安装好之后，还需要继续输入命令vnclicense –add vnc的秘钥，密钥可去网上找</span><br><span class="line">sudo vnclicense -add WHJRK-UXY7V-Q34M9-CZU8L-<span class="number">8</span>KGFA</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;至此安装完成，然后需要对服务端的电脑做一些<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">配置</a><sup>[4]</sup>，可根据上述链接做配置。另外，注意客户端连接时在服务端会弹出允许远程桌面的窗口，点击允许才能继续。<br>&emsp;&emsp;虽然这种方法安装简单，但是存在很多问题:1)客户端的界面和服务端的界面是共用的，类似于QQ的远程桌面;2)配置过程麻烦，且登陆的时候在服务端还需要点允许;3)存在卡顿问题，即在客户端看视频的时候帧数很低;4)<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">卸载方法</a><sup>[5]</sup>很繁杂。</p>
-<p><strong><em>1.3、Ubuntu-vnc4server</em></strong><br><strong><em>1.3.1 vnc4server安装与配置</em></strong><br>&emsp;&emsp;相比于1.2节的服务端，现在要介绍一种优点更多的方法，即直接用apt-get的方式来安装。其安装过程可<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">查阅教程</a><sup>[6]</sup>，由于这种方式的重要性，这里也重复叙述一遍安装过程。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#apt-get方式安装vncserver</span><br><span class="line">sudo apt-get install vnc4server</span><br><span class="line">#安装gnome（linux的一种图形桌面环境）</span><br><span class="line">sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal</span><br><span class="line">#为当前用户创建密码（也可以不创建，在之后开启server的时候会询问）</span><br><span class="line">vncpasswd</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;至此，安装完成，开始修改配置，所有的配置文件均在<del>/.vnc隐藏文件夹下（需要先运行vncserver一次才会生成，<em>如果实在不知道怎么建，就现在命令行执行vncserver</em>），但是我们不使用非流程化的操作，还是自己去创建该文件夹，在</del>/.vnc目录下新建xstartup文件（配置文件），其内容如下（这里有两个方案，第一种是亲自试验过可以的，第二种跑起来很卡）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案一&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line">  </span><br><span class="line">[ -x &#x2F;etc&#x2F;vnc&#x2F;xstartup ] &amp;&amp; exec &#x2F;etc&#x2F;vnc&#x2F;xstartup  </span><br><span class="line">[ -r $HOME&#x2F;.Xresources ] &amp;&amp; xrdb $HOME&#x2F;.Xresources  </span><br><span class="line">xsetroot -solid grey  </span><br><span class="line">vncconfig -iconic &amp;  </span><br><span class="line">  </span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnome-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp; </span><br><span class="line"></span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;方案二&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#!&#x2F;bin&#x2F;sh  </span><br><span class="line">export XKL_XMODMAP_DISABLE&#x3D;1  </span><br><span class="line">unset SESSION_MANAGER  </span><br><span class="line">unset DBUS_SESSION_BUS_ADDRESS  </span><br><span class="line"></span><br><span class="line">gnome-panel &amp;  </span><br><span class="line">gnmoe-settings-daemon &amp;  </span><br><span class="line">metacity &amp;  </span><br><span class="line">nautilus &amp;  </span><br><span class="line">gnome-terminal &amp;  </span><br><span class="line">vncconfig &amp;  </span><br><span class="line">startlxde &amp;  </span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ibus-daemon -d &amp;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后一步，添加配置文件的可执行权限：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#为xstartup文件添加可执行权限</span><br><span class="line">chmod +x ~/.vnc/xstartup</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.3.2 vnc4server使用</em></strong><br>(1)开启服务端<br>&emsp;&emsp;在终端下直接运行下述命令，~/.vnc目录下会出现.log和.pid两个文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#直接生成pid为1的远程桌面端口</span><br><span class="line">vncserver :1</span><br><span class="line">#新增一个远程桌面端口，pid累加</span><br><span class="line">vncserver</span><br><span class="line">#如果需要指定客户端的屏幕大小，可以使用-geometry参数指定，使用方式为（例如指定屏幕大小为1920*1080）：</span><br><span class="line">vncserver -geometry 1920x1080 :1  </span><br></pre></td></tr></table></figure>
-<p>(2)客户端访问<br>&emsp;&emsp;客户端访问实际上除了RealVNCviewer，还有其他的方式比如xvnc4viewer，只不过前者是界面比较友好的GUI软件，而后者是命令行形式（其实后者是和vnc4server配对，前者和RealVNCviewer配对）。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用RealVNCviewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#这种方法和1.1节以及1.2节一致，只不过不需要登陆邮箱，直接输入IP:1</span><br><span class="line">192.168.112.130:1</span><br><span class="line">#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;使用xvnc4viewer&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#如果客户端是ubuntu系统，可以使用xvnc4viewer软件，但是这种是命令行模式的，先安装</span><br><span class="line">sudo apt-get install xvnc4viewer</span><br><span class="line">#启动vncviewer软件，连接服务端</span><br><span class="line">vncviewer IP:1  </span><br></pre></td></tr></table></figure>
-<p>(3)关闭服务端<br>vncserver -kill :1 </p>
-<p><strong><em>1.3.3、vnc4server自启动</em></strong><br>&emsp;&emsp;首先确保vnc server已经装好，在/etc文件夹下，新建vncserver文件夹，在vncserver文件夹下新增两个文件startvnc.py和startvnc.sh。<br>(1)startvnc.py</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys  </span><br><span class="line"><span class="keyword">import</span> os  </span><br><span class="line">user=[<span class="string">&quot;k40&quot;</span>,<span class="string">&quot;wcg&quot;</span>,<span class="string">&quot;szh&quot;</span>,<span class="string">&quot;zf&quot;</span>,<span class="string">&quot;yry&quot;</span>,<span class="string">&quot;lxy&quot;</span>,<span class="string">&quot;llp&quot;</span>] <span class="comment">#不同账户的用户名，port按这个顺序依次是1到7，如：k40即port 1  </span></span><br><span class="line">i = <span class="number">1</span>  </span><br><span class="line">depth = <span class="string">&quot;16&quot;</span>  </span><br><span class="line">geometry = <span class="string">&quot;1024x900&quot;</span>  <span class="comment">#分辨率  </span></span><br><span class="line">name = <span class="string">&quot;vncserver&quot;</span>  </span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> user:  </span><br><span class="line">    options = <span class="string">&quot;-name %s -depth %s -geometry %s :%d&quot;</span> % (name, depth, geometry, i)  </span><br><span class="line">    print(options)  </span><br><span class="line">    i = i + <span class="number">1</span>  </span><br><span class="line">    cmd = <span class="string">&quot;su %s -c &#x27;/usr/bin/vncserver %s&#x27;&quot;</span> % (name, options)  </span><br><span class="line">    print(cmd)  </span><br><span class="line">    os.system(cmd)</span><br></pre></td></tr></table></figure>
-<p>(2)startvnc.sh:</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/bash  </span></span><br><span class="line">python /etc/vncserver/startvnc.py  </span><br><span class="line">exit <span class="number">0</span> </span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;运行.sh，然后重启电脑。</p>
-<p><strong><em>1.4、Ubuntu-x11vnc</em></strong><br>&emsp;&emsp;vnc4server确实能用，且特点是宿主机界面不跟随客户机(可以黑？)，但是配置真的很烦。还有一种方法和1.2节中的Ubuntu-RealVNCserver效果一样，但是帧率似乎高了一些，并且我自己也写了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">脚本</a><sup>[7]</sup>，直接运行即可且是开机自启动，但是注意:1)运行过程中需要输入希望配置的密码;2)运行结束会reboot。</p>
-<h3 id="0x03-TeamViewer"><a href="#0x03-TeamViewer" class="headerlink" title="0x03 TeamViewer"></a><em>0x03 TeamViewer</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Ubuntu平台</span><br><span class="line">  1.1 安装TeamViewer</span><br><span class="line">  1.2 设置开机自启动以及登录密码</span><br><span class="line">  1.3 设置局域网联接</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.1、安装TeamViewer</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">教程介绍</a><sup>[8]</sup>，去<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">teamviewer官网</a><sup>[9]</sup>下载最新版的teamviewer for linux。  </p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb</span><br><span class="line"><span class="comment">#安装失败，修复依赖关系  </span></span><br><span class="line">sudo apt-get install -f  </span><br><span class="line"><span class="comment">#重新安装deb包  </span></span><br><span class="line">sudo dpkg -i teamviewer_13<span class="number">.1</span><span class="number">.8286</span>_amd64.deb  </span><br></pre></td></tr></table></figure>
-<p><strong><em>1.2、设置开机自启动以及登录密码</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">教程介绍</a><sup>[10]</sup>。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#停止teamviewer  </span></span><br><span class="line">teamviewer –daemon stop  </span><br><span class="line"><span class="comment">#给conf文件添加权限  </span></span><br><span class="line">sudo chmod <span class="number">777</span> /opt/teamviewer/config/<span class="keyword">global</span>.conf  </span><br><span class="line"><span class="comment">#打开conf文件  </span></span><br><span class="line">gedit /opt/teamviewer/config/<span class="keyword">global</span>.conf</span><br><span class="line"><span class="comment">#在conf文件最后添加一段命令  </span></span><br><span class="line">EulaAccepted = <span class="number">1</span>  </span><br><span class="line">EulaAcceptedRevision = <span class="number">6</span>  </span><br><span class="line"><span class="comment">#打开teamviewer  </span></span><br><span class="line">teamviewer –daemon start  </span><br><span class="line"><span class="comment">#修改teamviewer登录密码  </span></span><br><span class="line">sudo teamviewer –passwd <span class="number">123456</span></span><br><span class="line"><span class="comment">#记录teamviewer ID，方便登录的时候输入  </span></span><br><span class="line">teamviewer –info <span class="keyword">print</span> id</span><br><span class="line"><span class="comment">#设置开机启动(不操作到这一步，配置重启后就会消失)  </span></span><br><span class="line">sudo systemctl enable teamviewerd.service  </span><br><span class="line"><span class="comment">#(如果想不开启开机自启动)  </span></span><br><span class="line">sudo systemctl disable teamviewerd.service</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.3、设置局域网联接</em></strong><br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">教程介绍</a><sup>[11]</sup>。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#option-&gt;常规-&gt;网络设置-&gt;呼入的LAN连接-&gt;选择accept</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yuanjl/article/details/79147314">https://blog.csdn.net/xiao_yuanjl/article/details/79147314</a><br>[2]<a target="_blank" rel="noopener" href="https://www.realvnc.com/en">https://www.realvnc.com/en</a><br>[3]<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html">https://jingyan.baidu.com/article/d2b1d102b85a825c7e37d405.html</a><br>[4]<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xuliangxing/p/7642650.html">http://www.cnblogs.com/xuliangxing/p/7642650.html</a><br>[5]<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04">https://askubuntu.com/questions/653321/how-to-uninstall-real-vnc-in-ubuntu-14-04</a><br>[6]<a target="_blank" rel="noopener" href="https://blog.csdn.net/linuxshine/article/details/79972786">https://blog.csdn.net/linuxshine/article/details/79972786</a><br>[7]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/x11vnc.sh">https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh/blob/master/Ubuntu14.04配置sh包/x11vnc.sh</a><br>[8]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38451119/article/details/81369043">https://blog.csdn.net/qq_38451119/article/details/81369043</a><br>[9]<a target="_blank" rel="noopener" href="https://www.teamviewer.com/zhcn/download/linux/">https://www.teamviewer.com/zhcn/download/linux/</a><br>[10]<a target="_blank" rel="noopener" href="https://blog.csdn.net/box172506/article/details/88016732">https://blog.csdn.net/box172506/article/details/88016732</a><br>[11]<a target="_blank" rel="noopener" href="https://blog.csdn.net/moshiyaofei/article/details/86431188">https://blog.csdn.net/moshiyaofei/article/details/86431188</a>  </p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">远程桌面， 工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/08/%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7-SSH%E4%B8%8EVCN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
@@ -615,7 +587,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -623,7 +595,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -635,15 +607,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

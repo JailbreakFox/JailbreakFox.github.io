@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/vmstat.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/slabtop.png">
 <meta property="article:published_time" content="2018-10-20T07:00:44.000Z">
-<meta property="article:modified_time" content="2021-07-14T02:44:55.851Z">
+<meta property="article:modified_time" content="2021-07-14T09:11:57.879Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux 工具">
 <meta name="twitter:card" content="summary">
@@ -465,11 +465,7 @@
 <p><strong><em>26、密码过期设置-chage</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用法  chage [选项] 用户名</span></span><br><span class="line"><span class="comment"># -m：密码可更改的最小天数。为零时代表任何时候都可以更改密码。</span></span><br><span class="line"><span class="comment"># -M：密码保持有效的最大天数。</span></span><br><span class="line"><span class="comment"># -w：用户密码到期前，提前收到警告信息的天数。</span></span><br><span class="line"><span class="comment"># -E：帐号到期的日期。过了这天，此帐号将不可用。</span></span><br><span class="line"><span class="comment"># -d：上一次更改的日期。</span></span><br><span class="line"><span class="comment"># -i：停滞时期。如果一个密码已过期这些天，那么此帐号将不可用。</span></span><br><span class="line"><span class="comment"># -l：例出当前的设置。由非特权用户来确定他们的密码或帐号何时过期。</span></span><br></pre></td></tr></table></figure>
 
-<p><strong><em>27、环境变量-export/locale/env</em></strong><br>&emsp;&emsp;环境变量分为系统级变量和用户级环境变量。关于系统级变量的配置文件如下:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/profile</span></span><br><span class="line"><span class="comment"># 在系统启动后第一个用户登录时运行</span></span><br><span class="line"><span class="comment"># 并从/etc/profile.d目录的配置文件中搜集shell的设置</span></span><br><span class="line"><span class="comment"># 使用该文件配置的环境变量将应用于登录到系统的每一个用户。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/bashrc（Ubuntu和Debian中是/etc/bash.bashrc）</span></span><br><span class="line"><span class="comment"># 在 bash shell 打开时运行(注意，只针对bash shell)，修改该文件配置的环境变量将会影响所有用户使用的bash shell。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/environment</span></span><br><span class="line"><span class="comment"># 在系统启动时运行，用于配置与系统运行相关但与用户无关的环境变量</span></span><br><span class="line"><span class="comment"># 修改该文件配置的环境变量将影响全局。</span></span><br></pre></td></tr></table></figure>
-<p>关于用户级变量的配置文件如下:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.profile（推荐首选）</span></span><br><span class="line"><span class="comment"># 当用户登录时执行，每个用户都可以使用该文件来配置专属于自己使用的shell信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bashrc（不推荐）</span></span><br><span class="line">当用户登录时以及每次打开新的shell时该文件都将被读取</span><br><span class="line">不推荐在这里配置用户专用的环境变量，因为每开一个shell，该文件都会被读取一次，效率肯定受影响</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bash_profile 或 ~./bash_login - </span></span><br><span class="line">如果有其中的一个文件存在的话, 当启动的是一个 登录shell时，Bash 会执行该文件而不会执行~/.profile</span><br><span class="line">如果两个文件都存在的话，Bash 将会优先执行~/.bash_profile 而不是~/.bash_login</span><br><span class="line">然而, 默认情况下，这些文件不会影响图形会话</span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bash_logout</span></span><br><span class="line">当每次退出系统(退出bash shell)时执行该文件</span><br><span class="line"></span><br><span class="line"><span class="comment"># 总结</span></span><br><span class="line">一般情况下，Linux加载环境变量配置文件的执行顺序为</span><br><span class="line">==&gt; /etc/profile</span><br><span class="line">==&gt; ~/.bash_profile | ~/.bash_login | ~/.profile</span><br><span class="line">==&gt; ~/.bashrc</span><br><span class="line">==&gt; /etc/bashrc</span><br><span class="line">==&gt; ~/.bash_logout</span><br></pre></td></tr></table></figure>
-<p>下面解释下，各个修改配置文件的命令和方法:  </p>
+<p><strong><em>27、环境变量-export/locale/env</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># export</span></span><br><span class="line"><span class="comment"># 该命令用于设置或显示环境变量。但是export 的效力仅限于该次登陆操作</span></span><br><span class="line"><span class="comment"># 如果想每次登录都拥有该环境变量，则需在对应配置文件内添加上述命令，配置文件作用看上面描述</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$PATH</span>:/opt/bin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># locale</span></span><br><span class="line"><span class="comment"># 用于打印用户语言相关的环境变量</span></span><br><span class="line">locale</span><br><span class="line"></span><br><span class="line"><span class="comment"># set</span></span><br><span class="line"><span class="comment"># 用于打印所有本地环境变量</span></span><br><span class="line"><span class="built_in">set</span></span><br><span class="line"><span class="comment"># env</span></span><br><span class="line"><span class="comment"># 用于打印用户所有的环境变量</span></span><br><span class="line">env</span><br><span class="line"><span class="comment"># export -p用于显示当前所有环境变量</span></span><br><span class="line"><span class="built_in">export</span> -p</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>28、编辑器-gedit/dedit</em></strong>  </p>
@@ -558,56 +554,7 @@
 <p><strong><em>42、设置别名 - alias</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># alias命令用于设置指令的别名</span></span><br><span class="line"><span class="comment"># 用法: alias[别名]=[指令名称]</span></span><br><span class="line">$ <span class="built_in">alias</span> lx=ls</span><br><span class="line">$ lx</span><br><span class="line">anaconda-ks.cfg Desktop install.log install.log.syslog qte</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-Linux系统日志系统"><a href="#0x04-Linux系统日志系统" class="headerlink" title="0x04 Linux系统日志系统"></a><em>0x04 Linux系统日志系统</em></h3><p><strong><em>常见日志文件解析</em></strong>  </p>
-<table>
-<thead>
-<tr>
-<th>地址</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/var/log/message</td>
-<td>系统启动后的信息和错误日志</td>
-</tr>
-<tr>
-<td>/var/log/secure</td>
-<td>与安全相关的日志信息</td>
-</tr>
-<tr>
-<td>/var/log/maillog</td>
-<td>与邮件相关的日志信息</td>
-</tr>
-<tr>
-<td>/var/log/cron</td>
-<td>与定时任务相关的日志信息</td>
-</tr>
-<tr>
-<td>/var/log/spooler</td>
-<td>与UUCP和news设备相关的日志信息</td>
-</tr>
-<tr>
-<td>/var/log/boot.log</td>
-<td>守护进程启动和停止相关的日志消息</td>
-</tr>
-<tr>
-<td>/var/log/wtmp</td>
-<td>永久记录每个用户登录、注销及系统的启动、停机的事件</td>
-</tr>
-<tr>
-<td>/var/run/utmp</td>
-<td>记录当前正在登录系统的用户信息</td>
-</tr>
-<tr>
-<td>/var/log/btmp</td>
-<td>记录失败的登录尝试信息</td>
-</tr>
-<tr>
-<td>~/.xession-error</td>
-<td>记录登录桌面失败的信息</td>
-</tr>
-</tbody></table>
-<p><strong><em>历史记录</em></strong>  </p>
+<h3 id="0x04-Linux系统日志系统"><a href="#0x04-Linux系统日志系统" class="headerlink" title="0x04 Linux系统日志系统"></a><em>0x04 Linux系统日志系统</em></h3><p><strong><em>历史记录</em></strong>  </p>
 <table>
 <thead>
 <tr>
@@ -879,7 +826,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -887,7 +834,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -899,15 +846,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
