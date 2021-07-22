@@ -762,7 +762,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server1:</span></span><br><span class="line">ssh-keygen  一直回车</span><br><span class="line">ssh-copy-id root@192.168.200.202</span><br><span class="line"><span class="comment"># server2验证</span></span><br><span class="line">cat ~/.ssh/authorized_keys  server1的公钥已添加</span><br><span class="line"><span class="comment"># server1</span></span><br><span class="line">ssh root@192.168.200.202    无密码可登录</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>36、计划任务-cron</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 符号含义</span></span><br><span class="line"><span class="comment">#     *    表示该范围内的任意时间</span></span><br><span class="line"><span class="comment">#     ,    表示间隔的多个不连续时间点，例如，“1,2,5,7,8,9”</span></span><br><span class="line"><span class="comment">#     -    表示一个连续的时间范围，例如“2-6”表示“2,3,4,5,6”</span></span><br><span class="line"><span class="comment">#     /    指定间隔的时间频率，例如“0-23/2”表示每两小时执行一次</span></span><br><span class="line"><span class="comment"># 示例：</span></span><br><span class="line"><span class="comment">#     0  17  *  *  1-5    周一到周五每天17:00</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加计划任务</span></span><br><span class="line"><span class="comment"># 第一次使用&#x27;-e&#x27;指令的时候会选择编辑器</span></span><br><span class="line"><span class="comment"># 打开后写上需要执行的指令即可</span></span><br><span class="line">crontab -e -u <span class="string">&#x27;添加任务的用户名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某用户的计划任务列表</span></span><br><span class="line">crontab -l <span class="string">&#x27;添加任务的用户名&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 符号含义</span></span><br><span class="line"><span class="comment">#     *    表示该范围内的任意时间</span></span><br><span class="line"><span class="comment">#     ,    表示间隔的多个不连续时间点，例如，“1,2,5,7,8,9”</span></span><br><span class="line"><span class="comment">#     -    表示一个连续的时间范围，例如“2-6”表示“2,3,4,5,6”</span></span><br><span class="line"><span class="comment">#     /    指定间隔的时间频率，例如“0-23/2”表示每两小时执行一次</span></span><br><span class="line"><span class="comment"># 示例：周一到周五每天17:00</span></span><br><span class="line"><span class="comment">#     0  17  *  *  1-5 bash /home/test.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加计划任务</span></span><br><span class="line"><span class="comment"># 第一次使用&#x27;-e&#x27;指令的时候会选择编辑器</span></span><br><span class="line"><span class="comment"># 打开后写上需要执行的指令即可</span></span><br><span class="line">crontab -e -u <span class="string">&#x27;添加任务的用户名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某用户的计划任务列表</span></span><br><span class="line">crontab -l -u <span class="string">&#x27;添加任务的用户名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>37、网络配置-nmcli</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 网络设备信息</span></span><br><span class="line"><span class="comment"># 可简写为nmcli d show/status</span></span><br><span class="line">nmcli device show    <span class="comment"># 详细信息</span></span><br><span class="line">nmcli device status  <span class="comment"># 粗略信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络连接信息</span></span><br><span class="line"><span class="comment"># 可简写为nmcli c show</span></span><br><span class="line">nmcli connection show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络设备开启/断开</span></span><br><span class="line">nmcli device connect <span class="string">&#x27;设备名&#x27;</span>     <span class="comment"># 连接设备</span></span><br><span class="line">nmcli device disconnect <span class="string">&#x27;设备名&#x27;</span>  <span class="comment"># 断开设备</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络连接启动/停止</span></span><br><span class="line">nmcli connection up <span class="string">&#x27;连接配置名&#x27;</span>    <span class="comment"># 连接配置</span></span><br><span class="line">nmcli connection down <span class="string">&#x27;连接配置名&#x27;</span>  <span class="comment"># 断开配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加网络连接配置</span></span><br><span class="line"><span class="comment"># type类型 ethernet以太网卡，con-name 配置文件名字，ifname 设备名字，connection.autoconnect自动连接，可加可不加，一般都加上</span></span><br><span class="line">nmcli connection add <span class="built_in">type</span> <span class="string">&#x27;ethernet&#x27;</span> con-name <span class="string">&#x27;ens33&#x27;</span> ifname <span class="string">&#x27;ens33&#x27;</span> connection.autoconnect <span class="string">&#x27;yes&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改网络连接配置</span></span><br><span class="line"><span class="comment"># +ipv4.dns代表添加一个备选的DNS地址</span></span><br><span class="line">nmcli connection modify ens33 ipv4.method manual ipv4.addresses 192.168.200.201/24 ipv4.gateway 192.168.200.2 ipv4.dns 114.114.114.114 +ipv4.dns 20.106.0.20 connection.autoconnect yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改网络连接配置-一个网卡多添加一个ip地址</span></span><br><span class="line">nmcli connection modify ens33 ipv4.method manual +ipv4.addresses 10.0.0.1/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启网络服务</span></span><br><span class="line">systemctl restart NetworkManager</span><br><span class="line"></span><br><span class="line"><span class="comment"># 临时配置网络IP地址</span></span><br><span class="line"><span class="comment"># 用这个方法恢复 nmcli c down &#x27;连接配置名&#x27;，再次up</span></span><br><span class="line">ifconfig <span class="string">&#x27;连接配置名&#x27;</span> 192.168.200.201/24</span><br></pre></td></tr></table></figure>
@@ -994,15 +994,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1014,15 +1014,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1050,15 +1050,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
