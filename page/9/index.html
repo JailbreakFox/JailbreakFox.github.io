@@ -788,7 +788,7 @@
 <p><strong><em>44、文本处理 - awk</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截取ps获得结果的第二个字符串，以空格分隔</span></span><br><span class="line">ps -ef |grep serv | grep -v grep | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、首行指令</em></strong><br>首行指令用于声明使用的终端:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br></pre></td></tr></table></figure>
 
@@ -803,6 +803,9 @@
 
 <p><strong><em>5、命令执行</em></strong><br>命令执行使用 ‘ ` ‘ 符号包含，将返回的打印结果赋给左值:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">PROC=`ps -ef |grep serv | grep -v grep | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> 2&gt;/dev/null`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PROC</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>6、后台运行</em></strong><br>添加&amp;运行后，在当前终端可以继续执行其他的命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">./<span class="string">&#x27;可执行程序名&#x27;</span> &amp;</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-Linux系统日志系统"><a href="#0x05-Linux系统日志系统" class="headerlink" title="0x05 Linux系统日志系统"></a><em>0x05 Linux系统日志系统</em></h3><p><strong><em>历史记录</em></strong>  </p>
 <table>
@@ -1032,11 +1035,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1056,11 +1059,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1076,11 +1079,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
