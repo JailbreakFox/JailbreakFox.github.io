@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2021-08-10T11:52:22.909Z">
+<meta property="article:modified_time" content="2021-08-10T11:56:47.618Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -282,15 +282,175 @@
 <p><strong><em>1、生成任务栏图标</em></strong><br>&emsp;&emsp;在linux系统中，要在任务栏中生成一个可以打开某个程序的图标，需要在/usr/share/applications目录中添加一个<a target="_blank" rel="noopener" href="https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html">.desktop文件</a>:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Type=Application</span><br><span class="line">Version=0.9.4</span><br><span class="line">Name=Netanim</span><br><span class="line">Comment=Run Netanim</span><br><span class="line">Icon=/usr2/ns-allinone-3.25/netanim-3.107/netanim-logo.png</span><br><span class="line">Exec=/usr2/ns-allinone-3.25/netanim-3.107/NetAnim</span><br><span class="line">Terminal=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、生成桌面图标</em></strong><br>&emsp;&emsp;生成桌面图标有三种方法:  </p>
-<ul>
-<li>硬链接/usr/share/applications/XXX.desktop到指定用户桌面</li>
-<li>软链接/usr/share/applications/XXX.desktop到指定用户桌面</li>
-<li>拷贝/usr/share/applications/XXX.desktop到指定用户桌面<br>&emsp;&emsp;由于后两者无法同时改动桌面与源文件，因此这边只推荐使用硬链接<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln /usr/share/applications/XXX.desktop <span class="string">&#x27;Desktop文件夹目录/XXX.desktop&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong><em>2、生成桌面图标</em></strong><br>&emsp;&emsp;生成桌面图标有三种方法:1.硬链接/usr/share/applications/XXX.desktop到指定用户桌面;2.软链接/usr/share/applications/XXX.desktop到指定用户桌面;3.拷贝/usr/share/applications/XXX.desktop到指定用户桌面。<br>&emsp;&emsp;由于后两者无法同时改动桌面与源文件，因此这边只推荐使用硬链接:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln /usr/share/applications/XXX.desktop <span class="string">&#x27;Desktop文件夹目录/XXX.desktop&#x27;</span></span><br></pre></td></tr></table></figure>
 
-</li>
-</ul>
-<p><strong><em>3、指令对照表</em></strong><br>| Key                    | 描述                                                                                        | Value 类型    | 是否必须？ | 生效的类型 |<br>| ———————- | ——————————————————————————————— | ————— | ———- | ———- |<br>| Type                   | Application (type1), Link (type2), Direcory (type3)                                           | string          | Yes        |            |<br>| Version                | 版本，例如1.1                                                                            | string          | No         | 1-3        |<br>| Name                   | 应用程序的特定名称，例如“Mozilla”。                                          | localestring    | Yes        | 1-3        |<br>| GenericName            | 应用程序的通用名称，例如“Web浏览器”。                                     | localestring    | No         | 1-3        |<br>| NoDisplay              | 不在菜单中显示, 但可以与MIME类型相关联                                        | boolean         | No         | 1-3        |<br>| Comment                | 应用描述                                                                                  | ocalestring     | No         | 1-3        |<br>| Icon                   | 要么绝对路径，要么符合图标主题规范                                           | localestring    | No         | 1-3        |<br>| Hidden                 | 是否隐藏，等同于不存在的文件                                                    | boolean         | No         | 1-3        |<br>| OnlyShowIn， NotShowIn | 一般不用此字段                                                                         | boolean         | No         | 1-3        |<br>| DBusActivatable        | DBus激活，默认false。参阅D-Bus激活。应包含Exec行，实现兼容                | boolean         | No         |            |<br>| TryExec                | 如果文件不存在, 则忽略该文件，并不在菜单中出现                          | string          | No         | 1          |<br>| Exec                   | 执行路径 。参阅Exec Key                                                                | string          | No         | 1          |<br>| Path                   | 当Type=Application时，程序运行的目录                                                | string No       | 1          |            |<br>| Terminal               | 程序是否在终端窗口中运行。                                                       | boolean         | No         | 1          |<br>| Actions                | 为其他组提供接口，比如Action=Gallery;，那么其他组就为[Desktop Action Gallery] | string(s)       | No         | 1          |<br>| MimeType               | 此应用支持打开的类型，具体类型可以百度                                     | string(s)       | No         | 1          |<br>| Categories             | 参阅桌面菜单规范                                                                      | string(s)       | No         | 1          |<br>| Implements             | 默认情况下，桌面文件不实现任何接口。参阅接口                            | string(s)       | No         |            |<br>| Keywords               | 用于搜索，不应该是Name或者为多余的值 GenericName。                           | localestring(s) | No         | 1          |<br>| StartupNotify          | 如果不存在，则合理的处理取决于实现（假设为false，使用StartupWMClass等）。参阅启动通知协议规范 | boolean         | No         | 1          |<br>| StartupWMClass         | 一般跟Name相同即可                                                                     | string          | No         | 1          |<br>| URL                    | 只适用于Type=Link                                                                         | string          | Yes        | ２        |</p>
+<p><strong><em>3、指令对照表</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>描述</th>
+<th>Value 类型</th>
+<th>是否必须？</th>
+<th>生效的类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Type</td>
+<td>Application (type1), Link (type2), Direcory (type3)</td>
+<td>string</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>Version</td>
+<td>版本，例如1.1</td>
+<td>string</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>应用程序的特定名称，例如“Mozilla”。</td>
+<td>localestring</td>
+<td>Yes</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>GenericName</td>
+<td>应用程序的通用名称，例如“Web浏览器”。</td>
+<td>localestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>NoDisplay</td>
+<td>不在菜单中显示, 但可以与MIME类型相关联</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>应用描述</td>
+<td>ocalestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Icon</td>
+<td>要么绝对路径，要么符合图标主题规范</td>
+<td>localestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Hidden</td>
+<td>是否隐藏，等同于不存在的文件</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>OnlyShowIn， NotShowIn</td>
+<td>一般不用此字段</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>DBusActivatable</td>
+<td>DBus激活，默认false。参阅D-Bus激活。应包含Exec行，实现兼容</td>
+<td>boolean</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>TryExec</td>
+<td>如果文件不存在, 则忽略该文件，并不在菜单中出现</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Exec</td>
+<td>执行路径 。参阅Exec Key</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Path</td>
+<td>当Type=Application时，程序运行的目录</td>
+<td>string No</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>Terminal</td>
+<td>程序是否在终端窗口中运行。</td>
+<td>boolean</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Actions</td>
+<td>为其他组提供接口，比如Action=Gallery;，那么其他组就为[Desktop Action Gallery]</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>MimeType</td>
+<td>此应用支持打开的类型，具体类型可以百度</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Categories</td>
+<td>参阅桌面菜单规范</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Implements</td>
+<td>默认情况下，桌面文件不实现任何接口。参阅接口</td>
+<td>string(s)</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>Keywords</td>
+<td>用于搜索，不应该是Name或者为多余的值 GenericName。</td>
+<td>localestring(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>StartupNotify</td>
+<td>如果不存在，则合理的处理取决于实现（假设为false，使用StartupWMClass等）。参阅启动通知协议规范</td>
+<td>boolean</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>StartupWMClass</td>
+<td>一般跟Name相同即可</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>只适用于Type=Link</td>
+<td>string</td>
+<td>Yes</td>
+<td>２</td>
+</tr>
+</tbody></table>
 </div></div>
       
 
@@ -501,11 +661,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,7 +685,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -525,7 +693,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -541,19 +709,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -561,11 +721,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
              
               <li class="article-tag-list-item">
