@@ -662,6 +662,76 @@
 <td>２</td>
 </tr>
 </tbody></table>
+<h3 id="0x06-文件权限"><a href="#0x06-文件权限" class="headerlink" title="0x06 文件权限"></a><em>0x06 文件权限</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 权限描述</span><br><span class="line">2 特殊权限</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、权限描述</em></strong><br>&emsp;&emsp;Linux系统中使用UID(用户ID)与GID(组ID)对用户进行管理，每个文件都拥有自己的权限描述，可以用以下方式查看与设置:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 查看方式 =====</span></span><br><span class="line"><span class="comment"># ll &#x27;文件路径&#x27;</span></span><br><span class="line"><span class="comment"># 例如</span></span><br><span class="line">&amp; ll /usr/bin/passwd</span><br><span class="line">-rwsr-xr-x 1 root root 27832 Jun 10  2014 /usr/bin/passwd</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 设置方式 =====</span></span><br><span class="line"><span class="comment"># ---- 数字 -----</span></span><br><span class="line">&amp; chmod 777 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ---- 字母 -----</span></span><br><span class="line"><span class="comment"># 权限分配：用户 用户组 其他用户 所有用户</span></span><br><span class="line"><span class="comment"># 字母描述: u    g     o        a</span></span><br><span class="line"><span class="comment"># 符号描述：+    –     =</span></span><br><span class="line">&amp; chmod +x <span class="string">&#x27;文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下面开始解析上述输出的含义:  </p>
+<table>
+<thead>
+<tr>
+<th>权限项</th>
+<th>文件类型</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符表示</td>
+<td>(d/l/c/s/p/-)</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+</tr>
+<tr>
+<td>数字表示</td>
+<td></td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>权限分配</td>
+<td></td>
+<td>文件所有者</td>
+<td></td>
+<td></td>
+<td>文件所属组用户</td>
+<td></td>
+<td></td>
+<td>其他用户</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件类型中</span></span><br><span class="line">d: 表示目录文件</span><br><span class="line">l: 表示符号连接文件</span><br><span class="line">c: 表示字符设备文件</span><br><span class="line">s: 表示socket文件</span><br><span class="line">p: 表示命名管道文件</span><br><span class="line">-: 表示普通文件</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、特殊权限</em></strong><br>&emsp;&emsp;除了上述rwx三种权限之外，还存在三种特殊权限 SUID/SGID/Sticky 。  </p>
+<ul>
+<li>SUID - 特殊权限，一般设置可执行文件。可执行的文件搭配这个权限，便能得到特权，任意存取该文件的所有者能使用的全部系统资源;</li>
+<li>SGID - 特殊权限组，一般设置可执行文件。其效果与SUID相同，只不过将文件所有者换成用户组，该文件就可以任意存取整个用户组所能使用的系统资源;</li>
+<li>Sticky - 粘滞位，一般设置文件夹。如果想在文件夹中新建文件，则必须获取该文件夹的写权限，那么如何让用户在文件夹中只能新建文件而不能删除文件呢?设置粘滞位的文件夹，任意用户可以在文件夹中新建文件，但是不能删除其他用户新建的文件。  </li>
+</ul>
+<p>&emsp;&emsp;其表现在执行位置上:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 设置方法 =====</span></span><br><span class="line"><span class="comment"># 在rwx权限前一位，即为特殊权限位</span></span><br><span class="line"><span class="comment"># SUID: 4</span></span><br><span class="line"><span class="comment"># SGID: 2</span></span><br><span class="line"><span class="comment"># Sticky: 1</span></span><br><span class="line">&amp; chmod 7764 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsrwSr-T</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 举例 =====</span></span><br><span class="line"><span class="comment"># 特殊权限 - SUID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 4755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsr-xr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 4655 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwSr-xr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特殊权限组 - SGID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 2755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-sr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 2745 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-Sr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 粘滞位 - Sticky</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 1755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-t</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 1754 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-T</span><br></pre></td></tr></table></figure>
 </div></div>
       
 
@@ -1049,15 +1119,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1065,7 +1127,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1077,23 +1143,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1101,7 +1155,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1109,11 +1171,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
