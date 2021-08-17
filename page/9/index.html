@@ -788,7 +788,7 @@
 <p><strong><em>44、文本处理 - awk</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截取ps获得结果的第二个字符串，以空格分隔</span></span><br><span class="line">ps -ef |grep serv | grep -v grep | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、首行指令</em></strong><br>首行指令用于声明使用的终端:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br></pre></td></tr></table></figure>
 
@@ -806,6 +806,12 @@
 
 <p><strong><em>6、后台运行</em></strong><br>添加&amp;运行后，在当前终端可以继续执行其他的命令</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">./<span class="string">&#x27;可执行程序名&#x27;</span> &amp;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>7、脚本调用</em></strong><br>脚本调用有三种方法:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一: fork</span></span><br><span class="line"><span class="comment"># 新开子shell执行脚本，继承父shell环境变量，但子shell环境变量不会带回父shell</span></span><br><span class="line">./child.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二: exec</span></span><br><span class="line"><span class="comment"># 在父shell中执行，但父shell中 exec 行之后的内容就不会再执行了</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;run1&quot;</span></span><br><span class="line"><span class="built_in">exec</span> ./child.sh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;run2&quot;</span> <span class="comment"># 不在执行</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法三: source</span></span><br><span class="line"><span class="comment"># 在父shell中执行，父shell中 source 行之后的内容继续执行(环境变量共用，相当于合并脚本)</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;run1&quot;</span></span><br><span class="line"><span class="built_in">source</span> ./child.sh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;run2&quot;</span> <span class="comment"># 继续执行</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>8、流程语句</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># if语句</span></span><br><span class="line"><span class="keyword">if</span> condition1</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    command1</span><br><span class="line"><span class="keyword">elif</span> condition2 </span><br><span class="line"><span class="keyword">then</span> </span><br><span class="line">    command2</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    commandN</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># for语句</span></span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> item1 item2 ... itemN</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">command</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># while语句</span></span><br><span class="line"><span class="keyword">while</span> condition</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">command</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># case语句</span></span><br><span class="line"><span class="keyword">case</span> 值 <span class="keyword">in</span></span><br><span class="line">  值1)</span><br><span class="line">      <span class="built_in">command</span></span><br><span class="line">  ;;</span><br><span class="line">  值2）</span><br><span class="line">      <span class="built_in">command</span></span><br><span class="line">  ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-Linux系统日志系统"><a href="#0x05-Linux系统日志系统" class="headerlink" title="0x05 Linux系统日志系统"></a><em>0x05 Linux系统日志系统</em></h3><p><strong><em>历史记录</em></strong>  </p>
 <table>
@@ -1019,11 +1025,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1031,7 +1033,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1051,10 +1057,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
@@ -1063,7 +1065,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1071,15 +1085,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
