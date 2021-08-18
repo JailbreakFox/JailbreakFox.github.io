@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2021-08-16T09:23:33.364Z">
+<meta property="article:modified_time" content="2021-08-18T08:50:37.064Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -272,11 +272,14 @@
 <p>&emsp;&emsp;当然如果只是希望使可执行文件能直接使用，推荐软链接的方式</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为原文件创造一个新的指针，类似于Windows的快捷方式</span></span><br><span class="line"><span class="comment"># 注意！这边的路径最好都写绝对路径，不然链接不上</span></span><br><span class="line"><span class="comment"># ln -s /home/dev/cmake /usr/bin/</span></span><br><span class="line"><span class="comment"># 使用ls -lah /usr/bin/ |grep cmake可以查看到链接情况</span></span><br><span class="line">ln -s <span class="string">&#x27;原文件路径&#x27;</span> <span class="string">&#x27;快捷方式路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、三方库使用条件</em></strong><br>&emsp;&emsp;在编译时，第三方库必须要有静态库或动态库以及头文件。在运行时，第三方库只需要有静态库或动态库即可。  </p>
 <p><strong><em>2、编译时依赖</em></strong><br>&emsp;&emsp;关于编译时依赖查看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/04/29/CMake/">CMAKE相关文章</a>。</p>
 <p><strong><em>3、运行时依赖</em></strong><br>&emsp;&emsp;Windows进程运行时依赖于当前文件夹与环境变量。<br>&emsp;&emsp;Linux进程运行时依赖于RPATH，关于进程的依赖可通过下面两个命令获取:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可执行程序的依赖</span></span><br><span class="line">ldd <span class="string">&#x27;可执行程序路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看可执行程序的RPATH</span></span><br><span class="line">readelf -d <span class="string">&#x27;可执行程序路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、依赖库与头文件查找顺序</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 缓存 /etc/ld.so.cache</span><br><span class="line">    4.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-桌面图标生成"><a href="#0x05-桌面图标生成" class="headerlink" title="0x05 桌面图标生成"></a><em>0x05 桌面图标生成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 生成任务栏图标</span><br><span class="line">2. 生成桌面图标</span><br><span class="line">3. 指令对照表</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、生成任务栏图标</em></strong><br>&emsp;&emsp;在linux系统中，要在任务栏中生成一个可以打开某个程序的图标，需要在/usr/share/applications目录中添加一个<a target="_blank" rel="noopener" href="https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html">.desktop文件</a>:  </p>
@@ -731,15 +734,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -759,15 +762,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -779,11 +778,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
