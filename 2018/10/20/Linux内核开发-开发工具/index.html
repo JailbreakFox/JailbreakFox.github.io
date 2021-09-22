@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/vmstat.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/slabtop.png">
 <meta property="article:published_time" content="2018-10-20T07:00:44.000Z">
-<meta property="article:modified_time" content="2021-09-17T07:04:21.649Z">
+<meta property="article:modified_time" content="2021-09-17T08:14:50.885Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux 工具">
 <meta name="twitter:card" content="summary">
@@ -348,7 +348,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo apt install systemd-coredump</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----1、调整cmake为调试模式-----</span></span><br><span class="line"><span class="comment"># 纯调试模式</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_BUILD_TYPE Debug)</span><br><span class="line"><span class="comment"># 或者半调试模式</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_BUILD_TYPE RelWithDebInfo)</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、开启coredump-----</span></span><br><span class="line"><span class="comment"># 查看是否开启coredump，返回0则表示没开启</span></span><br><span class="line"><span class="built_in">ulimit</span> -c</span><br><span class="line"><span class="comment"># 开启coredump</span></span><br><span class="line"><span class="built_in">ulimit</span> -c unlimited</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----3、修改core生成路径-----</span></span><br><span class="line"><span class="comment"># proc/sys/kernel/core_pattern 可以控制corefile保存位置和文件名格式</span></span><br><span class="line"><span class="comment"># corefile的生成路径文件夹</span></span><br><span class="line">mkdir /corefile</span><br><span class="line"><span class="comment">## 控制所产生的core文件存放到/corefile目录下，产生的文件名为core-命令名-pid-时间戳</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;/corefile/core-%e%-p%-%t&quot;</span> &gt; /proc/sys/kernel/core_pattern</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----4、调试模式下生成corefile-----</span></span><br><span class="line">gdb <span class="string">&quot;可执行程序路径&quot;</span> <span class="string">&quot;corefile路径&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----**5、常用调试手段-----</span></span><br><span class="line"><span class="comment"># 查看内存溢出的进程历史</span></span><br><span class="line">coredumpctl list</span><br><span class="line"><span class="comment"># debug目标PID进程</span></span><br><span class="line">coredumpctl debug <span class="string">&quot;进程PID&quot;</span></span><br><span class="line">bt  <span class="comment"># gdb列出调用栈</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>4 进程查询-ps + grep/pgrep/pidof/pstree</em></strong><br>&emsp;&emsp;ps指令能显示进程的消息，grep是Linux下的文本过滤工具，它俩是个组合工具。我们经常用如下命令查找进程：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先可以用ps直接查询PID对应的进程</span></span><br><span class="line">ps <span class="string">&#x27;PID号&#x27;</span></span><br><span class="line"><span class="comment"># 或者用ll去查看PID对应的进程</span></span><br><span class="line">ll <span class="string">&#x27;/proc/PID号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找所有进程，并过滤出有进程名字片段的所有进程</span></span><br><span class="line"><span class="comment"># &quot;|&quot;是管道命令。通常需要借助管道命令&quot;|&quot;多个命令的组合</span></span><br><span class="line"><span class="comment"># ------ ps -ef ------</span></span><br><span class="line"><span class="comment"># 是用标准的格式显示进程的</span></span><br><span class="line">ps -ef | grep <span class="string">&quot;进程名片段&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------ ps aux ------</span></span><br><span class="line"><span class="comment"># 是用BSD的格式来显示</span></span><br><span class="line">ps aux | grep <span class="string">&quot;进程名片段&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果觉得上述命令麻烦，可以使用两个更简介的写法</span></span><br><span class="line">pgrep/pidof <span class="string">&#x27;PID号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 还能使用pstree打印进程树</span></span><br><span class="line">pstree</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前终端的PID</span></span><br><span class="line">ps</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有终端(tty)与远程终端(pty)的PID</span></span><br><span class="line">ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定终端(tty或pty)的PID</span></span><br><span class="line">ps -t <span class="string">&#x27;N&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 首先可以用ps直接查询PID对应的进程</span></span><br><span class="line">ps <span class="string">&#x27;PID号&#x27;</span></span><br><span class="line"><span class="comment"># 或者用ll去查看PID对应的进程</span></span><br><span class="line">ll <span class="string">&#x27;/proc/PID号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找所有进程，并过滤出有进程名字片段的所有进程</span></span><br><span class="line"><span class="comment"># &quot;|&quot;是管道命令。通常需要借助管道命令&quot;|&quot;多个命令的组合</span></span><br><span class="line"><span class="comment"># ------ ps -ef ------</span></span><br><span class="line"><span class="comment"># 是用标准的格式显示进程的</span></span><br><span class="line">ps -ef | grep <span class="string">&quot;进程名片段&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------ ps aux ------</span></span><br><span class="line"><span class="comment"># 是用BSD的格式来显示</span></span><br><span class="line">ps aux | grep <span class="string">&quot;进程名片段&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果觉得上述命令麻烦，可以使用两个更简介的写法</span></span><br><span class="line">pgrep/pidof <span class="string">&#x27;PID号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 还能使用pstree打印进程树</span></span><br><span class="line">pstree</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>5、杀死进程-kill/killall/pkill</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kill能杀死指定的ID进程，需要在杀进程之前使用ps等命令再配合grep来查找进程</span></span><br><span class="line"><span class="built_in">kill</span> <span class="string">&quot;参数&quot;</span> <span class="string">&quot;进程ID&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># killall/pkill类似，用于杀死指定名字的进程</span></span><br><span class="line">killall <span class="string">&quot;参数&quot;</span> <span class="string">&quot;进程名&quot;</span></span><br><span class="line">pkill <span class="string">&quot;参数&quot;</span> <span class="string">&quot;进程名&quot;</span></span><br></pre></td></tr></table></figure>
@@ -842,15 +842,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -862,6 +858,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -870,15 +874,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -890,11 +886,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -903,6 +899,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
