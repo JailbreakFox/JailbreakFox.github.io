@@ -19,8 +19,9 @@
 <meta property="og:image" content="http://yoursite.com/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/Bash.png">
 <meta property="og:image" content="http://yoursite.com/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/管道文件.png">
 <meta property="og:image" content="http://yoursite.com/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/匿名双管道.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/检测方案.png">
 <meta property="article:published_time" content="2021-09-18T01:21:24.000Z">
-<meta property="article:modified_time" content="2021-09-24T09:03:04.391Z">
+<meta property="article:modified_time" content="2021-09-28T05:33:57.037Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="信息安全技术">
 <meta name="twitter:card" content="summary">
@@ -252,10 +253,12 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 误报案例一</span></span><br><span class="line"><span class="string">&#x27; /usr/lib/deepin-daemon/uos-license-agent</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 9月  18 11:31 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 1 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 2 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 误报案例二</span></span><br><span class="line"><span class="string">&#x27; /dbappsecurity/rpc_service/rpc_service runservice</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 18 10:22 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 1 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 2 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;容易分析，误报原因为标准输入未被劫持，但是标准输出与标准错误输出被劫持，反弹Shell未形成一条链。</p>
 <p><strong><em>2、方案改进</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 检查所有进程 =====</span></span><br><span class="line"><span class="comment"># 1.记录当前系统下所有Shell</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"><span class="comment"># 2.记录所有具有连接外部IP属性的socket号</span></span><br><span class="line">cat /etc/net/tcp</span><br><span class="line"><span class="comment"># 3.检查所有具有以下特征Shell进程的标准输入输出</span></span><br><span class="line"><span class="comment">#   1) 标准输入输出均指向socket号</span></span><br><span class="line"><span class="comment">#   2) 标准输入输出均指向匿名管道或管道文件</span></span><br><span class="line"><span class="comment">#   3) 标准输入输出有一个指向socket号，一个指向匿名管道或管道文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 判断是否被劫持 =====</span></span><br><span class="line"><span class="comment"># 1.如果标准输入或输出是socket号，判断socket号是否外连到其他IP</span></span><br><span class="line"><span class="comment"># 2.如果标准输入或输出是管道，则寻找管道另一端的进程，并判断其</span></span><br><span class="line"><span class="comment">#   1) 标准输入或输出是否通过socket外连</span></span><br><span class="line"><span class="comment">#   2) 标准输入或输出是否连接远程终端</span></span><br><span class="line"><span class="comment">#   3) 标准输入或输出是否是连接管道</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/检测方案.png">
+<div align="left">  
 
 <h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/mountzf/article/details/51735691">https://blog.csdn.net/mountzf/article/details/51735691</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/12038070.html">https://www.cnblogs.com/LittleHann/p/12038070.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/worldchinalee/article/details/104049141">https://blog.csdn.net/worldchinalee/article/details/104049141</a></p>
-</div></div></div></div></div></div></div></div>
+</div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -452,11 +455,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -468,11 +471,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -484,15 +495,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -500,11 +503,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

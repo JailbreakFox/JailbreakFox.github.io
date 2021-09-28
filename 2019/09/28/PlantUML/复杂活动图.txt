@@ -1,0 +1,48 @@
+@startuml
+start
+#00FF00:while 0;
+note left
+遍历检查/proc/'PID号'
+end note
+repeat
+    if(是否为Shell进程) then (Y)
+        #A020F0:while 1;
+        while (循环查看该进程fd0与fd1 ?) is (未检查完)
+            if(当前fd是否重定向到socket) then (Y)
+                if(socket号是否连接到外界IP) then (Y)
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            else (N)
+                if(当前fd是否重定向到管道) then (Y)
+                    :继续检查管道对端进程当前fd的连接;
+                    note left
+                    对应以下四种情况分别执行
+                    ====
+                    * 1.连接socket未外连IP(正常)
+                    * 2.连接socket且外连IP(可疑)
+                    * 3.连接到管道文件(可疑)
+                    * 4.连接到匿名管道(可疑)
+                    end note
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            endif
+        endwhile (检查完)
+    else (N)
+        #00FF00:goto [while 0];
+        detach
+    endif
+if(Shell进程fd0与fd1均外联?) then (Y)
+    #HotPink:打日志并上报警告;
+else (N)
+    :结束检查该进程;
+endif
+repeat while (检查下一个Shell进程)
+@enduml
