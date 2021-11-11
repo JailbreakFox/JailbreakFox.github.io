@@ -179,7 +179,7 @@
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。</p>
 <h3 id="0x01-rpm打包"><a href="#0x01-rpm打包" class="headerlink" title="0x01 rpm打包"></a><em>0x01 rpm打包</em></h3><p>&emsp;&emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">  2.4 SPEC文件执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; 这里以centos7为rpm打包平台，具体的环境配置已经在仓库里面，可以自行<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">查阅资料</a><sup>[1]</sup>。  </p>
 <p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、rpm打包文件结构</em></strong><br>&emsp;&emsp; rpmdev-setuptree命令由工具rpmdevtools提供，可以直接在/root/rpmbuild/目录下生成rpm打包所需的目录结构。下面具体描述各个文件夹的作用:  </p>
@@ -333,6 +333,9 @@
 <td>$RPM_BUILD_ROOT</td>
 </tr>
 </tbody></table>
+<p><strong><em>2.4、SPEC文件执行流程</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 升级时完整执行流程：</span></span><br><span class="line">1、执行新包spec文件中 %pre 段.</span><br><span class="line">2、安装新包的相关依赖包.</span><br><span class="line">3、执行新包spec文件中的 %post 段.</span><br><span class="line">4、执行旧包spec文件中的 %preun 段.</span><br><span class="line">5、删除新包中不需要的旧文件。</span><br><span class="line">6、执行旧包spec文件中的 %postun 段.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整参数传递：</span></span><br><span class="line">%pre和%post段</span><br><span class="line">当传递的第一个参数为1时，表示新安装一个rpm包。</span><br><span class="line">当传递的第一个参数为2时，表示升级一个已经存在的包。</span><br><span class="line">%preun和%postun段</span><br><span class="line">当传递的第一个参数为0时，表示删除一个包。</span><br><span class="line">当传递的第一个参数为1时，表示更新一个包。</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>3、源码打包方法</em></strong><br>&emsp;&emsp; SPECS撰写方法参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">文献</a><sup>[3]</sup>，这里以最后实现的一个rpm项目打包为例。首先要在/root/rpmbuild/SPECS/目录下新建一个.spec文件，并且内部需要实现一些字段，下面解释各个部分的作用:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目名</span></span><br><span class="line">name: CTest</span><br><span class="line"><span class="comment"># 项目版本</span></span><br><span class="line">Version: 1.0</span><br><span class="line"><span class="comment"># 发布序列号</span></span><br><span class="line">Release: 1%&#123;?dist&#125;</span><br><span class="line"><span class="comment"># 概要</span></span><br><span class="line">Summary: The <span class="string">&quot;CTest&quot;</span> program from GNU</span><br><span class="line">Summary(zh_CN):  GNU <span class="string">&quot;Hello World&quot;</span> 程序</span><br><span class="line"><span class="comment"># 开源协议</span></span><br><span class="line">License: GPLv3+</span><br><span class="line"><span class="comment"># 源代码路径，即放在SOURCES目录下的tar包名</span></span><br><span class="line">Source0: %&#123;name&#125;.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介</span></span><br><span class="line">%description</span><br><span class="line">The <span class="string">&quot;CTest&quot;</span> program</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介中文</span></span><br><span class="line">%description -l zh_CN</span><br><span class="line"><span class="string">&quot;CTest&quot;</span> 程序</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装前执行的脚本</span></span><br><span class="line">%prep</span><br><span class="line"><span class="comment"># 作用: 将解压后的源码重命名为/root/rpmbuild/BUILD/CTest/</span></span><br><span class="line">%setup -n CTest</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装后执行的脚本</span></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载前执行的脚本</span></span><br><span class="line">%preun</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载后执行的脚本</span></span><br><span class="line">%postun</span><br><span class="line"></span><br><span class="line"><span class="comment"># build默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line">%build</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make %&#123;?_smp_mflags&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># install默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line"><span class="comment"># 开始把软件安装到虚拟的根目录中，正规写法应该是在MakeFile里面些install</span></span><br><span class="line"><span class="comment"># 虚拟根目录即 /root/rpmbuild/BUILDROOT/’包名‘</span></span><br><span class="line"><span class="comment"># 可以用宏 $RPM_BUILD_ROOT 或 %&#123;buildroot&#125; 代替</span></span><br><span class="line">%install</span><br><span class="line">mkdir -p %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cp CTest %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line"><span class="comment"># !!files默认 cd /root/rpmbuild/BUILDROOT/&#x27;包名&#x27;/ 目录下</span></span><br><span class="line"><span class="comment"># %defattr(文件权限,用户名,组名,目录权限),其中&#x27;-&#x27;表示默认权限</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%&#123;_bindir&#125;/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变更日志</span></span><br><span class="line">%changelog</span><br><span class="line">* Sun MAY 4 2021 Your Name &lt;youremail@xxx.xxx&gt; - 1.0</span><br><span class="line">- Update to 1.0</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
@@ -347,7 +350,7 @@
 <ul>
 <li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
 <li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
+<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p><strong><em>1、环境搭建</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
@@ -375,6 +378,9 @@
 <p>&emsp;&emsp;如果想在安装成功后修改文件的权限，则需要修改postinst文件，可以这样写:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">chmod 777 /home/1.md</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;目前还有一个遗留问题，就是打包前给的777权限，安装后权限变成了755。</p>
+<p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
+
 <p><strong><em>3.1、源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;deb源码打包一个优点是能够识别CMake文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码结构</span></span><br><span class="line"><span class="comment"># 注意源码根文件夹名不能有大写</span></span><br><span class="line"><span class="comment"># 根文件名一般取 项目名称 + &#x27;-&#x27; + 版本号，例如ctest-1.0</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── CTest.cpp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成tar.gz包</span></span><br><span class="line">$ tar -zcvf debbuild/ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── CTest.cpp</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ dh_make -f ../ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   ├── debian</span><br><span class="line">│   └── obj-x86_64-linux-gnu</span><br><span class="line">├── ctest_1.0-1_amd64.deb</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;值得注意的是，目前仍不知道如何使用rules文件，因此源码打包流程中所有的make install过程均在CMakeList.txt实现(实际上也应该这么实现)。</p>
@@ -1211,7 +1217,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1219,11 +1225,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1231,15 +1241,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1251,6 +1253,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
@@ -1259,19 +1269,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
