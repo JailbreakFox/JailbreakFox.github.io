@@ -156,6 +156,109 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-仓库源管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">仓库源管理</a>
+    </h1>
+  
+
+        
+        <a href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/" class="archive-article-date">
+  	<time datetime="2020-05-14T06:22:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-14</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;软件仓库是一个预备好的目录，或是一系列存放软件的服务器，或是一个网站，包含了软件包和索引文件。多数Linux发行版都有自己的软件安装、配置方案，同时还有各自的软件包管理系统。为了省去用户四处寻找合适软件安装包的麻烦，这些发行版将常用的软件集中到一个服务器上，并为用户提供了自动下载、安装软件的接口，这就是我们所说的“软件仓库”。为了方便大众访问，人们为这些软件仓库建立了大量的“镜像”，使世界各地的用户都能方便地使用。不同发行版的软件仓库一般不同，如用户接口各异、软件丰富程度不同、镜像分布不同等等。</p>
+<h3 id="0x01-仓库源地址"><a href="#0x01-仓库源地址" class="headerlink" title="0x01 仓库源地址"></a><em>0x01 仓库源地址</em></h3><p>&emsp;&emsp;源地址通常是很长的一串地址，由四个部分组成，例如下述源地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://10.0.10.25/uos eagle main contrib non-free</span><br><span class="line">deb-src http://10.0.10.25/uos eagle main contrib non-free</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>deb/deb-src : 表示deb包地址/源码包地址。当你要 ‘apt-get source’ 源码时，必须使用 ‘deb-src’ 。当你要 ‘apt-get install’ 软件时，则必须使用deb。</li>
+<li><a target="_blank" rel="noopener" href="http://10.0.10.25/uos">http://10.0.10.25/uos</a> : 这个字段是仓库的http访问地址。</li>
+<li>eagle : 这个段是表示仓库的codename。可用 ‘lsb_release -a’ 指令查询。</li>
+<li>main contrib non-free : 这个字段是仓库的分组目录，linux根据软件不同属性进行分组。</li>
+</ul>
+<h3 id="0x02-源管理文件"><a href="#0x02-源管理文件" class="headerlink" title="0x02 源管理文件"></a><em>0x02 源管理文件</em></h3><p>&emsp;&emsp;Linux中的源管理文件主要是sources.list，它是一个普通可编辑的文本文件，保存了ubuntu软件更新的源服务器的地址:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑sources.list</span></span><br><span class="line">sudo vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;除了使用sources.list文件来管理源地址，同时 sources.list.d/ 路径为单独在文件中写入源的地址提供了一种方式，通常用来安装第三方的软件。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 到 /etc/apt/sources.list.d/ 路径下新建 *.list</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt</span><br><span class="line">sudo vim *.list</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-软件包首选配置"><a href="#0x03-软件包首选配置" class="headerlink" title="0x03 软件包首选配置"></a><em>0x03 软件包首选配置</em></h3><p>&emsp;&emsp;关于软件包的版本管理，可通过修改<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">AptConfigure</a><sup>[1]</sup>来配置。<br><strong>查看软件包版本信息</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看某个软件包的版本号、可选的版本包以及对应的仓库</span></span><br><span class="line">apt policy <span class="string">&#x27;软件包名&#x27;</span></span><br><span class="line"></span><br><span class="line">    apt policy claws-mail</span><br><span class="line"></span><br><span class="line">    claws-mail:</span><br><span class="line">    Installed : (none)</span><br><span class="line">    Candidate : 3.14.1-3+b1</span><br><span class="line">    Version table :</span><br><span class="line">        3.17.1-1~bpo9+1 100</span><br><span class="line">            100 https://deb.debian.org/debian stretch-backports/main amd64 Packages</span><br><span class="line">        3.14.1-3+b1 500</span><br><span class="line">            500 https://deb.debian.org/debian stretch/main amd64 Package</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看所有仓库源信息</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有仓库源信息</span></span><br><span class="line">apt policy</span><br><span class="line"></span><br><span class="line">    Package files: </span><br><span class="line">    500 https://deb.debian.org/debian stable/main amd64 Packages</span><br><span class="line">        o=Debian,n=stable,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br><span class="line"></span><br><span class="line">    500 https://deb.debian.org/debian stable-updates/main amd64 Packages</span><br><span class="line">        release o=Debian,a=oldstable-updates,n=stable-updates,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br></pre></td></tr></table></figure>
+
+<p><strong>新建首选配置文件</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 /etc/apt/preferences.d/ 路径下新建配置文件(无后缀)</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt/preferences.d/</span><br><span class="line">sudo vim <span class="string">&#x27;配置文件名&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;比如新建一个名为99debian-backports的配置文件，并输入如下内容，可以让claws-mail以后所有的更新包都按照a=stretch-backports的源来更新，900即为该源的置信值，值越高越是首选：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: claws-mail</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;同样，也可以为所有的软件包都设置该源为首选项：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: *</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">https://wiki.debian.org/AptConfiguration</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-DBus" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -404,139 +507,6 @@
 
 
   
-    <article id="post-PlantUML" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/28/PlantUML/">PlantUML</a>
-    </h1>
-  
-
-        
-        <a href="/2019/09/28/PlantUML/" class="archive-article-date">
-  	<time datetime="2019-09-28T01:55:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;UML(Unified Modeling Language)是一种统一建模语言，其优点在于可使用代码的形式快速绘制线框图。其可绘制的图形如下(使用PlantUML思维导图绘制):  </p>
-<div align="center">
-<img src="/2019/09/28/PlantUML/UML可绘制图.png">
-<div align="left">  
-
-<p>&emsp;&emsp;下面讲解各个图的绘制基础语法，推荐查看<a target="_blank" rel="noopener" href="https://plantuml.com/zh">PlantUML官网</a>，以及<a target="_blank" rel="noopener" href="https://www.planttext.com/">在线绘制PlantUML</a></p>
-<h3 id="0x01-活动图"><a href="#0x01-活动图" class="headerlink" title="0x01 活动图"></a><em>0x01 活动图</em></h3><p>&emsp;&emsp;活动图<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">基础用法</a>，在学习完基础用法后，实现一个复杂的活动图:  </p>
-<pre><code class="sh">@startuml
-start
-#00FF00:while 0;
-note left
-遍历检查/proc/&#39;PID号&#39;
-end note
-repeat
-    if(是否为Shell进程) then (Y)
-        #A020F0:while 1;
-        while (循环查看该进程fd0与fd1 ?) is (未检查完)
-            if(当前fd是否重定向到socket) then (Y)
-                if(socket号是否连接到外界IP) then (Y)
-                    #A020F0:goto [while 1];
-                    detach
-                else (N)
-                    #00FF00:goto [while 0];
-                    detach
-                endif
-            else (N)
-                if(当前fd是否重定向到管道) then (Y)
-                    :继续检查管道对端进程当前fd的连接;
-                    note left
-                    对应以下四种情况分别执行
-                    ====
-                    * 1.连接socket未外连IP(正常)
-                    * 2.连接socket且外连IP(可疑)
-                    * 3.连接到管道文件(可疑)
-                    * 4.连接到匿名管道(可疑)
-                    end note
-                    #A020F0:goto [while 1];
-                    detach
-                else (N)
-                    #00FF00:goto [while 0];
-                    detach
-                endif
-            endif
-        endwhile (检查完)
-    else (N)
-        #00FF00:goto [while 0];
-        detach
-    endif
-if(Shell进程fd0与fd1均外联?) then (Y)
-    #HotPink:打日志并上报警告;
-else (N)
-    :结束检查该进程;
-endif
-repeat while (检查下一个Shell进程)
-@enduml</code></pre>
-<div align="center">
-<img src="/2019/09/28/PlantUML/复杂活动图.png">
-<div align="left">  
-
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/28/PlantUML/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
@@ -662,15 +632,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -686,6 +660,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -694,11 +672,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -706,7 +684,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -715,10 +693,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -156,6 +156,234 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-操作系统安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装（待完成）</a>
+    </h1>
+  
+
+        
+        <a href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/" class="archive-article-date">
+  	<time datetime="2018-08-01T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-01</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 很多时候需要自己安装操作系统，比如重装系统、装双系统等等情况，这里将记录操作系统安装的相关内容。</p>
+<h3 id="0x01-自制系统U盘"><a href="#0x01-自制系统U盘" class="headerlink" title="0x01 自制系统U盘"></a><em>0x01 自制系统U盘</em></h3><p>&emsp;&emsp;使用U盘制作系统盘是种廉价且方便的方法，网上有许多教程，具体方法可分为两种，第一种是<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/ab69b2706bbb1a2ca7189f2d.html">PE安装</a><sup>[1]</sup>，第二种是<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/5225f26b0bb45fe6fa0908bc.html">ISO写入</a>。前者更加可靠，且系统U盘仍有一部分可以当作U盘来使用，且一个U盘可以放多种系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 PE制作系统U盘</span><br><span class="line">  1.1 微PE制作Windows系统U盘</span><br><span class="line">  1.2 微PE+FbinstTool制作多系统U盘</span><br><span class="line">2 ISO烧制系统U盘</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、PE制作系统U盘</em></strong><br><strong><em>1.1、微PE安装Win</em></strong><br>&emsp;&emsp;PE(Windows Preinstallation Environment)，是Windows的预安装环境，可以理解为一种占用很小存储量的系统。由于本身就是Windows的原装系统，所以实际上只是对Win系统的安装友好，这里以安装Win10系统为例，安装过程可查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html">百度经验</a>。<br>&emsp;&emsp;1)安装PE工具，并用其格式化U盘。PE工具优点在于，体积小但是功能齐全，没有植入广告和垃圾软件，下载链接在上述经验<sup>[1]</sup>里。<br>&emsp;&emsp;2)从<a target="_blank" rel="noopener" href="http://mirrors.aliyun.com/ubuntu-releases/14.04/">阿里云镜像</a><sup>[2]</sup>上下载对应的.iso文件，并将其放入U盘。<br>&emsp;&emsp;OK！系统U盘已制作完成，接下去可以选择依赖于U盘的单个系统重装或是双系统安装。<br>&emsp;&emsp;这里有几点需要注意:1)微PE格式化U盘以后生成两个盘符，其中一个用来存放PE系统，另一个较大的盘用来存放想安装的系统ISO或者GHOST，两者均可在PE系统桌面下直接安装;2)可以直接去PE系统桌面下进行盘符分区，也可以直接在旧的系统下分区(这里只是方便没有系统的电脑分区)。<br>**<em>1.1、PE+FbinstTool制作多系统U盘**</em><br>&emsp;&emsp;由于PE系统桌面本身是无法直接安装Ubuntu的，因此我们需要借用另一个工具-FbinstTool。该工具实际上与微PE类似，只不过实际操作过程有点区别，我们只需要安装一遍就能理解。这里以4G内存U盘PE方法制作Ubuntu14.04为例，具体的操作过程可参见为数不多的一篇<a target="_blank" rel="noopener" href="https://www.cnblogs.com/acbingo/p/4515240.html">博文</a>，我们用到的工具实质上为微PE+FbinstTool，前者用来格式化U盘并加入一个基础的PE系统(与上一节一致)，而后者就可以直接放在U盘下依靠一个名为grldr(类似于Cmakelist)的文件被系统识别，它负责告诉系统我的U盘里包含了哪些系统。根据博客里的指导，我们先看下U盘非PE盘符下的文件结构：  </p>
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/FbinstTool1.png">
+<div align="left">  
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/FbinstTool2.png">
+<div align="left">  
+&emsp;&emsp;可知，我把Ubuntu14.04的ISO文件放在了目录G:/ISO下，另外两个文件initrd与vmlinuz.efi是从镜像文件里拿出来的，具体位置看博客，原因似乎是FbinstTool需要调用，那么接下来看看FbinstTool的配置文件grldr究竟在说些什么：
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#不用管这两行了</span></span><br><span class="line">default 0</span><br><span class="line">timeout 60</span><br><span class="line"><span class="comment">#Auto方式启动PE，启动PE的方式也不用管了</span></span><br><span class="line">title Windows PE (Auto)</span><br><span class="line">find --<span class="built_in">set</span>-root --ignore-floppies /wepe/wepemenu.ini || find --<span class="built_in">set</span>-root --ignore-floppies /wepe.iso</span><br><span class="line">configfile /wepe/wepemenu.ini || map /wepe.iso (0xff) &amp;&amp; map --hook &amp;&amp; chainloader (0xff)</span><br><span class="line"><span class="comment">#EFI方式启动PE，可删</span></span><br><span class="line">title Windows PE (From EFI)</span><br><span class="line">errorcheck off</span><br><span class="line">find --<span class="built_in">set</span>-root --ignore-floppies /wepe/wepemenu.ini &amp;&amp; configfile /wepe/wepemenu.ini</span><br><span class="line">errorcheck on</span><br><span class="line"><span class="comment">#UD方式启动PE，可删</span></span><br><span class="line">title Windows PE (From UD)</span><br><span class="line">errorcheck off</span><br><span class="line">map (ud)/wepe.iso (0xff)</span><br><span class="line">map --hook</span><br><span class="line">chainloader (0xff)</span><br><span class="line">errorcheck on</span><br><span class="line"><span class="comment">#关键在这儿，引入名为Ubuntu14.04的系统，且指明重要文件的位置</span></span><br><span class="line">title Ubuntu14.04</span><br><span class="line">find --<span class="built_in">set</span>-root /ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">kernel /ISO/vmlinuz.efi boot=casper iso-scan/filename=/ISO/ubuntu-14.04.6-desktop-amd64.iso</span><br><span class="line">initrd /ISO/initrd</span><br><span class="line">boot</span><br><span class="line"><span class="comment">#为了制作多系统U盘可以仿照上面一条的方法自行添加</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;OK！说了这么多，U盘已经制作完了，接下来要装单系统或是双系统，可接下去看：</p>
+<h3 id="0x02-单系统重装"><a href="#0x02-单系统重装" class="headerlink" title="0x02 单系统重装"></a><em>0x02 单系统重装</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 进入BIOS的方式</span><br><span class="line">2 Windows 10系统重装</span><br><span class="line">  2.1 方案一：重置此电脑</span><br><span class="line">  2.2 方案二：使用微PE制作的Windows系统U盘</span><br><span class="line">3 任意系统重装</span><br><span class="line">  3.1 使用微PE+FbinstTool制作的多系统U盘</span><br><span class="line">4 Ubuntu系统相关</span><br><span class="line">  4.1 Ubuntu系统磁盘分配推荐</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、进入BIOS的方式</em></strong><br>品牌电脑进入BIOS的按键一般如下：  </p>
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/bios进入按键.jpg">
+<div align="left">  
+
+<p><strong><em>2、Windows 10系统重装</em></strong><br><strong><em>2.1、方案一：重置此电脑</em></strong><br>&emsp;&emsp;Windows 10较人性化的一点就是自带系统重装功能，关于Win10重置电脑的资料可直接查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/b0b63dbf310d2f4a49307071.html">百度经验</a><sup>[3]</sup>。<br>&emsp;&emsp;这边需要注意的两点是:1)重置电脑可以选择只重置盘符C或者全部盘符清理（相当于完全重装电脑）;2)如果盘符C的空间不足，则会直接报错，并提示增加C盘空间再重置，假如没报错在重置的时候也会出错，所以要保证C盘剩余容量大于10G（个人经验）。<br>**<em>2.2、方案二：使用微PE制作的Windows系统U盘**</em><br>&emsp;&emsp;这里以安装Win10系统为例，安装过程可查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3aed632eda312b701080910b.html">百度经验</a>。</p>
+<p><strong><em>3、任意系统重装</em></strong><br><strong><em>3.1、使用微PE+FbinstTool制作的多系统U盘</em></strong><br>&emsp;&emsp;(1)直接U盘方式启动，先运行Auto PE，进入PE系统后设置盘符，由于安装单系统，所以格式化所有盘符;<br>&emsp;&emsp;(2)重启，并以title名为 Ubuntu14.04 U盘进入方法启动，可以看到进入了一个Ubuntu系统桌面，但是桌面上还有两个文件，其中一个是Install Ubuntu14.04，按步骤安装即可;<br>&emsp;&emsp;(3)安装完成，重启进入BIOS，并将U盘启动后移，继续重启即可运行Ubuntu系统。  </p>
+<p><strong><em>4、Ubuntu系统相关</em></strong><br><strong><em>4.1、Ubuntu系统磁盘分配推荐</em></strong><br>&emsp;&emsp;磁盘分配即系统使用过程中硬盘空间的资源合理配置，这里记录一下比较适合的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/116970u/p/10487452.html">分配方法</a>，下面以128G工控机为例。<br>&emsp;&emsp;首先，介绍各挂载点作用：  </p>
+<table>
+<thead>
+<tr>
+<th>挂载点</th>
+<th>分区类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/</td>
+<td>主分区</td>
+<td>用于存放系统，相当于windows的C盘，15G即可</td>
+</tr>
+<tr>
+<td>/home</td>
+<td>逻辑分区</td>
+<td>用户存储数据用，要尽可能大</td>
+</tr>
+<tr>
+<td>/boot</td>
+<td>主分区</td>
+<td>引导分区，大小设置为480M</td>
+</tr>
+<tr>
+<td>swap</td>
+<td>逻辑分区</td>
+<td>相当于电脑内存，大小设置为电脑内存大小(2/4/8/16G)</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;给出高级用户Desktop版本的分配建议：</p>
+<table>
+<thead>
+<tr>
+<th>挂载点</th>
+<th>装置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/</td>
+<td>/dev/hda1</td>
+<td>15G</td>
+</tr>
+<tr>
+<td>/home</td>
+<td>/dev/hda2</td>
+<td>最大的剩余空间</td>
+</tr>
+<tr>
+<td>/boot</td>
+<td>/dev/hda3</td>
+<td>480MB左右</td>
+</tr>
+<tr>
+<td>swap</td>
+<td>/dev/hda5</td>
+<td>大约内存大小(建议至少512MB)</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;高级用户Server版本的分配建议：</p>
+<table>
+<thead>
+<tr>
+<th>挂载点</th>
+<th>装置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/</td>
+<td>/dev/hda1</td>
+<td>15G</td>
+</tr>
+<tr>
+<td>/home</td>
+<td>/dev/hda2</td>
+<td>最大的剩余空间</td>
+</tr>
+<tr>
+<td>/boot</td>
+<td>/dev/hda3</td>
+<td>480MB左右</td>
+</tr>
+<tr>
+<td>swap</td>
+<td>/dev/hda5</td>
+<td>大约内存大小(建议至少512MB)</td>
+</tr>
+<tr>
+<td>/var</td>
+<td>/dev/hda6</td>
+<td>视服务器功能决定大小</td>
+</tr>
+</tbody></table>
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/swap.png">
+<div align="left">  
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/boot.png">
+<div align="left">  
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/home.png">
+<div align="left">  
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/root.png">
+<div align="left">  
+
+<h3 id="0x03-双系统安装"><a href="#0x03-双系统安装" class="headerlink" title="0x03 双系统安装"></a><em>0x03 双系统安装</em></h3><p>&emsp;&emsp;出于工作的需要，有时候需要用到Ubuntu系统，这里讲一下在Win10系统上安装Ubuntu14.04系统方法。<br>&emsp;&emsp;1)制作系统U盘。这已在第一章中讲过，可回头去看如何制作。<br>&emsp;&emsp;2)给Win10分区。为了方便给第二系统腾出空间，需要先给该系统分出一个盘符，具体的分区方法查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/3d69c551233c56f0ce02d759.html">百度经验</a>。<br>&emsp;&emsp;3)BIOS选择U盘启动项。每台电脑情况都不一样，而且和当前系统也有关系，比如我的Y430P机身侧面有一个NAVO键可直接进入BIOS，其他电脑见第二章1节。  </p>
+<h3 id="0x04-Windows-10子系统"><a href="#0x04-Windows-10子系统" class="headerlink" title="0x04 Windows 10子系统"></a><em>0x04 Windows 10子系统</em></h3><h3 id="0x05-虚拟机"><a href="#0x05-虚拟机" class="headerlink" title="0x05 虚拟机"></a><em>0x05 虚拟机</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 VirtualBox安装Kali</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、VirtualBox安装Kali</em></strong><br>&emsp;&emsp;VirtualBox 是一款开源虚拟机软件，在Docker中被默认使用。Kali是一款用于信息安全的操作系统，具体的安装流程可看<a target="_blank" rel="noopener" href="https://blog.csdn.net/JaydenWang5310/article/details/78104472">博客</a></p>
+<h3 id="0x06-Docker容器技术"><a href="#0x06-Docker容器技术" class="headerlink" title="0x06 Docker容器技术"></a><em>0x06 Docker容器技术</em></h3><p>&emsp;&emsp;Docker容器技术与虚拟机一样，是在当前系统下使用其他系统软件的方法，但它更方便快捷，占用体积更小，运行目标程序只需要拥有一个配置好环境的镜像文件即可。关于Docker可以参考<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-hello-world.html">教程</a>。另外比较重要的一点是Docker所使用的<a target="_blank" rel="noopener" href="https://blog.51cto.com/11880730/2115614">四种网络连接方式</a>，比较幸运的是其默认使用桥接模式，方便信息安全方面的技术研究。<br>&emsp;&emsp;如教程所示，Win10专业版有较方便的安装方法，但是普通版本的Win10安装Docker还有许多坑在那儿。这里讲一讲Win10安装Docker的步骤<br>&emsp;&emsp;1)从<a target="_blank" rel="noopener" href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/">阿里云镜像</a>种下载最新的Docker toolbox，这个ce版本在Win10上是支持的。<br>&emsp;&emsp;2)安装下载文件，git可以选用自己以前安装的，所以不用下载，只需在安装完成后，右键Docker Quickstart Terminal属性，并修改目标git的bash.exe路径即可。<br>&emsp;&emsp;3)右键管理员方式启动Docker Quickstart Terminal，发现程序一直<a target="_blank" rel="noopener" href="https://blog.csdn.net/dhaiuda/article/details/81975550">卡死在boot2docker.iso的下载</a>，只需按链接里的方法即可解决，原因就是没有翻墙，也可以ss开启全局模式下载。<br>&emsp;&emsp;4)每次运行都需要右键管理员模式运行。  </p>
+<h3 id="0x07-软件安装脚本与镜像制作"><a href="#0x07-软件安装脚本与镜像制作" class="headerlink" title="0x07 软件安装脚本与镜像制作"></a><em>0x07 软件安装脚本与镜像制作</em></h3><p>&emsp;&emsp;由于各种原因，经常需要在不同的电脑上安装不同的系统，但是每次重装以后都会导致需要重新安装软件以及修改配置，为了节约时间，这里提出两种解决办法:1)软件安装脚本编写。即将各个软件的下载步骤写成脚本文件，一键安装;2)镜像制作。即将已经配置好的系统生成一个镜像，并使用U盘安装，也被称为非纯净系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 软件安装脚本</span><br><span class="line">  1.1 Ubuntu14.04安装脚本</span><br><span class="line">2 镜像制作</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、软件安装脚本</em></strong><br><strong><em>1.1、Ubuntu14.04安装脚本</em></strong><br>&emsp;&emsp;由于工作需要，该系统下的软件安装脚本，本人已在git上屯了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh">仓库</a>，并会不时地维护，如果想加入的小伙伴可以Fork一下。</p>
+<p><strong><em>2、镜像制作</em></strong><br>&emsp;&emsp;</p>
+<h3 id="0x08-开发环境部署"><a href="#0x08-开发环境部署" class="headerlink" title="0x08 开发环境部署"></a><em>0x08 开发环境部署</em></h3><p>&emsp;&emsp;添加源:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 国内其他源地址 --- 按需添加</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 163镜像源</span></span><br><span class="line">deb http://mirrors.163.com/debian/ stretch main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian-security/ stretch/updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian-security/ stretch/updates main non-free contrib</span><br><span class="line"></span><br><span class="line"><span class="comment">## 中科大镜像源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 阿里云镜像站</span></span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line"></span><br><span class="line"><span class="comment">## 华为镜像站</span></span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch-backports main contrib non-free </span><br><span class="line"></span><br><span class="line"><span class="comment">## 清华大学镜像站</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 兰州大学镜像站</span></span><br><span class="line">deb http://mirror.lzu.edu.cn/debian stable main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian stable main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian stable-updates main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian stable-updates main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 上海交大镜像站</span></span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;下载开发安装包:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备注：关于qtcreator-template-dtk 在mips arm 等架构下会出现找不到的情况. 正常的X86没啥问题</span></span><br><span class="line">qtcreator </span><br><span class="line">qt5-default </span><br><span class="line">qtcreator-template-dtk </span><br><span class="line">g++ </span><br><span class="line">gdb </span><br><span class="line">openssh-server </span><br><span class="line">cmake </span><br><span class="line">astyle </span><br><span class="line">git</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;设置Qt开发环境:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">1.打开qt——帮助——关于插件——搜beautifier——勾选后重启qt</span><br><span class="line">2.打开qt——工具——选项——beautifier</span><br><span class="line">    1)General：不要钩</span><br><span class="line">    2)Artistic Style——Artistic sytle <span class="built_in">command</span>:  /usr/bin/astyle</span><br><span class="line">    3)Artistic Style——use customized style: Add 添加，复制以下内容:</span><br><span class="line"></span><br><span class="line">indent=spaces=4</span><br><span class="line">style=kr</span><br><span class="line">indent-labels</span><br><span class="line">pad-oper</span><br><span class="line">unpad-paren</span><br><span class="line">pad-header</span><br><span class="line">keep-one-line-statements</span><br><span class="line">convert-tabs</span><br><span class="line">indent-preprocessor</span><br><span class="line">align-pointer=name</span><br><span class="line">align-reference=name</span><br><span class="line">keep-one-line-blocks</span><br><span class="line">keep-one-line-statements</span><br><span class="line">attach-namespaces</span><br><span class="line">max-instatement-indent=120</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;配置VScode开发环境:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#===========VScode安装============</span></span><br><span class="line"><span class="comment"># 下载deb包</span></span><br><span class="line"><span class="comment"># https://code.visualstudio.com/Download</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line"><span class="comment"># sudo dpkg -i ...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line"><span class="comment"># code</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#------c++环境搭建------</span></span><br><span class="line"><span class="comment"># VScode安装以下两个插件</span></span><br><span class="line"><span class="comment"># 1.C++ 2.CMake Tools 3.CMake(高亮显示)</span></span><br><span class="line"><span class="comment"># 注意：打开工程文件夹的时候会提示生成Intellisense文件，确认即可（会自动include一些库文件，比如Qt）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#------python环境搭建------</span></span><br><span class="line"><span class="comment"># VScode安装以下插件</span></span><br><span class="line"><span class="comment"># 1.Python</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x09-引用文献"><a href="#0x09-引用文献" class="headerlink" title="0x09 引用文献"></a><em>0x09 引用文献</em></h3></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技巧</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Git与Hexo" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -523,15 +751,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -547,6 +779,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -555,11 +791,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -567,7 +803,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -576,10 +812,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

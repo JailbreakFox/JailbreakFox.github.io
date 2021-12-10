@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2021-11-19T03:00:33.808Z">
+<meta property="article:modified_time" content="2021-12-10T01:25:30.762Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -210,7 +210,7 @@
 <p><strong><em>16. /sys</em></strong><br>&ensp;&ensp;/sys 是一个虚拟目录(类似 /proc 和 /dev)，并且包含了远程连接设备的信息。<br>&ensp;&ensp;比如可以通过修改文件 /sys/devices/pci0000:00/0000:00:02.0/drm/card1/card1-eDP-1/intel_backlight/brightness 改变屏幕亮度。不要轻易改动 /sys 目录。</p>
 <p><strong><em>17. /tmp</em></strong><br>&ensp;&ensp;/tmp 包含正在运行的应用程序生成的临时文件。文件和目录经常包含应用程序当前不需要但以后可能需要的数据。</p>
 <p><strong><em>18. /var</em></strong><br>&ensp;&ensp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。</p>
-<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd:            <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
+<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
 
 <p><strong><em>常见日志文件路径</em></strong>  </p>
 <table>
@@ -265,6 +265,10 @@
 <td>系统崩溃日志</td>
 </tr>
 <tr>
+<td>/var/log/audit/audit.log</td>
+<td>系统审计日志</td>
+</tr>
+<tr>
 <td>~/.xession-error</td>
 <td>记录登录桌面失败的信息</td>
 </tr>
@@ -276,16 +280,17 @@
 <p>&emsp;&emsp;当然如果只是希望使可执行文件能直接使用，推荐软链接的方式</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为原文件创造一个新的指针，类似于Windows的快捷方式</span></span><br><span class="line"><span class="comment"># 注意！这边的路径最好都写绝对路径，不然链接不上</span></span><br><span class="line"><span class="comment"># ln -s /home/dev/cmake /usr/bin/</span></span><br><span class="line"><span class="comment"># 使用ls -lah /usr/bin/ |grep cmake可以查看到链接情况</span></span><br><span class="line">ln -s <span class="string">&#x27;原文件路径&#x27;</span> <span class="string">&#x27;快捷方式路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br><span class="line">5. 动态库与静态库</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br><span class="line">5. 动态库与静态库</span><br><span class="line">6. 其他相关知识</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、三方库使用条件</em></strong><br>&emsp;&emsp;在编译时，第三方库必须要有静态库或动态库以及头文件。在运行时，第三方库只需要有静态库或动态库即可。  </p>
 <p><strong><em>2、编译时依赖</em></strong><br>&emsp;&emsp;关于编译时依赖查看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/04/29/CMake/">CMAKE相关文章</a>。</p>
 <p><strong><em>3、运行时依赖</em></strong><br>&emsp;&emsp;Windows进程运行时依赖于当前文件夹与环境变量。<br>&emsp;&emsp;Linux进程运行时依赖于RPATH，关于进程的依赖可通过下面两个命令获取:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可执行程序的依赖</span></span><br><span class="line">ldd <span class="string">&#x27;可执行程序路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看可执行程序的RPATH</span></span><br><span class="line">readelf -d <span class="string">&#x27;可执行程序路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>4、依赖库与头文件查找顺序</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 缓存 /etc/ld.so.cache</span><br><span class="line">    4.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 设置文件 /etc/ld.so.conf /etc/ld.so.conf.d/</span><br><span class="line">    4.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>5、动态库与静态库</em></strong><br>&emsp;&emsp;1).进程依赖动态库，则编译时需要.so文件与头文件，运行时需要.so文件;<br>&emsp;&emsp;2).进程依赖静态库，则编译时需要.a文件与头文件，运行时无需其他文件（本质是把符号表都合入到进程中）;<br>&emsp;&emsp;3).进程依赖静态库，但是静态库本身又依赖其他动态库，则编译时需要所有.a文件、.so文件以及头文件，运行时需要静态库依赖的.so文件。</p>
+<p><strong><em>6、其他相关知识</em></strong><br>&emsp;&emsp;库文件的文件头中是会含有库名相关的信息的(比如“libdb-4.3.so”，可用strings命令察看)，仅通过修改文件名以冒充某已被识别的库是行不通的，需要使用Makefile修改库名重新编译。</p>
 <h3 id="0x05-桌面图标生成"><a href="#0x05-桌面图标生成" class="headerlink" title="0x05 桌面图标生成"></a><em>0x05 桌面图标生成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 生成任务栏图标</span><br><span class="line">2. 生成桌面图标</span><br><span class="line">3. 指令对照表</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、生成任务栏图标</em></strong><br>&emsp;&emsp;在linux系统中，要在任务栏中生成一个可以打开某个程序的图标，需要在/usr/share/applications目录中添加一个<a target="_blank" rel="noopener" href="https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html">.desktop文件</a>:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Type=Application</span><br><span class="line">Version=0.9.4</span><br><span class="line">Name=Netanim</span><br><span class="line">Comment=Run Netanim</span><br><span class="line">Icon=/usr2/ns-allinone-3.25/netanim-3.107/netanim-logo.png</span><br><span class="line">Exec=/usr2/ns-allinone-3.25/netanim-3.107/NetAnim</span><br><span class="line">Terminal=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
@@ -763,15 +768,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -787,6 +796,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
@@ -795,11 +808,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -807,7 +820,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -816,10 +829,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
