@@ -545,13 +545,18 @@
 <p><strong><em>2、普通进程</em></strong><br>&emsp;&emsp;首先要在/usr/share/applications目录中添加桌面图标.desktop文件，并将其软链接或直接复制到以下目录:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># root用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /root/.config/autostart</span><br><span class="line"><span class="comment"># 其他用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /home/<span class="string">&#x27;用户名&#x27;</span>/.config/autostart</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x08-编译相关"><a href="#0x08-编译相关" class="headerlink" title="0x08 编译相关"></a><em>0x08 编译相关</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 g++与c++11</span><br></pre></td></tr></table></figure>
+<h3 id="0x08-编译相关"><a href="#0x08-编译相关" class="headerlink" title="0x08 编译相关"></a><em>0x08 编译相关</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 g++与c++11</span><br><span class="line">2 编译参数 -fPIC</span><br><span class="line">3 MSVC编译参数 &#x2F;MT &#x2F;MD</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、g++与c++11</em></strong><br>&emsp;&emsp;g++4.8、g++4.9包含c++11但是默认不开启，g++5.1开始默认开启c++11(提供了一个宏来控制其是否使用 _GLIBCXX_USE_CXX11_ABI)  </p>
 <ul>
 <li>进程依赖动态库，动态库使用g++4编译且不开启c++11。进程可使用g++4编译(c++11开启与关闭均可);进程可使用g++5编译(必须通过宏关闭c++11)  </li>
 <li>进程依赖动态库，动态库使用g++5编译且开启(默认开启)。进程可使用g++5编译(通过宏关闭c++11后无法编译通过)<br>&emsp;&emsp;下面记录直接使用g++以及使用cmake分别在g++4/g++5下如何控制c++11的开启与关闭:  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 使用g++4编译 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11(默认关闭)</span></span><br><span class="line">g++ <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 2.开启c++11</span></span><br><span class="line">g++ -std=c++11 <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">g++ -std=c++0x <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 使用g++5编译 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11</span></span><br><span class="line">g++ -D_GLIBCXX_USE_CXX11_ABI=0 <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 2.开启c++11(默认开启)</span></span><br><span class="line">g++ <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== cmake/g++4 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11(默认关闭)</span></span><br><span class="line"><span class="comment"># 2.开启c++11</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_STANDARD 11) <span class="comment"># cmake3.1以后支持该设置方法</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -std=gnu++11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== cmake/g++5 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11</span></span><br><span class="line">add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)</span><br><span class="line"><span class="comment"># 2.开启c++11(默认开启)</span></span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
+<p><strong><em>2、编译参数 -fPIC</em></strong><br>&emsp;&emsp;-fPIC编译参数在产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。<br>&emsp;&emsp;Linux机器如果要编译.so动态库，则必须加这个编译选项，否则会报下面的错误:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">relocation R_X86_64_32 against `a <span class="built_in">local</span> symbol<span class="string">&#x27; can not be used when making a shared object; recompile with -fPIC</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、MSVC编译参数 /MT /MD</em></strong><br>&emsp;&emsp;这两个参数是Windows下的MSVC编译器参数，在编译静态库时被用到。<br>&emsp;&emsp;/MD: 表示运行时库由操作系统提供一个DLL，程序里不集成。编译出来的文件比较小。使用的库文件是MSVCRT.lib<br>&emsp;&emsp;/MT: 表示运行时库由程序集成。编译出来的文件比较大。在运行的机器上不需要安装依赖的VS的动态库，使用的库文件是LIBCMT.lib</p>
 </div></div>
       
 
@@ -1120,15 +1125,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1148,15 +1153,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1168,6 +1169,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
@@ -1176,7 +1181,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1184,7 +1189,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
