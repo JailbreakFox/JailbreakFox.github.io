@@ -182,21 +182,9 @@
 <p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Mermaid的语法(需要加’```mermaid’前缀)，摘自<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">文献</a><sup>[1]</sup>:   </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">1.横向流程图:</span><br><span class="line">graph LR</span><br><span class="line">A[方形] --&gt;B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt;|a=1| D[结果1]</span><br><span class="line">    C --&gt;|a=2| E[结果2]</span><br><span class="line">    F[横向流程图]</span><br><span class="line"></span><br><span class="line">2.竖向流程图:</span><br><span class="line">graph TD</span><br><span class="line">A[方形] --&gt; B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt; |a=1| D[结果1]</span><br><span class="line">    C --&gt; |a=2| E[结果2]</span><br><span class="line">    F[竖向流程图]</span><br><span class="line"></span><br><span class="line">3.时序图:</span><br><span class="line">sequenceDiagram</span><br><span class="line">participant 张三</span><br><span class="line">participant 李四</span><br><span class="line">张三-&gt;王五: 王五你好吗？</span><br><span class="line">loop 健康检查</span><br><span class="line">    王五-&gt;王五: 与疾病战斗</span><br><span class="line">end</span><br><span class="line">Note right of 王五: 合理 食物 &lt;br/&gt;看医生...</span><br><span class="line">李四--&gt;&gt;张三: 很好!</span><br><span class="line">王五-&gt;李四: 你怎么样?</span><br><span class="line">李四--&gt;王五: 很好!</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、输出图表</em></strong><br>1).横向流程图  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">A[方形] --&gt;B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt;|a&#x3D;1| D[结果1]</span><br><span class="line">    C --&gt;|a&#x3D;2| E[结果2]</span><br><span class="line">    F[横向流程图]</span><br></pre></td></tr></table></figure>
-
-<p>2).竖向流程图  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[方形] --&gt; B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt; |a&#x3D;1| D[结果1]</span><br><span class="line">    C --&gt; |a&#x3D;2| E[结果2]</span><br><span class="line">    F[竖向流程图]</span><br></pre></td></tr></table></figure>
-
-<p>3).时序图  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">%% 时序图例子,-&gt; 直线，--&gt;虚线，-&gt;&gt;实线箭头</span><br><span class="line">  sequenceDiagram</span><br><span class="line">    participant 张三</span><br><span class="line">    participant 李四</span><br><span class="line">    张三-&gt;王五: 王五你好吗？</span><br><span class="line">    loop 健康检查</span><br><span class="line">        王五-&gt;王五: 与疾病战斗</span><br><span class="line">    end</span><br><span class="line">    Note right of 王五: 合理 食物 &lt;br&#x2F;&gt;看医生...</span><br><span class="line">    李四--&gt;&gt;张三: 很好!</span><br><span class="line">    王五-&gt;李四: 你怎么样?</span><br><span class="line">    李四--&gt;王五: 很好!</span><br></pre></td></tr></table></figure>
-
 <h3 id="0x02-Flow"><a href="#0x02-Flow" class="headerlink" title="0x02 Flow"></a><em>0x02 Flow</em></h3><p>&emsp;&emsp;Flow是专门用来画标准流程图的语言，但是Mermaid实际上也能画流程图，并且从渲染上来看Mermaid更胜一筹，因此推荐使用Mermaid。<br>&emsp;&emsp;在VSCOde中使用Flow，也需要先安装Markdown Preview Enhanced插件。能直接在markdown文件中编写。</p>
 <p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;在VSCode中的使用方法(需要加’```flow’前缀):  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: 开始框</span><br><span class="line">op=&gt;operation: 处理框</span><br><span class="line">cond=&gt;condition: 判断框(是或否?)</span><br><span class="line">sub1=&gt;subroutine: 子流程</span><br><span class="line">io=&gt;inputoutput: 输入输出框</span><br><span class="line">e=&gt;end: 结束框</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;io-&gt;e</span><br><span class="line">cond(no)-&gt;sub1(right)-&gt;op</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、输出图表</em></strong>  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">st&#x3D;&gt;start: 开始框</span><br><span class="line">op&#x3D;&gt;operation: 处理框</span><br><span class="line">cond&#x3D;&gt;condition: 判断框(是或否?)</span><br><span class="line">sub1&#x3D;&gt;subroutine: 子流程</span><br><span class="line">io&#x3D;&gt;inputoutput: 输入输出框</span><br><span class="line">e&#x3D;&gt;end: 结束框</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;io-&gt;e</span><br><span class="line">cond(no)-&gt;sub1(right)-&gt;op</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x03-PlantUML"><a href="#0x03-PlantUML" class="headerlink" title="0x03 PlantUML"></a><em>0x03 PlantUML</em></h3><p>&emsp;&emsp;PlantUML可以很好地绘制用例图、类图、活动图、组件图、状态图、对象图、时序图，语法非常简洁。<br>&emsp;&emsp;其在VSCode中配置较麻烦(推荐在线画图并生成图片)。需要安装PlantUML插件、去graphviz官网下载其安装包以及安装JAVA。而且只支持特殊的后缀文件，如.pu / .puml。<br>&emsp;&emsp;其可绘制的图形如下(使用PlantUML思维导图绘制):  </p>
 <div align="center">
@@ -205,13 +193,68 @@
 
 <p>&emsp;&emsp;下面讲解各个图的绘制基础语法，推荐查看<a target="_blank" rel="noopener" href="https://plantuml.com/zh">PlantUML官网</a><sup>[2]</sup>，以及<a target="_blank" rel="noopener" href="https://www.planttext.com/">在线绘制PlantUML</a><sup>[3]</sup></p>
 <p><strong><em>1、活动图</em></strong><br>&emsp;&emsp;活动图<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">基础用法</a><sup>[4]</sup>，在学习完基础用法后，实现一个复杂的活动图:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">start</span><br><span class="line"><span class="comment">#00FF00:while 0;</span></span><br><span class="line">note left</span><br><span class="line">遍历检查/proc/<span class="string">&#x27;PID号&#x27;</span></span><br><span class="line">end note</span><br><span class="line">repeat</span><br><span class="line">    <span class="keyword">if</span>(是否为Shell进程) <span class="keyword">then</span> (Y)</span><br><span class="line">        <span class="comment">#A020F0:while 1;</span></span><br><span class="line">        <span class="keyword">while</span> (循环查看该进程fd0与fd1 ?) is (未检查完)</span><br><span class="line">            <span class="keyword">if</span>(当前fd是否重定向到socket) <span class="keyword">then</span> (Y)</span><br><span class="line">                <span class="keyword">if</span>(socket号是否连接到外界IP) <span class="keyword">then</span> (Y)</span><br><span class="line">                    <span class="comment">#A020F0:goto [while 1];</span></span><br><span class="line">                    detach</span><br><span class="line">                <span class="keyword">else</span> (N)</span><br><span class="line">                    <span class="comment">#00FF00:goto [while 0];</span></span><br><span class="line">                    detach</span><br><span class="line">                endif</span><br><span class="line">            <span class="keyword">else</span> (N)</span><br><span class="line">                <span class="keyword">if</span>(当前fd是否重定向到管道) <span class="keyword">then</span> (Y)</span><br><span class="line">                    :继续检查管道对端进程当前fd的连接;</span><br><span class="line">                    note left</span><br><span class="line">                    对应以下四种情况分别执行</span><br><span class="line">                    ====</span><br><span class="line">                    * 1.连接socket未外连IP(正常)</span><br><span class="line">                    * 2.连接socket且外连IP(可疑)</span><br><span class="line">                    * 3.连接到管道文件(可疑)</span><br><span class="line">                    * 4.连接到匿名管道(可疑)</span><br><span class="line">                    end note</span><br><span class="line">                    <span class="comment">#A020F0:goto [while 1];</span></span><br><span class="line">                    detach</span><br><span class="line">                <span class="keyword">else</span> (N)</span><br><span class="line">                    <span class="comment">#00FF00:goto [while 0];</span></span><br><span class="line">                    detach</span><br><span class="line">                endif</span><br><span class="line">            endif</span><br><span class="line">        endwhile (检查完)</span><br><span class="line">    <span class="keyword">else</span> (N)</span><br><span class="line">        <span class="comment">#00FF00:goto [while 0];</span></span><br><span class="line">        detach</span><br><span class="line">    endif</span><br><span class="line"><span class="keyword">if</span>(Shell进程fd0与fd1均外联?) <span class="keyword">then</span> (Y)</span><br><span class="line">    <span class="comment">#HotPink:打日志并上报警告;</span></span><br><span class="line"><span class="keyword">else</span> (N)</span><br><span class="line">    :结束检查该进程;</span><br><span class="line">endif</span><br><span class="line">repeat <span class="keyword">while</span> (检查下一个Shell进程)</span><br><span class="line">@enduml</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">&lt;div align=center&gt;</span><br><span class="line">&lt;img src=<span class="string">&quot;./PlantUML/复杂活动图.png&quot;</span> /&gt;</span><br><span class="line">&lt;div align=left&gt;  </span><br><span class="line"></span><br><span class="line"><span class="comment">### *0x04 yUML*  </span></span><br><span class="line">&amp;emsp;&amp;emsp;yUML支持类图、活动图、用例图、状态图、部署图、包图以及时序图(Sequnce)。  </span><br><span class="line">&amp;emsp;&amp;emsp;在VSCOde中使用yUML，需要先安装yUML插件，并且其文件后缀必须为.yuml。</span><br><span class="line">&amp;emsp;&amp;emsp;然而Markdown Preview Enhanced插件支持其使用时序图(Sequnce)。</span><br><span class="line"></span><br><span class="line">***1、基础语法***  </span><br><span class="line">```sh</span><br><span class="line">对象A-&gt;对象B: 对象B你好吗?（请求）</span><br><span class="line">Note right of 对象B: 对象B的描述</span><br><span class="line">Note left of 对象A: 对象A的描述(提示)</span><br><span class="line">对象B--&gt;对象A: 我很好(响应)</span><br><span class="line">对象A-&gt;对象B: 你真的好吗？</span><br></pre></td></tr></table></figure>
+<pre><code class="sh">@startuml
+start
+#00FF00:while 0;
+note left
+遍历检查/proc/&#39;PID号&#39;
+end note
+repeat
+    if(是否为Shell进程) then (Y)
+        #A020F0:while 1;
+        while (循环查看该进程fd0与fd1 ?) is (未检查完)
+            if(当前fd是否重定向到socket) then (Y)
+                if(socket号是否连接到外界IP) then (Y)
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            else (N)
+                if(当前fd是否重定向到管道) then (Y)
+                    :继续检查管道对端进程当前fd的连接;
+                    note left
+                    对应以下四种情况分别执行
+                    ====
+                    * 1.连接socket未外连IP(正常)
+                    * 2.连接socket且外连IP(可疑)
+                    * 3.连接到管道文件(可疑)
+                    * 4.连接到匿名管道(可疑)
+                    end note
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            endif
+        endwhile (检查完)
+    else (N)
+        #00FF00:goto [while 0];
+        detach
+    endif
+if(Shell进程fd0与fd1均外联?) then (Y)
+    #HotPink:打日志并上报警告;
+else (N)
+    :结束检查该进程;
+endif
+repeat while (检查下一个Shell进程)
+@enduml</code></pre>
+<div align="center">
+<img src="/2019/09/28/UML/复杂活动图.png">
+<div align="left">  
 
-<p><strong><em>2、输出图表</em></strong>  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">对象A-&gt;对象B: 对象B你好吗?（请求）</span><br><span class="line">Note right of 对象B: 对象B的描述</span><br><span class="line">Note left of 对象A: 对象A的描述(提示)</span><br><span class="line">对象B--&gt;对象A: 我很好(响应)</span><br><span class="line">对象A-&gt;对象B: 你真的好吗？</span><br></pre></td></tr></table></figure>
 
+<h3 id="0x04-yUML"><a href="#0x04-yUML" class="headerlink" title="0x04 yUML"></a><em>0x04 yUML</em></h3><p>&emsp;&emsp;yUML支持类图、活动图、用例图、状态图、部署图、包图以及时序图(Sequnce)。<br>&emsp;&emsp;在VSCOde中使用yUML，需要先安装yUML插件，并且其文件后缀必须为.yuml。<br>&emsp;&emsp;然而Markdown Preview Enhanced插件支持其使用时序图(Sequnce)。  </p>
+<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Sequnce的语法(需要加’```sequnce’前缀):  </p>
+<pre><code class="sh">对象A-&gt;对象B: 对象B你好吗?（请求）
+Note right of 对象B: 对象B的描述
+Note left of 对象A: 对象A的描述(提示)
+对象B--&gt;对象A: 我很好(响应)
+对象A-&gt;对象B: 你真的好吗？</code></pre>
 <h3 id="0x05-参考文献"><a href="#0x05-参考文献" class="headerlink" title="0x05 参考文献"></a><em>0x05 参考文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">https://www.runoob.com/markdown/md-advance.html</a><br>[2]<a target="_blank" rel="noopener" href="https://plantuml.com/zh">https://plantuml.com/zh</a><br>[3]<a target="_blank" rel="noopener" href="https://www.planttext.com/">https://www.planttext.com</a><br>[4]<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">https://plantuml.com/zh/activity-diagram-beta</a></p>
-</div></div>
+</div></div></div></div>
       
 
       
@@ -621,11 +664,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -669,15 +712,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -686,10 +733,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
