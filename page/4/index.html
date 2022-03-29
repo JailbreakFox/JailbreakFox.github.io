@@ -156,6 +156,187 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-关系型数据库-MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">关系型数据库-MySQL</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/" class="archive-article-date">
+  	<time datetime="2020-09-02T07:55:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-02</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoahong/p/10385466.html">https://www.cnblogs.com/luoahong/p/10385466.html</a><br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title">https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title</a></p>
+<h1 id="0x01-基础架构"><a href="#0x01-基础架构" class="headerlink" title="0x01 基础架构"></a>0x01 基础架构</h1><div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/MySQL逻辑架构图.png" width="700" height="500">
+<div align="left">  
+
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/工作流程.png" width="400" height="400">
+<div align="left">  
+
+
+<p>MySQL 可以分为 Server 层和存储引擎层两部分。<br>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，是共用的。<br>存储引擎层负责数据的存储和提取，且是插件式的。支持 InnoDB、MyISAM、Memory 等多个存储引擎，现在最常用的存储引擎是 InnoDB。  </p>
+<p><strong><em>连接器</em></strong><br>定义: 接器负责跟客户端建立连接、获取权限、维持和管理连接。  </p>
+<ul>
+<li>数据库里长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接</li>
+<li>短连接则是指每次执行完很少的几次查询就断开连接，下次查询再重新建立一个。</li>
+</ul>
+<p>问题<br>建立连接的过程通常是比较复杂的，所以应该尽量使用长连接。但长连接可能导致MySQL占用内存过快，因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才释放。<br>解决方案<br>1.定期断开长链接  2.MySQL5.7之后通过执行’mysql_reset_connection’来重新初始化连接资源</p>
+<p><strong><em>查询缓存</em></strong><br>之前执行过的语句及其结果可能会以 key-value 对的形式，被直接缓存在内存中。MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。<br>不建议使用查询缓存  </p>
+<ul>
+<li>查询缓存的失效非常频繁，只要有一个表更新，这个表上所有的查询缓存都被清空</li>
+<li>对于更新压力大的数据库来说，查询缓存的命中率会非常低，</li>
+<li>除非你的业务就是有一张静态表，很长时间才会更新一次(比如一个系统配置表)</li>
+</ul>
+<p>MySQL 8.0 版本开始直接将查询缓存的整块功能删掉</p>
+<p><strong><em>分析器</em></strong><br>执行sql语句前需要分析器先对用户的命令做‘词法分析’和‘语法分析’<br>词法分析: 识别出里面的字符串分别是什么<br>语法分析: 判断输入的sql语句是否满足MySQL语法</p>
+<p><strong><em>优化器</em></strong><br>作用</p>
+<ul>
+<li>在表里面有多个索引的时候，决定使用哪个索引</li>
+<li>多表关联(ioin)的时候，决定各个表的链接顺序</li>
+</ul>
+<p><strong><em>执行器</em></strong>  </p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/执行器原理.png" width="300" height="200">
+<div align="left">  
+
+<h1 id="0x02-日志系统"><a href="#0x02-日志系统" class="headerlink" title="0x02 日志系统"></a>0x02 日志系统</h1><p>&emsp;&emsp;日志模块分为redo log与binlog。两种模块配合的方式称为WAL(Write-Ahead Logging)技术。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/粉板.png">
+<div align="left">
+
+<p>两种日志有以下区别</p>
+<ul>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
+</ul>
+<p><strong><em>redo log记录原理</em></strong>  </p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/redolog内存空间.png">
+<div align="left">
+
+<p>&emsp;&emsp;redo log的内存空间是固定的。write pos与check point 之间是可写入部分，如果可写入空间不足，则清除一部分日志，并将check point后移。有了redo log，InnoDB就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为crash-safe</p>
+<p><strong><em>update语句执行流程</em></strong><br>&emsp;&emsp;update语句是比较典型的sql语句，能帮助我们理解日志记录的流程。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/update语句执行流程.png">
+<div align="left">
+
+<p>两段式提交<br>&emsp;&emsp;图表中的最后三步，被称为”两段式提交”，其实就是:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.写入redo <span class="built_in">log</span></span><br><span class="line">2.写入binlog</span><br><span class="line">3.commit</span><br></pre></td></tr></table></figure>
+
+<p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>**<em>事务隔离的基础**</em><br>1).事务基本要素（ACID）</p>
+<ul>
+<li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
+<li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
+<li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
+<li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
+</ul>
+<p>2).事务的并发问题</p>
+<ul>
+<li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
+<li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
+<li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
+</ul>
+<p>3).MySQL事务隔离级别</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
+<div align="left">
+
+<p>下面解释下四个事务隔离级别的意义:</p>
+<ul>
+<li>读未提交: 一个事务还未提交，它的变更就能被别的事务看到</li>
+<li>读提交: 一个事务提交后，它的变更才能被别的事务看到</li>
+<li>可重复读: 一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
+<li>串行化: 对于同一行记录，”写”会加”写锁”，”读”会加”读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行</li>
+</ul>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别1.png">
+<div align="left">
+
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
+<div align="left">
+
+<p><strong><em>事务隔离的实现</em></strong><br>&emsp;&emsp;在 MySQL 中，每条记录在更新的时候都会同时记录一条回滚操作。同一条记录在系统中可以存在多个版本，这就是数据库的多版本并发控制（MVCC），也因此实现了事务隔离。当没有事务需要用到这些回滚日志的时候，回滚日志会被删除。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离的实现.png">
+<div align="left">
+
+<p><strong><em>事务的启动方式</em></strong><br>1).尽量避免使用长事务<br>&emsp;&emsp;长事务意味着系统里面会存在很老的read-view。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
+<p>2).事务启动要注意的点</p>
+<ul>
+<li>set autocommit=0，这个命令会将这个线程的自动提交关掉。有些客户端连接框架会默认连接成功后先执行一个 set autocommit=0 的命令。这就导致接下来的查询都在事务中，如果是长连接，就导致了意外的长事务</li>
+<li>显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback</li>
+</ul>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-仓库源管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -399,117 +580,9 @@
 
 
   
-    <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">流媒体</a>
-    </h1>
-  
-
-        
-        <a href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/" class="archive-article-date">
-  	<time datetime="2020-01-31T03:16:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-31</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。<br>&emsp;&emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务器获取视频的技术。<br>&emsp;&emsp;由于流媒体服务器需要公网IP，这里直接使用阿里云服务器。  </p>
-<h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a><em>0x01 环境搭建</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 流媒体服务器</span><br><span class="line">  1.1 云服务器搭建</span><br><span class="line">  1.2 srs部署</span><br><span class="line">2 OBS推流部署</span><br><span class="line">3 VLC拉流部署</span><br></pre></td></tr></table></figure>
-<p><strong><em>1 流媒体服务器</em></strong><br><strong><em>1.1 云服务器搭建</em></strong><br>&emsp;&emsp;这里用的是<a target="_blank" rel="noopener" href="https://www.aliyun.com/">阿里云服务器</a><sup>[1]</sup>，由于考虑到只是测试使用，因此买了一款1核2G，1Mbps的服务器。运行远程主机以后，记得<strong>添加安全组并开启1935端口</strong>，因为后面的srs需要用到该端口来交互信息。<br>&emsp;&emsp;值得注意的是，阿里云已经为用户提供了直播控制台，也就是说没必要自己部署流媒体服务器，但是由于要收费，我们这里还是部署开源的框架。  </p>
-<p><strong><em>1.2 srs部署</em></strong><br>&emsp;&emsp;流媒体服务器目前有很多优秀的开源框架，知乎上也有对比不同框架的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">文章</a><sup>[2]</sup>，这里我们选用srs。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/流媒体开源框架.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;从上图可以看到，srs部署在Ubuntu下，网上有很多<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">技术博客</a><sup>[3]</sup>已经具体介绍了其安装方式:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先去Git上clone</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ossrs/srs.git</span><br><span class="line"><span class="built_in">cd</span> srs/trunk</span><br><span class="line"><span class="comment">#配置</span></span><br><span class="line">./configure</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line">make</span><br><span class="line"><span class="comment">#开启服务，第一次需要输入</span></span><br><span class="line">./objs/srs -c conf/srs.conf</span><br><span class="line"><span class="comment">#以后只需要输入 ./etc/init.d/srs start</span></span><br><span class="line"><span class="comment">#关闭服务为./etc/init.d/srs stop</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2 OBS推流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是OBS，非常好用快速，该软件可从<a target="_blank" rel="noopener" href="https://obsproject.com/">官网</a><sup>[4]</sup>免费下载。第一次使用，需要修改一些关键设置:<br>&emsp;&emsp;1)推流设置<br>&emsp;&emsp;这是最重要的设置内容，拉流的时候需要用到该地址。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs推流.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;推流地址的设置格式如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户名</span></span><br><span class="line">rtmp://你的ip/你喜欢的url</span><br><span class="line"><span class="comment">#串流密钥(适用于开源框架，不适用于阿里云的直播控制台)</span></span><br><span class="line">你喜欢的任意字符串</span><br><span class="line"><span class="comment">#上述两者合起来就是你的流地址</span></span><br><span class="line"><span class="comment">#例如rtmp://11.11.11.11/xyh/tiancai</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;2)输出设置<br>&emsp;&emsp;这个设置关系到你直播内容的清晰度、流量使用量等，设置方法可以参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">B站大佬的教程</a><sup>[5]</sup>。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs输出.png">
-<div align="left">  
-
-<p>&emsp;&emsp;x264是一个开源的H.264/MPEG-4 AVC视频编码函数库(不明觉厉就选它)。CBR是以恒定比特率方式进行编码(具体内容请自行查阅，由于服务器流量少，只能给500 Kbps)。CPU使用预设可根据自己电脑配置做调整。  </p>
-<p>&emsp;&emsp;3)视频设置<br>&emsp;&emsp;基础分辨率为电脑的分辨率，输出分辨率为拉流端的分辨率，如果流媒体服务器流量小，可以选择较小的输出分辨率。FPS值为刷新频率，普通人人眼能识别的帧率只需25帧，这里给30帧，也是为了考虑流量问题。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs视频.png">
-<div align="left">  
-
-<p>&emsp;&emsp;设置完成后，只需要点击”开始推流”即可。</p>
-<p><strong><em>3 VLC拉流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是VLC，PC端也可以从官网上直接下载，安卓端可以从APKPure下载。下载完成后在”串流”菜单中输入 1.2 节中设置的流地址，就能连上流媒体服务器，进行拉流动作。</p>
-<h3 id="0x02-常见问题"><a href="#0x02-常见问题" class="headerlink" title="0x02 常见问题"></a><em>0x02 常见问题</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 黑屏</span><br></pre></td></tr></table></figure>
-<p><strong><em>1 黑屏</em></strong><br>&emsp;&emsp;OBS推流时，设置”显示器捕获”与”窗口捕获”，打开以后显示黑屏。有多种问题源，因此有多种解决方法，常见原因参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">B站up主教程</a><sup>[6]</sup>。<br>&emsp;&emsp;我的电脑原因可能是obs渲染采用的是集成显卡，解决方法查阅<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">贴吧</a><sup>[7]</sup>。Windows10 设置，系统，显示，最下边图形设置。图形性能首选项里边，经典应用，浏览添加OBS应用程序，OBS选项设置为节能（反正我的节能是集成图形输出，设置完毕之后就可以用）。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.aliyun.com/">https://www.aliyun.com</a><br>[2]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">https://www.zhihu.com/question/31160392/answer/256141081</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">https://blog.csdn.net/lmj623565791/article/details/77937483</a><br>[4]<a target="_blank" rel="noopener" href="https://obsproject.com/">https://obsproject.com</a><br>[5]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">https://www.bilibili.com/video/av52560685</a><br>[6]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">https://www.bilibili.com/video/av65194185</a><br>[7]<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">http://tieba.baidu.com/p/6364329041</a></p>
-</div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具，流</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
     </nav>
   
 
@@ -628,19 +701,19 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -676,19 +749,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -697,6 +770,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
