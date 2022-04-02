@@ -156,6 +156,146 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DBus" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/03/21/DBus/">DBus</a>
+    </h1>
+  
+
+        
+        <a href="/2020/03/21/DBus/" class="archive-article-date">
+  	<time datetime="2020-03-21T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。</p>
+<div align="center">
+<img src="/2020/03/21/DBus/DBus框架.png" width="700" height="400">
+<div align="left">  
+
+<h3 id="0x01-DBus简介"><a href="#0x01-DBus简介" class="headerlink" title="0x01 DBus简介"></a><em>0x01 DBus简介</em></h3><p>&emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 运行机制</span><br><span class="line">2 重要ID</span><br></pre></td></tr></table></figure>
+<p><em>1、运行机制</em>  </p>
+<ul>
+<li>DBus-daemon : 运行一个DBus-daemon就是创建了一条通信的总线Bus。总线分为 系统总线(system daemon)/会话总线(session daemon) 两类，例如Ubuntu系统开启时会自动拉起一个系统总线和会话总线。</li>
+<li>Connection : 当一个进程(Application)连接到Bus总线上面时，就产生了连接(Connection)。</li>
+<li>Application : 每个进程即为一个Application。DBus能实现进程间通信，且其实现是基于socket的，因此总有一个等待连接的Server APP，以及一个主动连接的Client APP。</li>
+<li>Object : 可理解为程序员希望用DBus实现的进程间通信类。</li>
+<li>Interface : 可理解为每个Object内的类成员。</li>
+<li>通信方式 : D-bus里面支持的通信方式有signal/method两种。前者其实就是广播(UDP,一对多的通信方式);后者则是一问一答(TCP，一对一的通信),这种方式有点像远程调用，Client APP1调用Server APP2的method并传递参数给这个method，获取到这个method返回的结果。</li>
+</ul>
+<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">参考教程</a><sup>[1]</sup>。</p>
+<ul>
+<li>Address : 用于标识DBus-daemon。当一个DBus-daemon运行以后，其他的app该怎么连接到这个DBus-daemon，靠的就是address。格式如/com/polkit/qt/example/dbus。</li>
+<li>BusName : 用于标志Application。当一个进程连接上DBus-daemon，就需要注册一个BusName方便其他进程找到自己。格式如com.polkit.qt.example.dbus。</li>
+<li>Object Path : 用于标识Object类。当Client APP1的Object要跟Server APP2的Object通信时，就要告诉DBus-daemon目标的Object Path。格式如/com/polkit/qt/example/dbus。</li>
+<li>Interface name : 用于标志Object类成员。格式如com.polkit.qt.example.dbus。</li>
+<li>Member name : 用于标志通信类型信息。无特殊格式。</li>
+</ul>
+<h3 id="0x02-QDBus简介"><a href="#0x02-QDBus简介" class="headerlink" title="0x02 QDBus简介"></a><em>0x02 QDBus简介</em></h3><p>&emsp;&emsp;Qt有DBus的具体实现库，即QDBus。QDBus可参考QtLearning/QDbus里的实现代码，具体使用方式如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用命令qdbuscpp2xml生成dbus.h的xml文件</span></span><br><span class="line"><span class="comment"># dbus类为客户端用来调用服务端的接口</span></span><br><span class="line">qdbuscpp2xml dbus.h -A -o com.polkit.qt.example.dbus.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-DBus工具"><a href="#0x03-DBus工具" class="headerlink" title="0x03 DBus工具"></a><em>0x03 DBus工具</em></h3><p>&emsp;&emsp;下面介绍一些用来生成DBus或查看DBus运行状态的工具。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 QDBus文件生成工具</span><br><span class="line">  1.1 qdbuscpp2xml</span><br><span class="line">  1.2 qdbusxml2cpp</span><br><span class="line">2 DBus状态分析工具</span><br><span class="line">  2.1 D-feet</span><br><span class="line">  2.2 dbus-send&#x2F;dbus-monitor</span><br><span class="line">  2.3 busctl</span><br><span class="line">  2.4 qdbus --literal</span><br></pre></td></tr></table></figure>
+<p><em>1、QDBus文件生成工具</em><br>&emsp;&emsp;如上一章所示，QDBus的进程间通信类实现需要先根据该类生成xml文件，再根据xml生成用于Server APP的adaptor以及用于Client APP的interface。<br><em>1.1、qdbuscpp2xml</em><br>&emsp;&emsp;qdbuscpp2xml会解析QObject派生类的C++头文件或是源文件，生成DBus的内省xml文件。qdbuscpp2xml会区分函数的输入输出，如果参数声明为const则会是输入，否则可能会被当作输出。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qdbuscpp2xml使用语法如下：</span></span><br><span class="line">qdbuscpp2xml [options...] [files...]</span><br><span class="line"><span class="comment"># Options参数如下：</span></span><br><span class="line"><span class="comment"># -p|-s|-m：只解析脚本化的属性、信号、方法(槽函数)</span></span><br><span class="line"><span class="comment"># -P|-S|-M：解析所有的属性、信号、方法(槽函数) </span></span><br><span class="line"><span class="comment"># -a：输出所有的脚本化内容，等价于-psm </span></span><br><span class="line"><span class="comment"># -A：输出所有的内容，等价于-PSM    </span></span><br><span class="line"><span class="comment"># -o filename：输出内容到filename文件</span></span><br></pre></td></tr></table></figure>
+<p><em>1.2、qdbusxml2cpp</em><br>&emsp;&emsp;qdbusxml2cpp能根据上一节生成的xml文件生成用于Server APP的adaptor以及用于Client APP的interface。  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractAdaptor的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractInterface的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<p><em>2、DBus状态分析工具</em><br>&emsp;&emsp;DBus运行过程中，需要用调试工具观察运行状态，这里介绍两种工具，分别是D-feet以及dbus_send/dbus_monitor。<br><em>2.1、D-feet</em><br>&emsp;&emsp;D-feet是Red Hat公司研发的DBus调试工具。当你准备用DBus来写你的程序时，D-feet是非常用的，它可以显示service提供的所有对象、信号、和方法，另外还可以通过它实现方法调用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装D-feet</span></span><br><span class="line">sudo apt-get install d-feet</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">d-feet</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/2020/03/21/DBus/D-feet.png" width="700" height="400">
+<div align="left">  
+
+<p><em>2.2、dbus-send/dbus-monitor</em><br>&emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。<br><strong>dbus-send</strong><br>&emsp;&emsp;dbus-send是dbus提供的一个工具程序，用来向dbus维护的消息总线或会话总线发送消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">dbus-send [--system | --session] --<span class="built_in">type</span>=[method_call | signal] --<span class="built_in">print</span>-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值</span><br><span class="line"></span><br><span class="line"><span class="comment"># 举例1</span></span><br><span class="line">dbus-send --system --<span class="built_in">type</span>=method_call --<span class="built_in">print</span>-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02</span><br><span class="line"><span class="comment"># 举例2-获取property值</span></span><br><span class="line"><span class="comment"># 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll</span></span><br><span class="line">dbus-send --system --<span class="built_in">print</span>-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:<span class="string">&quot;org.freedesktop.Accounts.User&quot;</span></span><br><span class="line"><span class="comment"># 举例3-观察property值改变</span></span><br><span class="line">dbus-monitor interface=org.freedesktop.DBus.Properties,path=/com/deepin/dde/daemon/Launcher,member=PropertiesChanged</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–system / –session<br>将命令发向系统总线或会话总线  </li>
+<li>–type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>–print-reply<br>打印返回结果</li>
+<li>–dest<br>服务名</li>
+<li>对象路径<br>/org/bluez/audio</li>
+<li>接口名<br>org.bluez.audio.Manager.CreateDevice</li>
+<li>参数类型:参数值<br>byte:0x01 byte:0x02</li>
+</ul>
+<p><strong>dbus-monitor</strong><br>&emsp;&emsp;dbus-monitor用于监听消息总线或会话总线发送的消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbus-monitor --system <span class="string">&quot;type=&#x27;signal&#x27;, sender=&#x27;org.gnome.TypingMonitor&#x27;, interface=&#x27;org.gnome.TypingMonitor&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>sender<br>要监听的服务名</li>
+<li>interface<br>要监听的对象路径</li>
+</ul>
+<p><em>2.3、busctl</em><br>&emsp;&emsp;busctl set-property能够用来设置dbus的参数</p>
+<p><em>2.4、qdbus –literal</em><br>&emsp;&emsp;可用该方法更改session的属性，比如修改背景图片: </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qdbus --literal com.deepin.wm /com/deepin/wm com.deepin.wm.ChangeCurrentWorkspaceBackground <span class="string">&quot;图片地址&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-GSettings配置"><a href="#0x04-GSettings配置" class="headerlink" title="0x04 GSettings配置"></a><em>0x04 GSettings配置</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件路径</span></span><br><span class="line"><span class="comment"># /usr/share/glib-2.0/schemas/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出所有schema</span></span><br><span class="line">gsettings list-schemas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找某个schema下的所有key</span></span><br><span class="line">gsettings list-keys <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某个schema下某个key的值,假如要获取priority</span></span><br><span class="line">gsettings get <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> priority</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置某个schema下某个key的值,假如要设置active</span></span><br><span class="line">gsettings <span class="built_in">set</span> <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> active <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/03/21/DBus/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -415,93 +555,6 @@ Note left of 对象A: 对象A的描述(提示)
 
 
   
-    <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/29/CRLF%E4%B8%8ELF/">CRLF与LF</a>
-    </h1>
-  
-
-        
-        <a href="/2019/08/29/CRLF%E4%B8%8ELF/" class="archive-article-date">
-  	<time datetime="2019-08-29T05:41:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-29</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式。CR(Carriage Return) 代表回车，对应字符 ‘\r’；LF(Line Feed) 代表换行，对应字符 ‘\n’。<br>&emsp;&emsp;不同操作系统会使用不同的换行方式，这也是导致我们传输文件时出现乱码的原因之一。目前主流的操作系统中，Windows使用的是CRLF, Unix系统(包括Linux, MacOS近些年的版本)使用的是LF。</p>
-<h3 id="0x01-Git换行符"><a href="#0x01-Git换行符" class="headerlink" title="0x01 Git换行符"></a><em>0x01 Git换行符</em></h3><p>&emsp;&emsp;Git服务器使用的换行方式是LF。  </p>
-<p><strong><em>1、换行符自动转换</em></strong><br>&emsp;&emsp;由于要考虑操作系统区别，Git提供了一个”<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33275327/article/details/81485051">换行符自动转换</a><sup>[1]</sup>“(AutoCRLF)功能，即当Windows用户向Git提交代码时，自动将CRLF格式转换为LF格式，当Windows用户拉代码时，又自动将代码转换为CRLF格式。<br>&emsp;&emsp;AutoCRLF使用方法如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##Windows系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时转换为CRLF</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">##Unix系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时不转换</span></span><br><span class="line">git config --global core.autocrlf input</span><br><span class="line"><span class="comment">##None</span></span><br><span class="line"><span class="comment">#提交、检出均不转换</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<p><strong><em>2、禁止/警告不可逆转换</em></strong><br>&emsp;&emsp;由于没有一个绝对有效的算法来判断一个文件是否采用多种换行符混合模式，因此Git还提供了”<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ec9564fe1c2b">禁止/警告不可逆转换</a><sup>[2]</sup>“的配置，可以自动完成标准化与转换。它的设置方式如下：<br>&emsp;&emsp;SafeCRLF使用方法如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#拒绝提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">#允许提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">false</span></span><br><span class="line"><span class="comment">#提交包含混合换行符的文件时给出警告</span></span><br><span class="line">git config --global core.safecrlf warn</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-换行符格式转换工具"><a href="#0x02-换行符格式转换工具" class="headerlink" title="0x02 换行符格式转换工具"></a><em>0x02 换行符格式转换工具</em></h3><p>&emsp;&emsp;由于日常工作的时候会经常下载到不同换行符格式的文件，导致出现乱码或无法编译。现使用Unix下的一个转换工具<a target="_blank" rel="noopener" href="https://blog.csdn.net/yonggang7/article/details/38459143">dos2unix</a><sup>[3]</sup>，它能将LF、CRLF格式文件进行相互转换。安装方式较为简单：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install dos2unix</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;另外附上其常用的使用方法：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-k 保持源文件mtime</span></span><br><span class="line"><span class="comment">#-n 保留旧文件，转换结果输出到新文件。</span></span><br><span class="line">dos2unix -k -n file newfile</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33275327/article/details/81485051">https://blog.csdn.net/weixin_33275327/article/details/81485051</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ec9564fe1c2b">https://www.jianshu.com/p/ec9564fe1c2b</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/yonggang7/article/details/38459143">https://blog.csdn.net/yonggang7/article/details/38459143</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/29/CRLF%E4%B8%8ELF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
@@ -631,11 +684,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -655,15 +712,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -675,27 +732,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -704,6 +753,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

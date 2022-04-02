@@ -156,6 +156,154 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-C++数据结构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">C++数据结构</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="archive-article-date">
+  	<time datetime="2018-10-21T07:44:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;数据结构是以某种特定的布局方式存储数据的容器。<br>&emsp;&emsp;在C++标准库中，STL(标准模板库)就借助类模板把常用的数据结构及其算法都实现了一遍，并且做到了数据结构和算法的分离。另外也可以使用boost库。<br>&emsp;&emsp;常用的数据结构为以下八种:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0x01 容器-向量元素连接结构</span><br><span class="line">  1 数组</span><br><span class="line">  2 链表</span><br><span class="line">  3 树</span><br><span class="line">  4 图</span><br><span class="line">  5 哈希表</span><br><span class="line">0x02 容器适配器-向量元素特殊增删方式</span><br><span class="line">  1 栈</span><br><span class="line">  2 队列</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x01-容器-向量元素连接结构"><a href="#0x01-容器-向量元素连接结构" class="headerlink" title="0x01 容器-向量元素连接结构"></a><em>0x01 容器-向量元素连接结构</em></h3><p>&emsp;&emsp;向量是由一组数据组合成的，但在计算机存储元器件内，需要以特定的方式连接。连接方式可分为静态连接(数组)与动态连接(链表)。 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">1 数组</span><br><span class="line">  1.1 静态数组-array</span><br><span class="line">  1.2 动态数组</span><br><span class="line">    1.2.1 vector</span><br><span class="line">    1.2.2 priority_queue</span><br><span class="line">    1.2.3 deque</span><br><span class="line">    1.2.4 stack</span><br><span class="line">    1.2.5 queue</span><br><span class="line">2 链表</span><br><span class="line">  2.1 单向链表-forward_list</span><br><span class="line">  2.2 双向链表-list</span><br><span class="line">3 树    </span><br><span class="line">  3.1 搜索树</span><br><span class="line">    3.1.1 二叉树</span><br><span class="line">    3.1.2 平衡二叉树</span><br><span class="line">    3.1.3 AVL树</span><br><span class="line">  3.2 高级搜索树</span><br><span class="line">    3.2.1 红黑树</span><br><span class="line">      3.2.1.1 map</span><br><span class="line">      3.2.1.2 <span class="built_in">set</span></span><br><span class="line">      3.2.1.3 multimap</span><br><span class="line">      3.2.1.4 multiset</span><br><span class="line">4 图</span><br><span class="line">  4.1 图论</span><br><span class="line">    4.1.1 基本概念</span><br><span class="line">    4.1.2 图的矩阵表示</span><br><span class="line">5 哈希表</span><br><span class="line">  5.1 基本概念</span><br><span class="line">  5.2 散列法</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、数组</em></strong><br>&emsp;&emsp;以数组方式存储的向量，在内存空间的存储形式是连续的，因此又称为静态连接。在C++中，其对应的类为std::vector。<br>&emsp;&emsp;相比于动态连接的链表，数组方式数据存储效率更高;缺点是当要在元素中间插入新元素时效率很低，因插入过程为将插入位置后续元素均后移再插入新元素。所以std::vector插入新元素时多为栈(下一章节)的方式，即push_back/emplace_back。</p>
+<p><strong><em>2、链表</em></strong><br>&emsp;&emsp;链表就像一个节点链，其中每个节点包含着数据和指向后续节点的指针，因此又称为动态连接。在C++中，其对应的类为std::list。<br>&emsp;&emsp;相比于静态连接的数组，链表在任意位置插入新元素的效率更高，因为新增元素时只需要修改上一元素指针指向及该元素指针指向;缺点是数据存储效率较低。所以当向量元素增删方式为队列(下一章节)时，元素之间的连接结构常用链表。</p>
+<p><strong><em>3、树</em></strong><br>&emsp;&emsp;假设现在需要维护关于一亿人口信息的数据库。如果用数组实现，虽然存储效率高，但是每修改一个用户信息，需要判断最多一亿次，且没插入数据将非常慢；如果用链表实现，虽然能够实现插入数据，但是每修改一个用户信息，仍然需要判断最多一亿次。<br>&emsp;&emsp;树是一种层次化结构，从文件系统、互联网域名系统和数据库<br>系统，一直到地球生态系统乃至人类社会系统，层次化特征以及层次结构均无所不在。<br>&emsp;&emsp;树的结构及各个部分名词如下，其中度表示该节点有多少个子节点:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/树.png" width="450" height="300">
+<div align="left">  
+
+<p><strong><em>3.1、搜索树</em></strong><br><strong><em>3.1.1、二叉树</em></strong><br>&emsp;&emsp;所谓二叉树的概念是指，所有的节点其子节点小于等于2的树。<br>**<em>3.1.2、平衡二叉树**</em><br>&emsp;&emsp;现在想想我们的目标，是希望尽可能用更少的搜索次数在树内搜索到目标，那么等价于树的深度尽可能小。假如有数组[1,2,3]，则可生成如下图所示五种树，最后一种的搜索速度最快:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/平衡二叉树.png" width="700" height="150">
+<div align="left">  
+
+<p><strong><em>3.1.3、AVL树</em></strong><br>&emsp;&emsp;所谓AVL树，是指所有节点的左右子树高度差不大于1的树。<br>&emsp;&emsp;AVL优点是查询速度非常快(平衡性好);缺点是每个节点都需要存储一个int型数据(-1,0,1)，用于表达左右子树的高度差，且旋转频次更高。AVL多用于数据库。</p>
+<p><strong><em>3.2、高级搜索树</em></strong><br>&emsp;&emsp;通过对任何一条从根到叶子的简单路径上各个节点的颜色进行约束，确保没有一条路径会比其他路径长2倍，因而是近似平衡的。所以相对于严格要求平衡的AVL树来说，它的旋转保持平衡次数较少。用于搜索时，插入删除次数多的情况下我们就用红黑树来取代AVL。<br>&emsp;&emsp;实际应用中，C++ STL(map、set)均基于红黑树。其原理可能较为难理解，具体介绍看<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av45909616?from=search&seid=17043173083215253621">视频</a><sup>[1]</sup>。红黑树举例如下图:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/红黑树.jpg" width="350" height="250">
+<div align="left">  
+
+<p>&emsp;&emsp;红黑树必须满足如下性质:1)根节点必须为黑色;2)父子节点不能同为红色;3)从根节点出发到任意叶子节点，黑色节点数量必须一致。</p>
+<p><strong><em>4、图</em></strong><br>&emsp;&emsp;树是一种层次化结构，可以方便地用来描述种属关系。但是现实世界中，很多问题并不是这种从根往下衍生的关系，比如社交网络或者运输网络等，这时图的作用即可体现。<br>**<em>4.1、图论**</em><br>&emsp;&emsp;图论是数学的一个分支，它以图为研究对象。图论中的图是由若干给定的点及连接两点的线所构成的图形，这种图形通常用来描述某些事物之间的某种特定关系，用点代表事物，用连接两点的线表示相应两个事物间具有这种关系。<br>以下内容摘自<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av88139911?from=search&seid=15931070673176572409">视频</a><sup>[2]</sup>。</p>
+<p><strong><em>4.1.1、基本概念</em></strong><br><strong>1) 有向图与无向图</strong><br>&emsp;&emsp;无方向的图为无向图，有方向的图为有向图，其中圆圈称为”结点”，连接线称为”边”:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/有向图与无向图.png" width="400" height="250">
+<div align="left">  
+
+<p><strong>2) 简单图与多重图</strong><br>&emsp;&emsp;如下图所示，结点v1有一两端重合的边e1，即为”环”;结点v2、v3之间有两条边，即为”多重边”。既没有环也没有重边的图称为”简单图”;含多重边的图称为”多重图”。</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/简单图与多重图.png" width="500" height="300">
+<div align="left">  
+
+<p><strong>3) 完全图与赋权图</strong><br>&emsp;&emsp;任意两顶点都相邻的简单图称为”完全图”，如果给其边上加权重，则称为”多重图”。</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/完全图与赋权图.png" width="500" height="250">
+<div align="left">  
+
+<p><strong><em>4.1.2、图的矩阵表示</em></strong><br><strong>1) 邻接矩阵</strong><br>$$A=\left ( a_{ij}\right )_{n\times n}$$  </p>
+<p>$$a_{ij}=\begin{cases}<br>1 &amp; v_iv_j \in E \\<br>0 &amp; v_iv_j \notin E<br>\end{cases}$$</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/邻接矩阵.png" width="600" height="400">
+<div align="left">  
+
+<p><strong>2) 权矩阵</strong><br>$$A=\left ( a_{ij}\right )_{n\times n}$$  </p>
+<p>$$a_{ij}=\begin{cases}<br>F(v_iv_j) &amp; v_iv_j \in E \\<br>0 &amp; i=j \\<br>\infty &amp; v_iv_j \in E<br>\end{cases}$$</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/权矩阵.png" width="600" height="400">
+<div align="left">  
+
+<p><strong><em>5、哈希表</em></strong><br>&emsp;&emsp;除了树和图，还有一种寻址容易，插入删除也容易的数据结构<a target="_blank" rel="noopener" href="https://blog.csdn.net/yyyljw/article/details/80903391">哈希表</a><sup>[3]</sup>，哈希表也叫散列表，是根据关键码值(key)而直接进行访问的数据结构。<br>**<em>5.1、基本概念**</em><br>&emsp;&emsp;哈希表实质上就是一个元素为链表的数组，而原来数组下标更改为了key，其计算方法是通过某种算法将hash值转换得到，这种算法叫做”散列法”，其对应的映射函数叫做”散列函数”，存放记录的数组叫做”散列表”。</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/哈希表.png" width="600" height="400">
+<div align="left">  
+
+<p><strong><em>5.2、散列法</em></strong><br>&emsp;&emsp;散列法有:除法散列法、平方散列法、斐波那契(Fibonacci)散列法。</p>
+<h3 id="0x02-容器适配器-向量元素特殊增删方式"><a href="#0x02-容器适配器-向量元素特殊增删方式" class="headerlink" title="0x02 容器适配器-向量元素特殊增删方式"></a><em>0x02 容器适配器-向量元素特殊增删方式</em></h3><p>&emsp;&emsp;在数组或链表中，向量元素的增删除了任意选定需要增删的元素之外，还有两种常用的特殊增删方式。即栈和队列，前者可描述为元素”后进先出”，而后者可描述为元素”先进先出”。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 栈</span><br><span class="line">2 队列</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、栈</em></strong><br>&emsp;&emsp;以栈的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量末尾的元素。因此栈的元素增删可形象地描述为”后进先出”，可参考如下图:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/栈操作.png" width="400" height="250">
+<div align="left">  
+&emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有栈功能的容器，其类名为std::stack。stack容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  
+
+<p><strong><em>2、队列</em></strong><br>&emsp;&emsp;以队列的方式增加向量元素时，是从向量末尾开始新增;以栈的方式删减向量元素时，是删除向量首部的元素。因此栈的元素增删可形象地描述为”先进先出”，可参考如下图:</p>
+<div align="center">
+<img src="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/队列操作.png" width="400" height="250">
+<div align="left">  
+&emsp;&emsp;C++ STL中提供了容器适配器，来直接指定具有队列功能的容器，其类名为std::queue。queue容器适配器的模板有两个参数，第一个参数是存储对象的类型，第二个参数是底层容器的类型，默认为deque。  
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621">https://www.bilibili.com/video/av45909616?from=search&amp;seid=17043173083215253621</a><br>[2]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409">https://www.bilibili.com/video/av88139911?from=search&amp;seid=15931070673176572409</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/yyyljw/article/details/80903391">https://blog.csdn.net/yyyljw/article/details/80903391</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/21/C++%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux内核开发-开发工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -938,182 +1086,6 @@
 
 
   
-    <article id="post-Git与Hexo" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/20/Git%E4%B8%8EHexo/">Git与Hexo</a>
-    </h1>
-  
-
-        
-        <a href="/2018/07/20/Git%E4%B8%8EHexo/" class="archive-article-date">
-  	<time datetime="2018-07-20T12:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;记录一下我自己的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html">Git + Github搭建</a>细节，顺便记录Git、Hexo与MarkDown的相关知识。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/git命令速查表.png" width="700" height="400">
-<div align="left">
-
-<h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><em>0x01 Git</em></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">  1.4 添加远程仓库</span><br><span class="line">2 远程主仓库、远程分仓库与本地仓库</span><br><span class="line">  2.1 <span class="built_in">clone</span></span><br><span class="line">  2.2 fork</span><br><span class="line">  2.3 remote</span><br><span class="line">3 分支推送</span><br><span class="line">  3.1 add</span><br><span class="line">  3.2 commit</span><br><span class="line">  3.3 push</span><br><span class="line">4 分支更新</span><br><span class="line">  4.1 fetch</span><br><span class="line">  4.2 pull</span><br><span class="line">5 分支合并</span><br><span class="line">  5.1 rebase</span><br><span class="line">  5.2 merge</span><br><span class="line">6 解决冲突</span><br><span class="line">7 回溯</span><br><span class="line">  7.1 本地修改清理</span><br><span class="line">  7.2 查看历史</span><br><span class="line">  7.3 版本回溯</span><br><span class="line">8 打标签</span><br><span class="line">9 堆栈暂存</span><br><span class="line">10 清理历史记录</span><br><span class="line">11 问责</span><br><span class="line">12 提交拣取</span><br><span class="line">13 工作区代码管理</span><br><span class="line">14 常用操作命令</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、配置</em></strong><br><em>1.1、用户与邮箱</em></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">&quot;your name&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;your email&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
-<p><em>1.2、CRLF与LF</em><br>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式，具体设置方式请查阅<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/08/29/CRLF%E4%B8%8ELF/">CRLF与LF</a>。  </p>
-<p><em>1.3、SSH key</em><br>&emsp;&emsp;由于Git使用过程中直接传输帐号密码会不太安全，另外也很不方便(每次使用都要输帐号密码)，因此可以考虑为Git帐号添加SSH key。  </p>
-<p><em>1.4、添加远程仓库</em><br>&emsp;&emsp;默认clone下来的库，其名称均为origin，如果想重新给远程仓库起名字，则用以下代码:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote add &lt;仓库名&gt; &lt;仓库地址&gt;</span><br><span class="line"><span class="comment">#举例</span></span><br><span class="line">git remote add upstream git@github.com:wuhan2020/wuhan2020.git</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、远程主仓库、远程分仓库与本地仓库</em></strong><br>&emsp;&emsp;我们创建的git仓库都是寄存在github服务器的，因此远程主仓库就是指某一项目最早被保存在github服务器内的哪个版本。有的时候我们需要多人合作，因此需要将主仓库fork下来，用于自行修改，但也保存在github服务器内，这种仓库叫做远程分仓库。<br><em>2.1、clone</em><br>&emsp;&emsp;克隆远程仓库可以用如下命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设要克隆user1的myRepository仓库</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/user1/myRepository.git</span><br><span class="line"><span class="comment"># 给你的远程仓库取名，可以使用&quot;-o&quot;参数</span></span><br><span class="line">git <span class="built_in">clone</span> <span class="string">&quot;仓库地址&quot;</span> -o <span class="string">&quot;仓库名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程仓库clone下来默认的仓库名是 origin ，可以用如下方式查看</span></span><br><span class="line">git remote -v</span><br><span class="line"><span class="comment"># 输出如下</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (fetch)</span></span><br><span class="line"><span class="comment">#origin https://github.com/user1/myRepository.git (push)</span></span><br><span class="line"><span class="comment"># 如果不喜欢这个名字，则可以删除重新添加</span></span><br><span class="line">git remote rm origin</span><br><span class="line">git remote add <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;仓库地址&quot;</span></span><br></pre></td></tr></table></figure>
-<p><em>2.2、fork</em><br>&emsp;&emsp;fork即所谓的派生远程主仓库，其过程如下图</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/fork.png" width="550" height="350">
-<div align="left">
-
-<p><em>2.3、remote</em><br>&emsp;&emsp;本地仓库的分支维护，需要用到remote方法:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有分支信息</span></span><br><span class="line">git branch –a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前所有远程仓库名</span></span><br><span class="line">git remote -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看关于远程的一些信息</span></span><br><span class="line">git remote show <span class="string">&#x27;仓库名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果远程仓库已经删除了某些分支，但是本地仍然存在这些分支，可用以下命令删除干净</span></span><br><span class="line">git remote prune <span class="string">&#x27;仓库名&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、分支推送</em></strong><br><em>3.2、commit</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -m参数可直接打提交名</span></span><br><span class="line">git commit -m <span class="string">&quot;提交名&quot;</span></span><br><span class="line"><span class="comment"># 追加提交</span></span><br><span class="line"><span class="comment"># 如果远程仓库已经push了一次提交，然而并不满意又不想分成两次提交，--amend参数可在此次提交之上追加一次提交，并将两次提交合并。</span></span><br><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
-<p><em>3.3、push</em><br>&emsp;&emsp;向远程仓库推送本地仓库的代码，用如下命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 完整的推送代码</span></span><br><span class="line"><span class="comment"># git push &quot;远程主机名&quot; &quot;本地分支名&quot;:&quot;远程分支名&quot;</span></span><br><span class="line">git push origin master:master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以省略远程分支名</span></span><br><span class="line"><span class="comment"># 如果同名远程分支存在则推送到该分支；如果该远程分支不存在，则该远程分支会被新建</span></span><br><span class="line">git push origin master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果省略本地分支，则代表删除该名远程分支</span></span><br><span class="line">git push origin :master</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、分支拉取</em></strong><br>&emsp;&emsp;分支拉取方式由fetch与pull两种，他们的区别如下图:</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/分支拉取.jpg" width="550" height="250">
-<div align="left">
-
-<p><em>4.1、fetch</em><br>&emsp;&emsp;git fetch是将远程主机的最新内容拉到本地，用户在检查了以后决定是否合并到本地分支中。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#fetch更新，缺省参数相当于git fetch origin/master</span></span><br><span class="line">git fetch</span><br><span class="line"><span class="comment">#取回更新后，会返回一个FETCH_HEAD</span></span><br><span class="line"><span class="comment">#输入以下代码检查区别</span></span><br><span class="line">git <span class="built_in">log</span> -p FETCH_HEAD</span><br></pre></td></tr></table></figure>
-
-<p><em>4.2、pull</em><br>&emsp;&emsp;git pull是将远程主机的最新内容拉下来后直接合并，即：git pull = git fetch + git merge，这样可能会产生冲突，需要手动解决。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pull更新，缺省参数相当于git pull origin/master</span></span><br><span class="line">git pull</span><br><span class="line"><span class="comment">#其实际运行过程相当于</span></span><br><span class="line"><span class="comment">#git fetch origin/master</span></span><br><span class="line"><span class="comment">#git merge FETCH_HEAD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整的拉取代码</span></span><br><span class="line"><span class="comment"># git pull &quot;远程主机名&quot; &quot;远程分支名&quot;:&quot;本地分支名&quot;</span></span><br><span class="line">git pull origin master:master</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>5、分支合并</em></strong><br>&emsp;&emsp;分支合并有rebase与merge两种方式。切记主分支内别用rebase，因为无法回溯到某个参与者提交的那次commit，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4079284dd970">查阅博客</a>，有一个<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48190059">网站</a>做了两者的使用实验。<br><em>5.1、rebase</em><br>&emsp;&emsp;rebase会把你当前分支的commit放到公共分支的最后面,所以叫变基。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/rebase.jpg" width="400" height="200">
-<div align="left">
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rebase</span></span><br><span class="line">git pull --rebase <span class="string">&quot;远程主仓库&quot;</span> <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># push到自己的fork仓库</span></span><br><span class="line">git push <span class="string">&quot;远程fork仓库&quot;</span> <span class="string">&quot;分支名&quot;</span> -f</span><br></pre></td></tr></table></figure>
-
-<p><em>5.2、merge</em><br>&emsp;&emsp;merge 会把公共分支和你当前的commit合并在一起，形成一个新的commit提交。</p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/merge.jpg" width="400" height="200">
-<div align="left">
-
-<p><em>6、解决冲突</em><br>&emsp;&emsp;B站上有<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av48278991">大佬</a>已经很详细地讲述了解决冲突的两种办法。<br><em>6.1、冲突文件内解决</em><br>&emsp;&emsp;解决冲突的时候可以先合并分支，这样如果两分支代码没有冲突就能直接合并，假如有冲突，就需要直接修改显示冲突的文件(其内部已经用一些符号显示冲突位置)。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先合并分支</span></span><br><span class="line">git rebase/merge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果分支有冲突，则修改显示所有冲突的文件</span></span><br><span class="line">git diff .</span><br><span class="line"><span class="comment"># 或者单独显示某个文件</span></span><br><span class="line">git diff <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"><span class="comment"># 又或者显示某个文件与某个hash下的该文件差异</span></span><br><span class="line">git diff <span class="string">&quot;hash&quot;</span> <span class="string">&quot;文件路径&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后继续之前的合并命令</span></span><br><span class="line">git rebase/merge --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果分支有双方修改的冲突</span></span><br><span class="line"><span class="comment"># 可以选择全部接收对方的修改</span></span><br><span class="line">git checkout --theirs</span><br><span class="line"><span class="comment"># 也可以全部接收自己的修改</span></span><br><span class="line">git checkout --ours</span><br></pre></td></tr></table></figure>
-
-<p><em>6.2、补丁文件显示冲突</em><br>&emsp;&emsp;打补丁的方法比前面一种显得更加简洁，在合并之前，先测试被合并分支打的patch。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到被合并的分支</span></span><br><span class="line"><span class="comment"># 制作一个补丁,N表示生成几个patch,默认是一笔commit一个patch</span></span><br><span class="line"><span class="comment"># &quot;-N&quot;代表需要打的补丁数量，默认为1</span></span><br><span class="line">git format-patch -N</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到需要合并的分支</span></span><br><span class="line"><span class="comment"># 打上补丁，PATCH_NAME为上步操作得到的patch名</span></span><br><span class="line">git am PATCH_NAME</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果存在冲突，则会显示冲突补丁文件名</span></span><br><span class="line"><span class="comment"># 强制应用补丁，假如冲突补丁文件名为&quot;.git/rebase-apply/0001&quot;</span></span><br><span class="line"><span class="comment"># 如果有冲突，则会显示出冲突内容</span></span><br><span class="line">git apply --reject PATCH_NAME</span><br><span class="line"><span class="comment"># 可以打开冲突结果文件查看冲突内容</span></span><br><span class="line">vim <span class="string">&quot;冲突文件名&quot;</span>.rej</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以用Vim打开此patch，并对比着修改冲突，Vim命令如下</span></span><br><span class="line">:e PATCH_NAME</span><br></pre></td></tr></table></figure>
-
-<p><em>7、回溯</em><br><em>7.1、本地修改清理</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 放弃本地所有修改，代码与远程master一致</span></span><br><span class="line">git fetch origin</span><br><span class="line">git checkout master</span><br><span class="line">git reset --hard origin/master</span><br><span class="line">```  </span><br><span class="line">*7.2、查看历史*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 每个提交在一行内显示</span></span><br><span class="line">git <span class="built_in">log</span> --oneline</span><br><span class="line"><span class="comment"># 在所有提交日志中搜索包含 [homepage] 的提交</span></span><br><span class="line">git <span class="built_in">log</span> --all --grep=<span class="string">&#x27;homepage&#x27;</span></span><br><span class="line"><span class="comment"># 获取某人的提交日志</span></span><br><span class="line">git <span class="built_in">log</span> --author=<span class="string">&quot;xuyanghe&quot;</span></span><br><span class="line">```  </span><br><span class="line">*7.3、本地版本回溯*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 获取所有操作历史</span></span><br><span class="line">git reflog</span><br><span class="line"><span class="comment"># 重置到相应提交，回退一个版本</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line"><span class="comment"># 或者重置到某一提交版本</span></span><br><span class="line">git reset --hard <span class="string">&quot;提交的哈希值&quot;</span></span><br><span class="line">```  </span><br><span class="line">*7.4、远程版本回溯*  </span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 将版本回退提交到远程仓库</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line">git push --force</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">*8、打标签*  </span><br><span class="line">&amp;emsp;&amp;emsp;版本号用于标记比较特殊的版本:</span><br><span class="line">```sh</span><br><span class="line"><span class="comment"># 列出所有tag</span></span><br><span class="line">git tag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为当前代码添加一个tag</span></span><br><span class="line">git tag <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 添加带备注的tag，-a参数后面跟tag名和提交的哈希值，-m参数后面跟tag备注</span></span><br><span class="line">git tag -a <span class="string">&quot;tag名&quot;</span> <span class="string">&quot;提交的哈希值&quot;</span> -m <span class="string">&quot;tag备注&quot;</span></span><br><span class="line"><span class="comment"># 删除某个分支</span></span><br><span class="line">git tag -d <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示某一tag下的备注信息</span></span><br><span class="line">git show <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送某个标签</span></span><br><span class="line">git push <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 推送所有标签</span></span><br><span class="line">git push origin --tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到某个标签下的代码</span></span><br><span class="line">git checkout <span class="string">&quot;tag名&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>9、堆栈暂存</em><br>&emsp;&emsp;stash命令可以将修改的内容保存至堆栈区:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 保存至堆栈</span></span><br><span class="line">git stash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出堆栈中所有的存储内容</span></span><br><span class="line">git stash list</span><br><span class="line"><span class="comment"># 显示堆栈中某次存储内容</span></span><br><span class="line">git stash show stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(同时删除stash中的存储内容)</span></span><br><span class="line"><span class="comment"># 默认得到栈顶的存储</span></span><br><span class="line">git stash pop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(不删除stash中的存储内容)</span></span><br><span class="line">git stash apply stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 丢弃堆栈中某个存储内容</span></span><br><span class="line">git stash drop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 丢弃堆栈中所有存储内容</span></span><br><span class="line">git stash clear</span><br></pre></td></tr></table></figure>
-
-<p><em>10、清理历史记录</em><br>&emsp;&emsp;.git文件会记录所有的提交历史，删除所有提交记录，可采用如下措施:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.删除.git</span></span><br><span class="line">rm -rf .git/</span><br><span class="line"><span class="comment"># 2.重新添加.git</span></span><br><span class="line">git init</span><br><span class="line"><span class="comment"># 3.缓存所有文件</span></span><br><span class="line">git add .</span><br><span class="line"><span class="comment"># 4.提交跟踪过的文件</span></span><br><span class="line">git commit -m <span class="string">&quot;add all again&quot;</span></span><br><span class="line"><span class="comment"># 5.添加远程仓库链接</span></span><br><span class="line">git remote add orgin <span class="string">&quot;远程仓库名&quot;</span></span><br><span class="line"><span class="comment"># 6.强制提交到远程master分支</span></span><br><span class="line">git push -f orgin master:master</span><br></pre></td></tr></table></figure>
-
-<p><em>11、问责</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询某个文件的修改历史事件</span></span><br><span class="line">git blame <span class="string">&quot;文件名&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>12、提交拣取</em><br>&emsp;&emsp;如果在B分支内想获取A分支的某些提交，则可以使用commit拣取 cherry-pick :</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询A分支下的某个提交hash值</span></span><br><span class="line"><span class="comment"># 例如查询结果为 0dedsaf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到B分支下</span></span><br><span class="line">git cherry-pick <span class="string">&quot;提交的hash值(0dedsaf)&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><em>13、工作区代码管理</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加已被跟踪文件的修改到这次commit中</span></span><br><span class="line">git add .</span><br><span class="line">git add <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 放弃此次已被跟踪文件的修改</span></span><br><span class="line">git checkout .</span><br><span class="line">git checkout <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理未被跟踪的所有文件及文件夹</span></span><br><span class="line">git clean -df</span><br></pre></td></tr></table></figure>
-
-<p><em>14、常用操作命令</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建分支</span></span><br><span class="line">git branch <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># 删除分支</span></span><br><span class="line">git branch -D <span class="string">&quot;分支名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换分支</span></span><br><span class="line">git checkout <span class="string">&quot;分支名&quot;</span></span><br><span class="line"><span class="comment"># 创建并切换分支</span></span><br><span class="line">git checkout -b <span class="string">&quot;分支名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前分支，&quot;-a&quot;参数能显示尽量具体的分支内容</span></span><br><span class="line">git branch -a</span><br><span class="line"><span class="comment"># 更加详细的分支信息</span></span><br><span class="line">git show-branch -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看提交历史</span></span><br><span class="line">git <span class="built_in">log</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看历史提交信息</span></span><br><span class="line">git show <span class="string">&quot;提交hash值&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-MarkDown"><a href="#0x02-MarkDown" class="headerlink" title="0x02 MarkDown"></a><em>0x02 MarkDown</em></h3><p>&emsp;&emsp;Markdown是一种可以使用普通文本编辑器编写的标记语言，git博客的编辑语言默认为Markdown。这里记录一下与Markdown语言有关的一些教程。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux-Atom下部署MarkDown</span><br><span class="line">  1.1 下载MarkDown代码增强</span><br><span class="line">  1.2</span><br><span class="line">2 MarkDown基本语法</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-Hexo及主题"><a href="#0x03-Hexo及主题" class="headerlink" title="0x03 Hexo及主题"></a><em>0x03 Hexo及主题</em></h3><p>&emsp;&emsp;Hexo提供了快速方便的一键部署功能，让您只需一条命令就能将网站部署到服务器上。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Hexo命令</span><br><span class="line">2 主题与配置</span><br><span class="line">  2.1 Yilia</span><br><span class="line">    2.1.1 安装与配置</span><br><span class="line">    2.1.2</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、Hexo命令</em></strong><br>&emsp;&emsp;这里记录几个Hexo常用的命令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---新建一个网站---</span></span><br><span class="line"><span class="comment">#如果没有设置文件夹爱，Hexo 默认在目前的文件夹建立网站</span></span><br><span class="line">hexo init [folder]</span><br><span class="line"></span><br><span class="line"><span class="comment">#---新建一篇文章---</span></span><br><span class="line">hexo new <span class="string">&quot;文章名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---效果测试三连---</span></span><br><span class="line"><span class="comment">#清除缓存文件</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="comment">#生成网站静态文件</span></span><br><span class="line"><span class="comment">#hexo generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="comment">#启动本地服务器</span></span><br><span class="line"><span class="comment">#hexo server</span></span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#---自动生成网站静态文件，并部署到设定的仓库---</span></span><br><span class="line"><span class="comment">#hexo deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、主题与配置</em></strong><br>&emsp;&emsp;这里写一些我自己用的主题，以及其配置。<br><em>2.1、Yilia</em><br><em>2.1.1、安装与配置</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#---安装Yilia---</span></span><br><span class="line"><span class="comment">#并将其放入theme/文件夹下</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/litten/hexo-theme-yilia.git</span><br><span class="line"><span class="comment">#---配置主题为Yilia---</span></span><br><span class="line"><span class="comment">#修改hexo根目录下的_config.yml为theme: yilia</span></span><br><span class="line"><span class="comment">#---修改Yilia的配置---</span></span><br><span class="line"><span class="comment">#修改themes/Yilia/_config.yml</span></span><br><span class="line"><span class="comment">#包括样式、图片等私人订制内容。如果有图片，放到/source/assets/下</span></span><br></pre></td></tr></table></figure>
-
-
-<h3 id="0x04-Git与Hexo搭建博客"><a href="#0x04-Git与Hexo搭建博客" class="headerlink" title="0x04 Git与Hexo搭建博客"></a><em>0x04 Git与Hexo搭建博客</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 Git安装与配置</span><br><span class="line">  1.1 配置全局用户与邮箱</span><br><span class="line">  1.2 新建github.io仓库</span><br><span class="line">2 Nodejs与npm安装</span><br><span class="line">3 Hexo安装与配置</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、Git安装与配置</em></strong><br>&emsp;&emsp;Git安装方法这里就不再赘述，主要讲用于部署Hexo的配置。<br><em>1.1、配置全局用户与邮箱</em><br>&emsp;&emsp;由于将Hexo部署到Github过程中需要校验用户，因此请确保全局用户与邮箱配置正确(配置方法在0x00-&gt;1.1)。<br><em>1.2、新建github.io仓库</em><br>&emsp;&emsp;每个Github帐号能够申请一个github.io仓库，用于链接自己的博客主页。<br>&emsp;&emsp; 需要注意的是，Repository name中必须输入[用户名].github.io，具体的操作如下图所示：  </p>
-<div align="center">
-<img src="/2018/07/20/Git%E4%B8%8EHexo/博客仓库.png" width="600" height="500">
-<div align="left">
-
-<p><strong><em>2、Nodejs与npm安装</em></strong><br>&emsp;&emsp;Nodejs<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu16.04-LTS-sh/blob/master/Ubuntu16.04%E9%85%8D%E7%BD%AEsh%E5%8C%85/Nodejs.sh">安装方法</a>这里就不再赘述;npm是一款包管理工具，安装方法也不再赘述。  </p>
-<p><strong><em>3、Hexo安装与配置</em></strong><br>&emsp;&emsp;在安装完Node.js与npm之后，就可以很方便地安装Hexo了:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装Hexo</span></span><br><span class="line">sudo npm install -g hexo</span><br><span class="line"></span><br><span class="line"><span class="comment">#将目标文件夹初始化为博客存放点</span></span><br><span class="line">sudo hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line">sudo chmod 777 -R 博客初始化文件夹</span><br><span class="line"></span><br><span class="line"><span class="comment">#直接三连，分别是清除、生成和部署</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment">#登录 http://localhost:4000/ 查看效果</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><strong><em>0x05 引用文献</em></strong></h3></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/20/Git%E4%B8%8EHexo/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/10/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/12/">下一页</a>
@@ -1243,11 +1215,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1267,15 +1243,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1287,27 +1263,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1316,6 +1284,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
