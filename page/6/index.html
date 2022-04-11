@@ -156,6 +156,157 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-UML" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/28/UML/">UML</a>
+    </h1>
+  
+
+        
+        <a href="/2019/09/28/UML/" class="archive-article-date">
+  	<time datetime="2019-09-28T01:55:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;UML(Unified Modeling Language)是一种统一建模语言，其优点在于可使用代码的形式快速绘制线框图。<br>&emsp;&emsp;用于绘制UML图形的语言包括Mermaid、Flow、PlantUML、yUML等，下面逐个介绍各个语言。</p>
+<h3 id="0x01-Mermaid"><a href="#0x01-Mermaid" class="headerlink" title="0x01 Mermaid"></a><em>0x01 Mermaid</em></h3><p>&emsp;&emsp;语法超级简单，支持html标签及流行的markdown，可惜的是目前不支持类图的UML，但支持的流程图，甘特图以及时序图都是十分不错的。<br>&emsp;&emsp;在VSCode中配置非常方便，只需要安装Markdown Preview Enhanced插件(该插件还支持导出html与pdf)。并且支持markdown文件，方便写博客，另外hexo也支持Mermaid语法显示，以及Github官方也开始支持Mermaid语法(这意味着在Github官网也能够预览Mermaid语法绘制的图形)。</p>
+<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Mermaid的语法(需要加’```mermaid’前缀)，摘自<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">文献</a><sup>[1]</sup>:   </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">1.横向流程图:</span><br><span class="line">graph LR</span><br><span class="line">A[方形] --&gt;B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt;|a=1| D[结果1]</span><br><span class="line">    C --&gt;|a=2| E[结果2]</span><br><span class="line">    F[横向流程图]</span><br><span class="line"></span><br><span class="line">2.竖向流程图:</span><br><span class="line">graph TD</span><br><span class="line">A[方形] --&gt; B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt; |a=1| D[结果1]</span><br><span class="line">    C --&gt; |a=2| E[结果2]</span><br><span class="line">    F[竖向流程图]</span><br><span class="line"></span><br><span class="line">3.时序图:</span><br><span class="line">sequenceDiagram</span><br><span class="line">participant 张三</span><br><span class="line">participant 李四</span><br><span class="line">张三-&gt;王五: 王五你好吗？</span><br><span class="line">loop 健康检查</span><br><span class="line">    王五-&gt;王五: 与疾病战斗</span><br><span class="line">end</span><br><span class="line">Note right of 王五: 合理 食物 &lt;br/&gt;看医生...</span><br><span class="line">李四--&gt;&gt;张三: 很好!</span><br><span class="line">王五-&gt;李四: 你怎么样?</span><br><span class="line">李四--&gt;王五: 很好!</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-Flow"><a href="#0x02-Flow" class="headerlink" title="0x02 Flow"></a><em>0x02 Flow</em></h3><p>&emsp;&emsp;Flow是专门用来画标准流程图的语言，但是Mermaid实际上也能画流程图，并且从渲染上来看Mermaid更胜一筹，因此推荐使用Mermaid。<br>&emsp;&emsp;在VSCOde中使用Flow，也需要先安装Markdown Preview Enhanced插件。能直接在markdown文件中编写。</p>
+<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;在VSCode中的使用方法(需要加’```flow’前缀):  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: 开始框</span><br><span class="line">op=&gt;operation: 处理框</span><br><span class="line">cond=&gt;condition: 判断框(是或否?)</span><br><span class="line">sub1=&gt;subroutine: 子流程</span><br><span class="line">io=&gt;inputoutput: 输入输出框</span><br><span class="line">e=&gt;end: 结束框</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;io-&gt;e</span><br><span class="line">cond(no)-&gt;sub1(right)-&gt;op</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-PlantUML"><a href="#0x03-PlantUML" class="headerlink" title="0x03 PlantUML"></a><em>0x03 PlantUML</em></h3><p>&emsp;&emsp;PlantUML可以很好地绘制用例图、类图、活动图、组件图、状态图、对象图、时序图，语法非常简洁。<br>&emsp;&emsp;其在VSCode中配置较麻烦(推荐在线画图并生成图片)。需要安装PlantUML插件、去graphviz官网下载其安装包以及安装JAVA。而且只支持特殊的后缀文件，如.pu / .puml。<br>&emsp;&emsp;其可绘制的图形如下(使用PlantUML思维导图绘制):  </p>
+<div align="center">
+<img src="/2019/09/28/UML/UML可绘制图.png">
+<div align="left">  
+
+<p>&emsp;&emsp;下面讲解各个图的绘制基础语法，推荐查看<a target="_blank" rel="noopener" href="https://plantuml.com/zh">PlantUML官网</a><sup>[2]</sup>，以及<a target="_blank" rel="noopener" href="https://www.planttext.com/">在线绘制PlantUML</a><sup>[3]</sup></p>
+<p><strong><em>1、活动图</em></strong><br>&emsp;&emsp;活动图<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">基础用法</a><sup>[4]</sup>，在学习完基础用法后，实现一个复杂的活动图:  </p>
+<pre><code class="sh">@startuml
+start
+#00FF00:while 0;
+note left
+遍历检查/proc/&#39;PID号&#39;
+end note
+repeat
+    if(是否为Shell进程) then (Y)
+        #A020F0:while 1;
+        while (循环查看该进程fd0与fd1 ?) is (未检查完)
+            if(当前fd是否重定向到socket) then (Y)
+                if(socket号是否连接到外界IP) then (Y)
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            else (N)
+                if(当前fd是否重定向到管道) then (Y)
+                    :继续检查管道对端进程当前fd的连接;
+                    note left
+                    对应以下四种情况分别执行
+                    ====
+                    * 1.连接socket未外连IP(正常)
+                    * 2.连接socket且外连IP(可疑)
+                    * 3.连接到管道文件(可疑)
+                    * 4.连接到匿名管道(可疑)
+                    end note
+                    #A020F0:goto [while 1];
+                    detach
+                else (N)
+                    #00FF00:goto [while 0];
+                    detach
+                endif
+            endif
+        endwhile (检查完)
+    else (N)
+        #00FF00:goto [while 0];
+        detach
+    endif
+if(Shell进程fd0与fd1均外联?) then (Y)
+    #HotPink:打日志并上报警告;
+else (N)
+    :结束检查该进程;
+endif
+repeat while (检查下一个Shell进程)
+@enduml</code></pre>
+<div align="center">
+<img src="/2019/09/28/UML/复杂活动图.png">
+<div align="left">  
+
+
+<h3 id="0x04-yUML"><a href="#0x04-yUML" class="headerlink" title="0x04 yUML"></a><em>0x04 yUML</em></h3><p>&emsp;&emsp;yUML支持类图、活动图、用例图、状态图、部署图、包图以及时序图(Sequnce)。<br>&emsp;&emsp;在VSCOde中使用yUML，需要先安装yUML插件，并且其文件后缀必须为.yuml。<br>&emsp;&emsp;然而Markdown Preview Enhanced插件支持其使用时序图(Sequnce)。  </p>
+<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Sequnce的语法(需要加’```sequnce’前缀):  </p>
+<pre><code class="sh">对象A-&gt;对象B: 对象B你好吗?（请求）
+Note right of 对象B: 对象B的描述
+Note left of 对象A: 对象A的描述(提示)
+对象B--&gt;对象A: 我很好(响应)
+对象A-&gt;对象B: 你真的好吗？</code></pre>
+<h3 id="0x05-参考文献"><a href="#0x05-参考文献" class="headerlink" title="0x05 参考文献"></a><em>0x05 参考文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">https://www.runoob.com/markdown/md-advance.html</a><br>[2]<a target="_blank" rel="noopener" href="https://plantuml.com/zh">https://plantuml.com/zh</a><br>[3]<a target="_blank" rel="noopener" href="https://www.planttext.com/">https://www.planttext.com</a><br>[4]<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">https://plantuml.com/zh/activity-diagram-beta</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/09/28/UML/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -392,99 +543,6 @@ int main(int argc, char **argv)
 
 
   
-    <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/21/DeepFakes/">DeepFakes(未完成)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
-  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
-<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
-<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。  </p>
-<p><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;胡歌&quot;</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;刘亦菲&quot;</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
-<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。  </p>
-<p><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/21/DeepFakes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
@@ -626,11 +684,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -642,7 +704,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,7 +712,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -662,11 +724,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -675,10 +737,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
