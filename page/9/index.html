@@ -156,6 +156,275 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-CMake" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/29/CMake/">CMake</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/29/CMake/" class="archive-article-date">
+  	<time datetime="2019-04-29T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-29</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp/.h/.so/.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等<sup>[1]</sup>。但再深一层次地说，编译时文件之间的组织关系都是由一个名叫makefile的文件来完成的，只不过IDE已经代替完成了这件复杂的任务，所以通常我们对该文件并不熟悉。<br>&emsp;&emsp; makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。但是makefile语言本身比较抽象，让程序猿来手写是件非常费时费力的事情，于是CMake便应运而生了。CMake是比makefile抽象层次更高的项目管理工具，CMake能够通过命令转换成makefile文件，而所有一切软件设计人猿需要实现的编译任务均写在名为CMakeLists.txt文件内。<br>&emsp;&emsp; 本文将从两方面入手，来剖析和学习CMake。一个方向是从CMake的<a target="_blank" rel="noopener" href="https://cmake.org/cmake-tutorial">官方文档</a><sup>[2]</sup>入手,当然也可以看<a target="_blank" rel="noopener" href="https://www.hahack.com/codes/cmake">中文版文档</a><sup>[3]</sup>，推荐看中文版资料，详细且循序渐进，<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">代码</a><sup>[4]</sup>可在git上找到，该方向不再赘述；第二个方向是从一些比较实际的编译目标入手。</p>
+<h3 id="0x01-CMake可移植程序编译"><a href="#0x01-CMake可移植程序编译" class="headerlink" title="0x01 CMake可移植程序编译"></a><em>0x01 CMake可移植程序编译</em></h3><p>&emsp;&emsp; 由于程序经常需要在不同电脑之间使用，但是每次都需要重新搭建环境非常繁琐，现在希望通过CMake编译，能够将可执行程序用到的三方库打包，那么在统一个ubuntu系统下即可即插即用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 基础知识</span><br><span class="line">  1.1 静态库与动态库</span><br><span class="line">  1.2 CMake基础编译方式</span><br><span class="line">  1.3 Ubuntu搜索路径方式</span><br><span class="line">  1.4 CMake RPATH简介</span><br><span class="line">  1.5 可执行程序链接库批量处理</span><br><span class="line">2 CMake编译可移植程序方案</span><br><span class="line">  2.1 方案一：添加环境变量</span><br><span class="line">  2.2 方案二：安装至默认lib文件夹</span><br><span class="line">  *2.3 方案三：CMake添加RPATH</span><br><span class="line">  2.4 方案四：CMake静态编译</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、基础知识</em></strong><br><strong><em>1.1、静态库与动态库</em></strong><br>&emsp;&emsp; 现在的软件基本不可能全部是自己写的函数或类，我们经常需要使用别人的函数或类，那么就有必要得到那些软件的三方库，而库又分为静态库和动态库，在Windows下分别为.lib/.dll后缀文件，在Linux下分别为.a/.so文件。所谓静态库就是编译时和源代码一起被打包入可执行程序的库，而动态库是一些可重复使用的模块，他们的具体区别可参考<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html">教程</a><sup>[5]</sup>。</p>
+<p><strong><em>1.2、CMake基础编译方式</em></strong><br>&emsp;&emsp;看过基本的中文教程demo1可知，CMake实际上都在CmakeList.txt文件内描述完成，一旦写完，只需在顶层的CmakeList.txt文件目录下执行以下语句：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#做配置</span><br><span class="line">./configure</span><br><span class="line">#新建build目录，用来储存编译结果，否则会很乱</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line">#进入build目录</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">#开始生成makefile</span><br><span class="line">cmake ..</span><br><span class="line">#使用makefile编译程序</span><br><span class="line">make</span><br><span class="line">#安装程序，即在目标位置生成可执行程序以及对库文件做操作等</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.3、Ubuntu搜索路径方式</em></strong><br>&emsp;&emsp;编译之后的可执行程序在其他电脑上无法运行，实质上最关键的问题就在于新的操作系统环境下，程序不知道去什么地方寻找依赖库。Ubuntu系统默认的<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">.so库搜索方式</a><sup>[6]</sup>根据优先级依次为:1)-L;2)/usr/lib;3)/lib;4)LIBRARY_PATH。<br>&emsp;&emsp;第二三种方法，系统只会该目录下的文件，而不会遍历文件夹，若要识别文件夹下的文件，还需要修改/etc/ld.so.conf，并调用ldconfig命令，这里不再深究。<br>&emsp;&emsp;主要讲的是最后一种方法，修改LIBRARY_PATH，其实就是我们熟知的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">修改环境变量</a><sup>[7]</sup>，所以ROS也是这样，要执行rospack find就需要添加环境变量（该文件实质上是命令行每次开启时执行的一段命令，所以这样修改环境变量来运行程序的方法必须是使用./程序，双击的话就无法运行，除非新建一个快捷方式并指定优先运行一段export），那么可以采用：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向/.bashrc中填入搜索路径</span><br><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
+<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。</p>
+<p><strong><em>1.5、可执行程序链接库批量处理</em></strong><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span>、在build文件夹下新建脚本test.sh</span><br><span class="line">#<span class="number">2</span>、在test.sh中添加语句</span><br><span class="line">chk_lock_test=$( ldd $<span class="number">1</span> | awk &#x27;&#123;<span class="keyword">if</span> (match($<span class="number">3</span>,&quot;/&quot;))&#123; <span class="built_in">print</span> $<span class="number">3</span>&#125;&#125;&#x27; )</span><br><span class="line">cp -L -n $chk_lock_test $<span class="number">2</span></span><br><span class="line">#<span class="number">3</span>、给脚本一个权限，使其可移动所有文件</span><br><span class="line">sudo chmod <span class="number">777</span> test.sh</span><br><span class="line">#<span class="number">4</span>、脚本目录下执行命令，</span><br><span class="line"> ./test.sh 可执行程序目录 目标目录</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、CMake编译可移植程序方案</em></strong><br><strong><em>2.1、方案一：添加环境变量</em></strong><br>&emsp;&emsp;具体思路为:1)可执行程序链接库批量处理至CmakeList.txt根目录下;2)CMake将批量处理得到的动态链接库install至目标文件夹下;3)在目标机器的~/.bashrc文件中添加第二步链接库install所在路径;<br>&emsp;&emsp;思路其实非常简单，但是关键的难点在于链接库取得的技巧，这里有必要叙述一下。第一点为取得可执行程序的所有动态链接库，第二点为分析取得所有未被ldd出来的动态链接库。<br>&emsp;&emsp;难点一已经在1.5节中指出，难点二这里以取得Qt所有动态链接库为例展开讨论。实现上述三个步骤以后，我们修改LIBRARY_PATH参数，在可执行程序根目录下输入命令行：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br><span class="line">#<span class="built_in">cd</span>到可执行程序根目录下，运行程序</span><br><span class="line">./程序名称</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;发现程序报错，错误内容如下：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This application failed to <span class="built_in">start</span> because it could <span class="keyword">not</span> <span class="built_in">find</span> or load the Qt platform plugin &quot;xcb&quot;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;根据上述提示可知，缺少了名为xcb的一个链接库，<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010168781/article/details/82150105">查阅资料</a><sup>[9]</sup>可知我们需要在可执行目录下新建platforms文件夹，并添加libqxcb.so文件（该文件在qt的/Qt5.7.1/5.7/gcc_64/lib目录下，包括qt所有的链接库都在这个文件夹下面。<em>如何修改该libqxcb.so链接库位置仍未知</em>）。继续执行可执行程序，发现报出同样错误，为了找到错误原因，这里<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_26106275/article/details/82778951">引入一个技巧</a><sup>[10]</sup>，即设置命令行的环境变量参数QT_DEBUG_PLUGINS，并修改/.bashrc文件，使其在命令行开启前执行：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export QT_DEBUG_PLUGINS=<span class="number">1</span>&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;再次运行可执行程序，报错出现具体的错误原因：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Found metadata <span class="keyword">in</span> lib /home/cobot/PathImporter/build/platforms/libqxcb.so, metadata=&#123;</span><br><span class="line">    &quot;IID&quot;: &quot;org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.<span class="number">5</span>.<span class="number">3</span>&quot;,</span><br><span class="line">    &quot;MetaData&quot;: &#123;</span><br><span class="line">        &quot;Keys&quot;: [</span><br><span class="line">            &quot;xcb&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;className&quot;: &quot;QXcbIntegrationPlugin&quot;,</span><br><span class="line">    &quot;debug&quot;: false,</span><br><span class="line">    &quot;version&quot;: <span class="number">329473</span></span><br><span class="line">&#125;</span><br><span class="line">Got keys from plugin meta data (&quot;xcb&quot;)</span><br><span class="line">Cannot load library /home/cobot/PathImporter/build/platforms/libqxcb.so:(libQt5XcbQpa.so.<span class="number">5</span>: 无法打开共享对象文件: 没有那个文件或目录)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;可见文件夹里实质上还缺少一个名为libQt5XcbQpa.so.5的动态链接库，那么我们只需从qt的lib下找到该库并放入我们的目标文件夹下。再次运行程序并报错：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot mix incompatible Qt library (version <span class="number">0</span>x50201) with this library (version <span class="number">0</span>x50701)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;大意是Qt版本5.2.1与5.7.1的链接库不匹配，无法融合。可知实际上我的系统里存在多版本的Qt，Qt实质上会在默认库路径/usr/lib下生成一些必要的库，这也是报错的原因。这里有一个解决的技巧，即将所有lib文件全部放入目标文件夹，并执行程序，最后发现程序正常运行，可见库中必然还存在一个特定的动态链接库，使用二分法，多次将不同文件放入目标文件夹运行，迭代排查后发现缺少链接库libQt5DBus.so.5链接库，将其放入目标文件夹，运行正常（这个方法很牛逼，我都佩服我自己，全网基本上没有资料说这个文件的）。<br>&emsp;&emsp;这里还有两个细节，第一点libQt5DBus.so.5是一个类似于快捷方式的文件，它会链接到libQt5DBus.so.5.7.1上（库里还有一个libQt5DBus.so.5.7，暂时不知道何用），所以最后只需要取出libQt5DBus.so.5.7.1并重命名为libQt5DBus.so.5即可，链接库libQt5XcbQpa.so.5同理。第二点，有必要猜测下这三个链接库存在的意义，libqxcb.so应该是qt的入口库，然后libQt5XcbQpa.so.5是实际运行的函数，并且链接到了5.7.1的子版本上（方便版本控制），而这里的libQt5DBus.so.5应该是做Qt不同版本之间的一个解释器。</p>
+<p><strong><em>2.2、方案二：安装至默认lib文件夹</em></strong><br>&emsp;&emsp;方案一虽然可以顺利运行，但是每次要修改环境变量实际上是非常麻烦的事情，且并不是所有软件使用者都有这个觉悟，那么我们要考虑更加便捷的方法，即将库文件用CMake install至系统默认搜索的库，即在1.3节中已经叙述过的/usr/lib与/lib位置。在1.3节也讲过了，如果将所有库文件放入lib文件夹下的子文件夹内，则系统仍搜索不到链接库（如果要采取修改/etc/ld.so.conf以及添加ldconfig命令，则还不如方案一便捷）。唯一的办法就是将所有库文件全部install至lib文件夹下，运行程序完美报错：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: relocation error: /usr/lib/libQt5X11Extras.so.<span class="number">5</span>: symbol qt_version_tag, version Qt_5.<span class="number">7</span> <span class="keyword">not</span> <span class="keyword">defined</span> <span class="keyword">in</span> file libQt5Core.so.<span class="number">5</span> with link <span class="built_in">time</span> reference</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;未知错误（应该是多版本Qt的原因，还害得我修改了lib库所有文件权限，导致sudo用不了、系统时间出错、U盘都不出等一系列尿频尿急症状T_T）等待填坑。</p>
+<p>*<strong><em>2.3、方案三：CMake添加RPATH</em></strong><br>&emsp;&emsp;在1.4节中已经叙述过CMake RPATH的用途，该方案可以说是最便捷和人性化的了，第一不用修改环境变量，第二在make与make install的过程中就能决定中间执行程序与安装执行程序的库链接路径。<br>&emsp;&emsp;根据1.4节中提到的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">博客</a><sup>[8]</sup>，我们只需要在CmakeList.txt的install部分添加如下指令：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#方法一：在CMakeLists.txt文件中修改</span><br><span class="line">#修改安装执行程序的库链接路径</span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line">#保证只针对当前的target进行make install的时候RPATH的写入了</span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line">#方法二：在编译时修改</span><br><span class="line">#这里将install路径设置为build</span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../build/ ..</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这里依旧分享两个小技巧</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用指令readelf可以查看某一可执行程序的RPATH</span></span><br><span class="line">readelf -d <span class="string">&#x27;程序路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用ldd可查看某一可执行程序的链接库</span></span><br><span class="line">ldd <span class="string">&#x27;程序路径&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong><em>2.4、方案四：CMake静态编译</em></strong><br>&emsp;&emsp;除了上述三种调控动态链接库位置与链接的方式之外，我们还可以用CMake实现静态编译，即将三方库的动态链接库或者静态链接库加上自己的程序编译在一起，得到不需要外接库的可执行程序，在1.1节之中已经分析过了这种程序的优缺点（小型项目还好，一旦做大型项目，不但编译慢而且运行的电脑也会被大量占用空间）。目前该方式只在网上搜索到设置CMake设置静态编译的一段命令：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS &quot;-static $&#123;CMAKE_CXX_FLAGS&#125;&quot;)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;该方法等待填坑（不了解意思，执行之后也会报错）。</p>
+<h3 id="0x02-链接库选择路径"><a href="#0x02-链接库选择路径" class="headerlink" title="0x02 链接库选择路径"></a><em>0x02 链接库选择路径</em></h3><p>&emsp;&emsp;由于链接库路径选择的重要性，这一章节着重分析一下Linux链接库选择路径顺序及其修改方式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux动态库选择顺序</span><br><span class="line">2 Linux如何添加链接库搜索路径</span><br><span class="line">3 如何修改Qt链接库路径</span><br><span class="line">4 CMake链接库三要素*</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Linux 动态库选择顺序</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 缓存 /etc/ld.so.cache</span><br><span class="line">    4.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、Linux如何添加链接库搜索路径</em></strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 方案一 =====</span></span><br><span class="line"><span class="comment"># 首先找到.so或.a文件所在路径</span></span><br><span class="line"><span class="comment"># 比如/home/uos/Desktop/test.so</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改搜索路径，在如下文件中添加链接库所在路径</span></span><br><span class="line">sudo vim /etc/ld.so.conf</span><br><span class="line"><span class="comment"># 添加/home/uos/Desktop/</span></span><br><span class="line"><span class="comment"># 或者在/etc/ld.so.conf.d/文件夹下新建.conf文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使修改生效</span></span><br><span class="line">sudo /sbin/ldconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 方案二 =====</span></span><br><span class="line"><span class="comment"># LD_LIBRARY_PATH是Linux环境变量名</span></span><br><span class="line"><span class="comment"># 主要用于指定查找链接库时除默认路径外的其他路径</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="string">&quot;链接库路径&quot;</span>:<span class="variable">$LD_LIBRARY_PATH</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 方案三 =====</span></span><br><span class="line"><span class="comment"># 在CMakeLists.txt文件中添加rpath的搜索路径</span></span><br><span class="line"><span class="comment"># 方法一：针对某个链接库的rpath</span></span><br><span class="line">FIND_LIBRARY(MY_LIB NAMES libMathFunctions.so PATHS /home/uos/Desktop)</span><br><span class="line">TARGET_LINK_LIBRARYS(<span class="variable">$&#123;CMAKE_PROJECT_NAME&#125;</span> <span class="variable">$&#123;MY_LIB&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二：针对项目的rpath</span></span><br><span class="line"><span class="comment"># 注意该方法必须先设置安装路径及安装配置，且在make install后生效</span></span><br><span class="line">SET(CMAKE_INSTALL_PREFIX <span class="string">&quot;安装路径&quot;</span>)</span><br><span class="line">install(TARGETS MyLib</span><br><span class="line">        EXPORT MyLibTargets </span><br><span class="line">        LIBRARY DESTINATION lib  <span class="comment"># 动态库安装路径</span></span><br><span class="line">        ARCHIVE DESTINATION lib  <span class="comment"># 静态库安装路径</span></span><br><span class="line">        RUNTIME DESTINATION bin  <span class="comment"># 可执行文件安装路径</span></span><br><span class="line">        PUBLIC_HEADER DESTINATION include  <span class="comment"># 头文件安装路径</span></span><br><span class="line">        )</span><br><span class="line"><span class="comment">#修改安装执行程序的库链接路径</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line"><span class="comment">#保证只针对当前的target进行make install的时候RPATH的写入了</span></span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法三：针对各种编译版本的rpath</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS_DEBUG <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O0 -ggdb,-rpath=./libs&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELEASE <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3,-rpath=./libs&quot;</span>)</span><br><span class="line"><span class="comment"># ！！当然也可以使用相对路径，这个方法最推荐，-Wl代表用逗号添加参数</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -Wl,-rpath,./&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、如何修改Qt链接库路径</em></strong><br>&emsp;&emsp;为了少踩编译中或编译后的坑，请注意以下事项:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1.编译Qt、DTK 的生产目录，一定不要设置在 /usr 目录，这样非常容易桌面系统崩溃</span><br><span class="line">2.在编译其他应用时。请设置以下环境变量来确保程序加载的库不是系统自带的库(如果需要指定多个路径，请使用英文的:隔开)</span><br><span class="line">    1.export LD_LIBRARY_PATH=qtbuilddir/lib:dtkbuilddir/lib   说明： 设置程序运行是链接库的路径</span><br><span class="line">    2.export QT_QPA_PLATFORM_PLUGIN_PATH=qtbuilddir/plugins/platforms 说明： 平台相关插件</span><br><span class="line">    3.export QT_PLUGIN_PATH=qtbuilddir/plugins    说明： Qt插件</span><br><span class="line">    4.export PKG_CONFIG_PATH=qtbuilddir/lib/pkgconfig:dtkbuilddir/lib/pkgconfig说明：我们在Qt pro 中配置的 phgconfig 就是用过查找该目录下的.PC文件 实现头文件和库的引入</span><br><span class="line">3.设置上述环境变量的方式有多种。各有优点，如下： 我们建议通过终端的方式设置环境变量，然后在该终端上启动Qt，不会影响系统。</span><br><span class="line">    1.通过脚本的方式在终端设置环境变量。</span><br><span class="line">        生效时间：立即生效  有效期：仅仅在该终端生效，关闭终端无效 生效范围：仅对当前用户有效</span><br><span class="line">        优点：不影响系统。</span><br><span class="line">        缺点：需要从该终端启动 qtcreator   修改变量需要关闭qtcreator</span><br><span class="line">    2.在Qt 项目的构建环境中设置  </span><br><span class="line">        生效时间：立即生效  有效期：该项目  生效范围：该项目</span><br><span class="line">        优点：随时修改</span><br><span class="line">        缺点：项目多的时候每个项目都要设置一遍</span><br><span class="line">    3.通过修改用户目录下的&lt;code&gt;~/.bashrc&lt;/code&gt;文件进行配置 </span><br><span class="line">        生效时间：下次打开终端  有效期：永久  生效范围：仅对当前用户有效</span><br><span class="line">        缺点：可能导致系统崩溃</span><br><span class="line">    4.修改系统配置，需要管理员权限（如root） 不建议！</span><br><span class="line">4.在情况出乎您的意料的时候，请检查加载的库路径是否正确，检查方法如下</span><br><span class="line">    1.QtCreator 调试模式下菜单栏  控件 -&gt; 视图 -&gt; DebugLoger 该对话框输出了加载库的详细信息</span><br><span class="line">    2.使用ldd + 程序名（库名） 可以看到依赖库</span><br></pre></td></tr></table></figure>
+
+<p>*<strong>4<em>、CMake链接库三要素</em></strong></p>
+<ul>
+<li>.so / .o 文件</li>
+<li>库头文件</li>
+<li>环境变量</li>
+</ul>
+<h3 id="0x03-CMake常用变量"><a href="#0x03-CMake常用变量" class="headerlink" title="0x03 CMake常用变量"></a><em>0x03 CMake常用变量</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在CMake3.1之后设置编译器使用c++11的方法</span></span><br><span class="line"><span class="comment"># 此版本之前，可以使用 SET(CMAKE_CXX_FLAGS &quot;$&#123;CMAKE_CXX_FLAGS&#125; -std=gnu++11&quot;)</span></span><br><span class="line">SET(CMAKE_CXX_STANDARD 11)</span><br><span class="line"></span><br><span class="line">SET(CMAKE_INCLUDE_CURRENT_DIR ON)</span><br><span class="line"><span class="comment"># 设置自动生成moc文件,AUTOMOC打开可以省去QT5_WRAP_CPP命令</span></span><br><span class="line">SET(CMAKE_AUTOMOC ON)</span><br><span class="line"><span class="comment"># 设置自动生成ui.h文件,AUTOUIC打开可以省去QT5_WRAP_UI命令</span></span><br><span class="line">SET(CMAKE_AUTOUIC ON)</span><br><span class="line"><span class="comment"># 设置c++编译属性  https://blog.csdn.net/rheostat/article/details/19811407</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span>  -g -Wall -pthread -Wl,--as-need -fPIE -Wl,-E&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_DEBUG <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O0 -ggdb&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELEASE <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3&quot;</span>)</span><br><span class="line"><span class="comment"># 设置CMake模块寻找路径  CMAKE_SOURCE_DIR代表该CMakeLists.txt文件路径</span></span><br><span class="line">SET(CMAKE_MODULE_PATH <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/cmake/modules)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 龙芯系统</span></span><br><span class="line">IF (<span class="variable">$&#123;CMAKE_SYSTEM_PROCESSOR&#125;</span> MATCHES <span class="string">&quot;mips64&quot;</span>)</span><br><span class="line">    <span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi&quot;</span>)</span><br><span class="line">ENDIF()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果不是Debug模式.</span></span><br><span class="line"><span class="comment"># EXECUTE_PROCESS(COMMAND &lt;一句shell命令&gt; WORKING_DIRECTORY &lt;这句shell命令执行的工作目录&gt;)</span></span><br><span class="line">IF (NOT (<span class="variable">$&#123;CMAKE_BUILD_TYPE&#125;</span> MATCHES <span class="string">&quot;Debug&quot;</span>))</span><br><span class="line">    <span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -Ofast&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># generate qm</span></span><br><span class="line">    EXECUTE_PROCESS(COMMAND bash <span class="string">&quot;translate_generation.sh&quot;</span></span><br><span class="line">                    WORKING_DIRECTORY <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>)</span><br><span class="line">ENDIF ()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译类型</span></span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;Release&quot;</span>)</span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;Debug&quot;</span>)</span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;RelWithDebInfo&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译器</span></span><br><span class="line"><span class="comment">#告知当前使用的是交叉编译方式，必须配置</span></span><br><span class="line">SET(CMAKE_SYSTEM_NAME Linux)</span><br><span class="line"><span class="comment">#指定编译工具，一定要设置</span></span><br><span class="line"><span class="comment">#或交叉编译器使用绝对地址</span></span><br><span class="line">SET(CMAKE_C_COMPILER <span class="string">&quot;arm-linux-gcc&quot;</span>)</span><br><span class="line"><span class="comment">#指定C++交叉编译器</span></span><br><span class="line">SET(CMAKE_CXX_COMPILER <span class="string">&quot;arm-linux-g++&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-CMake学习中获得优质且繁杂的资源"><a href="#0x04-CMake学习中获得优质且繁杂的资源" class="headerlink" title="0x04 CMake学习中获得优质且繁杂的资源"></a><em>0x04 CMake学习中获得优质且繁杂的资源</em></h3><p>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7eeb6f79a275">CMake中调用Qt模块</a><sup>[11]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://blog.csdn.net/bigdog_1027/article/details/79113342">CMake中add_library include_library以及target_link_libraries区别</a><sup>[12]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoug2020/p/5904206.html">CMake构建动态、静态库</a><sup>[13]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html">CMake的一些变量</a><sup>[14]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html">CMake跨平台编译以及静态编译</a><sup>[15]</sup></p>
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/caowei880123/article/details/52497550">https://blog.csdn.net/caowei880123/article/details/52497550</a><br>[2]<a target="_blank" rel="noopener" href="https://cmake.org/cmake-tutorial">https://cmake.org/cmake-tutorial</a><br>[3]<a target="_blank" rel="noopener" href="https://www.hahack.com/codes/cmake">https://www.hahack.com/codes/cmake</a><br>[4]<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">https://github.com/wzpan/cmake-demo</a><br>[5]<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html">https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html</a><br>[6]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">https://blog.csdn.net/qq_16097611/article/details/53484724</a><br>[7]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html</a><br>[8]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">https://www.cnblogs.com/rickyk/p/3884257.html</a><br>[9]<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010168781/article/details/82150105">https://blog.csdn.net/u010168781/article/details/82150105</a><br>[10]<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_26106275/article/details/82778951">https://blog.csdn.net/sinat_26106275/article/details/82778951</a><br>[11]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7eeb6f79a275">https://www.jianshu.com/p/7eeb6f79a275</a><br>[12]<a target="_blank" rel="noopener" href="https://blog.csdn.net/bigdog_1027/article/details/79113342">https://blog.csdn.net/bigdog_1027/article/details/79113342</a><br>[13]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoug2020/p/5904206.html">https://www.cnblogs.com/zhoug2020/p/5904206.html</a><br>[14]<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html">https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html</a><br>[15]<a target="_blank" rel="noopener" href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html">https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/29/CMake/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-游戏AI-智能体行动系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/">游戏AI-智能体行动系统</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+  	<time datetime="2019-03-31T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-31</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 游戏AI和学术意义上的AI不同，后者尝试靠智能算法去优化或解决问题，而前者则是指在借助智能算法来改变NPC的思考和行为方式，从而让玩家感受到机器人的智能。本文将从几方面探讨游戏AI<sup>[1]</sup>：1)智能体的思考系统，包括有限状态机FSM、行为树与模糊逻辑等；2）智能体的感知系统，负责感知周围环境，并为思考和行动系统提供基础信息；3）智能体的行动系统，包括操控行为、A*寻路以及导航网络等；4）智能体的战略系统，即群集行为。<br>&emsp;&emsp;游戏中的AI角色行为一直处于感知-思考-行动的无限循环之中。本文主要研究智能体的行动系统，原文的游戏引擎采用unity3D，这里不介绍代码，代码请看原文献。智能体AI架构如下图所示：</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/AI架构.png">
+<div align="left">  
+
+<h3 id="0x01-智能体操控行为"><a href="#0x01-智能体操控行为" class="headerlink" title="0x01 智能体操控行为"></a><em>0x01 智能体操控行为</em></h3><p>&emsp;&emsp; 操控行为就像赋予智能体自主行动能力一样，使其按照一定的逻辑规则<sup>[2]</sup>来运动，这种行为的感知类似于真实的生物，是有范围且较小的。而A*寻路则是一种寻找最优解的方法，前提是对个体来说，在个体与目标之间的路况是全部已知的，目的是寻找最短路径并避开障碍物，最后到达目标。对于仿真大型群体，前者效率更高，且行为更真实和优美。而在仿真少量个体行为时，后者更具即使策略意义。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 个体行为操控</span><br><span class="line">  1.1 靠近与离开</span><br><span class="line">  1.2 抵达</span><br><span class="line">  1.3 追逐与逃避</span><br><span class="line">  1.4 随机徘徊</span><br><span class="line">  1.5 路径跟随</span><br><span class="line">  1.6 避开障碍</span><br><span class="line">2 群体行为操控</span><br><span class="line">  2.1 分离</span><br><span class="line">  2.2 队列</span><br><span class="line">  2.3 聚集</span><br></pre></td></tr></table></figure>
+
+<p> <strong><em>1、个体行为操控</em></strong>  </p>
+<p> <strong><em>1.1、靠近与离开</em></strong><br>&emsp;&emsp; 靠近过程是指给智能体一个理想情况下指向目标的预期速度向量，并施加力，实时改变速度至预期速度向量。而离开过程恰恰相反，是指给智能体一个理想情况下远离目标的预期速度向量。二者的具体过程看下图：</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/靠近与离开.png">
+<div align="left">  
+
+<p>&emsp;&emsp; 从图中可见，靠近(寻找)的预期速度向量为当前速度向量与靠近(寻找)遥控力向量之差，其变化速度可在操控力向量前加系数。而离开的预期速度向量为当前速度向量与离开遥控力向量之差。  </p>
+<p><strong><em>1.2、抵达</em></strong><br> &emsp;&emsp; 抵达行为与靠近的差别在于，前者的预期速度向量将随着智能体与目标之间的距离而改变，并且可是设置减速半径，当智能体在半径之外，便采取靠近的全速模式，当在半径内时，速度随距离减小而减小至零。</p>
+<p><strong><em>1.3、追逐与逃避</em></strong><br>&emsp;&emsp;追逐与靠近的不同点是目标为移动物体，为了达到追逐的目的，需要分两种情况：1)目标运动的速度方向与智能体速度方向夹角小于20°，这种情况下直接采取靠近算法；2)夹角大于20°，这种情况下说明智能体并不是面对目标，所以要像猎豹追鹿一样预测时间<em>T</em>之后的目标位置，并对预测点采取靠近算法，如下左图所示：</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/追逐与逃避.png">
+<div align="left">  
+
+<p>&emsp;&emsp;该预测时间<em>T</em>设定为与两者距离成正比，与两者速度成反比。夹角的计算方法，如上右图，可采用两个单位向量的点积求解。<br>&emsp;&emsp;逃避过程相对简单，不用像追逐一样考虑两种情况，只需要预测追逐者时间<em>T</em>之后的位置，该预测时间可设定为常数，或者与两者距离成正比(当然不应该去设置与速度之间成反比，这样子怕是永远追不上？)。</p>
+<p><strong><em>1.4、随机徘徊</em></strong><br>&emsp;&emsp;随机徘徊是让智能体产生有真实感的随机移动，比如巡逻的士兵与惬意吃草的牛羊。如果使用隔时间分配任意目标点的方法，会使行为看起来不真实，类似会突然掉头。Craig Reynolds<sup>[3]</sup>在1999年发表的一篇文献解决了该问题，他采用左下图所示方法，在一个圆周上生成目标点，且随时间更新位置，智能体采用靠近算法接近目标，当达到位置时重新生成圆周并反复该过程。最终生成由下图所示行动轨迹。</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/随机徘徊.png">
+<div align="left">  
+
+<p><strong><em>1.5、路径跟随</em></strong><br>&emsp;&emsp;路径跟随常常会用在赛车游戏中，它需要智能体按照某条指定路径运动，最简单的实现方法就是在一条路径上选取路点，让智能体做靠近算法，达到一个路点再朝向下一个。为了增加运动的平滑与多变，这里引入路点的半径，即当智能体接触到半径，就当作其已经到达该路点。如下图所示，不同的路点半径会导致运动过程变化。</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/路径跟随.png">
+<div align="left">  
+
+<p><strong><em>1.6、避开障碍</em></strong><br>&emsp;&emsp;智能体在朝着目标方向移动的时候，可能会在路上遇到障碍物，如果没有察觉到就会产生碰撞，为了躲避障碍物，我们在智能体速度方向上添加两个向量ahead、ahead2，如左下图所示。当任何一个向量在障碍物半径内时，都会给智能体施加一个如由下图所示的躲避力。至于为什么加两个视觉向量的原因，是当智能体的远视角开始躲避障碍物时，近视角可能会碰到另一个障碍物，那么躲避优先级就改变为更近的障碍物。</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/避开障碍.png">
+<div align="left">  
+
+<p><strong><em>2、群体行为操控</em></strong><br>&emsp;&emsp;相比与A*寻路，操控行为最大的优势就是在做群体行为操控时展现出的真实感。在研究相关算法之前，先引入两个先导知识<sup>[3]</sup>：1)组行为。是指群体中的个体之间相互交互的一些操控力规则，主要有分离、队列和聚集三种行为。2)雷达。个体要实现决定使用哪些操控力的前提是检测附近的AI角色，这种侦测行为与雷达相似。</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/组行为.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/雷达.png">
+<div align="left">  
+
+<p><strong><em>2.1、分离</em></strong><br>&emsp;&emsp;分离就是避免个体在局部过于拥挤而产生的操控力，如上图所示黑色三角形所表示的智能体通过雷达扫描附近有三个白三角表示的邻居，先求出某个邻居对智能体的排斥力方向单位向量，即$\frac{r}{\left | r \right |}$，而排斥力的大小与距离成反比，因此排斥力应为$\frac{r}{\left | r \right | ^{2}}$，最后将所有邻居的操控力相加即为总的分离操控力。</p>
+<p><strong><em>2.2、队列</em></strong><br>&emsp;&emsp;队列就是朝向附近同伴平均朝向的操控力，图中显示黑色三角形头部的灰线为其当前速度，黑线代表所有邻居速度方向的平均值，则队列操控力即为黑线与灰线的插值向量。<br>**<em>2.3、聚集**</em><br>&emsp;&emsp;聚集就是向附近同伴的平均位置移动的操控力，图中四个邻居连接的黑点即为他们的平均值，从智能体指向黑色小点的向量即为聚集操控力。</p>
+<h3 id="0x02-A星寻路"><a href="#0x02-A星寻路" class="headerlink" title="0x02 A星寻路"></a><em>0x02 A星寻路</em></h3><p>&emsp;&emsp; 寻找最优路径是让智能体显得更聪明的方法，A*寻路就是一种寻找最短路径并避开障碍物的算法，相比于操控行为，需要提前知道地图上的各个节点以及每个点的代价值，占用cpu强度大，因此更适合于控制少量且高智商的智能体。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 导航图网格划分方式</span><br><span class="line">  1.1 单元导航图</span><br><span class="line">  1.2 可视点导航图</span><br><span class="line">  1.3 导航网格</span><br><span class="line">2 A*寻路算法</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、导航图网格划分方式</em></strong><br>&emsp;&emsp; A*寻路网格划分方式通常有3种：基于单元的导航图、基于可视点的导航图与导航网格。现在的游戏中，广泛使用的方式是利用导航网格寻路，再靠设计师手工放置躲藏点、埋伏点进行战术决策。此三种导航图划分如下图：</p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路方式.png">
+<div align="left">  
+
+<p><strong><em>1.1、单元导航图</em></strong><br>&emsp;&emsp; 这种方法是将游戏地图划分为多个正方形或六边形单元组成的规则网络。如果划分格数过大会导致难得到好的路径，格数过小则需要储存大量节点，且影响cpu效率。并不算是一种很好的分割方法。</p>
+<p><strong><em>1.2、可视点导航图</em></strong><br>&emsp;&emsp; 可视点导航图又称路点图，是依靠场景设计者在场景中手动设置一些两点之间可见的路径点(不可见的话，就可能会跨障碍物，这样的路径是不可选取的)。这种方法的<strong>优点</strong>是灵活性强，场景设计者可根据自己的想法选择掩护、伏击位置，同时增加相应的位置信息(与路径代价相关的位置信息，在选择路径时要用到)。这种方法的<strong>缺点</strong>是：1)手工放置路径点很繁琐。尤其是在地图巨大的情况下；2)难以表示出实际的二维行走区域。如图中所示标的点位通常在墙边缘，而实际行走应该是在路中央；3)存在严重的组合爆炸问题。由于是人工布置点，因此点数无法控制精确，大量的点位将导致路径组合数爆炸。<br>&emsp;&emsp; 综上所述，场景设计师通常依靠可视点导航图来手工放置躲藏点、埋伏点等特殊点位进行战术决策。</p>
+<p><strong><em>1.3、导航网络</em></strong><br>&emsp;&emsp; 导航网络用多边形来分割场景，从图中可以观察到，此种方法分割的路径点数量远远少于单元导航图，且路径点为各多边形的中心点，这将大大减轻cpu的压力。使用这种分割方法要注意的是，如果智能体完全按照路径点来行走，如图中灰线所示就显得很笨拙，人的真实行为应当是类似于黑线所示，这类问题称为路径的<strong>平滑</strong>，unity3D的A* Pathfinding Project已经包含了相关的后处理功能。<br>&emsp;&emsp; 综上所述，场景设计师通常使用这种方法来分割场景，但其缺点是生成导航网格需要较长时间。</p>
+<p><strong><em>2、A星寻路算法</em></strong><br>&emsp;&emsp;A星寻路算法即一种使智能体寻找最短路径并避开障碍物的算法，先引入四个术语：1)代价。代价是在寻路过程中节点之间的消耗值，由设计师定义，例如时间、能量、金钱等等。2)目标估计。由于从当前节点到目标节点的代价无法计算(因为路径未知)，则需要一种算法来估算该代价值，比如单元导航图就可以计算两节点之间的相对(x+y)值；3)节点属性。在A星算法中，每个节点都必须包含3个属性值，分别是g-从起始节点到当前节点的总代价，h-目标估计，f=g+h。4)Open表与Closed表。前者所记录的节点表示已经计算节点属性且没被单独拿出来计算其周围所有单元节点属性的节点，而后者记录的节点表示已经计算节点属性且已经被单独拿出来计算其周围所有单元节点属性的节点。A星算法具体运作过程如下gif图所示： </p>
+<div align="center">
+<img src="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/A寻路.png">
+<div align="left">  
+
+<p>&emsp;&emsp;A星寻路算法的具体流程如下：1)计算起始点的节点属性，并将其归入Open表；2)计算起始点附近所有单元节点属性，并将起始点归入Closed表，邻近点归入Open表；3)从邻近点搜索f值最小的点，并重复1、2两条过程。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；4)从所有Open表节点中寻找f值最小的点，并无限重复1、2、4三条过程，直到终止点被加入Open表。假如Open表内节点的属性值改变且比原值小，则覆盖之且重新更新运动箭头；5)导出运动箭头记录的最优路径。<br>&emsp;&emsp;实际上A星寻路算法与人类择优过程很类似，我们总是能算未来几步路，并据此选择当前情况下最优的方案，但由于我们以为自己与目标之间一马平川，所以有许多障碍离得太远也就忽视了，当我们碰壁失败了，才会总结出这条路不通的结论，于是我们就更新观念，认为当初应该选择哪条路将更快，这时就更新了那条初始道路的节点属性，如此往复循环，最后我们能够明白哪条路才是真正的最优解。虽然这种方法看起来很笨，但是在未知障碍的情况下应该算是较好的策略了。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]unity3D人工智能编程精粹<br>[2]<a target="_blank" rel="noopener" href="https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model">https://www.researchgate.net/profile/Craig_Reynolds2/publication/2797343_Flocks_Herds_and_Schools_A_Distributed_Behavioral_Model</a><br>[3]<a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.636&amp;rep=rep1&amp;type=pdf</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">游戏设计，游戏AI，入门</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/31/%E6%B8%B8%E6%88%8FAI-%E6%99%BA%E8%83%BD%E4%BD%93%E8%A1%8C%E5%8A%A8%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-计算机视觉-图像描述" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -265,253 +534,9 @@
 
 
   
-    <article id="post-计算机视觉-图像分割" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/">计算机视觉-图像分割</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" class="archive-article-date">
-  	<time datetime="2019-01-15T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/计算机视觉1.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以及经过图像识别以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像分割的内容。</p>
-<h3 id="0x01-显著性检测"><a href="#0x01-显著性检测" class="headerlink" title="0x01 显著性检测"></a><em>0x01 显著性检测</em></h3><p>&emsp;&emsp;显著性检测关注两类问题。其一显著性物体分割，即最能引起人的视觉注意的物体区域。其二注视点预测，即通过对眼动的预测和研究探索人类视觉注意机制。<br>&emsp;&emsp;视觉注意机制又有两种策略。其一自底而上基于数据驱动的注意机制，即从数据出发的颜色、亮度、边缘等特征。其二是自上而下基于任务驱动的注意机制，即从知识、预期、兴趣等认知因素出发。<br>&emsp;&emsp;显著性检测常采用由VGG网络修改而成的DNN模型。</p>
-<h3 id="0x02-图像分割之物体分割"><a href="#0x02-图像分割之物体分割" class="headerlink" title="0x02 图像分割之物体分割"></a><em>0x02 图像分割之物体分割</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 前景背景分割</span><br><span class="line">  1.1 Graph Cuts分割</span><br><span class="line">  1.2 GrabCut分割</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、前景背景分割</em></strong><br>&emsp;&emsp;将含有背景的前景物体分割出来，需要交互提供初始标记。</p>
-<p><strong><em>1.1、Graph Cuts分割</em></strong><br>&emsp;&emsp;是一种基于图论的分割方法，具体内容看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">博文</a><sup>[2]</sup>。</p>
-<p><strong><em>1.2、GrabCut分割</em></strong><br>&emsp;&emsp;此种算法第一步使用标记初始化颜色模型，第二步迭代进行Graph Cuts分割算法。</p>
-<h3 id="0x03-图像分割之语义分割"><a href="#0x03-图像分割之语义分割" class="headerlink" title="0x03 图像分割之语义分割"></a><em>0x03 图像分割之语义分割</em></h3><p>&emsp;&emsp;不但要做一张图片上的物体分割，且要理解、识别各个物体的内容。<br>&emsp;&emsp;语义分割的用处有机器人视觉和场景理解、辅助/自动驾驶、医学X光等。<br>&emsp;&emsp;在2015年之前的语义分割用的算法是手工特征+图模型（CRF）。从2015年开始，便运用深度神经网络模型：<br>&emsp;&emsp;&emsp;&emsp;1）改进的CNN。传统CNN存在一些问题。<br>&emsp;&emsp;&emsp;&emsp;2）全卷积网络/FCN(Fully Convolutional Networks)。所有层都是卷积层，能够解决降采样后的低分辨率问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 全卷积网络&#x2F;FCN</span><br><span class="line">  1.1 卷积化</span><br><span class="line">  1.2 反卷积</span><br><span class="line">  1.3 跳层结构</span><br><span class="line">2 DeepLab全卷积网络</span><br><span class="line">  2.1 DCNN-孔算法</span><br><span class="line">  2.2 DCNN-Atrous空间金字塔池化</span><br><span class="line">  2.3 全连接CRF</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、全卷积网络</em></strong><br>&emsp;&emsp;全卷积网络具有三个重要的操作：<br>&emsp;&emsp;&emsp;&emsp;1）卷积化。即将所有的全连接层转换成卷积层，适应任意的尺寸输入，并输出低分辨率的图片。<br>&emsp;&emsp;&emsp;&emsp;2）<strong>反卷积</strong>。将低分辨率的图片进行上采样，输出同分辨率的分割图片。<br>&emsp;&emsp;&emsp;&emsp;3）跳层结构。精化分割图片。<br>&emsp;&emsp;全卷积网络的构架图例如下所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN4.jpg">
-<div align="left">  
-
-<p><strong><em>1.1、卷积化</em></strong><br>&emsp;&emsp;即卷积层，具体看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a><sup>[3]</sup>。</p>
-<p>*<strong><em>1.2、反卷积</em></strong><br>&emsp;&emsp;所谓反卷积(转置卷积)就是卷积的逆操作，反卷积核是卷积核的转置，其过程如下图所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN1.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;有必要细致地解释一下卷积以及反卷积的矩阵化写法。有如下所示4$\times $4的图像，需要卷积为2$\times $2的输出：<br>&emsp;&emsp;则每个卷积核都可以写为如下图所示的一行，合并成一个矩阵C，输入量为图像的16个元素展开成一个列向量x，输出为一个包含四个元素的列向量y，卷积过程可以用公式$y=Cx$表示。</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN5.jpg">
-<div align="left">  
-
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN6.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;则每个反卷积核则可用公式$y=C^{T}x$表示。<br>&emsp;&emsp;还有一种反池化操作(据说用的不多)，每次均要记录池化时的位置，其过程如下图所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN2.jpg">
-<div align="left">  
-
-<p><strong><em>1.3、跳层结构</em></strong><br>&emsp;&emsp;即将当前卷积层与前两层卷积层的输出做融合。这样做的原因是直接使用32倍反卷积得到的分割结果过于粗糙。</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN3.jpg">
-<div align="left">  
-
-<p><strong><em>2、DeepLab全卷积网络</em></strong><br>&emsp;&emsp;由于反卷积存在一定的缺陷，比如不能完全恢复信息。现在常用的网络为DeepLab全卷积网络。其基本结构为优化后的DCNN+传统的CRF图模型。<br>*<strong><em>2.1、DCNN-孔算法</em></strong><br>&emsp;&emsp;解决了原始FCN网络的输出低分辨率问题，能够灵活控制分辨率。其正式名称为膨胀卷积，取代上采样反卷积。其rate值越大，感受野越大，所谓rate即在卷积核元素之间插入步长，如下图所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN7.jpg">
-<div align="left">  
-
-<p><strong><em>2.2、DCNN-Atrous空间金字塔池化</em></strong><br>&emsp;&emsp;在第六层并行引入4个不同rate的膨胀卷积，能够解决物体在多尺度图像中状态不同的问题，其过程如下图所示：</p>
-<div align="center">
-<img src="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/FCN8.jpg">
-<div align="left">  
-
-<p><strong><em>2.3、全连接CRF</em></strong><br>&emsp;&emsp;其作用是通过迭代精化分割结果(恢复精确边界)。</p>
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">http://www.chinahadoop.cn/course/916</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hjlweilong/p/6119822.html">https://www.cnblogs.com/hjlweilong/p/6119822.html</a><br>[3]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">https://jailbreakfox.github.io/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/</a></p>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-计算机视觉-图像识别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">计算机视觉-图像识别</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" class="archive-article-date">
-  	<time datetime="2018-12-30T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-30</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 本文主要知识结构与素材摘自<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">《基于深度学习的计算机视觉》</a><sup>[1]</sup>。<br>&emsp;&emsp; 计算机视觉当前主要研究领域如下图所示：</p>
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/计算机视觉1.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;在经过图像数据处理以及获得图像的特征以后，就需要利用这些前期得到的信息基础来完成不同的计算机视觉任务，本文将涉及图像识别的内容。</p>
-<h3 id="0x01-图像识别之图像分类"><a href="#0x01-图像识别之图像分类" class="headerlink" title="0x01 图像识别之图像分类"></a><em>0x01 图像识别之图像分类</em></h3><p>&emsp;&emsp;图像分类，根据各自在图像信息中所反映的不同特征，把不同类别的目标区分开来的图像处理方法。它利用计算机对图像进行定量分析，把图像或图像中的每个像元或区域划归为若干个类别中的某一种，以代替人的视觉判读。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 神经网络基础</span><br><span class="line">2 卷积神经网络(CNN)</span><br><span class="line">  2.1 CNN基本层</span><br><span class="line">  2.2 AlexNet</span><br><span class="line">  2.3 VGG</span><br><span class="line">  2.4 Inception V1-&gt;V4</span><br><span class="line">  2.5 ResNet-&gt;ResNeXt</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、神经网络基础</em></strong><br>&emsp;&emsp;神经网络是机器学习领域中常使用的一种学习方法，具体内容可参考吴恩达教授的<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">机器学习课程</a><sup>[2]</sup>。</p>
-<p><strong><em>2、卷积神经网络(CNN)</em></strong><br>&emsp;&emsp;卷积神经网络是一类包含卷积计算且具有深度结构的前馈神经网络，是深度学习的代表算法之一。</p>
-<p><strong><em>2.1、CNN基本层</em></strong><br>&emsp;&emsp;普通的神经网络由输入层、隐含层与输出层组成，CNN也类似，其基本的构成层包括以下几种：卷积层、池化层、全连接层与批归一化层。<br>&emsp;&emsp;1）CNN卷积层：<br>&emsp;&emsp;&emsp;&emsp;卷积层的作用是提取局部特征。3D滤波器/卷积核（所谓3D这里以RGB为例，就是指一张彩图是由红绿蓝三层图组合成的）以扫描窗的方式，对图像做卷积；每层图含有多个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">卷积核</a><sup>[3]</sup>，且每个核对应了一个输出通道，卷积层的长度由核的数量决定。所以要明确的是卷积层最重要的有三个参数，其一为图片像素（k$\times $k），其二为3张RGB图，其三为卷积核数量。其示意图如下所示：</p>
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN1.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;&emsp;&emsp;举个例子，若输入图片为32$\times $32$\times $3，卷积核为5$\times $5$\times $3，且卷积核数量为6，且不补零，则输出特征为28$\times $28$\times $6。可见输出特征厚度只与卷积核数量有关。<br>&emsp;&emsp;&emsp;&emsp;CNN卷积层的非线性激活函数：sigmoid或是ReLU，可参考<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">pytorch-BP神经网络拟合非线性函数</a><sup>[4]</sup>。<br>&emsp;&emsp;2）CNN池化层：<br>&emsp;&emsp;&emsp;&emsp;池化层的作用是进行特征融合，降维。计算方式有最大化池化与平均值池化，以前者为例，操作过程如下图所示：</p>
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN2.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;3）CNN全连接层：<br>&emsp;&emsp;&emsp;&emsp;全连接层作用是分类，可以理解为就是普通的神经网络，其具体操作过程参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/gyh_420/article/details/78569225">对于全连接层的理解</a><sup>[5]</sup>。<br>&emsp;&emsp;4）CNN-Softmax层：<br>&emsp;&emsp;&emsp;&emsp;softmax层作用是将全连接层的实数向量压缩到（0,1），即为概率。实质为指数归一化函数，其公式如下：</p>
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/CNN3.jpg">
-<div align="left">  
-
-<h3 id="0x02-图像识别之物体检测"><a href="#0x02-图像识别之物体检测" class="headerlink" title="0x02 图像识别之物体检测"></a><em>0x02 图像识别之物体检测</em></h3><p>&emsp;&emsp;物体检测是计算机视觉中的经典问题之一，其任务是用框去标出图像中物体的位置，并给出物体的类别。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 区域卷积神经网络R-CNN</span><br><span class="line">2 SPP-Net网络</span><br><span class="line">3 Fast R-CNN</span><br><span class="line">4 Faster R-CNN</span><br><span class="line">5 R-FCN</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、区域卷积神经网络R-CNN</em></strong><br>&emsp;&emsp;这种网络的内部状态可以展示动态时序行为。不同于前馈神经网络的是，RNN可以利用它内部的记忆来处理任意时序的输入序列，这让它可以更容易处理如不分段的手写识别、语音识别等。<br>&emsp;&emsp;RNN物体检测具体过程为输入图片$\rightarrow $区域截取$\rightarrow $手工提取特征$\rightarrow $分类器分类，相应的过程图如下：</p>
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN1.jpg">
-<div align="left">  
-
-<div align="center">
-<img src="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/RNN2.jpg">
-<div align="left">  
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="http://www.chinahadoop.cn/course/916">http://www.chinahadoop.cn/course/916</a><br>[2]<a target="_blank" rel="noopener" href="http://study.163.com/course/courseMain.htm?courseId=1004570029">http://study.163.com/course/courseMain.htm?courseId=1004570029</a><br>[3]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin">https://baike.baidu.com/item/%E5%8D%B7%E7%A7%AF%E6%A0%B8/3377590?fr=aladdin</a>)<br>[4]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/">https://jailbreakfox.github.io/2018/12/12/pytorch-BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%8B%9F%E5%90%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0/</a><br>[5]<a target="_blank" rel="noopener" href="https://blog.csdn.net/gyh_420/article/details/78569225">https://blog.csdn.net/gyh_420/article/details/78569225</a></p>
-</div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">视觉，入门</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
     </nav>
   
 
@@ -630,7 +655,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -638,7 +663,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -654,10 +679,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
@@ -667,6 +688,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -686,6 +711,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
@@ -694,15 +723,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
