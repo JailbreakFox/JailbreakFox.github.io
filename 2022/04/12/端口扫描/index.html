@@ -6,23 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>网络数据包 | Jesse Tsui的博客</title>
+  <title>端口扫描 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。&amp;emsp;&amp;emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。 0x01 TCP网络数据包分解      0x02 UDP网络数据包分解">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;端口扫描是指向目标机器发送一组连接端口的数据包，根据目标机器返回结果判断该机器的指定端口是否开放。端口扫描是黑客入侵前获取目标机器的重要手段。 0x01 网络连接过程&amp;emsp;&amp;emsp;UDP协议和TCP协议都是传输层的协议，TCP协议提供可靠的通信传输，而UDP则是常常被用于让广播和细节控制的交给应用的通信传输。 121 TCP连接过程2 UDP连接过程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="网络数据包">
-<meta property="og:url" content="http://yoursite.com/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/index.html">
+<meta property="og:title" content="端口扫描">
+<meta property="og:url" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。&amp;emsp;&amp;emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。 0x01 TCP网络数据包分解      0x02 UDP网络数据包分解">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;端口扫描是指向目标机器发送一组连接端口的数据包，根据目标机器返回结果判断该机器的指定端口是否开放。端口扫描是黑客入侵前获取目标机器的重要手段。 0x01 网络连接过程&amp;emsp;&amp;emsp;UDP协议和TCP协议都是传输层的协议，TCP协议提供可靠的通信传输，而UDP则是常常被用于让广播和细节控制的交给应用的通信传输。 121 TCP连接过程2 UDP连接过程">
 <meta property="og:locale">
-<meta property="og:image" content="http://yoursite.com/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/TCP网络数据包.png">
-<meta property="og:image" content="http://yoursite.com/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/UDP网络数据包.png">
-<meta property="article:published_time" content="2021-04-12T06:48:23.000Z">
-<meta property="article:modified_time" content="2022-04-12T09:02:27.102Z">
+<meta property="og:image" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP连接过程.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP连接过程.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP网络数据包.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP网络数据包.png">
+<meta property="article:published_time" content="2022-04-12T06:48:23.000Z">
+<meta property="article:modified_time" content="2022-04-15T03:31:52.583Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/TCP网络数据包.png">
+<meta name="twitter:image" content="http://yoursite.com/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP连接过程.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -159,20 +161,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-网络数据包" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-端口扫描" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      网络数据包
+      端口扫描
     </h1>
   
 
         
-        <a href="/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2021-04-12T06:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-12</time>
+        <a href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" class="archive-article-date">
+  	<time datetime="2022-04-12T06:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-12</time>
 </a>
         
         
@@ -184,14 +186,141 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。<br>&emsp;&emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。</p>
-<h3 id="0x01-TCP网络数据包分解"><a href="#0x01-TCP网络数据包分解" class="headerlink" title="0x01 TCP网络数据包分解"></a><em>0x01 TCP网络数据包分解</em></h3><div align="center">
-<img src="/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/TCP网络数据包.png" width="700" height="250">
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;端口扫描是指向目标机器发送一组连接端口的数据包，根据目标机器返回结果判断该机器的指定端口是否开放。端口扫描是黑客入侵前获取目标机器的重要手段。</p>
+<h3 id="0x01-网络连接过程"><a href="#0x01-网络连接过程" class="headerlink" title="0x01 网络连接过程"></a><em>0x01 网络连接过程</em></h3><p>&emsp;&emsp;UDP协议和TCP协议都是传输层的协议，TCP协议提供可靠的通信传输，而UDP则是常常被用于让广播和细节控制的交给应用的通信传输。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 TCP连接过程</span><br><span class="line">2 UDP连接过程</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、TCP连接过程</em></strong><br>&emsp;&emsp;TCP协议在连接过程中要完成经典的三次握手、四次挥手，其具体过程如下图:  </p>
+<div align="center">
+<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP连接过程.png" width="500" height="600">
 <div align="left">  
 
-<h3 id="0x02-UDP网络数据包分解"><a href="#0x02-UDP网络数据包分解" class="headerlink" title="0x02 UDP网络数据包分解"></a><em>0x02 UDP网络数据包分解</em></h3><div align="center">
-<img src="/2021/04/12/%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85/UDP网络数据包.png" width="700" height="250">
-<div align="left">  </div></div></div></div>
+<p><strong><em>2、TCP连接过程</em></strong><br>&emsp;&emsp;UDP协议为单向传播，接收端接收到来自发送端的数据包之后，不会做反馈:  </p>
+<div align="center">
+<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP连接过程.png" width="250" height="300">
+<div align="left">  
+
+<h3 id="0x02-数据包构成"><a href="#0x02-数据包构成" class="headerlink" title="0x02 数据包构成"></a><em>0x02 数据包构成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 TCP网络数据包构成</span><br><span class="line">2 UDP网络数据包构成</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、TCP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。</p>
+<div align="center">
+<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP网络数据包.png" width="700" height="250">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">URG：紧急指针有效位。<br>ACK：当ACK=1时，确认序列号字段有效。ACK=0时，确认序列无效。<br>PSH：标志位为1时要求接受方尽快将数据送达应用层。<br>PST：当PST值为1时通知重新建立TCP连接。<br>SYN：同步序号位，TCP需要建立连接时将这个值设为1。<br>FIN：当FIN值为1时，表示请求断开连接。</font>  </p>
+</blockquote>
+<p><strong><em>2、UDP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。</p>
+<div align="center">
+<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP网络数据包.png" width="700" height="250">
+<div align="left">  
+
+
+<h3 id="0x03-端口扫描原理"><a href="#0x03-端口扫描原理" class="headerlink" title="0x03 端口扫描原理"></a><em>0x03 端口扫描原理</em></h3><p>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>端口扫描类型</th>
+<th>标志位</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TCP - 非隐蔽</td>
+<td>SYN扫描</td>
+<td>SYN</td>
+<td>不用实现完成三次握手，扫描速度快</td>
+<td>扫描行为容易被发现、可能丢包</td>
+</tr>
+<tr>
+<td></td>
+<td>TCP全连接扫描</td>
+<td>-</td>
+<td>稳定可靠，端口状态的判定结果准确</td>
+<td>扫描行为明显，失败请求和错误信息暴露在日志中，攻击成功后容易被溯源</td>
+</tr>
+<tr>
+<td></td>
+<td>ACK扫描</td>
+<td>ACK</td>
+<td>可以辅助SYN的方式来判断目标主机防火墙的状况</td>
+<td>只能用于判断防火墙是否屏蔽，扫描行为容易被发现</td>
+</tr>
+<tr>
+<td>TCP - 隐蔽</td>
+<td>FIN扫描</td>
+<td>FIN</td>
+<td>扫描隐蔽</td>
+<td>需等待超时，扫描时间长，可能丢包。windows不支持</td>
+</tr>
+<tr>
+<td></td>
+<td>NULL扫描</td>
+<td>全部置为0</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td></td>
+<td>XMAS扫描</td>
+<td>FIN URG PSH</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>UDP扫描</td>
+<td>-</td>
+<td>跨平台</td>
+<td>速度相对于TCP的FIN,SYN扫描要慢一些、可能丢包</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 TCP端口扫描</span><br><span class="line">  1.1 非隐蔽性扫描</span><br><span class="line">  1.2 隐蔽性扫描</span><br><span class="line">2 UDP端口扫描</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、TCP端口扫描</em></strong><br><strong><em>1.1、非隐蔽性扫描</em></strong>  </p>
+<ul>
+<li><p>SYN扫描: 该方式发送只有SYN标志的包到目标端口</p>
+<ul>
+<li>如果收到SYN/ACK回复，那么判断该端口是开放的</li>
+<li>如果收到RST包，那么判断该端口是关闭</li>
+<li>如果没收到回复，那么判断该端口是被屏蔽</li>
+</ul>
+</li>
+<li><p>TCP全连接扫描: 实现TCP三次握手，实现的方法通常使使用操作系统提供的connect函数</p>
+<ul>
+<li>如果无法连接，说明该端口关闭</li>
+</ul>
+</li>
+<li><p>ACK扫描: 向目标主机的端口发送只有ACK标志的包</p>
+<ul>
+<li>如果收到RST包，说明该端口没有被防火墙屏蔽</li>
+<li>没有收到RST包，说明被屏蔽</li>
+</ul>
+</li>
+</ul>
+<p><strong><em>1.2 隐蔽性扫描</em></strong>  </p>
+<ul>
+<li>FIN扫描: 向目标主机的端口发送只有FIN标志的包</li>
+<li>NULL扫描: 向目标主机的端口发送没有标志位的包</li>
+<li>XMAS扫描: 向目标主机的端口发送具有FIN、URG与PSH标志的包<ul>
+<li>如果收到对方RST回复包，那么说明该端口是关闭的</li>
+<li>没有收到RST包说明端口可能是开放的或被屏蔽的</li>
+</ul>
+</li>
+</ul>
+<p><strong><em>2、UDP端口扫描</em></strong>  </p>
+<ul>
+<li>UDP扫描: 向目标主机的UDP端口发送探测包<ul>
+<li>如果收到回复“ICMP port unreachable”就说明该端口是关闭的</li>
+<li>如果没有收到回复，那说明UDP端口可能是开放的或屏蔽的</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x04-端口扫描工具-NMap"><a href="#0x04-端口扫描工具-NMap" class="headerlink" title="0x04 端口扫描工具 - NMap"></a><em>0x04 端口扫描工具 - NMap</em></h3><h3 id="0x05-端口扫描防护"><a href="#0x05-端口扫描防护" class="headerlink" title="0x05 端口扫描防护"></a><em>0x05 端口扫描防护</em></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><em>0x06 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]port scan detect</p>
+</div></div></div></div></div></div></div></div>
       
 
       
@@ -223,18 +352,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          deb与rpm打包
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/04/11/IPV4%E4%B8%8EIPV6/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">IPV4与IPV6</div>
+    <a href="/2022/04/02/Docker/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Docker</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -261,7 +381,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-TCP%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">0x01 TCP网络数据包分解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-UDP%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">0x02 UDP网络数据包分解</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">0x01 网络连接过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%95%B0%E6%8D%AE%E5%8C%85%E6%9E%84%E6%88%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 数据包构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">0x03 端口扫描原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7-NMap"><span class="toc-number">5.</span> <span class="toc-text">0x04 端口扫描工具 - NMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E9%98%B2%E6%8A%A4"><span class="toc-number">6.</span> <span class="toc-text">0x05 端口扫描防护</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">7.</span> <span class="toc-text">0x06 引用文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -397,15 +517,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -413,11 +529,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -425,11 +541,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -457,6 +577,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
@@ -466,10 +590,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
