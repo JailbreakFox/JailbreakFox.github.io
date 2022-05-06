@@ -156,6 +156,134 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux文件事件监控" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">Linux文件事件监控</a>
+    </h1>
+  
+
+        
+        <a href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/" class="archive-article-date">
+  	<time datetime="2022-04-22T07:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-22</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。<br>&emsp;&emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操作上报给应用层的监听进程。  </p>
+<div align="center">
+<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg" width="500" height="250">
+<div align="left">  
+
+<h3 id="0x01-dnotify"><a href="#0x01-dnotify" class="headerlink" title="0x01 dnotify"></a><em>0x01 dnotify</em></h3><ul>
+<li>dnotify<ul>
+<li>支持内核: 内核2.4.0以上版本</li>
+<li>缺陷:<ul>
+<li>只能监控文件夹，并且对每个目标文件夹都需要添加监控点</li>
+<li>文件夹umount时有影响</li>
+<li>使用信号的方式通知文件系统事件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x02-inotify"><a href="#0x02-inotify" class="headerlink" title="0x02 inotify"></a><em>0x02 inotify</em></h3><ul>
+<li>inotify<ul>
+<li>支持内核: 内核2.6.13以上版本</li>
+<li>优点:<ul>
+<li>既可以监视文件，也可以监视目录</li>
+<li>不打开目标对象描述符，所以目标umount时不影响，且生成umount事件通知</li>
+<li>使用系统调用的方式通知文件系统事件，效率高于dnotify</li>
+</ul>
+</li>
+<li>缺点:<ul>
+<li>监控文件夹时不能同时监控子文件夹或子文件，需要添加监控点</li>
+<li>监控点有上限，如果监控目录过深，会影响监控能力</li>
+<li>只能记录或通知文件事件，不能阻止该操作</li>
+<li>不能记录更详细的信息，比如对文件执行操作的进程PID</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x03-fanotify"><a href="#0x03-fanotify" class="headerlink" title="0x03 fanotify"></a><em>0x03 fanotify</em></h3><ul>
+<li>fanotify<ul>
+<li>支持内核: 内核2.6.37以上版本</li>
+<li>优点:<ul>
+<li>能同时监控子文件夹或子文件</li>
+<li>无限监控点</li>
+<li>允许介入并改变文件事件的行为</li>
+<li>获取更详细的信息</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div align="center">
+<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg" width="450" height="250">
+<div align="left">  
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man7/fanotify.7.html">https://www.man7.org/linux/man-pages/man7/fanotify.7.html</a><br>[2]<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/186027813">https://zhuanlan.zhihu.com/p/186027813</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-端口扫描" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -191,7 +319,7 @@
 <img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP连接过程.png" width="250" height="300">
 <div align="left">  
 
-<h3 id="0x02-数据包构成"><a href="#0x02-数据包构成" class="headerlink" title="0x02 数据包构成"></a><em>0x02 数据包构成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 TCP网络数据包构成</span><br><span class="line">2 UDP网络数据包构成</span><br></pre></td></tr></table></figure>
+<h3 id="0x02-数据包构成"><a href="#0x02-数据包构成" class="headerlink" title="0x02 数据包构成"></a><em>0x02 数据包构成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 TCP网络数据包构成</span><br><span class="line">2 UDP网络数据包构成</span><br><span class="line">3 DNS网络数据包构成</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、TCP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。</p>
 <div align="center">
@@ -207,7 +335,15 @@
 <img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP网络数据包.png" width="700" height="250">
 <div align="left">  
 
+<p><strong><em>3、DNS网络数据包构成</em></strong><br>&emsp;&emsp;DNS网络数据包是在UDP网络数据包基础上实现的，其不同的位置在于data部分，data部分的字段如下:  </p>
+<div align="center">
+<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/DNS网络数据包.jpg" width="400" height="250">
+<div align="left">  
 
+<hr>
+<blockquote>
+<p><font size="2">注意1: 在解析IP网络数据包的时候要注意’报头长度4位’字段，该字段表示’选项(可选)32位’字段的实际长度(最多能表示15个32bit的的字，即4*15=60个字节的首部长度)。<br>注意2: 当’选项(可选)32位’字段长度为0时，UDP(DNS)网络数据包除去data部分的数据封包总长度为42字节。</font> </p>
+</blockquote>
 <h3 id="0x03-端口扫描原理"><a href="#0x03-端口扫描原理" class="headerlink" title="0x03 端口扫描原理"></a><em>0x03 端口扫描原理</em></h3><p>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
 <table>
 <thead>
@@ -310,8 +446,8 @@
 </ul>
 </li>
 </ul>
-<h3 id="0x04-端口扫描工具-NMap"><a href="#0x04-端口扫描工具-NMap" class="headerlink" title="0x04 端口扫描工具 - NMap"></a><em>0x04 端口扫描工具 - NMap</em></h3><h3 id="0x05-端口扫描防护"><a href="#0x05-端口扫描防护" class="headerlink" title="0x05 端口扫描防护"></a><em>0x05 端口扫描防护</em></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><em>0x06 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]port scan detect</p>
-</div></div></div></div></div></div></div></div>
+<h3 id="0x04-端口扫描工具-NMap"><a href="#0x04-端口扫描工具-NMap" class="headerlink" title="0x04 端口扫描工具 - NMap"></a><em>0x04 端口扫描工具 - NMap</em></h3><h3 id="0x05-端口扫描防护"><a href="#0x05-端口扫描防护" class="headerlink" title="0x05 端口扫描防护"></a><em>0x05 端口扫描防护</em></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><em>0x06 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/90abebfe0014">https://www.jianshu.com/p/90abebfe0014</a><br>[3]port scan detect</p>
+</div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -519,134 +655,6 @@
 
 
   
-    <article id="post-Linux网络管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/">Linux网络管理</a>
-    </h1>
-  
-
-        
-        <a href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="archive-article-date">
-  	<time datetime="2021-12-10T02:40:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-10</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux系统下，防火墙在内核态是使用netfilter实现的，而iptables则是为了方便用户在用户态控制防火墙的规则而产生的。<br>&emsp;&emsp;iptables通过指定规则(源地址、目的地址、传输协议(如TCP、UDP、ICMP)和服务类型(如HTTP、FTP和SMTP)等)，当数据包与规则匹配时做相应处理(放行(accept)、拒绝(reject)和丢弃(drop)等)。<br>&emsp;&emsp;iptables控制数据包传递的总体流程图如下:  </p>
-<div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables链表.png">
-<div align="left">  
-
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 五链四表</span><br><span class="line">  1.1 五链</span><br><span class="line">  1.2 四表</span><br><span class="line">2 堵通策略</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、五链四表</em></strong><br><strong><em>1.1、五链</em></strong>  </p>
-<ul>
-<li>五链 - 数据包从网卡传入，根据其去向必经的五个链条，流程图如下<ul>
-<li>PREROUTING - 路由前</li>
-<li>INPUT - 数据包流入口</li>
-<li>FORWARD - 转发管卡</li>
-<li>OUTPUT - 数据包出口</li>
-<li>POSTROUTING - 路由后</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables链.png">
-<div align="left">  
-
-<ul>
-<li>到本机某进程的报文：PREROUTING –&gt; INPUT</li>
-<li>由本机转发的报文：PREROUTING –&gt; FORWARD –&gt; POSTROUTING</li>
-<li>由本机的某进程发出报文（通常为响应报文）：OUTPUT –&gt; POSTROUTING</li>
-</ul>
-<p><strong><em>1.2、四表</em></strong>  </p>
-<ul>
-<li>四表 - 每条链下会有很多用户定义的规则，相同功能的规则被分类为一个表，最后形成了一下四表，图以PREROUTING链为例:<ul>
-<li>raw - 控制nat表中连接追踪机制的启用状况</li>
-<li>mangle - 修改数据包中的原数据</li>
-<li>nat - 控制数据包中地址转换</li>
-<li>filter - 控制数据包是否允许进出及转发</li>
-</ul>
-</li>
-<li>每条链上的规则表有检测的优先级，其优先级排序(由高到低)如下:  <ul>
-<li>raw –&gt; mangle –&gt; nat –&gt; filter</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables表.png">
-<div align="left">  
-
-<p><strong><em>2、堵通策略</em></strong>  </p>
-<ul>
-<li>堵通策略 - 在数据包匹配了规则后，防火墙需要对数据包做出对应操作，常用策略如下:  <ul>
-<li>ACCEPT - 允许数据包通过</li>
-<li>DROP - 不允许数据包通过，不给发送者反馈</li>
-<li>REJECT - 不允许数据包通过，给发送者拒绝反馈</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1199">https://www.zsythink.net/archives/1199</a></p>
-</div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术 Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
@@ -776,11 +784,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -816,7 +824,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -824,11 +832,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,6 +845,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
