@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2022-04-24T08:24:06.995Z">
+<meta property="article:modified_time" content="2022-05-12T01:44:53.582Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -194,14 +194,17 @@
 
 <p><strong><em>1. /bin</em></strong><br>&emsp;&emsp;/bin 是包含二进制文件的目录，即可以运行的某些应用程序和程序。您将在此目录中找到上面提到的ls程序，以及用于创建和删除文件和目录，在文件中移动它们的其他基本工具，等等。文件系统树的其他部分中还有更多的 bin 目录，但稍后我们将讨论它们。  </p>
 <p><strong><em>2. /boot</em></strong><br>&emsp;&emsp;/boot 目录包含启动系统所需的文件。如果您弄乱了其中的一个文件，则可能无法运行Linux，并且很难修复。另一方面，必须具有超级用户权限才能执行此操作。</p>
-<p><strong><em>3. /dev</em></strong><br>&emsp;&emsp;/dev 包含设备文件,其中许多是在启动时甚至在运行时生成的。例如，如果您将新的网络摄像头或USB随身碟插入计算机，则会在此处自动弹出一个新的设备条目。</p>
+<p><strong><em>3. /dev</em></strong><br>&emsp;&emsp;/dev 包含设备文件,其中许多是在启动时甚至在运行时生成的。例如，如果您将新的网络摄像头或USB随身碟插入计算机，则会在此处自动弹出一个新的设备条目。<br>&emsp;&emsp;/dev/char/ 字符设备的软链接存放目录，实际查看可使用’ls -l /dev/char’命令<br>&emsp;&emsp;/dev/block/ 块设备的软链接存放目录，实际查看可使用’ls -l /dev/block’命令</p>
+<blockquote>
+<p><font size="2">字符设备：提供连续的数据流，应用程序可以顺序读取，通常不支持随机存取。相反，此类设备支持按字节自/字符来读写数据。举例来说，百键盘、串口、调制解调器都是典型的字符设备。<br>块设备：应用程序可以随机访问设备数据，程序可自行确定读取数据的位置。硬盘、软盘、CD-ROM驱动器和闪存都是典型度的块设备，应用程序可以寻址磁盘上的任何位置，并由此读取数据。此外，数据的读写知只能以块(通常是512B)的倍数进行。与字符设备不同，块设备并不支持基于字符的寻址。<br>这两种类型的设备的根本区别在于它们是否可以被随机访问。字符设备只能顺序读取道，块设备可以随机读取。</font>  </p>
+</blockquote>
 <p><strong><em>4. /etc</em></strong><br>&emsp;&emsp;/etc 包含大多数系统范围的配置文件。例如，包含系统名称，用户及其密码，网络上的计算机名称以及何时以及在何处安装硬盘上的分区的文件均位于此处。</p>
 <p><strong><em>5. /home</em></strong><br>&emsp;&emsp;/home 是存放用户个人目录的位置。</p>
 <p><strong><em>6. /lib</em></strong><br>&emsp;&emsp;/lib 是库所在的位置,库是包含应用程序可以使用的代码的文件。它们包含应用程序用来在桌面上绘制窗口，控制外围设备或将文件发送到硬盘的代码片段。</p>
 <p><strong><em>7. /media</em></strong><br>&emsp;&emsp;/media 目录用于自动挂载外部存储。</p>
 <p><strong><em>8. /mnt</em></strong><br>&emsp;&emsp;/mnt 目录,可以在此处手动安装存储设备或分区，它并不经常被使用。</p>
 <p><strong><em>9. /opt</em></strong><br>&emsp;&emsp;/opt 目录中编译软件,应用程序将最终在 /opt/bin 目录中，并将库文件存放在 /opt/lib 目录中。<br>注意：应用程序和库存放的另一个位置是 /usr/local ，在这里安装软件时，还将有 /usr/local/bin 和 /usr/local/lib 目录。开发人员如何配置用于控制编译和安装过程的文件，这决定了将哪种软件运往何处。</p>
-<p><strong><em>10. /proc</em></strong><br>&emsp;&emsp;/proc 就像 /dev 是一个虚拟目录，它包含有关您的计算机的信息。例如有关您的CPU和Linux系统正在运行的内核的信息。<br>&emsp;&emsp;/proc/stat提供的是系统的CPU和任务统计信息。<br>&emsp;&emsp;/proc/net/tcp文件提供了tcp的连接信息。<br>&emsp;&emsp;/proc/‘pid’/stat提供的是进程的CPU和任务统计信息。<br>&emsp;&emsp;/proc/‘pid’/sessionid提供的是拉起该进程的终端会话ID</p>
+<p><strong><em>10. /proc</em></strong><br>&emsp;&emsp;/proc 就像 /dev 是一个虚拟目录，它包含有关您的计算机的信息。例如有关您的CPU和Linux系统正在运行的内核的信息。<br>&emsp;&emsp;/proc/stat提供的是系统的CPU和任务统计信息。<br>&emsp;&emsp;/proc/net/tcp文件提供了tcp的连接信息。<br>&emsp;&emsp;/proc/‘pid’/stat提供的是进程的CPU和任务统计信息。<br>&emsp;&emsp;/proc/‘pid’/sessionid提供的是拉起该进程的终端会话ID<br>&emsp;&emsp;与硬件及驱动相关的文件:<br>&emsp;&emsp;/proc/cpuinfo cpu信息<br>&emsp;&emsp;/proc/pci 板卡信息，可用lspci命令查看<br>&emsp;&emsp;/proc/meminfo 内存信息<br>&emsp;&emsp;/proc/bus/usb/devices USB设备信息<br>&emsp;&emsp;/proc/bus/input/devices 键盘和鼠标信息<br>&emsp;&emsp;/proc/interrupts 各设备中断请求<br>&emsp;&emsp;/proc/devices 所有硬件设备信息</p>
 <p><strong><em>11. /root</em></strong><br>&emsp;&emsp;/root 是系统超级用户的主目录，它与其他用户主目录分开。</p>
 <p><strong><em>12. /run</em></strong><br>&emsp;&emsp;/run 目录，系统进程使用它来存储临时数据，不要随意修改该文件。</p>
 <p><strong><em>13. /sbin</em></strong><br>&emsp;&emsp;/sbin 与 /bin 相似，但是 /sbin 包含仅超级用户所需的应用程序。/sbin 通常包含可以安装内容，删除内容和格式化内容的工具，需小心使用。</p>
@@ -771,15 +774,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -811,19 +814,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -831,7 +826,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -840,10 +847,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

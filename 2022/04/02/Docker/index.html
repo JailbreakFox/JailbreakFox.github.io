@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2022/04/02/Docker/镜像分层.png">
 <meta property="article:published_time" content="2022-04-02T02:08:59.000Z">
-<meta property="article:modified_time" content="2022-04-14T08:29:10.090Z">
+<meta property="article:modified_time" content="2022-06-02T03:28:39.954Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="工具">
 <meta name="twitter:card" content="summary">
@@ -224,7 +224,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登陆Docker Hub注册账号 https://hub.docker.com</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 终端登陆/登出Docker账号</span></span><br><span class="line">$ docker login</span><br><span class="line">$ docker <span class="built_in">logout</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 向个人仓库推送镜像</span></span><br><span class="line">$ docker push <span class="string">&#x27;用户名&#x27;</span>/<span class="string">&#x27;仓库名&#x27;</span>:<span class="string">&#x27;tag号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在个人仓库中寻找镜像</span></span><br><span class="line">$ docker search <span class="string">&#x27;用户名&#x27;</span>/<span class="string">&#x27;仓库名&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>2、镜像</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出镜像列表</span></span><br><span class="line">$ docker images</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找镜像</span></span><br><span class="line">$ docker search ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取镜像</span></span><br><span class="line">$ docker pull ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除镜像</span></span><br><span class="line">$ docker rmi ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新镜像</span></span><br><span class="line">$ docker commit -m=<span class="string">&quot;XXX&quot;</span> -a=<span class="string">&quot;XXX&quot;</span> e218edb10161 runoob/ubuntu:v2</span><br><span class="line">  -m: 提交的描述信息</span><br><span class="line">  -a: 指定镜像作者</span><br><span class="line">  e218edb10161: 容器ID</span><br><span class="line">  runoob/ubuntu: 镜像所在仓库</span><br><span class="line">  v2: 镜像tag号</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出/导入本地镜像</span></span><br><span class="line">$ docker save -o <span class="string">&#x27;压缩包名&#x27;</span> <span class="string">&#x27;镜像名&#x27;</span></span><br><span class="line">$ docker load -i <span class="string">&#x27;压缩包名&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出镜像列表</span></span><br><span class="line">$ docker images</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找镜像</span></span><br><span class="line">$ docker search ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取镜像</span></span><br><span class="line">$ docker pull ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除镜像</span></span><br><span class="line">$ docker rmi ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新镜像</span></span><br><span class="line">$ docker commit -m=<span class="string">&quot;XXX&quot;</span> -a=<span class="string">&quot;XXX&quot;</span> e218edb10161 runoob/ubuntu:v2</span><br><span class="line">  -m: 提交的描述信息</span><br><span class="line">  -a: 指定镜像作者</span><br><span class="line">  e218edb10161: 容器ID</span><br><span class="line">  runoob/ubuntu: 镜像所在仓库</span><br><span class="line">  v2: 镜像tag号</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3、容器</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建容器</span></span><br><span class="line">$ docker run -itd ubuntu /bin/bash</span><br><span class="line">  -i: 交互式操作</span><br><span class="line">  -t: 终端</span><br><span class="line">  -d: 后台运行</span><br><span class="line">  ubuntu: 仓库名</span><br><span class="line">  /bin/bash: 交互式使用的终端</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 删除容器</span></span><br><span class="line">$ docker rm -f <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有容器</span></span><br><span class="line">$ docker ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 继续/停止/重新运行容器</span></span><br><span class="line">$ docker start <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line">$ docker stop <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line">$ docker restart <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器 - attach(退出容器会导致其停止)</span></span><br><span class="line">$ docker attach <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器 - exec(退出容器不会导致其停止)</span></span><br><span class="line">$ docker <span class="built_in">exec</span> -it <span class="string">&#x27;容器ID&#x27;</span> /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 宿主机拷贝文件至容器</span></span><br><span class="line">$ docker cp <span class="string">&#x27;宿主机文件路径&#x27;</span> <span class="string">&#x27;容器ID&#x27;</span>:<span class="string">&#x27;容器文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 容器拷贝文件至宿主机</span></span><br><span class="line">$ docker cp <span class="string">&#x27;容器ID&#x27;</span>:<span class="string">&#x27;容器文件路径&#x27;</span> <span class="string">&#x27;宿主机文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 容器日志查看</span></span><br><span class="line">$ docker logs -f <span class="string">&#x27;容器ID&#x27;</span></span><br><span class="line">  -f : 跟踪日志输出</span><br><span class="line">  --since :显示某个开始时间的所有日志</span><br><span class="line">  -t : 显示时间戳</span><br><span class="line">  --tail :仅列出最新N条容器日志</span><br></pre></td></tr></table></figure>
@@ -233,7 +233,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取容器/镜像的元数据</span></span><br><span class="line">$ docker inspect <span class="string">&#x27;容器ID/镜像ID&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示Docker系统信息，包括镜像和容器数</span></span><br><span class="line">$ docker info</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器资源使用情况</span></span><br><span class="line">$ docker stats</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x03-Dockerfile构建镜像"><a href="#0x03-Dockerfile构建镜像" class="headerlink" title="0x03 Dockerfile构建镜像"></a><em>0x03 Dockerfile构建镜像</em></h3><p>&emsp;&emsp;Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 命令摘要</span><br><span class="line">2 Dockerfile实例</span><br><span class="line">3 镜像构建</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 命令摘要</span><br><span class="line">2 Dockerfile实例</span><br><span class="line">3 镜像构建</span><br><span class="line">4 多阶段构建</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、命令摘要</em></strong><br><font size="2"></font></p>
 <ul>
@@ -258,12 +258,59 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:latest</span><br><span class="line">ADD edr-server /home/dev/edr-server</span><br><span class="line">ADD agent_service.sh /home/dev/agent_service.sh</span><br><span class="line">RUN chmod a+x /home/dev/edr-server \</span><br><span class="line">&amp;&amp; chmod a+x /home/dev/agent_service.sh</span><br><span class="line">WORKDIR /home/dev</span><br><span class="line">ENTRYPOINT [<span class="string">&quot;./agent_service.sh&quot;</span>,<span class="string">&quot;XXX&quot;</span>]</span><br></pre></td></tr></table></figure>
 <hr>
 <blockquote>
-<p><font size="2">注意1: CMD或者ENTRYPOINT在容器运行后会执行命令，程序运行结束，容器也就结束。并且上述两个命令如果由多个，则只有最后一个起效<br>注意2: 如果需要使用CMD或者ENTRYPOINT在容器运行后开启多个服务，需要用其运行一个脚本，在脚本中使用’&amp;’方式后台启动多个服务。</font>  </p>
+<p><font size="2">注意1: CMD或者ENTRYPOINT在容器运行后会执行命令，程序运行结束，容器也就结束。并且上述两个命令如果由多个，则只有最后一个起效<br>注意2: 如果需要使用CMD或者ENTRYPOINT在容器运行后开启多个服务，需要用其运行一个脚本，在脚本中使用’&amp;’方式后台启动多个服务。<br>注意3: 如果希望CMD或者ENTRYPOINT脚本在运行完毕后不结束容器，则可在最后添加’/bin/bash’语句</font>  </p>
 </blockquote>
 <p><strong><em>3、镜像构建</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入Dockerfile所在目录</span></span><br><span class="line">$ <span class="built_in">cd</span> <span class="string">&#x27;Dockerfile目录&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始构建</span></span><br><span class="line"><span class="comment"># &#x27;.&#x27;代表上下文目录，即构建开始时所在目录</span></span><br><span class="line">$ docker build -t <span class="string">&#x27;仓库名&#x27;</span>:<span class="string">&#x27;tag号&#x27;</span> .</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看新镜像</span></span><br><span class="line">$ docker images</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-tutorial.html">https://www.runoob.com/docker/docker-tutorial.html</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/s-b-b/p/8533936.html">https://www.cnblogs.com/s-b-b/p/8533936.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/iov_aaron/article/details/97135158">https://blog.csdn.net/iov_aaron/article/details/97135158</a></p>
+<p><strong><em>4、多阶段构建</em></strong><br>&emsp;&emsp;Docker 17.05版本以后，支持了多阶段构建，允许一个Dockerfile 中出现多个 FROM 指令。<br>&emsp;&emsp;多个 FROM 指令时，最后生成的镜像，仍以最后一条 FROM 为准，之前的 FROM 会被抛弃。但是在后面的 FROM 指令中， 能够将前置阶段中的文件拷贝到后边的阶段中，这就是多阶段构建的最大意义。使用示例:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译阶段</span></span><br><span class="line">FROM golang:1.10.3</span><br><span class="line">COPY server.go /build/</span><br><span class="line">WORKDIR /build</span><br><span class="line">RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOARM=6 go build -ldflags <span class="string">&#x27;-w -s&#x27;</span> -o server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行阶段</span></span><br><span class="line">FROM scratch</span><br><span class="line">COPY --from=0 /build/server / <span class="comment"># 从编译阶段的中拷贝编译结果到当前镜像中</span></span><br><span class="line">ENTRYPOINT [<span class="string">&quot;/server&quot;</span>]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><font size="2">注意1: COPY 指令的–from=0 参数，从前边的阶段中拷贝文件到当前阶段中，多个FROM语句时，0代表第一个阶段<br>注意2: scratch 是内置关键词，并不是一个真实存在的镜像。FROM scratch 会使用一个完全干净的文件系统，不包含任何文件(当然也可以替换为已存在的系统)<br>注意3: –from=0也可以替换为类似 –from=quay.io/coreos/etcd:v3.3.9 这种直接从hub镜像上的文件提取</font>  </p>
+</blockquote>
+<h3 id="0x04-特殊技巧"><a href="#0x04-特殊技巧" class="headerlink" title="0x04 特殊技巧"></a><em>0x04 特殊技巧</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 容器执行参数</span><br><span class="line">2 容器&#x2F;镜像导入与导出</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、容器执行参数</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --net 设定网络模式</span></span><br><span class="line"><span class="comment"># host模式: 相当于NAT模式</span></span><br><span class="line"><span class="comment"># none模式</span></span><br><span class="line"><span class="comment"># bridge模式(默认): 相当于桥接模式</span></span><br><span class="line"><span class="comment"># container模式: 与某个容器使用相同网卡信息</span></span><br><span class="line">$ docker run -it --net=host xxx:xxx</span><br><span class="line"></span><br><span class="line"><span class="comment"># --privileged 使用容器内的root账户拥有真正的root权限</span></span><br><span class="line">$ docker run -it --privileged=<span class="literal">true</span> xxx:xxx</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、容器/镜像导入与导出</em></strong><br>&emsp;&emsp;docker导入导出镜像可以使用docker save/load命令，导入导出容器可以使用docker export/import命令。具体区别如下:  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>作用</th>
+<th>导入/导出对象</th>
+<th>命令示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker save</td>
+<td>导出镜像(tar包)</td>
+<td>当目标为镜像时直接导出镜像; 当目标为容器时导出容器所使用的镜像</td>
+<td>docker save -o ‘压缩包名’.tar ‘镜像名’(‘容器名’)</td>
+</tr>
+<tr>
+<td>docker load</td>
+<td>导入镜像(tar包)</td>
+<td>导入镜像(不能指定镜像名称)，覆盖已存在的同名镜像</td>
+<td>docker load -i ‘压缩包名’.tar</td>
+</tr>
+<tr>
+<td>docker export</td>
+<td>导出镜像(tar包)</td>
+<td>导出容器当前状态为镜像</td>
+<td>docker export -o ‘压缩包名’.tar ‘容器名’</td>
+</tr>
+<tr>
+<td>docker import</td>
+<td>导入镜像(tar包)</td>
+<td>导入镜像(能指定镜像名称)，夺取已存在的同名镜像名，原镜像只保留ID</td>
+<td>docker import ‘压缩包名’.tar ‘新镜像名’</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font size="2">注意1: docker save保存的是镜像（image），docker export保存的是容器（container）<br>注意2: docker load用来载入镜像包，docker import用来载入容器包，但两者都会恢复为镜像<br>注意3: docker load不能对载入的镜像重命名，而docker import可以为镜像指定新名称</font>  </p>
+</blockquote>
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-tutorial.html">https://www.runoob.com/docker/docker-tutorial.html</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/s-b-b/p/8533936.html">https://www.cnblogs.com/s-b-b/p/8533936.html</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/iov_aaron/article/details/97135158">https://blog.csdn.net/iov_aaron/article/details/97135158</a></p>
 </div></div>
       
 
@@ -334,7 +381,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Docker%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">0x01 Docker基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-Docker%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">0x02 Docker基础用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Dockerfile%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">4.</span> <span class="toc-text">0x03 Dockerfile构建镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Docker%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">0x01 Docker基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-Docker%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">0x02 Docker基础用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Dockerfile%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">4.</span> <span class="toc-text">0x03 Dockerfile构建镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E7%89%B9%E6%AE%8A%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">0x04 特殊技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">6.</span> <span class="toc-text">0x05 引用文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -470,15 +517,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -510,19 +557,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -530,7 +569,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -539,10 +590,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

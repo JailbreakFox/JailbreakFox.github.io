@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/vmstat.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/20/Linux%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/slabtop.png">
 <meta property="article:published_time" content="2018-10-20T07:00:44.000Z">
-<meta property="article:modified_time" content="2022-04-22T09:17:14.450Z">
+<meta property="article:modified_time" content="2022-05-30T08:45:58.038Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux 工具">
 <meta name="twitter:card" content="summary">
@@ -590,7 +590,7 @@
 <p><strong><em>53、数据包截获 - tcpdump</em></strong><br>网络数据采集分析工具</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截获来自某IP的数据包</span></span><br><span class="line">$ tcpdump host <span class="string">&#x27;IP地址&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br><span class="line">9 交互语句</span><br><span class="line">10 数组运算</span><br><span class="line">11 系统判断</span><br><span class="line">12 守护进程</span><br><span class="line">13 文件读取</span><br><span class="line">14 杀死进程</span><br><span class="line">15 参数传递</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br><span class="line">9 交互语句</span><br><span class="line">10 数组运算</span><br><span class="line">11 系统判断</span><br><span class="line">12 守护进程</span><br><span class="line">13 文件读取</span><br><span class="line">14 杀死进程</span><br><span class="line">15 参数传递</span><br><span class="line">16 去除别名</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、首行指令</em></strong><br>首行指令用于声明使用的终端:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br></pre></td></tr></table></figure>
 
@@ -631,10 +631,13 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取ini文件某key对应的value</span></span><br><span class="line">id=`sed <span class="string">&#x27;/^ID=/!d;s/.*=//&#x27;</span> <span class="string">&#x27;ini文件路径&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$id</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>14、杀死进程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -efww |grep -w <span class="string">&#x27;进程名&#x27;</span> |grep -v grep |cut -c 9-15 |xargs <span class="built_in">kill</span> -9</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在shell脚本中杀死某进程名的进程</span></span><br><span class="line">ps -efww |grep -w <span class="string">&#x27;进程名&#x27;</span> |grep -v grep |cut -c 9-15 |xargs <span class="built_in">kill</span> -9</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在shell脚本中杀死脚本本身</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>15、参数传递</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;执行的文件名: <span class="variable">$0</span>&quot;</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;第一个参数为: <span class="variable">$1</span>&quot;</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;第二个参数为: <span class="variable">$2</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;传递到脚本的参数个数: <span class="variable">$#</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;脚本运行的当前进程ID号: $$&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;后台运行的最后一个进程的ID号: $!&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;显示Shell使用的当前选项: $-&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;上个命令的退出状态(0表示没有错误): $?&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>16、去除别名</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在指令前加上反斜杠，可以忽略掉 alias 的指定选项。</span></span><br><span class="line"><span class="comment"># 可保证输出在各个系统中一致。比如</span></span><br><span class="line">\rm <span class="string">&#x27;文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-Linux系统日志系统"><a href="#0x05-Linux系统日志系统" class="headerlink" title="0x05 Linux系统日志系统"></a><em>0x05 Linux系统日志系统</em></h3><p><strong><em>历史记录</em></strong>  </p>
 <table>
@@ -880,15 +883,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -920,19 +923,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -940,7 +935,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -949,10 +956,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
