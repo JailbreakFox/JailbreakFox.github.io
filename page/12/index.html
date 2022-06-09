@@ -818,7 +818,7 @@
 <p><strong><em>53、数据包截获 - tcpdump</em></strong><br>网络数据采集分析工具</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截获来自某IP的数据包</span></span><br><span class="line">$ tcpdump host <span class="string">&#x27;IP地址&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br><span class="line">9 交互语句</span><br><span class="line">10 数组运算</span><br><span class="line">11 系统判断</span><br><span class="line">12 守护进程</span><br><span class="line">13 文件读取</span><br><span class="line">14 杀死进程</span><br><span class="line">15 参数传递</span><br><span class="line">16 去除别名</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br><span class="line">9 交互语句</span><br><span class="line">10 数组运算</span><br><span class="line">11 系统判断</span><br><span class="line">12 守护进程</span><br><span class="line">13 文件操作</span><br><span class="line">14 杀死进程</span><br><span class="line">15 参数传递</span><br><span class="line">16 去除别名</span><br><span class="line">17 随机数生成</span><br><span class="line">18 字符串分割</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、首行指令</em></strong><br>首行指令用于声明使用的终端:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br></pre></td></tr></table></figure>
 
@@ -826,10 +826,10 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">VAR=123</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$VAR</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3、常用表达式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件表达式</span></span><br><span class="line">-e filename 如果 filename存在，则为真</span><br><span class="line">-d filename 如果 filename为目录，则为真 </span><br><span class="line">-f filename 如果 filename为常规文件，则为真</span><br><span class="line">-L filename 如果 filename为符号链接，则为真</span><br><span class="line">-r filename 如果 filename可读，则为真 </span><br><span class="line">-w filename 如果 filename可写，则为真 </span><br><span class="line">-x filename 如果 filename可执行，则为真</span><br><span class="line">-s filename 如果文件长度不为0，则为真</span><br><span class="line">-h filename 如果文件是软链接，则为真</span><br><span class="line">filename1 -nt filename2 如果 filename1比 filename2新，则为真。</span><br><span class="line">filename1 -ot filename2 如果 filename1比 filename2旧，则为真。</span><br><span class="line"><span class="comment"># 举例 - 若不存在文件夹则新建</span></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;./XXX&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    mkdir ./XXX</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 整数变量表达式</span></span><br><span class="line">-eq 等于</span><br><span class="line">-ne 不等于</span><br><span class="line">-gt 大于</span><br><span class="line">-ge 大于等于</span><br><span class="line">-lt 小于</span><br><span class="line">-le 小于等于</span><br><span class="line"><span class="comment"># 字符串变量表达式</span></span><br><span class="line"><span class="keyword">if</span>  [ <span class="variable">$string1</span> !=  <span class="variable">$string2</span> ]   如果string1不等于string2，则为真       </span><br><span class="line"><span class="keyword">if</span>  [ -n <span class="variable">$string</span>  ]             如果string 非空(非0），返回0(<span class="literal">true</span>)  </span><br><span class="line"><span class="keyword">if</span>  [ -z <span class="variable">$string</span>  ]             如果string 为空，则为真</span><br><span class="line"><span class="keyword">if</span>  [ <span class="variable">$sting</span> ]                  如果string 非空，返回0 (和-n类似) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 逻辑表达式</span></span><br><span class="line"><span class="keyword">if</span> [ ! 表达式 ]                 逻辑非 !</span><br><span class="line"><span class="keyword">if</span> [ 表达式1 –a 表达式2 ]       逻辑与 -a</span><br><span class="line"><span class="keyword">if</span> [ 表达式1 –o 表达式2 ]       逻辑或 -o</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件表达式</span></span><br><span class="line">-e filename 如果 filename存在，则为真</span><br><span class="line">-d filename 如果 filename为目录，则为真 </span><br><span class="line">-f filename 如果 filename为常规文件，则为真</span><br><span class="line">-L filename 如果 filename为符号链接，则为真</span><br><span class="line">-r filename 如果 filename可读，则为真 </span><br><span class="line">-w filename 如果 filename可写，则为真 </span><br><span class="line">-x filename 如果 filename可执行，则为真</span><br><span class="line">-s filename 如果文件长度不为0，则为真</span><br><span class="line">-h filename 如果文件是软链接，则为真</span><br><span class="line">filename1 -nt filename2 如果 filename1比 filename2新，则为真。</span><br><span class="line">filename1 -ot filename2 如果 filename1比 filename2旧，则为真。</span><br><span class="line"><span class="comment"># 举例 - 若不存在文件夹则新建</span></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;./XXX&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    mkdir ./XXX</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 整数(字符串)变量表达式</span></span><br><span class="line">-eq 等于</span><br><span class="line">-ne 不等于</span><br><span class="line">-gt 大于</span><br><span class="line">-ge 大于等于</span><br><span class="line">-lt 小于</span><br><span class="line">-le 小于等于</span><br><span class="line"><span class="comment"># 例子</span></span><br><span class="line"><span class="keyword">if</span> [ 1 -eq 1 ]</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;1&quot;</span> -eq <span class="string">&quot;1&quot;</span> ]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 字符串变量表达式</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$string1</span> == <span class="variable">$string2</span> ]     <span class="comment"># 如果string1等于string2，则为真 </span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$string1</span>&quot;</span> == <span class="string">&quot;<span class="variable">$string2</span>&quot;</span> ] <span class="comment"># 可以加引号</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$string1</span> != <span class="variable">$string2</span> ]     <span class="comment"># 如果string1不等于string2，则为真       </span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="variable">$string</span>  ]              <span class="comment"># 如果string 非空(非0），返回0(true)  </span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="variable">$string</span>  ]              <span class="comment"># 如果string 为空，则为真</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$sting</span> ]                   <span class="comment"># 如果string 非空，返回0 (和-n类似) </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逻辑表达式</span></span><br><span class="line"><span class="keyword">if</span> [ ! 表达式 ]                 <span class="comment"># 逻辑非 !</span></span><br><span class="line"><span class="keyword">if</span> [ 表达式1 –a 表达式2 ]       <span class="comment"># 逻辑与 -a</span></span><br><span class="line"><span class="keyword">if</span> [ 表达式1 –o 表达式2 ]       <span class="comment"># 逻辑或 -o</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 异常忽略</span></span><br><span class="line"><span class="keyword">if</span> [[ 1 -lt <span class="variable">$string</span> ]]         <span class="comment"># 当string变量不存在时，不会报错</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>4、文件生成</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;#!/bin/bash&quot;</span> &gt; ./test.sh <span class="comment"># &#x27;&gt;&#x27; 代表覆盖写入</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;VAR=111&quot;</span> &gt;&gt; ./test.sh <span class="comment"># &#x27;&gt;&gt;&#x27; 代表追加写入</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;echo \$VAR&quot;</span> &gt;&gt; ./test.sh <span class="comment"># 记得字符串里的特殊符号前要加转义符&#x27;\&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;#!/bin/bash&quot;</span> &gt; ./test.sh <span class="comment"># &#x27;&gt;&#x27; 代表覆盖写入</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;VAR=111&quot;</span> &gt;&gt; ./test.sh    <span class="comment"># &#x27;&gt;&gt;&#x27; 代表追加写入</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;echo \$VAR&quot;</span> &gt;&gt; ./test.sh <span class="comment"># 记得字符串里的特殊符号前要加转义符&#x27;\&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>5、命令执行</em></strong><br>命令执行使用 ‘ ` ‘ 符号包含，将返回的打印结果赋给左值:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">PROC=`ps -ef |grep serv | grep -v grep | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> 2&gt;/dev/null`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PROC</span></span><br></pre></td></tr></table></figure>
@@ -855,8 +855,8 @@
 <p><strong><em>12、守护进程</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    server=`ps aux | grep <span class="built_in">test</span>| grep -v grep`</span><br><span class="line">    <span class="keyword">if</span> [ ! <span class="string">&quot;<span class="variable">$server</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">cd</span> <span class="string">&#x27;进程目录&#x27;</span></span><br><span class="line">        ./<span class="string">&#x27;进程名&#x27;</span> &amp;</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    sleep 5</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
-<p><strong><em>13、文件读取</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取ini文件某key对应的value</span></span><br><span class="line">id=`sed <span class="string">&#x27;/^ID=/!d;s/.*=//&#x27;</span> <span class="string">&#x27;ini文件路径&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$id</span></span><br></pre></td></tr></table></figure>
+<p><strong><em>13、文件操作</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取ini文件某key对应的value</span></span><br><span class="line">id=`sed <span class="string">&#x27;/^ID=/!d;s/.*=//&#x27;</span> <span class="string">&#x27;ini文件路径&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$id</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 字符串全局替换</span></span><br><span class="line">sed -i <span class="string">&quot;s/&#x27;被替换项&#x27;/&#x27;替换项&#x27;/g&quot;</span> <span class="string">&#x27;ini文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>14、杀死进程</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在shell脚本中杀死某进程名的进程</span></span><br><span class="line">ps -efww |grep -w <span class="string">&#x27;进程名&#x27;</span> |grep -v grep |cut -c 9-15 |xargs <span class="built_in">kill</span> -9</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在shell脚本中杀死脚本本身</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
@@ -866,6 +866,12 @@
 
 <p><strong><em>16、去除别名</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在指令前加上反斜杠，可以忽略掉 alias 的指定选项。</span></span><br><span class="line"><span class="comment"># 可保证输出在各个系统中一致。比如</span></span><br><span class="line">\rm <span class="string">&#x27;文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>17、随机数生成</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成数组中的某个数</span></span><br><span class="line">a=(&#123;5..9&#125;)</span><br><span class="line">ITEM=$((<span class="variable">$RANDOM</span> % <span class="variable">$&#123;#a[@]&#125;</span>))</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$ITEM</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成32位随机数</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$RANDOM</span> | md5sum | cut -c 1-32</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>18、字符串分割</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">string=<span class="string">&quot;hello,shell,split,test&quot;</span>  </span><br><span class="line">array=(<span class="variable">$&#123;string//,/ &#125;</span>)  </span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;array[@]&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="variable">$var</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-Linux系统日志系统"><a href="#0x05-Linux系统日志系统" class="headerlink" title="0x05 Linux系统日志系统"></a><em>0x05 Linux系统日志系统</em></h3><p><strong><em>历史记录</em></strong>  </p>
 <table>
@@ -1079,11 +1085,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1099,15 +1105,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1115,11 +1113,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1127,11 +1129,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1143,15 +1149,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
