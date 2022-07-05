@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2022-06-16T11:53:54.694Z">
+<meta property="article:modified_time" content="2022-07-04T11:32:29.940Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -213,7 +213,7 @@
 <p><strong><em>16. /sys</em></strong><br>&emsp;&emsp;/sys 是一个虚拟目录(类似 /proc 和 /dev)，并且包含了远程连接设备的信息。<br>&emsp;&emsp;比如可以通过修改文件 /sys/devices/pci0000:00/0000:00:02.0/drm/card1/card1-eDP-1/intel_backlight/brightness 改变屏幕亮度。不要轻易改动 /sys 目录。</p>
 <p><strong><em>17. /tmp</em></strong><br>&emsp;&emsp;/tmp 包含正在运行的应用程序生成的临时文件。文件和目录经常包含应用程序当前不需要但以后可能需要的数据。</p>
 <p><strong><em>18. /var</em></strong><br>&emsp;&emsp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。</p>
-<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
+<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line">/etc/sudoers            <span class="comment"># 超级权限账户信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
 
 <p><strong><em>常见日志文件路径</em></strong>  </p>
 <table>
@@ -777,7 +777,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -786,18 +794,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -825,23 +821,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -853,7 +841,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -861,15 +857,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
               </li>
             
             <div class="clearfix"></div>

@@ -207,7 +207,7 @@
 <p><strong><em>16. /sys</em></strong><br>&emsp;&emsp;/sys 是一个虚拟目录(类似 /proc 和 /dev)，并且包含了远程连接设备的信息。<br>&emsp;&emsp;比如可以通过修改文件 /sys/devices/pci0000:00/0000:00:02.0/drm/card1/card1-eDP-1/intel_backlight/brightness 改变屏幕亮度。不要轻易改动 /sys 目录。</p>
 <p><strong><em>17. /tmp</em></strong><br>&emsp;&emsp;/tmp 包含正在运行的应用程序生成的临时文件。文件和目录经常包含应用程序当前不需要但以后可能需要的数据。</p>
 <p><strong><em>18. /var</em></strong><br>&emsp;&emsp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。</p>
-<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
+<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line">/etc/sudoers            <span class="comment"># 超级权限账户信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
 
 <p><strong><em>常见日志文件路径</em></strong>  </p>
 <table>
@@ -643,7 +643,7 @@
 <h3 id="0x01-PAM配置文件"><a href="#0x01-PAM配置文件" class="headerlink" title="0x01 PAM配置文件"></a><em>0x01 PAM配置文件</em></h3><p>&emsp;&emsp;/etc/pam.d/目录专门用于存放 PAM 配置，用于为具体的应用程序设置独立的认证方式。应用程序通过调用相应配置文件的方式，从而调用本地的认证模块。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 PAM配置文件简介</span><br><span class="line">2 PAM配置内容格式</span><br><span class="line">  2.1 模块类型</span><br><span class="line">  2.2 控制标记</span><br><span class="line">  2.3 模块路径</span><br><span class="line">  2.4 模块参数</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、PAM配置文件简介</em></strong><br>&emsp;&emsp;system-auth文件是PAM模块的重要配置文件，它主要负责用户登录系统的身份认证工作，不仅如此，其他的应用程序或服务可以通过include接口来调用它（该文件是system-auth-ac的软链接）。此外password-auth配置文件也是与身份验证相关的重要配置文件，比如用户的远程登录验证(SSH登录)就通过它调用。而在Ubuntu、SuSE Linux等发行版中，PAM主要配置文件是common-auth、common-account、common-password、common-session这四个文件，所有的应用程序和服务的主要PAM配置都可以通过它们来调用。<br>&emsp;&emsp;其他多以服务名来命名，比如/etc/pam.d/vsftpd，/etc/pam.d/login等。</p>
+<p><strong><em>1、PAM配置文件简介</em></strong><br>&emsp;&emsp;system-auth文件是PAM模块的重要配置文件，它主要负责用户登录系统的身份认证工作，不仅如此，其他的应用程序或服务可以通过include接口来调用它（该文件是system-auth-ac的软链接）。此外password-auth配置文件也是与身份验证相关的重要配置文件，比如用户的远程登录验证(SSH登录)就通过它调用。而在Ubuntu、SuSE Linux等发行版中，PAM主要配置文件是common-auth、common-account、common-password、common-session这四个文件，所有的应用程序和服务的主要PAM配置都可以通过它们来调用。<br>&emsp;&emsp;PAM具体调用哪个配置文件是写在/etc/pam.d/sshd文件内的。<br>&emsp;&emsp;其他多以服务名来命名，比如/etc/pam.d/vsftpd，/etc/pam.d/login等。</p>
 <p><strong><em>2、PAM配置内容格式</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-test06 ~]<span class="comment"># cat /etc/pam.d/sshd</span></span><br><span class="line"><span class="comment">#%PAM-1.0</span></span><br><span class="line">auth       required     pam_sepermit.so</span><br><span class="line">auth       include      password-auth</span><br><span class="line">account    required     pam_nologin.so</span><br><span class="line">account    include      password-auth</span><br><span class="line">password   include      password-auth</span><br><span class="line"><span class="comment"># pam_selinux.so close should be the first session rule</span></span><br><span class="line">session    required     pam_selinux.so      close</span><br><span class="line">session    required     pam_loginuid.so</span><br><span class="line"><span class="comment"># pam_selinux.so open should only be followed by sessions to be executed in the user context</span></span><br><span class="line">session    required     pam_selinux.so      open env_params</span><br><span class="line">session    required     pam_namespace.so</span><br><span class="line">session    optional     pam_keyinit.so      force revoke</span><br><span class="line">session    include      password-auth</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;根据pam模块文件内容看，可以将pam配置文件分为四列:</p>
@@ -1133,7 +1133,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1142,18 +1150,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1181,23 +1177,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1209,7 +1197,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1217,15 +1213,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
               </li>
             
             <div class="clearfix"></div>

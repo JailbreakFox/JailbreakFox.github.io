@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;PAM(Pluggable Authentication Modules)是一个系统级用户认证框架，在Linux中进行身份或是状态的验证程序是由PAM来进行的。&amp;emsp;&amp;emsp;Linux-PAM使本地系统管理员可以随意选择程序的认证方式。换句话说，不用(重新编写)重新编译一个包含PAM功能的应用程序，就可以改变它使用的认证机制，这种方式下，就算升级本地">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-09-21T06:22:17.000Z">
-<meta property="article:modified_time" content="2020-09-21T08:28:22.700Z">
+<meta property="article:modified_time" content="2022-07-05T01:14:41.365Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -185,7 +185,7 @@
 <h3 id="0x01-PAM配置文件"><a href="#0x01-PAM配置文件" class="headerlink" title="0x01 PAM配置文件"></a><em>0x01 PAM配置文件</em></h3><p>&emsp;&emsp;/etc/pam.d/目录专门用于存放 PAM 配置，用于为具体的应用程序设置独立的认证方式。应用程序通过调用相应配置文件的方式，从而调用本地的认证模块。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 PAM配置文件简介</span><br><span class="line">2 PAM配置内容格式</span><br><span class="line">  2.1 模块类型</span><br><span class="line">  2.2 控制标记</span><br><span class="line">  2.3 模块路径</span><br><span class="line">  2.4 模块参数</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、PAM配置文件简介</em></strong><br>&emsp;&emsp;system-auth文件是PAM模块的重要配置文件，它主要负责用户登录系统的身份认证工作，不仅如此，其他的应用程序或服务可以通过include接口来调用它（该文件是system-auth-ac的软链接）。此外password-auth配置文件也是与身份验证相关的重要配置文件，比如用户的远程登录验证(SSH登录)就通过它调用。而在Ubuntu、SuSE Linux等发行版中，PAM主要配置文件是common-auth、common-account、common-password、common-session这四个文件，所有的应用程序和服务的主要PAM配置都可以通过它们来调用。<br>&emsp;&emsp;其他多以服务名来命名，比如/etc/pam.d/vsftpd，/etc/pam.d/login等。</p>
+<p><strong><em>1、PAM配置文件简介</em></strong><br>&emsp;&emsp;system-auth文件是PAM模块的重要配置文件，它主要负责用户登录系统的身份认证工作，不仅如此，其他的应用程序或服务可以通过include接口来调用它（该文件是system-auth-ac的软链接）。此外password-auth配置文件也是与身份验证相关的重要配置文件，比如用户的远程登录验证(SSH登录)就通过它调用。而在Ubuntu、SuSE Linux等发行版中，PAM主要配置文件是common-auth、common-account、common-password、common-session这四个文件，所有的应用程序和服务的主要PAM配置都可以通过它们来调用。<br>&emsp;&emsp;PAM具体调用哪个配置文件是写在/etc/pam.d/sshd文件内的。<br>&emsp;&emsp;其他多以服务名来命名，比如/etc/pam.d/vsftpd，/etc/pam.d/login等。</p>
 <p><strong><em>2、PAM配置内容格式</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-test06 ~]<span class="comment"># cat /etc/pam.d/sshd</span></span><br><span class="line"><span class="comment">#%PAM-1.0</span></span><br><span class="line">auth       required     pam_sepermit.so</span><br><span class="line">auth       include      password-auth</span><br><span class="line">account    required     pam_nologin.so</span><br><span class="line">account    include      password-auth</span><br><span class="line">password   include      password-auth</span><br><span class="line"><span class="comment"># pam_selinux.so close should be the first session rule</span></span><br><span class="line">session    required     pam_selinux.so      close</span><br><span class="line">session    required     pam_loginuid.so</span><br><span class="line"><span class="comment"># pam_selinux.so open should only be followed by sessions to be executed in the user context</span></span><br><span class="line">session    required     pam_selinux.so      open env_params</span><br><span class="line">session    required     pam_namespace.so</span><br><span class="line">session    optional     pam_keyinit.so      force revoke</span><br><span class="line">session    include      password-auth</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;根据pam模块文件内容看，可以将pam配置文件分为四列:</p>
@@ -526,7 +526,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -535,18 +543,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -574,23 +570,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -602,7 +590,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -610,15 +606,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
               </li>
             
             <div class="clearfix"></div>

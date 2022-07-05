@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Git与Hexo | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。     0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。 123456789101112131415161718192021222324252627282930311">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。     0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。 1234567891011121314151617181920212223242526272829303132">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git与Hexo">
 <meta property="og:url" content="http://yoursite.com/2018/07/20/Git%E4%B8%8EHexo/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。     0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。 123456789101112131415161718192021222324252627282930311">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;记录一下我自己的Git + Github搭建细节，顺便记录Git、Hexo与MarkDown的相关知识。     0x01 Git&amp;emsp;&amp;emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。 1234567891011121314151617181920212223242526272829303132">
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2018/07/20/Git%E4%B8%8EHexo/git命令速查表.png">
 <meta property="og:image" content="http://yoursite.com/2018/07/20/Git%E4%B8%8EHexo/fork.png">
@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/07/20/Git%E4%B8%8EHexo/merge.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/07/20/Git%E4%B8%8EHexo/博客仓库.png">
 <meta property="article:published_time" content="2018-07-20T12:03:00.000Z">
-<meta property="article:modified_time" content="2022-04-15T02:18:40.470Z">
+<meta property="article:modified_time" content="2022-06-29T11:19:22.971Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
@@ -194,7 +194,7 @@
 <div align="left">
 
 <h3 id="0x01-Git"><a href="#0x01-Git" class="headerlink" title="0x01 Git"></a><em>0x01 Git</em></h3><p>&emsp;&emsp;Git是目前世界上最先进的分布式版本控制系统，其安装方法这里就不再赘述，主要介绍一些常用的指令。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">  1.4 添加远程仓库</span><br><span class="line">2 远程主仓库、远程分仓库与本地仓库</span><br><span class="line">  2.1 <span class="built_in">clone</span></span><br><span class="line">  2.2 fork</span><br><span class="line">  2.3 remote</span><br><span class="line">3 分支推送</span><br><span class="line">  3.1 add</span><br><span class="line">  3.2 commit</span><br><span class="line">  3.3 push</span><br><span class="line">4 分支更新</span><br><span class="line">  4.1 fetch</span><br><span class="line">  4.2 pull</span><br><span class="line">5 分支合并</span><br><span class="line">  5.1 rebase</span><br><span class="line">  5.2 merge</span><br><span class="line">6 解决冲突</span><br><span class="line">7 回溯</span><br><span class="line">  7.1 本地修改清理</span><br><span class="line">  7.2 查看历史</span><br><span class="line">  7.3 版本回溯</span><br><span class="line">8 打标签</span><br><span class="line">9 堆栈暂存</span><br><span class="line">10 清理历史记录</span><br><span class="line">11 问责</span><br><span class="line">12 提交拣取</span><br><span class="line">13 工作区代码管理</span><br><span class="line">14 常用操作命令</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">1 配置</span><br><span class="line">  1.1 用户与邮箱</span><br><span class="line">  1.2 CRLF与LF</span><br><span class="line">  1.3 SSH key</span><br><span class="line">  1.4 添加远程仓库</span><br><span class="line">2 远程主仓库、远程分仓库与本地仓库</span><br><span class="line">  2.1 <span class="built_in">clone</span></span><br><span class="line">  2.2 fork</span><br><span class="line">  2.3 remote</span><br><span class="line">3 分支推送</span><br><span class="line">  3.1 add</span><br><span class="line">  3.2 commit</span><br><span class="line">  3.3 push</span><br><span class="line">4 分支更新</span><br><span class="line">  4.1 fetch</span><br><span class="line">  4.2 pull</span><br><span class="line">5 分支合并</span><br><span class="line">  5.1 rebase</span><br><span class="line">  5.2 merge</span><br><span class="line">6 解决冲突</span><br><span class="line">7 回溯</span><br><span class="line">  7.1 本地修改清理</span><br><span class="line">  7.2 查看历史</span><br><span class="line">  7.3 版本回溯</span><br><span class="line">  7.4 远程版本回溯</span><br><span class="line">8 打标签</span><br><span class="line">9 堆栈暂存</span><br><span class="line">10 清理历史记录</span><br><span class="line">11 问责</span><br><span class="line">12 提交拣取</span><br><span class="line">13 工作区代码管理</span><br><span class="line">14 常用操作命令</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、配置</em></strong><br><em>1.1、用户与邮箱</em></p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置全局用户名与邮箱名，如果不是全局的则去掉--global</span></span><br><span class="line">git config --global user.name <span class="string">&quot;your name&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;your email&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询当前用户名和邮箱</span></span><br><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
 <p><em>1.2、CRLF与LF</em><br>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式，具体设置方式请查阅<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/08/29/CRLF%E4%B8%8ELF/">CRLF与LF</a>。  </p>
@@ -254,13 +254,13 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每个提交在一行内显示</span></span><br><span class="line">git <span class="built_in">log</span> --oneline</span><br><span class="line"><span class="comment"># 在所有提交日志中搜索包含 [homepage] 的提交</span></span><br><span class="line">git <span class="built_in">log</span> --all --grep=<span class="string">&#x27;homepage&#x27;</span></span><br><span class="line"><span class="comment"># 获取某人的提交日志</span></span><br><span class="line">git <span class="built_in">log</span> --author=<span class="string">&quot;xuyanghe&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p><em>7.3、本地版本回溯</em>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取所有操作历史</span></span><br><span class="line">git reflog</span><br><span class="line"><span class="comment"># 重置到相应提交，回退一个版本</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line"><span class="comment"># 或者重置到某一提交版本</span></span><br><span class="line">git reset --hard <span class="string">&quot;提交的哈希值&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取所有操作历史</span></span><br><span class="line">git reflog</span><br><span class="line"><span class="comment"># 重置到相应提交，回退一个版本</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line"><span class="comment"># 或者重置到某一提交版本</span></span><br><span class="line">git reset --hard <span class="string">&quot;提交的哈希值&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在已经push到远程的情况下</span></span><br><span class="line">git revert <span class="string">&quot;需要回退提交的哈希值&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p><em>7.4、远程版本回溯</em>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将版本回退提交到远程仓库</span></span><br><span class="line">git reset HEAD@&#123;1&#125;</span><br><span class="line">git push --force</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>8、打标签</em></strong><br>&emsp;&emsp;版本号用于标记比较特殊的版本:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出所有tag</span></span><br><span class="line">git tag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为当前代码添加一个tag</span></span><br><span class="line">git tag <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 添加带备注的tag，-a参数后面跟tag名和提交的哈希值，-m参数后面跟tag备注</span></span><br><span class="line">git tag -a <span class="string">&quot;tag名&quot;</span> <span class="string">&quot;提交的哈希值&quot;</span> -m <span class="string">&quot;tag备注&quot;</span></span><br><span class="line"><span class="comment"># 删除某个分支</span></span><br><span class="line">git tag -d <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示某一tag下的备注信息</span></span><br><span class="line">git show <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送某个标签</span></span><br><span class="line">git push <span class="string">&quot;仓库名&quot;</span> <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 推送所有标签</span></span><br><span class="line">git push origin --tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到某个标签下的代码</span></span><br><span class="line">git checkout <span class="string">&quot;tag名&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出所有tag</span></span><br><span class="line">git tag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为当前代码添加一个tag</span></span><br><span class="line">git tag <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 添加带备注的tag，-a参数后面跟tag名和提交的哈希值，-m参数后面跟tag备注</span></span><br><span class="line">git tag -a <span class="string">&quot;tag名&quot;</span> <span class="string">&quot;提交的哈希值&quot;</span> -m <span class="string">&quot;tag备注&quot;</span></span><br><span class="line"><span class="comment"># 删除本地tag</span></span><br><span class="line">git tag -d <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 删除远程tag</span></span><br><span class="line">git push origin :refs/tags/<span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示某一tag下的备注信息</span></span><br><span class="line">git show <span class="string">&quot;tag名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送某个标签</span></span><br><span class="line">git push origin <span class="string">&quot;tag名&quot;</span></span><br><span class="line"><span class="comment"># 推送所有标签</span></span><br><span class="line">git push origin --tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到某个标签下的代码</span></span><br><span class="line">git checkout <span class="string">&quot;tag名&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>9、堆栈暂存</em></strong><br>&emsp;&emsp;stash命令可以将修改的内容保存至堆栈区:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 保存至堆栈</span></span><br><span class="line">git stash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出堆栈中所有的存储内容</span></span><br><span class="line">git stash list</span><br><span class="line"><span class="comment"># 显示堆栈中某次存储内容</span></span><br><span class="line">git stash show stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(同时删除stash中的存储内容)</span></span><br><span class="line"><span class="comment"># 默认得到栈顶的存储</span></span><br><span class="line">git stash pop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 从堆栈中得到存储内容(不删除stash中的存储内容)</span></span><br><span class="line">git stash apply stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 丢弃堆栈中某个存储内容</span></span><br><span class="line">git stash drop stash@&#123;<span class="string">&quot;list中的num&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 丢弃堆栈中所有存储内容</span></span><br><span class="line">git stash clear</span><br></pre></td></tr></table></figure>
@@ -508,7 +508,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,18 +525,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -556,23 +552,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -584,7 +572,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -592,15 +588,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技巧</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，打包工具</a>
               </li>
             
             <div class="clearfix"></div>
