@@ -156,6 +156,138 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux进程防杀" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/">Linux进程防杀</a>
+    </h1>
+  
+
+        
+        <a href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/" class="archive-article-date">
+  	<time datetime="2021-07-05T09:22:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-05</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;本文主要研究Linux下如果防止进程被kill的方法。<br>&emsp;&emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。<br>&emsp;&emsp;当 kill 被调用时，这一切都发生在内核中。如果要实现进程防杀，只有使内核代码介于发送信号的进程和接收信号的进程之间。<br>&emsp;&emsp;Linux系统下，要实现系统防杀可以从<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">两个角度</a><sup>[1]</sup>考虑，控制接收kill流程与控制被kill进程的状态。</p>
+<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 sys_kill劫持</span><br><span class="line">3 其他方法</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、LD_PRELOAD注入程序</em></strong><br>&emsp;&emsp;这里主要叙述的是<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD注入程序</a><sup>[2]</sup>这个方法。如果杀手进程是链接动态库的，就可以通过修改LD_PRELOAD(是个环境变量，用于动态库的加载)注入拒绝杀死指定PID的代码，并替换 kill 系统调用(您可能需要对 tkill或pkill执行相同的操作，具体取决于杀手实际发送信号的方式)。  </p>
+<p><strong><em>1.1、简单使用</em></strong><br>&emsp;&emsp;首先写一个任意生成十个数字random.cpp文件(注意进程可以用.cpp或.c做后缀):</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  srand(time(<span class="literal">NULL</span>));</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">while</span>(i--) <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,rand()%<span class="number">100</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc random.cpp -o random</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后写一个用于注入为动态库的源文件unrandom.c文件(*注意进程不可以用.cpp做后缀，必须用.c，原因未知):</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rand</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic unrandom.c -o unrandom.so</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后执行如下命令，发现生成随机数均为42，且已经链接到unrandom.so上了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ldd random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so</span><br><span class="line">$ ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">ldd random</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.2、防止递归调用</em></strong><br>&emsp;&emsp;假如我们要封装一个open函数的动态库，很明显open函数将被递归调用:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int open(const char *pathname, int flags)&#123;</span><br><span class="line">  <span class="built_in">return</span> open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们将使用dlfcn.h的dlsym函数来解决递归问题，修改后的注入源码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE <span class="comment">// 指示编译器启用一些非标准</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数指针</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*orig_open_f_type)</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags, ...)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 此处可加注入的程序</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;The victim used open(...) to access &#x27;%s&#x27;!!!\n&quot;</span>, pathname); </span><br><span class="line"></span><br><span class="line">    orig_open_f_type orig_open;</span><br><span class="line">    <span class="comment">// RTLD_DEFAULT是在当前库中查找函数，而RTLD_NEXT则是在当前库之后查找第一次出现的函数</span></span><br><span class="line">    orig_open = (orig_open_f_type)dlsym(RTLD_NEXT, <span class="string">&quot;open&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> orig_open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectopen.c -o injectopen.so -ldl</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;新建一个调用open()函数的.cpp源文件:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">2</span> != argc) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: ./opener + &#x27;file path&#x27; \n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    errno = <span class="number">0</span>;</span><br><span class="line">    fd = <span class="built_in">open</span>(argv[<span class="number">1</span>], O_RDONLY | O_CREAT, S_IRWXU);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">-1</span> == fd) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() failed with error [%s]\n&quot;</span>,strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() Successful.\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc opener.cpp -o opener</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注入与不注入动态库的输出结果如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注入动态库</span></span><br><span class="line">$ ./opener test.md</span><br><span class="line">open() Successful.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不注入动态库</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/inspect_open.so ./opener test.md</span><br><span class="line">The victim used open(...) to access <span class="string">&#x27;test.md&#x27;</span>!!!</span><br><span class="line">open() Successful.</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.3、进程防杀示例</em></strong><br>&emsp;&emsp;接下来记录一个完整的<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">防杀示例</a><sup>[3]</sup>，能够记录下杀手进程终端、杀手进程、被杀进程的详细信息。首先，实现注入进程的源码injectkill.c :</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*KILL)</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TMP_BUF_SIZE 256</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 获取进程命令行参数 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_cmd_by_pid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[TMP_BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">snprintf</span>(buf, TMP_BUF_SIZE, <span class="string">&quot;/proc/%d/cmdline&quot;</span>, pid);</span><br><span class="line">    FILE* fp = fopen(buf, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, TMP_BUF_SIZE);</span><br><span class="line">    <span class="keyword">size_t</span> ret = fread(cmd, <span class="number">1</span>, TMP_BUF_SIZE - <span class="number">1</span>, fp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; ret != <span class="number">0</span> &amp;&amp; i &lt; ret - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cmd[i] == <span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">            cmd[i] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(fp);</span><br><span class="line">    cmd[TMP_BUF_SIZE - <span class="number">1</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kill</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> KILL orign_kill = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收kill命令的进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_des[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(pid, buf_des);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取当前进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_org[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getpid(), buf_org);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取父进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_porg[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getppid(), buf_porg);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hook kill(sig:%d): [%s(%d) -&gt; %s(%d)] -&gt; [%s(%d)]\n&quot;</span>,</span><br><span class="line">           sig, buf_porg, getppid(), buf_org, getpid(), buf_des, pid);</span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span>(!orign_kill)</span><br><span class="line">        orign_kill = (KILL)dlsym(RTLD_NEXT, <span class="string">&quot;kill&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> orign_kill(pid, sig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectkill.c -o injectkill.so -ldl</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;为了验证kill注入程序有起到作用，需要先写一个被杀的进程killed.cpp:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_handler</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signo == SIGINT)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;received SIGINT\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signal(SIGINT, sig_handler) == SIG_ERR)</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\ncan&#x27;t catch SIGINT\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后进行编译:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc killed.cpp -o killed</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后来验证一下注入效果:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行被杀进程</span></span><br><span class="line">$ ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察被杀进程PID</span></span><br><span class="line">$ ps -ef |grep killed</span><br><span class="line">xyh        9169   8440  0 13:53 pts/8    00:00:00 ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行kill / pkill / tkill方法</span></span><br><span class="line"><span class="comment"># 可观察到杀手进程是bash(9118)下运行的kill(9173)，被杀进程是killed(9169)</span></span><br><span class="line"><span class="comment"># 注意这里必须调用/bin/kill，而不是直接运行kill(这是使用bash内建kill程序)</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/injectkill.so /bin/<span class="built_in">kill</span> 9169</span><br><span class="line">hook <span class="built_in">kill</span>(sig:15): [-bash(9118) -&gt; /bin/<span class="built_in">kill</span> 9169(9173)] -&gt; [./killed(9169)]</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、sys_kill劫持</em></strong><br>&emsp;&emsp;LD_PRELOAD方法本质是劫持用户态的kill，但是仍然有些<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10312787/setting-the-ld-preload-environment-variable-for-commands-run-without-typing-the">不足的地方</a>，比如当用户直接调用kill就无法劫持了。如果想验证两者区别，可以用以下方法分析，两者输出是不同的因此不是同一个进程:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 内建kill</span></span><br><span class="line">$ <span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin目录下的kill程序</span></span><br><span class="line">$ /bin/<span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想要shell关闭内建kill，可以用enable来禁止使用内建kill</span></span><br><span class="line"><span class="built_in">enable</span> -n <span class="built_in">kill</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
+<h3 id="0x02-控制被kill进程状态"><a href="#0x02-控制被kill进程状态" class="headerlink" title="0x02 控制被kill进程状态"></a><em>0x02 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简单的Unix权限</span><br><span class="line">2 基础知识构建</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、简单的Unix权限</em></strong><br>&emsp;&emsp;引用 Linux 上的 kill(2) 手册页：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一个进程要有发送信号的权限，它要么是有root用户（Linux下：在目标进程的用户命名空间中具有CAP_KILL能力），要么发送进程的真实或有效用户ID必须等于真实或保存的目标进程的 <span class="built_in">set</span>-user-ID。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">以与杀手进程不同的用户身份运行被杀死的进程（假设杀手不是以 root 身份运行）</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、Linux安全模块</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LSM 可以（至少对 Smack、SELinux 和 apparmor 可以）过滤可能向什么发送信号的内容。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">使用 LSM。 例如，当使用 Smack（以 security=smack 作为内核参数启动）时，为受害进程设置不同的标签就足以让其他进程无法看到它，更不用说杀死它了。</span><br><span class="line">sudo zsh -c <span class="string">&#x27;echo unkillable &gt; /proc/self/attr/current &amp;&amp; exec sleep 1000&#x27;</span></span><br><span class="line">上述操作会在unkillable域中运行 sleep（名称可以是任何东西，关键是目前没有定义的规则允许以任何方式干扰该域），甚至以相同 uid 运行的进程也无法杀死它，root用户也一样。</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、一些进程对杀戮免疫</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Linux上id为1（init）的进程就是这种情况。其他子命名空间的根进程也不受其命名空间中其他进程发送的信号的影响。内核任务也不受信号影响。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line"><span class="comment"># 以终端为例</span></span><br><span class="line">$ sudo unshare -p --fork --mount-proc zsh</span><br><span class="line">$ <span class="built_in">kill</span> -s KILL <span class="string">&quot;$$&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、内核检测机制(未仔细研究)</em></strong><br>&emsp;&emsp;还有类似于 SystemTap 使用的内核检测机制，它允许您影响内核的行为，在这里可以用来劫持信号传递。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SystemTap 可以在这里使用。 但是请注意，您需要内核符号（Debian 上的 linux-image-&lt;version&gt;-dbgsym）才能使用它，并且 SystemTap 或您的 stap 脚本将挂钩的内部内核函数可能会发生变化。 所以可能不是最稳定的选择。 Guru 模式也应该小心使用（不要尝试做任何太花哨的事情）。</span><br><span class="line">使用 stap，您可以在正在运行的内核中的不同点注入代码。 例如，您可以挂钩处理 <span class="built_in">kill</span>() 或 tkill() 系统调用的内核函数，并告诉它当 pid 是您的受害者时将信号更改为 0（无害）。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;sys_kill&quot;) &#123; if ($pid == 12345) $sig = 0; &#125;&#x27;</span></span><br><span class="line">（这里对于任何信号，如果您只想覆盖 SIGKILL，您也可以检查 <span class="variable">$sig</span> == 9）。 现在，当使用 tkill() 或使用受害者的进程组 ID 调用 <span class="built_in">kill</span>() 时，这不起作用，因此我们需要扩展它。 这不包括信号由内核本身发送的情况。</span><br><span class="line">但是我们也可以查看内核代码，看看我们是否可以在内核检查发送信号权限的地方钩住自己。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">           if (@entry($t-&gt;pid) == 12345) $return = -1; &#125;&#x27;</span></span><br><span class="line">我们返回 -1 (-EPERM) ，当请求的 pid 是我们目标的 pid 时（这里以 12345 为例），它还有一个好处是让杀手知道它的 <span class="built_in">kill</span>() 失败了。</span><br><span class="line">~$ sleep 1000 &amp;</span><br><span class="line">[1] 8508</span><br><span class="line">~$ sudo stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($t-&gt;pid) == &#x27;</span><span class="string">&quot;$!&quot;</span><span class="string">&#x27;) $return = -1; &#125;&#x27;</span> &amp;</span><br><span class="line">[2] 8510</span><br><span class="line">~$ <span class="built_in">kill</span> -s KILL 8508</span><br><span class="line"><span class="built_in">kill</span>: <span class="built_in">kill</span> 8508 failed: operation not permitted</span><br><span class="line">它也适用于内核自行发送信号的某些情况，但不是全部。 为此，我们需要深入到内核代码中进行信号传递的最底层函数：__send_signal()（至少在当前版本的 Linux 内核中）。</span><br><span class="line">一种方法是挂钩 __send_signal() 在开始时调用的 prepare_signal() 函数（如果返回 0 则退出）；</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;prepare_signal&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($p-&gt;pid) == 12345) $return = 0; &#125;&#x27;</span></span><br><span class="line">然后，只要该 stap 进程存在，pid 12345 将是不可杀死的。</span><br><span class="line">请注意，内核通常假设 SIGKILL 会起作用，因此在某些极端情况下，上述内容可能会产生意想不到的副作用（例如，如果 oom-killer 继续选择无法杀死的受害者，则它会变得无效）。</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process</a><br>[2]<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/</a><br>[3]<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">https://www.52coder.net/post/ld-preload</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-deb与rpm打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -545,105 +677,6 @@
 
 
   
-    <article id="post-品茶图鉴" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/">品茶图鉴</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/" class="archive-article-date">
-  	<time datetime="2021-03-29T01:03:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-29</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;记录一些品茶的感悟。</p>
-<h3 id="0x01-明前龙井"><a href="#0x01-明前龙井" class="headerlink" title="0x01 明前龙井"></a><em>0x01 明前龙井</em></h3><p>&emsp;&emsp;西湖龙井主要产区有狮峰、龙井、云栖、虎跑、梅家坞五大核心产区。这次记录的是龙坞(龙井二级国家保护产区)产的明前龙井。<br>&emsp;&emsp;清明前半个月产的龙井茶，芽嫩，清香馥郁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 干茶</span><br><span class="line">  1.1 颜色</span><br><span class="line">  1.2 香味</span><br><span class="line">  1.3 干燥程度</span><br><span class="line">2 茶汤</span><br><span class="line">3 芽底</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、干茶</em></strong><br><strong><em>1.1、颜色</em></strong><br>&emsp;&emsp;暗绿带黄的糙米色，质感粗糙。  </p>
-<div align="center">
-<img src="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/干茶.jpg">
-<div align="left">  
-
-<div align="center">
-<img src="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/干茶(单).jpg">
-<div align="left">  
-
-<p><strong><em>1.2、香味</em></strong><br>&emsp;&emsp;开盖瞬间香气浓郁，清新中带有一股醇厚感，没有任何劣质霉变、酸臭杂味。</p>
-<p><strong><em>1.3、干燥程度</em></strong><br>&emsp;&emsp;用三根手指用力捻，容易变为碎末。用手拿茶叶时，很容易就碰碎。  </p>
-<div align="center">
-<img src="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/碎茶叶.jpg">
-<div align="left">  
-
-<p><strong><em>2、茶汤</em></strong><br>&emsp;&emsp;泡开的茶水呈嫩黄绿色，且没有杂质。  </p>
-<div align="center">
-<img src="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/茶汤.jpg">
-<div align="left">  
-
-<p><strong><em>3、芽底</em></strong><br>&emsp;&emsp;多为一叶一芽或两叶一芽，叶子较小(劣质龙井叶子较大，叶子越小越嫩)，部分叶底芽头较多(都是刚发的嫩芽)</p>
-</div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">食物 茶</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/29/%E5%93%81%E8%8C%B6%E5%9B%BE%E9%89%B4/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
@@ -769,11 +802,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -785,7 +818,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -793,7 +826,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -817,11 +850,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -837,15 +870,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">

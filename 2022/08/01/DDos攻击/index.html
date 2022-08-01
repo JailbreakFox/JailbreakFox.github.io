@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2021/4 | Jesse Tsui的博客</title>
+  <title>DDos攻击 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/archives/2021/04/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;DDos即分布式拒绝服务攻击，其原理通常是借用僵尸网络或特殊服务器对单个目标请求大量网络资源，以达到瘫痪网络的目的。 0x01 DDos攻击类型&amp;emsp;&amp;emsp;DDos攻击可以大致按其原理所在链路层分类:         1234567891011121 应用层攻击  1.1 cc攻击2 传输层攻击 - TCP  2.1 SYN Flood  2.2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDos攻击">
+<meta property="og:url" content="http://yoursite.com/2022/08/01/DDos%E6%94%BB%E5%87%BB/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;DDos即分布式拒绝服务攻击，其原理通常是借用僵尸网络或特殊服务器对单个目标请求大量网络资源，以达到瘫痪网络的目的。 0x01 DDos攻击类型&amp;emsp;&amp;emsp;DDos攻击可以大致按其原理所在链路层分类:         1234567891011121 应用层攻击  1.1 cc攻击2 传输层攻击 - TCP  2.1 SYN Flood  2.2">
 <meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2022/08/01/DDos%E6%94%BB%E5%87%BB/DDos攻击类型.png">
+<meta property="og:image" content="http://yoursite.com/2022/08/01/DDos%E6%94%BB%E5%87%BB/DNS反射.png">
+<meta property="article:published_time" content="2022-08-01T01:44:13.000Z">
+<meta property="article:modified_time" content="2022-08-01T05:40:18.407Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/08/01/DDos%E6%94%BB%E5%87%BB/DDos攻击类型.png">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -154,36 +159,66 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-DDos攻击" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/11/IPV4%E4%B8%8EIPV6/" class="archive-article-date">
-  	<time datetime="2021-04-11T10:01:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-11</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/11/IPV4%E4%B8%8EIPV6/">IPV4与IPV6</a>
+    <h1 class="article-title" itemprop="name">
+      DDos攻击
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2022/08/01/DDos%E6%94%BB%E5%87%BB/" class="archive-article-date">
+  	<time datetime="2022-08-01T01:44:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-01</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DDos即分布式拒绝服务攻击，其原理通常是借用僵尸网络或特殊服务器对单个目标请求大量网络资源，以达到瘫痪网络的目的。</p>
+<h3 id="0x01-DDos攻击类型"><a href="#0x01-DDos攻击类型" class="headerlink" title="0x01 DDos攻击类型"></a><em>0x01 DDos攻击类型</em></h3><p>&emsp;&emsp;DDos攻击可以大致按其原理所在链路层分类:  </p>
+<div align="center">
+<img src="/2022/08/01/DDos%E6%94%BB%E5%87%BB/DDos攻击类型.png" width="700" height="300">
+<div align="left">  
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 应用层攻击</span><br><span class="line">  1.1 cc攻击</span><br><span class="line">2 传输层攻击 - TCP</span><br><span class="line">  2.1 SYN Flood</span><br><span class="line">  2.2 RST&#x2F;FIN Flood</span><br><span class="line">3 传输层攻击 - UDP</span><br><span class="line">  3.1 UDP Flood</span><br><span class="line">4 互联网层攻击</span><br><span class="line">  4.1 ICMP Flood</span><br><span class="line">  4.2 Ping of Death</span><br><span class="line">5 特殊类型攻击 - 反射放大型</span><br><span class="line">  5.1 DNS反射</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、应用层攻击</em></strong><br><strong><em>1.1、cc攻击</em></strong><br>&emsp;&emsp;cc攻击(HTTP Flood)攻击目标是web服务器。该攻击是指攻击者通过代理或僵尸主机向目标服务器发起大量的HTTP报文，请求涉及数据库操作的URI或其它消耗系统资源的URI，造成服务器资源耗尽，无法响应正常请求。  </p>
+<p><strong><em>2、传输层攻击 - TCP</em></strong><br><strong><em>2.1、SYN Flood</em></strong><br>&emsp;&emsp;SYN Flood攻击目标是各种服务器。该攻击是指在攻击时间段内伪造不同的IP地址的SYN报文，服务端每接受到一个SYN报文，就进入SYN_RCVD状态。但服务端发送出去的ACK+SYN报文又无法的得到ACK应答，从而会导致占满服务端的SYN接收队列，使得服务器不能为正常用户服务。  </p>
+<p><strong><em>2.2、RST/FIN Flood</em></strong><br>&emsp;&emsp;RST/FIN Flood攻击目标是各种服务器。该攻击是指在成功的三向或四向 TCP-SYN 会话后，服务器会交换RST或FIN数据包以关闭主机和客户端计算机之间的 TCP-SYN 会话。在RST或FIN Flood攻击中，目标服务器会收到大量不属于目标服务器上任何会话的欺骗性RST或FIN数据包。  </p>
+<p><strong><em>3、传输层攻击 - UDP</em></strong><br><strong><em>3.1、UDP Flood</em></strong><br>&emsp;&emsp;UDP Flood攻击目标是各种服务器。该攻击是指利用大量UDP小包冲击DNS服务器或Radius认证服务器、流媒体视频服务器。  </p>
+<p><strong><em>4、互联网层攻击</em></strong><br><strong><em>4.1、ICMP Flood</em></strong><br>&emsp;&emsp;UDP Flood攻击目标是各种服务器。该攻击是指在短时间内向目的主机发送大量ping包，消耗主机资源，主机资源耗尽后就会瘫痪或者无法提供其他服务。  </p>
+<p><strong><em>4.2、Ping of Death</em></strong><br>&emsp;&emsp;Ping of Death攻击目标是各种服务器。该攻击是一种畸形报文攻击，方法是由攻击者故意发送大于65535字节的ip数据包给对方，当许多操作系统收到一个特大号的ip包时候，它们不知道该做什么，因此，服务器会被冻结、宕机或重新启动。  </p>
+<p><strong><em>5、特殊类型攻击 - 反射放大型</em></strong><br>&emsp;&emsp;反射放大型攻击成本很低，不需要僵尸网络就可以使目标机器返回海量数据。所谓反射是指攻击者将数据包的接收IP从自身篡改为目标机器，这样中间机器就会将返回的数据包输送到目标机器。所谓放大是指返回的数据包流量比发出的大几倍。  </p>
+<p><strong><em>5.1、DNS反射</em></strong><br>&emsp;&emsp;DNS反射，就是攻击者向DNS服务器发起域名解析请求，但同时将请求IP篡改为目标机器，并且数据包大小放大将近50倍。  </p>
+<div align="center">
+<img src="/2022/08/01/DDos%E6%94%BB%E5%87%BB/DNS反射.png" width="700" height="300">
+<div align="left">  
+
+<h3 id="0x02-DDos攻击防御"><a href="#0x02-DDos攻击防御" class="headerlink" title="0x02 DDos攻击防御"></a><em>0x02 DDos攻击防御</em></h3><p>&emsp;&emsp;防御方式很多，参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click">B站资源</a><sup>[1]</sup>:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 网络设备IP过滤</span><br><span class="line">2 分布式过滤</span><br><span class="line">3 CDN技术</span><br><span class="line">4 流量清洗设备</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、网络设备IP过滤</em></strong><br>&emsp;&emsp;一些大的厂商拥有大量黑名单IP，通过收集被认定为是僵尸机器的IP地址，可有效防御攻击。比如有时使用国内网络连接Github并频繁地操作时，会发现过一会儿会连接不上，很有可能就是IP被加入黑名单，需要等一段时间后恢复。  </p>
+<p><strong><em>2、分布式过滤</em></strong><br>&emsp;&emsp;根据数据包的路由，剔除一些不合理的路由数据包。  </p>
+<p><strong><em>3、CDN技术</em></strong><br>&emsp;&emsp;有些大厂可以在服务器上连接一些CDN机器，用于缓解服务器的流量压力。  </p>
+<p><strong><em>4、流量清洗设备</em></strong><br>&emsp;&emsp;可以在服务器前搭建一个流量清洗设备，提前过滤掉有问题的数据包。  </p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click">https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -195,19 +230,68 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">设计模式-行为型模式</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-DDos%E6%94%BB%E5%87%BB%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">0x01 DDos攻击类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-DDos%E6%94%BB%E5%87%BB%E9%98%B2%E5%BE%A1"><span class="toc-number">3.</span> <span class="toc-text">0x02 DDos攻击防御</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">4.</span> <span class="toc-text">0x03 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -233,8 +317,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

@@ -156,6 +156,107 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DDos攻击" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/01/DDos%E6%94%BB%E5%87%BB/">DDos攻击</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/01/DDos%E6%94%BB%E5%87%BB/" class="archive-article-date">
+  	<time datetime="2022-08-01T01:44:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-01</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DDos即分布式拒绝服务攻击，其原理通常是借用僵尸网络或特殊服务器对单个目标请求大量网络资源，以达到瘫痪网络的目的。</p>
+<h3 id="0x01-DDos攻击类型"><a href="#0x01-DDos攻击类型" class="headerlink" title="0x01 DDos攻击类型"></a><em>0x01 DDos攻击类型</em></h3><p>&emsp;&emsp;DDos攻击可以大致按其原理所在链路层分类:  </p>
+<div align="center">
+<img src="/2022/08/01/DDos%E6%94%BB%E5%87%BB/DDos攻击类型.png" width="700" height="300">
+<div align="left">  
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 应用层攻击</span><br><span class="line">  1.1 cc攻击</span><br><span class="line">2 传输层攻击 - TCP</span><br><span class="line">  2.1 SYN Flood</span><br><span class="line">  2.2 RST&#x2F;FIN Flood</span><br><span class="line">3 传输层攻击 - UDP</span><br><span class="line">  3.1 UDP Flood</span><br><span class="line">4 互联网层攻击</span><br><span class="line">  4.1 ICMP Flood</span><br><span class="line">  4.2 Ping of Death</span><br><span class="line">5 特殊类型攻击 - 反射放大型</span><br><span class="line">  5.1 DNS反射</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、应用层攻击</em></strong><br><strong><em>1.1、cc攻击</em></strong><br>&emsp;&emsp;cc攻击(HTTP Flood)攻击目标是web服务器。该攻击是指攻击者通过代理或僵尸主机向目标服务器发起大量的HTTP报文，请求涉及数据库操作的URI或其它消耗系统资源的URI，造成服务器资源耗尽，无法响应正常请求。  </p>
+<p><strong><em>2、传输层攻击 - TCP</em></strong><br><strong><em>2.1、SYN Flood</em></strong><br>&emsp;&emsp;SYN Flood攻击目标是各种服务器。该攻击是指在攻击时间段内伪造不同的IP地址的SYN报文，服务端每接受到一个SYN报文，就进入SYN_RCVD状态。但服务端发送出去的ACK+SYN报文又无法的得到ACK应答，从而会导致占满服务端的SYN接收队列，使得服务器不能为正常用户服务。  </p>
+<p><strong><em>2.2、RST/FIN Flood</em></strong><br>&emsp;&emsp;RST/FIN Flood攻击目标是各种服务器。该攻击是指在成功的三向或四向 TCP-SYN 会话后，服务器会交换RST或FIN数据包以关闭主机和客户端计算机之间的 TCP-SYN 会话。在RST或FIN Flood攻击中，目标服务器会收到大量不属于目标服务器上任何会话的欺骗性RST或FIN数据包。  </p>
+<p><strong><em>3、传输层攻击 - UDP</em></strong><br><strong><em>3.1、UDP Flood</em></strong><br>&emsp;&emsp;UDP Flood攻击目标是各种服务器。该攻击是指利用大量UDP小包冲击DNS服务器或Radius认证服务器、流媒体视频服务器。  </p>
+<p><strong><em>4、互联网层攻击</em></strong><br><strong><em>4.1、ICMP Flood</em></strong><br>&emsp;&emsp;UDP Flood攻击目标是各种服务器。该攻击是指在短时间内向目的主机发送大量ping包，消耗主机资源，主机资源耗尽后就会瘫痪或者无法提供其他服务。  </p>
+<p><strong><em>4.2、Ping of Death</em></strong><br>&emsp;&emsp;Ping of Death攻击目标是各种服务器。该攻击是一种畸形报文攻击，方法是由攻击者故意发送大于65535字节的ip数据包给对方，当许多操作系统收到一个特大号的ip包时候，它们不知道该做什么，因此，服务器会被冻结、宕机或重新启动。  </p>
+<p><strong><em>5、特殊类型攻击 - 反射放大型</em></strong><br>&emsp;&emsp;反射放大型攻击成本很低，不需要僵尸网络就可以使目标机器返回海量数据。所谓反射是指攻击者将数据包的接收IP从自身篡改为目标机器，这样中间机器就会将返回的数据包输送到目标机器。所谓放大是指返回的数据包流量比发出的大几倍。  </p>
+<p><strong><em>5.1、DNS反射</em></strong><br>&emsp;&emsp;DNS反射，就是攻击者向DNS服务器发起域名解析请求，但同时将请求IP篡改为目标机器，并且数据包大小放大将近50倍。  </p>
+<div align="center">
+<img src="/2022/08/01/DDos%E6%94%BB%E5%87%BB/DNS反射.png" width="700" height="300">
+<div align="left">  
+
+<h3 id="0x02-DDos攻击防御"><a href="#0x02-DDos攻击防御" class="headerlink" title="0x02 DDos攻击防御"></a><em>0x02 DDos攻击防御</em></h3><p>&emsp;&emsp;防御方式很多，参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click">B站资源</a><sup>[1]</sup>:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 网络设备IP过滤</span><br><span class="line">2 分布式过滤</span><br><span class="line">3 CDN技术</span><br><span class="line">4 流量清洗设备</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、网络设备IP过滤</em></strong><br>&emsp;&emsp;一些大的厂商拥有大量黑名单IP，通过收集被认定为是僵尸机器的IP地址，可有效防御攻击。比如有时使用国内网络连接Github并频繁地操作时，会发现过一会儿会连接不上，很有可能就是IP被加入黑名单，需要等一段时间后恢复。  </p>
+<p><strong><em>2、分布式过滤</em></strong><br>&emsp;&emsp;根据数据包的路由，剔除一些不合理的路由数据包。  </p>
+<p><strong><em>3、CDN技术</em></strong><br>&emsp;&emsp;有些大厂可以在服务器上连接一些CDN机器，用于缓解服务器的流量压力。  </p>
+<p><strong><em>4、流量清洗设备</em></strong><br>&emsp;&emsp;可以在服务器前搭建一个流量清洗设备，提前过滤掉有问题的数据包。  </p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click">https://www.bilibili.com/video/BV1KQ4y117nq?spm_id_from=333.337.search-card.all.click</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/01/DDos%E6%94%BB%E5%87%BB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-设计模式-行为型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -185,10 +286,10 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 观察者模式</span><br><span class="line">2 订阅-发布模式</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、观察者模式</em></strong><br>&emsp;&emsp;观察者模式有两个重要的角色，即目标和观察者，在目标和观察者之间是没有事件通道的。一方面，观察者要想订阅目标事件，由于没有事件通道，因此必须将自己添加到目标(Subject) 中进行管理；另一方面，目标在触发事件的时候，也无法将通知操作(notify) 委托给事件通道，因此只能亲自去通知所有的观察者。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Observer* observer)</span> </span>&#123;</span><br><span class="line">        m_observers.push_back(observer);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_observers.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            m_observers[i]-&gt;update(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Observer*&gt; m_observers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line"><span class="comment">// 创建观察者ob1</span></span><br><span class="line">Observer* ob1 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建观察者ob2</span></span><br><span class="line">Observer* ob2 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建目标sub</span></span><br><span class="line">Subject* sub = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 目标sub添加观察者ob1 （目标和观察者建立了依赖关系）</span></span><br><span class="line">sub-&gt;add(ob1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 目标sub添加观察者ob2</span></span><br><span class="line">sub-&gt;add(ob2);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 目标sub触发SMS事件（目标主动通知观察者）</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I fired SMS event&quot;</span>;</span><br><span class="line">sub-&gt;notify(&amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Observer* observer)</span> </span>&#123;</span><br><span class="line">        m_observers.push_back(observer);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_observers.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            m_observers[i]-&gt;update(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Observer*&gt; m_observers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建观察者ob1</span></span><br><span class="line">    Observer* ob1 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建观察者ob2</span></span><br><span class="line">    Observer* ob2 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建目标sub</span></span><br><span class="line">    Subject* sub = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob1 （目标和观察者建立了依赖关系）</span></span><br><span class="line">    sub-&gt;add(ob1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob2</span></span><br><span class="line">    sub-&gt;add(ob2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub触发SMS事件（目标主动通知观察者）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I fired SMS event&quot;</span>;</span><br><span class="line">    sub-&gt;notify(&amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>2、订阅-发布模式</em></strong><br>&emsp;&emsp;发布-订阅模式是面向调度中心编程的，只需要写一个类专门用于控制信息的发布。其优点在于去中心化，即不在乎谁是发布者，而且能管理多个事件。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(* CALLBACK)</span><span class="params">(<span class="keyword">void</span> *param)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PubSub</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, CALLBACK callback)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">            m_subscribers[topic].push_back(callback);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">publish</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, <span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; cb = m_subscribers[topic];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cb.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            CALLBACK cbFunc = cb[i];</span><br><span class="line">            cbFunc(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; &gt; m_subscribers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">void</span>* param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line"><span class="comment">// 创建事件调度中心，为订阅者和发布者提供调度服务</span></span><br><span class="line">PubSub* pubSub = <span class="keyword">new</span> PubSub();</span><br><span class="line"></span><br><span class="line"><span class="comment">// A订阅了SMS事件（A只关注SMS本身，而不关心谁发布这个事件）</span></span><br><span class="line">pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line"><span class="comment">// B订阅了SMS事件</span></span><br><span class="line">pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line"><span class="comment">// C发布了SMS事件（C只关注SMS本身，不关心谁订阅了这个事件）</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I published SMS event&quot;</span>;</span><br><span class="line">pubSub-&gt;publish(<span class="string">&quot;SMS&quot;</span>, &amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(* CALLBACK)</span><span class="params">(<span class="keyword">void</span> *param)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PubSub</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, CALLBACK callback)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">            m_subscribers[topic].push_back(callback);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">publish</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, <span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; cb = m_subscribers[topic];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cb.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            CALLBACK cbFunc = cb[i];</span><br><span class="line">            cbFunc(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; &gt; m_subscribers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">void</span>* param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建事件调度中心，为订阅者和发布者提供调度服务</span></span><br><span class="line">    PubSub* pubSub = <span class="keyword">new</span> PubSub();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A订阅了SMS事件（A只关注SMS本身，而不关心谁发布这个事件）</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// B订阅了SMS事件</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// C发布了SMS事件（C只关注SMS本身，不关心谁订阅了这个事件）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I published SMS event&quot;</span>;</span><br><span class="line">    pubSub-&gt;publish(<span class="string">&quot;SMS&quot;</span>, &amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a></p>
 </div></div>
@@ -377,134 +478,6 @@
 
 
   
-    <article id="post-Linux文件事件监控" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">Linux文件事件监控</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/" class="archive-article-date">
-  	<time datetime="2022-04-22T07:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-22</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。<br>&emsp;&emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操作上报给应用层的监听进程。  </p>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg" width="500" height="250">
-<div align="left">  
-
-<h3 id="0x01-dnotify"><a href="#0x01-dnotify" class="headerlink" title="0x01 dnotify"></a><em>0x01 dnotify</em></h3><ul>
-<li>dnotify<ul>
-<li>支持内核: 内核2.4.0以上版本</li>
-<li>缺陷:<ul>
-<li>只能监控文件夹，并且对每个目标文件夹都需要添加监控点</li>
-<li>文件夹umount时有影响</li>
-<li>使用信号的方式通知文件系统事件</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x02-inotify"><a href="#0x02-inotify" class="headerlink" title="0x02 inotify"></a><em>0x02 inotify</em></h3><ul>
-<li>inotify<ul>
-<li>支持内核: 内核2.6.13以上版本</li>
-<li>优点:<ul>
-<li>既可以监视文件，也可以监视目录</li>
-<li>不打开目标对象描述符，所以目标umount时不影响，且生成umount事件通知</li>
-<li>使用系统调用的方式通知文件系统事件，效率高于dnotify</li>
-</ul>
-</li>
-<li>缺点:<ul>
-<li>监控文件夹时不能同时监控子文件夹或子文件，需要添加监控点</li>
-<li>监控点有上限，如果监控目录过深，会影响监控能力</li>
-<li>只能记录或通知文件事件，不能阻止该操作</li>
-<li>不能记录更详细的信息，比如对文件执行操作的进程PID</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x03-fanotify"><a href="#0x03-fanotify" class="headerlink" title="0x03 fanotify"></a><em>0x03 fanotify</em></h3><ul>
-<li>fanotify<ul>
-<li>支持内核: 内核2.6.37以上版本</li>
-<li>优点:<ul>
-<li>能同时监控子文件夹或子文件</li>
-<li>无限监控点</li>
-<li>允许介入并改变文件事件的行为</li>
-<li>获取更详细的信息</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg" width="450" height="250">
-<div align="left">  
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man7/fanotify.7.html">https://www.man7.org/linux/man-pages/man7/fanotify.7.html</a><br>[2]<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/186027813">https://zhuanlan.zhihu.com/p/186027813</a></p>
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
@@ -630,11 +603,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">视觉，应用， AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -646,7 +619,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -654,7 +627,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -678,11 +651,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -698,15 +671,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">配置</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
               </li>
              
               <li class="article-tag-list-item">
