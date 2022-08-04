@@ -156,6 +156,187 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-关系型数据库-MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">关系型数据库-MySQL</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/" class="archive-article-date">
+  	<time datetime="2020-09-02T07:55:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-02</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoahong/p/10385466.html">https://www.cnblogs.com/luoahong/p/10385466.html</a><br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title">https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title</a></p>
+<h1 id="0x01-基础架构"><a href="#0x01-基础架构" class="headerlink" title="0x01 基础架构"></a>0x01 基础架构</h1><div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/MySQL逻辑架构图.png" width="700" height="500">
+<div align="left">  
+
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/工作流程.png" width="400" height="400">
+<div align="left">  
+
+
+<p>MySQL 可以分为 Server 层和存储引擎层两部分。<br>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，是共用的。<br>存储引擎层负责数据的存储和提取，且是插件式的。支持 InnoDB、MyISAM、Memory 等多个存储引擎，现在最常用的存储引擎是 InnoDB。  </p>
+<p><strong><em>连接器</em></strong><br>定义: 接器负责跟客户端建立连接、获取权限、维持和管理连接。  </p>
+<ul>
+<li>数据库里长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接</li>
+<li>短连接则是指每次执行完很少的几次查询就断开连接，下次查询再重新建立一个。</li>
+</ul>
+<p>问题<br>建立连接的过程通常是比较复杂的，所以应该尽量使用长连接。但长连接可能导致MySQL占用内存过快，因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才释放。<br>解决方案<br>1.定期断开长链接  2.MySQL5.7之后通过执行’mysql_reset_connection’来重新初始化连接资源</p>
+<p><strong><em>查询缓存</em></strong><br>之前执行过的语句及其结果可能会以 key-value 对的形式，被直接缓存在内存中。MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。<br>不建议使用查询缓存  </p>
+<ul>
+<li>查询缓存的失效非常频繁，只要有一个表更新，这个表上所有的查询缓存都被清空</li>
+<li>对于更新压力大的数据库来说，查询缓存的命中率会非常低，</li>
+<li>除非你的业务就是有一张静态表，很长时间才会更新一次(比如一个系统配置表)</li>
+</ul>
+<p>MySQL 8.0 版本开始直接将查询缓存的整块功能删掉</p>
+<p><strong><em>分析器</em></strong><br>执行sql语句前需要分析器先对用户的命令做‘词法分析’和‘语法分析’<br>词法分析: 识别出里面的字符串分别是什么<br>语法分析: 判断输入的sql语句是否满足MySQL语法</p>
+<p><strong><em>优化器</em></strong><br>作用</p>
+<ul>
+<li>在表里面有多个索引的时候，决定使用哪个索引</li>
+<li>多表关联(ioin)的时候，决定各个表的链接顺序</li>
+</ul>
+<p><strong><em>执行器</em></strong>  </p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/执行器原理.png" width="300" height="200">
+<div align="left">  
+
+<h1 id="0x02-日志系统"><a href="#0x02-日志系统" class="headerlink" title="0x02 日志系统"></a>0x02 日志系统</h1><p>&emsp;&emsp;日志模块分为redo log与binlog。两种模块配合的方式称为WAL(Write-Ahead Logging)技术。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/粉板.png">
+<div align="left">
+
+<p>两种日志有以下区别</p>
+<ul>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
+</ul>
+<p><strong><em>redo log记录原理</em></strong>  </p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/redolog内存空间.png">
+<div align="left">
+
+<p>&emsp;&emsp;redo log的内存空间是固定的。write pos与check point 之间是可写入部分，如果可写入空间不足，则清除一部分日志，并将check point后移。有了redo log，InnoDB就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为crash-safe</p>
+<p><strong><em>update语句执行流程</em></strong><br>&emsp;&emsp;update语句是比较典型的sql语句，能帮助我们理解日志记录的流程。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/update语句执行流程.png">
+<div align="left">
+
+<p>两段式提交<br>&emsp;&emsp;图表中的最后三步，被称为”两段式提交”，其实就是:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.写入redo <span class="built_in">log</span></span><br><span class="line">2.写入binlog</span><br><span class="line">3.commit</span><br></pre></td></tr></table></figure>
+
+<p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>**<em>事务隔离的基础**</em><br>1).事务基本要素（ACID）</p>
+<ul>
+<li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
+<li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
+<li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
+<li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
+</ul>
+<p>2).事务的并发问题</p>
+<ul>
+<li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
+<li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
+<li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
+</ul>
+<p>3).MySQL事务隔离级别</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
+<div align="left">
+
+<p>下面解释下四个事务隔离级别的意义:</p>
+<ul>
+<li>读未提交: 一个事务还未提交，它的变更就能被别的事务看到</li>
+<li>读提交: 一个事务提交后，它的变更才能被别的事务看到</li>
+<li>可重复读: 一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
+<li>串行化: 对于同一行记录，”写”会加”写锁”，”读”会加”读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行</li>
+</ul>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别1.png">
+<div align="left">
+
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
+<div align="left">
+
+<p><strong><em>事务隔离的实现</em></strong><br>&emsp;&emsp;在 MySQL 中，每条记录在更新的时候都会同时记录一条回滚操作。同一条记录在系统中可以存在多个版本，这就是数据库的多版本并发控制（MVCC），也因此实现了事务隔离。当没有事务需要用到这些回滚日志的时候，回滚日志会被删除。</p>
+<div align="center">
+<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离的实现.png">
+<div align="left">
+
+<p><strong><em>事务的启动方式</em></strong><br>1).尽量避免使用长事务<br>&emsp;&emsp;长事务意味着系统里面会存在很老的read-view。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
+<p>2).事务启动要注意的点</p>
+<ul>
+<li>set autocommit=0，这个命令会将这个线程的自动提交关掉。有些客户端连接框架会默认连接成功后先执行一个 set autocommit=0 的命令。这就导致接下来的查询都在事务中，如果是长连接，就导致了意外的长事务</li>
+<li>显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback</li>
+</ul>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-仓库源管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -399,105 +580,6 @@
 
 
   
-    <article id="post-装机指南" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/">装机指南</a>
-    </h1>
-  
-
-        
-        <a href="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/" class="archive-article-date">
-  	<time datetime="2020-03-12T10:29:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-12</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;组装一台电脑需要配件: 主板、内存条、CPU、显卡、硬盘、光驱、风扇、机箱、电源、显示器、鼠标与键盘。<br>&emsp;&emsp;本文旨在描述每个硬件的详细选配方法。</p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 总线</span><br><span class="line">2 协议</span><br><span class="line">3 接口</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、总线</em></strong><br>&emsp;&emsp;总线即为机箱内不同硬件设备之间交互数据的通路。<br>&emsp;&emsp;带宽即为单位时间内传输的数据量。  </p>
-<div align="center">
-<img src="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/总线.jpg" width="300" height="400">
-<div align="left">  
-
-<p><strong><em>2、协议</em></strong><br>&emsp;&emsp;协议即为两个硬件之间相互交流的规矩。只有协议完全一样或相容的两个硬件才能够通讯。</p>
-<p><strong><em>3、接口</em></strong><br>&emsp;&emsp;接口即为硬件插入口的类型，比如Type-C、USB等都为接口。</p>
-<h3 id="0x02-硬盘"><a href="#0x02-硬盘" class="headerlink" title="0x02 硬盘"></a><em>0x02 硬盘</em></h3><p>&emsp;&emsp;目前所有的硬盘所使用的协议、总线与接口可分为以下:  </p>
-<div align="center">
-<img src="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/硬盘.jpg" width="700" height="300">
-<div align="left">  
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 SATA接口</span><br><span class="line">2 M.2接口</span><br><span class="line">3 PCle接口</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、SATA接口</em></strong><br>&emsp;&emsp;常用的机械硬盘就是使用SATA总线、SATA接口。SATA3的理论极限速率为500Mb/s。  </p>
-<div align="center">
-<img src="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/SATA接口.png" width="600" height="300">
-<div align="left">  
-
-<p><strong><em>2、M.2接口</em></strong><br>&emsp;&emsp;市面上比较好的民用固态硬盘通常使用M.2接口。使用SATA总线的M.2接口理论极限速率仍然为500Mb/s。<br>&emsp;&emsp;但是使用NVME协议、PCle总线的M.2接口理论速率则由PCle决定，大部分固态硬盘为PCle3.0 x 4(速率上限为4Gb/s)，少部分为PCle4.0 x 4(速率上限为8Gb/s)。<br>&emsp;&emsp;M.2接口又分为B-Key与M-Key。前者豁口在左边，后者豁口在右边。前者支持SATA总线与PCle x 2，后者支持SATA总线与PCle x 4。</p>
-<div align="center">
-<img src="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/M.2接口.png" width="700" height="300">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">注意: 即使你的主板有M.2接口，也要查看说明书确保能使用PCle协议。</font>  </p>
-</blockquote>
-<p><strong><em>3、PCle接口</em></strong><br>&emsp;&emsp;PCle接口主要是用来插显卡的，但其实也可以插固态硬盘、有线网卡、无线网卡、声卡、采集卡等。  </p>
-<div align="center">
-<img src="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/PCle接口.png" width="600" height="300">
-<div align="left">  
-
-<h3 id="0x0-引用文献"><a href="#0x0-引用文献" class="headerlink" title="0x0? 引用文献"></a><em>0x0? 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Qv411t7ZL?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click">https://www.bilibili.com/video/BV1Qv411t7ZL?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click</a></p>
-</div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/12/%E8%A3%85%E6%9C%BA%E6%8C%87%E5%8D%97/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
@@ -619,15 +701,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -667,11 +749,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">

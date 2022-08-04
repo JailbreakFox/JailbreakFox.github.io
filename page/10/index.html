@@ -156,6 +156,105 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">环境配置-机器学习(待完成)</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2019-05-16T13:37:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-16</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 机器学习常用库TensorFlow和PyTorch，为避免忘记开发环境的配置，这里记录一下。</p>
+<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes的安装教程</a>为例，解释如何配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 DeepFakes</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、Win10环境下安装</em></strong>  </p>
+<p><strong><em>1.1、Anaconda安装</em></strong><br>&emsp;&emsp; Anaconda是一个开源的包、环境管理器，它的优势在于能够配置不同版本python环境，同时集成一键安装各种依赖包和IDE等常用工具，其中包括我们常用的Git、VSCode等软件，所以以后装机的时候完全可以先装一个Anaconda，再用它去管理我们的常用开发工具。<br>&emsp;&emsp;其安装方式较简单，查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/0202781124ef4a1bcc9ce5cd.html">百度经验</a>，注意事项如下：<br>&emsp;&emsp;1)右键管理员权限方式打开安装包;<br>&emsp;&emsp;2)个人计算机还是勾选Just Me;<br>&emsp;&emsp;3)取消勾选Add Anaconda to my PATH environment variable。由于该项勾选后，后续需要卸载Anaconda时，将需要手动删除很多路径，因此推荐在安装完毕后自己手动添加环境变量(其实就是系统的链接库查询路径)。<br>&emsp;&emsp;安装完成后，根据需要<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jpfss/p/8608204.html">手动添加环境变量</a>，目的就是为了在CMD或PowerShell环境下识别Conda指令，但实际上也没有必要，原因如下：<br>&emsp;&emsp;1)我们通常情况下会使用Anaconda自带的终端环境Anaconda Powershell Prompt，这不会产生任何错误;<br>&emsp;&emsp;2)就算按上述手动添加环境变量，在CMD或PowerShell环境下还是不能使用”conda activate”或”conda deactivate”命令，还需要在终端运行”conda init”指令，该指令是用来初始化终端和Anaconda环境链接关系的;<br>&emsp;&emsp;3)就算运行“conda init”指令了，CMD变得可以使用”conda activate”或”conda deactivate”命令，但是PowerShell仍然不行，还需要借用<a target="_blank" rel="noopener" href="http://yuhao.me/zai-powershellzhong-shi-yong-condade-activate.html">其他的技术</a>，我已经踩坑这里就别试了，这个方法用完之后，在我的CMD里添加了初始化运行环境，不知道怎么删(类似于Ubuntu下的/.bashrc)，导致每次打开终端都会显示一段错误提示。<br>&emsp;&emsp;总结，不改配置环境也行，使用Anaconda自带的终端环境Anaconda Powershell Prompt，且在后续我会介绍怎么配置VSCode内运行Prompt。<br>&emsp;&emsp;若要添加环境变量，如下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Anaconda3为安装目录</span></span><br><span class="line">\Anaconda3</span><br><span class="line">\Anaconda3\Scripts</span><br><span class="line">\Anaconda3\Library\bin</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.2、Anaconda环境生成</em></strong><br>&emsp;&emsp;Anaconda最大的优势就在于能配置多个Python环境，而由于TensorFlow不同版本只能运行在指定Python版本下，比如这里我们就需要Python3.6的环境，那么就使用Anaconda生成一个独立的环境(注意，每个环境都有自己独立的开发工具，比如就算在base环境下安装了Git，那么在新环境下仍然重新安装)。具体操作流程查阅<a target="_blank" rel="noopener" href="https://www.cnblogs.com/W-Yentl/p/7783933.html">博文</a>，这里简单码一下代码：  </p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先打开Anaconda Prompt</span></span><br><span class="line"><span class="comment">#添加配置清华源</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --set show_channel_urls yes</span><br><span class="line"><span class="comment">#直接添加一个环境，取名为faceswap，且依赖于Python3.6</span></span><br><span class="line">conda create -n faceswap python=<span class="number">3.6</span></span><br><span class="line"><span class="comment">#启动该环境</span></span><br><span class="line">conda activate faceswap</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。  </p>
+<p><strong><em>1.3、Git和VSCode安装</em></strong><br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone DeepFakes，VSCode用来搭建编译环境。  </p>
+<p><strong><em>1.4、DeepFakes</em></strong><br>&emsp;&emsp;由于本教程是以DeepFakes软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone DeepFakes，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习，<strong>且必须选用对应算力的CUDA与CUDNN，否则报错</strong>)。<br>具体安装方式如下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.6、VSCode配置</em></strong><br>&emsp;&emsp;VSCode应该是目前用过最节简的IDE了，体积小，运行快，可自动添加各种插件还开源。如果总是使用Anaconda Prompt或者从Anaconda Navigator运行环境则稍显麻烦，这里简述一下如何将Anaconda环境外安装的VSCode链接至Anaconda并搭建自己的环境。<br>&emsp;&emsp;1)首先下载依赖包-Python;<br>&emsp;&emsp;2)选择File-Preferences-Settings，键入python.python Path，修改路径为/Anaconda3/python.exe，即根目录下的python可执行文件;<br>&emsp;&emsp;3)此时在IDE内打开任意.py文件，IDE左下角便可以选择使用哪个版本Python，点击选择我们在1.2节中搭建环境的Python3.6版本;<br>&emsp;&emsp;4)键入快捷键”CTRL + ~”，打开终端界面，默认使用PowerShell(前面介绍过，使用该终端并不能activate环境)，但是应该会提示更换Prompt版本终端，更改之后就相当于一款内置于VSCode的Anaconda Prompt了。</p>
+<h3 id="0x02-PyTorch环境配置"><a href="#0x02-PyTorch环境配置" class="headerlink" title="0x02 PyTorch环境配置"></a><em>0x02 PyTorch环境配置</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、PyTorch安装</span><br><span class="line">2、PyCharm安装</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1 PyTorch安装</em></strong><br>&emsp;&emsp;PyTorch基于Ubuntu16.04配置环境。  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先安装pip3</span></span><br><span class="line">sudo apt-get install python3-pip</span><br><span class="line"><span class="comment">#更新pip3版本</span></span><br><span class="line">sudo pip3 install --upgrade pip</span><br><span class="line"><span class="comment">#去官网 https://pytorch.org 查安装代码(根据个人系统情况)</span></span><br><span class="line">pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html</span><br><span class="line"><span class="comment">#安装numpy</span></span><br><span class="line">pip3 install --upgrade numpy</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2 PyCharm安装</em></strong><br>&emsp;&emsp;PyCharm安装，用于编写python程序的IDE，具体安装方式查阅Ubuntu16.04配置sh包。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">配置</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-信息聚合工具-RSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -367,135 +466,6 @@
 
 
   
-    <article id="post-CMake" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/29/CMake/">CMake</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/29/CMake/" class="archive-article-date">
-  	<time datetime="2019-04-29T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-29</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 一个完整的软件是由很多函数库组成的，那么编译程序或者可执行程序是如何知道该怎么调用和组织这些.cpp/.h/.so/.a等等后缀名的文件呢？通常我们会处在比较高层的位置，很多IDE软件都能帮我们自动完成这些任务，比如Windows平台上就会使用Visual Studio，在Linux平台上就会使用QT creator或者CLion等<sup>[1]</sup>。但再深一层次地说，编译时文件之间的组织关系都是由一个名叫makefile的文件来完成的，只不过IDE已经代替完成了这件复杂的任务，所以通常我们对该文件并不熟悉。<br>&emsp;&emsp; makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。但是makefile语言本身比较抽象，让程序猿来手写是件非常费时费力的事情，于是CMake便应运而生了。CMake是比makefile抽象层次更高的项目管理工具，CMake能够通过命令转换成makefile文件，而所有一切软件设计人猿需要实现的编译任务均写在名为CMakeLists.txt文件内。<br>&emsp;&emsp; 本文将从两方面入手，来剖析和学习CMake。一个方向是从CMake的<a target="_blank" rel="noopener" href="https://cmake.org/cmake-tutorial">官方文档</a><sup>[2]</sup>入手,当然也可以看<a target="_blank" rel="noopener" href="https://www.hahack.com/codes/cmake">中文版文档</a><sup>[3]</sup>，推荐看中文版资料，详细且循序渐进，<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">代码</a><sup>[4]</sup>可在git上找到，该方向不再赘述；第二个方向是从一些比较实际的编译目标入手。</p>
-<h3 id="0x01-CMake可移植程序编译"><a href="#0x01-CMake可移植程序编译" class="headerlink" title="0x01 CMake可移植程序编译"></a><em>0x01 CMake可移植程序编译</em></h3><p>&emsp;&emsp; 由于程序经常需要在不同电脑之间使用，但是每次都需要重新搭建环境非常繁琐，现在希望通过CMake编译，能够将可执行程序用到的三方库打包，那么在统一个ubuntu系统下即可即插即用。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 基础知识</span><br><span class="line">  1.1 静态库与动态库</span><br><span class="line">  1.2 CMake基础编译方式</span><br><span class="line">  1.3 Ubuntu搜索路径方式</span><br><span class="line">  1.4 CMake RPATH简介</span><br><span class="line">  1.5 可执行程序链接库批量处理</span><br><span class="line">2 CMake编译可移植程序方案</span><br><span class="line">  2.1 方案一：添加环境变量</span><br><span class="line">  2.2 方案二：安装至默认lib文件夹</span><br><span class="line">  *2.3 方案三：CMake添加RPATH</span><br><span class="line">  2.4 方案四：CMake静态编译</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、基础知识</em></strong><br><strong><em>1.1、静态库与动态库</em></strong><br>&emsp;&emsp; 现在的软件基本不可能全部是自己写的函数或类，我们经常需要使用别人的函数或类，那么就有必要得到那些软件的三方库，而库又分为静态库和动态库，在Windows下分别为.lib/.dll后缀文件，在Linux下分别为.a/.so文件。所谓静态库就是编译时和源代码一起被打包入可执行程序的库，而动态库是一些可重复使用的模块，他们的具体区别可参考<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html">教程</a><sup>[5]</sup>。</p>
-<p><strong><em>1.2、CMake基础编译方式</em></strong><br>&emsp;&emsp;看过基本的中文教程demo1可知，CMake实际上都在CmakeList.txt文件内描述完成，一旦写完，只需在顶层的CmakeList.txt文件目录下执行以下语句：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#做配置</span><br><span class="line">./configure</span><br><span class="line">#新建build目录，用来储存编译结果，否则会很乱</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line">#进入build目录</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">#开始生成makefile</span><br><span class="line">cmake ..</span><br><span class="line">#使用makefile编译程序</span><br><span class="line">make</span><br><span class="line">#安装程序，即在目标位置生成可执行程序以及对库文件做操作等</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.3、Ubuntu搜索路径方式</em></strong><br>&emsp;&emsp;编译之后的可执行程序在其他电脑上无法运行，实质上最关键的问题就在于新的操作系统环境下，程序不知道去什么地方寻找依赖库。Ubuntu系统默认的<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">.so库搜索方式</a><sup>[6]</sup>根据优先级依次为:1)-L;2)/usr/lib;3)/lib;4)LIBRARY_PATH。<br>&emsp;&emsp;第二三种方法，系统只会该目录下的文件，而不会遍历文件夹，若要识别文件夹下的文件，还需要修改/etc/ld.so.conf，并调用ldconfig命令，这里不再深究。<br>&emsp;&emsp;主要讲的是最后一种方法，修改LIBRARY_PATH，其实就是我们熟知的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">修改环境变量</a><sup>[7]</sup>，所以ROS也是这样，要执行rospack find就需要添加环境变量（该文件实质上是命令行每次开启时执行的一段命令，所以这样修改环境变量来运行程序的方法必须是使用./程序，双击的话就无法运行，除非新建一个快捷方式并指定优先运行一段export），那么可以采用：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向/.bashrc中填入搜索路径</span><br><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
-<p><strong><em>1.4、CMake RPATH简介</em></strong><br>&emsp;&emsp;实际上，CMake在编译和安装后生成的可执行程序头部都会有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">RPATH参数</a><sup>[8]</sup>，其用来表示搜索库的路径。操作系统本身搜索库路径的方式有环境变量和默认路径，但RPATH能跟随程序本身，所以不受程序所在环境的制约。</p>
-<p><strong><em>1.5、可执行程序链接库批量处理</em></strong><br>&emsp;&emsp;make步骤之后生成的中间可执行程序，在Ubuntu下可通过指令ldd拿到所有用到的链接库，可通过制作.sh脚本的方式将链接库文件批量导入目标文件夹中，具体步骤如下：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span>、在build文件夹下新建脚本test.sh</span><br><span class="line">#<span class="number">2</span>、在test.sh中添加语句</span><br><span class="line">chk_lock_test=$( ldd $<span class="number">1</span> | awk &#x27;&#123;<span class="keyword">if</span> (match($<span class="number">3</span>,&quot;/&quot;))&#123; <span class="built_in">print</span> $<span class="number">3</span>&#125;&#125;&#x27; )</span><br><span class="line">cp -L -n $chk_lock_test $<span class="number">2</span></span><br><span class="line">#<span class="number">3</span>、给脚本一个权限，使其可移动所有文件</span><br><span class="line">sudo chmod <span class="number">777</span> test.sh</span><br><span class="line">#<span class="number">4</span>、脚本目录下执行命令，</span><br><span class="line"> ./test.sh 可执行程序目录 目标目录</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、CMake编译可移植程序方案</em></strong><br><strong><em>2.1、方案一：添加环境变量</em></strong><br>&emsp;&emsp;具体思路为:1)可执行程序链接库批量处理至CmakeList.txt根目录下;2)CMake将批量处理得到的动态链接库install至目标文件夹下;3)在目标机器的~/.bashrc文件中添加第二步链接库install所在路径;<br>&emsp;&emsp;思路其实非常简单，但是关键的难点在于链接库取得的技巧，这里有必要叙述一下。第一点为取得可执行程序的所有动态链接库，第二点为分析取得所有未被ldd出来的动态链接库。<br>&emsp;&emsp;难点一已经在1.5节中指出，难点二这里以取得Qt所有动态链接库为例展开讨论。实现上述三个步骤以后，我们修改LIBRARY_PATH参数，在可执行程序根目录下输入命令行：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export LD_LIBRARY_PATH=目标路径&quot; &gt;&gt;~/.bashrc</span><br><span class="line">#<span class="built_in">cd</span>到可执行程序根目录下，运行程序</span><br><span class="line">./程序名称</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;发现程序报错，错误内容如下：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This application failed to <span class="built_in">start</span> because it could <span class="keyword">not</span> <span class="built_in">find</span> or load the Qt platform plugin &quot;xcb&quot;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;根据上述提示可知，缺少了名为xcb的一个链接库，<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010168781/article/details/82150105">查阅资料</a><sup>[9]</sup>可知我们需要在可执行目录下新建platforms文件夹，并添加libqxcb.so文件（该文件在qt的/Qt5.7.1/5.7/gcc_64/lib目录下，包括qt所有的链接库都在这个文件夹下面。<em>如何修改该libqxcb.so链接库位置仍未知</em>）。继续执行可执行程序，发现报出同样错误，为了找到错误原因，这里<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_26106275/article/details/82778951">引入一个技巧</a><sup>[10]</sup>，即设置命令行的环境变量参数QT_DEBUG_PLUGINS，并修改/.bashrc文件，使其在命令行开启前执行：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &quot;export QT_DEBUG_PLUGINS=<span class="number">1</span>&quot; &gt;&gt;~/.bashrc</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;再次运行可执行程序，报错出现具体的错误原因：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Found metadata <span class="keyword">in</span> lib /home/cobot/PathImporter/build/platforms/libqxcb.so, metadata=&#123;</span><br><span class="line">    &quot;IID&quot;: &quot;org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.<span class="number">5</span>.<span class="number">3</span>&quot;,</span><br><span class="line">    &quot;MetaData&quot;: &#123;</span><br><span class="line">        &quot;Keys&quot;: [</span><br><span class="line">            &quot;xcb&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;className&quot;: &quot;QXcbIntegrationPlugin&quot;,</span><br><span class="line">    &quot;debug&quot;: false,</span><br><span class="line">    &quot;version&quot;: <span class="number">329473</span></span><br><span class="line">&#125;</span><br><span class="line">Got keys from plugin meta data (&quot;xcb&quot;)</span><br><span class="line">Cannot load library /home/cobot/PathImporter/build/platforms/libqxcb.so:(libQt5XcbQpa.so.<span class="number">5</span>: 无法打开共享对象文件: 没有那个文件或目录)</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;可见文件夹里实质上还缺少一个名为libQt5XcbQpa.so.5的动态链接库，那么我们只需从qt的lib下找到该库并放入我们的目标文件夹下。再次运行程序并报错：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot mix incompatible Qt library (version <span class="number">0</span>x50201) with this library (version <span class="number">0</span>x50701)</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;大意是Qt版本5.2.1与5.7.1的链接库不匹配，无法融合。可知实际上我的系统里存在多版本的Qt，Qt实质上会在默认库路径/usr/lib下生成一些必要的库，这也是报错的原因。这里有一个解决的技巧，即将所有lib文件全部放入目标文件夹，并执行程序，最后发现程序正常运行，可见库中必然还存在一个特定的动态链接库，使用二分法，多次将不同文件放入目标文件夹运行，迭代排查后发现缺少链接库libQt5DBus.so.5链接库，将其放入目标文件夹，运行正常（这个方法很牛逼，我都佩服我自己，全网基本上没有资料说这个文件的）。<br>&emsp;&emsp;这里还有两个细节，第一点libQt5DBus.so.5是一个类似于快捷方式的文件，它会链接到libQt5DBus.so.5.7.1上（库里还有一个libQt5DBus.so.5.7，暂时不知道何用），所以最后只需要取出libQt5DBus.so.5.7.1并重命名为libQt5DBus.so.5即可，链接库libQt5XcbQpa.so.5同理。第二点，有必要猜测下这三个链接库存在的意义，libqxcb.so应该是qt的入口库，然后libQt5XcbQpa.so.5是实际运行的函数，并且链接到了5.7.1的子版本上（方便版本控制），而这里的libQt5DBus.so.5应该是做Qt不同版本之间的一个解释器。</p>
-<p><strong><em>2.2、方案二：安装至默认lib文件夹</em></strong><br>&emsp;&emsp;方案一虽然可以顺利运行，但是每次要修改环境变量实际上是非常麻烦的事情，且并不是所有软件使用者都有这个觉悟，那么我们要考虑更加便捷的方法，即将库文件用CMake install至系统默认搜索的库，即在1.3节中已经叙述过的/usr/lib与/lib位置。在1.3节也讲过了，如果将所有库文件放入lib文件夹下的子文件夹内，则系统仍搜索不到链接库（如果要采取修改/etc/ld.so.conf以及添加ldconfig命令，则还不如方案一便捷）。唯一的办法就是将所有库文件全部install至lib文件夹下，运行程序完美报错：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by ./PathImporter)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.<span class="number">5</span>: no version information available (required by /usr/lib/libvtkGUISupportQt-<span class="number">8</span>.<span class="number">2</span>.so.<span class="number">1</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: /usr/lib/x86_64-linux-gnu/libQt5Core.so.<span class="number">5</span>: no version information available (required by /usr/lib/libQt5X11Extras.so.<span class="number">5</span>)</span><br><span class="line">./PathImporter: relocation error: /usr/lib/libQt5X11Extras.so.<span class="number">5</span>: symbol qt_version_tag, version Qt_5.<span class="number">7</span> <span class="keyword">not</span> <span class="keyword">defined</span> <span class="keyword">in</span> file libQt5Core.so.<span class="number">5</span> with link <span class="built_in">time</span> reference</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;未知错误（应该是多版本Qt的原因，还害得我修改了lib库所有文件权限，导致sudo用不了、系统时间出错、U盘都不出等一系列尿频尿急症状T_T）等待填坑。</p>
-<p>*<strong><em>2.3、方案三：CMake添加RPATH</em></strong><br>&emsp;&emsp;在1.4节中已经叙述过CMake RPATH的用途，该方案可以说是最便捷和人性化的了，第一不用修改环境变量，第二在make与make install的过程中就能决定中间执行程序与安装执行程序的库链接路径。<br>&emsp;&emsp;根据1.4节中提到的<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">博客</a><sup>[8]</sup>，我们只需要在CmakeList.txt的install部分添加如下指令：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#方法一：在CMakeLists.txt文件中修改</span><br><span class="line">#修改安装执行程序的库链接路径</span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line">#保证只针对当前的target进行make install的时候RPATH的写入了</span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line">#方法二：在编译时修改</span><br><span class="line">#这里将install路径设置为build</span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../build/ ..</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这里依旧分享两个小技巧</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用指令readelf可以查看某一可执行程序的RPATH</span></span><br><span class="line">readelf -d <span class="string">&#x27;程序路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用ldd可查看某一可执行程序的链接库</span></span><br><span class="line">ldd <span class="string">&#x27;程序路径&#x27;</span></span><br></pre></td></tr></table></figure>
-<p><strong><em>2.4、方案四：CMake静态编译</em></strong><br>&emsp;&emsp;除了上述三种调控动态链接库位置与链接的方式之外，我们还可以用CMake实现静态编译，即将三方库的动态链接库或者静态链接库加上自己的程序编译在一起，得到不需要外接库的可执行程序，在1.1节之中已经分析过了这种程序的优缺点（小型项目还好，一旦做大型项目，不但编译慢而且运行的电脑也会被大量占用空间）。目前该方式只在网上搜索到设置CMake设置静态编译的一段命令：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS &quot;-static $&#123;CMAKE_CXX_FLAGS&#125;&quot;)</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;该方法等待填坑（不了解意思，执行之后也会报错）。</p>
-<h3 id="0x02-链接库选择路径"><a href="#0x02-链接库选择路径" class="headerlink" title="0x02 链接库选择路径"></a><em>0x02 链接库选择路径</em></h3><p>&emsp;&emsp;由于链接库路径选择的重要性，这一章节着重分析一下Linux链接库选择路径顺序及其修改方式。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 Linux动态库选择顺序</span><br><span class="line">2 Linux如何添加链接库搜索路径</span><br><span class="line">3 如何修改Qt链接库路径</span><br><span class="line">4 CMake链接库三要素*</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、Linux 动态库选择顺序</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 缓存 /etc/ld.so.cache</span><br><span class="line">    4.系统默认库位置 /lib    /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、Linux如何添加链接库搜索路径</em></strong></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 方案一 =====</span></span><br><span class="line"><span class="comment"># 首先找到.so或.a文件所在路径</span></span><br><span class="line"><span class="comment"># 比如/home/uos/Desktop/test.so</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改搜索路径，在如下文件中添加链接库所在路径</span></span><br><span class="line">sudo vim /etc/ld.so.conf</span><br><span class="line"><span class="comment"># 添加/home/uos/Desktop/</span></span><br><span class="line"><span class="comment"># 或者在/etc/ld.so.conf.d/文件夹下新建.conf文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使修改生效</span></span><br><span class="line">sudo /sbin/ldconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 方案二 =====</span></span><br><span class="line"><span class="comment"># LD_LIBRARY_PATH是Linux环境变量名</span></span><br><span class="line"><span class="comment"># 主要用于指定查找链接库时除默认路径外的其他路径</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="string">&quot;链接库路径&quot;</span>:<span class="variable">$LD_LIBRARY_PATH</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 方案三 =====</span></span><br><span class="line"><span class="comment"># 在CMakeLists.txt文件中添加rpath的搜索路径</span></span><br><span class="line"><span class="comment"># 方法一：针对某个链接库的rpath</span></span><br><span class="line">FIND_LIBRARY(MY_LIB NAMES libMathFunctions.so PATHS /home/uos/Desktop)</span><br><span class="line">TARGET_LINK_LIBRARYS(<span class="variable">$&#123;CMAKE_PROJECT_NAME&#125;</span> <span class="variable">$&#123;MY_LIB&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二：针对项目的rpath</span></span><br><span class="line"><span class="comment"># 注意该方法必须先设置安装路径及安装配置，且在make install后生效</span></span><br><span class="line">SET(CMAKE_INSTALL_PREFIX <span class="string">&quot;安装路径&quot;</span>)</span><br><span class="line">install(TARGETS MyLib</span><br><span class="line">        EXPORT MyLibTargets </span><br><span class="line">        LIBRARY DESTINATION lib  <span class="comment"># 动态库安装路径</span></span><br><span class="line">        ARCHIVE DESTINATION lib  <span class="comment"># 静态库安装路径</span></span><br><span class="line">        RUNTIME DESTINATION bin  <span class="comment"># 可执行文件安装路径</span></span><br><span class="line">        PUBLIC_HEADER DESTINATION include  <span class="comment"># 头文件安装路径</span></span><br><span class="line">        )</span><br><span class="line"><span class="comment">#修改安装执行程序的库链接路径</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_INSTALL_RPATH 目标路径)</span><br><span class="line"><span class="comment">#保证只针对当前的target进行make install的时候RPATH的写入了</span></span><br><span class="line">set_target_properties(程序名 PROPERTIES INSTALL_RPATH CMAKE_INSTALL_RPATH)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法三：针对各种编译版本的rpath</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS_DEBUG <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O0 -ggdb,-rpath=./libs&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELEASE <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3,-rpath=./libs&quot;</span>)</span><br><span class="line"><span class="comment"># ！！当然也可以使用相对路径，这个方法最推荐，-Wl代表用逗号添加参数</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -Wl,-rpath,./&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、如何修改Qt链接库路径</em></strong><br>&emsp;&emsp;为了少踩编译中或编译后的坑，请注意以下事项:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1.编译Qt、DTK 的生产目录，一定不要设置在 /usr 目录，这样非常容易桌面系统崩溃</span><br><span class="line">2.在编译其他应用时。请设置以下环境变量来确保程序加载的库不是系统自带的库(如果需要指定多个路径，请使用英文的:隔开)</span><br><span class="line">    1.export LD_LIBRARY_PATH=qtbuilddir/lib:dtkbuilddir/lib   说明： 设置程序运行是链接库的路径</span><br><span class="line">    2.export QT_QPA_PLATFORM_PLUGIN_PATH=qtbuilddir/plugins/platforms 说明： 平台相关插件</span><br><span class="line">    3.export QT_PLUGIN_PATH=qtbuilddir/plugins    说明： Qt插件</span><br><span class="line">    4.export PKG_CONFIG_PATH=qtbuilddir/lib/pkgconfig:dtkbuilddir/lib/pkgconfig说明：我们在Qt pro 中配置的 phgconfig 就是用过查找该目录下的.PC文件 实现头文件和库的引入</span><br><span class="line">3.设置上述环境变量的方式有多种。各有优点，如下： 我们建议通过终端的方式设置环境变量，然后在该终端上启动Qt，不会影响系统。</span><br><span class="line">    1.通过脚本的方式在终端设置环境变量。</span><br><span class="line">        生效时间：立即生效  有效期：仅仅在该终端生效，关闭终端无效 生效范围：仅对当前用户有效</span><br><span class="line">        优点：不影响系统。</span><br><span class="line">        缺点：需要从该终端启动 qtcreator   修改变量需要关闭qtcreator</span><br><span class="line">    2.在Qt 项目的构建环境中设置  </span><br><span class="line">        生效时间：立即生效  有效期：该项目  生效范围：该项目</span><br><span class="line">        优点：随时修改</span><br><span class="line">        缺点：项目多的时候每个项目都要设置一遍</span><br><span class="line">    3.通过修改用户目录下的&lt;code&gt;~/.bashrc&lt;/code&gt;文件进行配置 </span><br><span class="line">        生效时间：下次打开终端  有效期：永久  生效范围：仅对当前用户有效</span><br><span class="line">        缺点：可能导致系统崩溃</span><br><span class="line">    4.修改系统配置，需要管理员权限（如root） 不建议！</span><br><span class="line">4.在情况出乎您的意料的时候，请检查加载的库路径是否正确，检查方法如下</span><br><span class="line">    1.QtCreator 调试模式下菜单栏  控件 -&gt; 视图 -&gt; DebugLoger 该对话框输出了加载库的详细信息</span><br><span class="line">    2.使用ldd + 程序名（库名） 可以看到依赖库</span><br></pre></td></tr></table></figure>
-
-<p>*<strong>4<em>、CMake链接库三要素</em></strong></p>
-<ul>
-<li>.so / .o 文件</li>
-<li>库头文件</li>
-<li>环境变量</li>
-</ul>
-<h3 id="0x03-CMake常用变量"><a href="#0x03-CMake常用变量" class="headerlink" title="0x03 CMake常用变量"></a><em>0x03 CMake常用变量</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在CMake3.1之后设置编译器使用c++11的方法</span></span><br><span class="line"><span class="comment"># 此版本之前，可以使用 SET(CMAKE_CXX_FLAGS &quot;$&#123;CMAKE_CXX_FLAGS&#125; -std=gnu++11&quot;)</span></span><br><span class="line">SET(CMAKE_CXX_STANDARD 11)</span><br><span class="line"></span><br><span class="line">SET(CMAKE_INCLUDE_CURRENT_DIR ON)</span><br><span class="line"><span class="comment"># 设置自动生成moc文件,AUTOMOC打开可以省去QT5_WRAP_CPP命令</span></span><br><span class="line">SET(CMAKE_AUTOMOC ON)</span><br><span class="line"><span class="comment"># 设置自动生成ui.h文件,AUTOUIC打开可以省去QT5_WRAP_UI命令</span></span><br><span class="line">SET(CMAKE_AUTOUIC ON)</span><br><span class="line"><span class="comment"># 设置c++编译属性  https://blog.csdn.net/rheostat/article/details/19811407</span></span><br><span class="line">SET(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span>  -g -Wall -pthread -Wl,--as-need -fPIE -Wl,-E&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_DEBUG <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O0 -ggdb&quot;</span>)</span><br><span class="line">SET(CMAKE_CXX_FLAGS_RELEASE <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3&quot;</span>)</span><br><span class="line"><span class="comment"># 设置CMake模块寻找路径  CMAKE_SOURCE_DIR代表该CMakeLists.txt文件路径</span></span><br><span class="line">SET(CMAKE_MODULE_PATH <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/cmake/modules)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 龙芯系统</span></span><br><span class="line">IF (<span class="variable">$&#123;CMAKE_SYSTEM_PROCESSOR&#125;</span> MATCHES <span class="string">&quot;mips64&quot;</span>)</span><br><span class="line">    <span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi&quot;</span>)</span><br><span class="line">ENDIF()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果不是Debug模式.</span></span><br><span class="line"><span class="comment"># EXECUTE_PROCESS(COMMAND &lt;一句shell命令&gt; WORKING_DIRECTORY &lt;这句shell命令执行的工作目录&gt;)</span></span><br><span class="line">IF (NOT (<span class="variable">$&#123;CMAKE_BUILD_TYPE&#125;</span> MATCHES <span class="string">&quot;Debug&quot;</span>))</span><br><span class="line">    <span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -Ofast&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># generate qm</span></span><br><span class="line">    EXECUTE_PROCESS(COMMAND bash <span class="string">&quot;translate_generation.sh&quot;</span></span><br><span class="line">                    WORKING_DIRECTORY <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>)</span><br><span class="line">ENDIF ()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译类型</span></span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;Release&quot;</span>)</span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;Debug&quot;</span>)</span><br><span class="line">SET(CMAKE_BUILD_TYPE <span class="string">&quot;RelWithDebInfo&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译器</span></span><br><span class="line"><span class="comment">#告知当前使用的是交叉编译方式，必须配置</span></span><br><span class="line">SET(CMAKE_SYSTEM_NAME Linux)</span><br><span class="line"><span class="comment">#指定编译工具，一定要设置</span></span><br><span class="line"><span class="comment">#或交叉编译器使用绝对地址</span></span><br><span class="line">SET(CMAKE_C_COMPILER <span class="string">&quot;arm-linux-gcc&quot;</span>)</span><br><span class="line"><span class="comment">#指定C++交叉编译器</span></span><br><span class="line">SET(CMAKE_CXX_COMPILER <span class="string">&quot;arm-linux-g++&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-CMake学习中获得优质且繁杂的资源"><a href="#0x04-CMake学习中获得优质且繁杂的资源" class="headerlink" title="0x04 CMake学习中获得优质且繁杂的资源"></a><em>0x04 CMake学习中获得优质且繁杂的资源</em></h3><p>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7eeb6f79a275">CMake中调用Qt模块</a><sup>[11]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://blog.csdn.net/bigdog_1027/article/details/79113342">CMake中add_library include_library以及target_link_libraries区别</a><sup>[12]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoug2020/p/5904206.html">CMake构建动态、静态库</a><sup>[13]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html">CMake的一些变量</a><sup>[14]</sup><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html">CMake跨平台编译以及静态编译</a><sup>[15]</sup></p>
-<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/caowei880123/article/details/52497550">https://blog.csdn.net/caowei880123/article/details/52497550</a><br>[2]<a target="_blank" rel="noopener" href="https://cmake.org/cmake-tutorial">https://cmake.org/cmake-tutorial</a><br>[3]<a target="_blank" rel="noopener" href="https://www.hahack.com/codes/cmake">https://www.hahack.com/codes/cmake</a><br>[4]<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">https://github.com/wzpan/cmake-demo</a><br>[5]<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html">https://www.runoob.com/w3cnote/cpp-static-library-and-dynamic-library.html</a><br>[6]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16097611/article/details/53484724">https://blog.csdn.net/qq_16097611/article/details/53484724</a><br>[7]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html">https://www.cnblogs.com/trying/archive/2013/06/07/3123577.html</a><br>[8]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rickyk/p/3884257.html">https://www.cnblogs.com/rickyk/p/3884257.html</a><br>[9]<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010168781/article/details/82150105">https://blog.csdn.net/u010168781/article/details/82150105</a><br>[10]<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_26106275/article/details/82778951">https://blog.csdn.net/sinat_26106275/article/details/82778951</a><br>[11]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7eeb6f79a275">https://www.jianshu.com/p/7eeb6f79a275</a><br>[12]<a target="_blank" rel="noopener" href="https://blog.csdn.net/bigdog_1027/article/details/79113342">https://blog.csdn.net/bigdog_1027/article/details/79113342</a><br>[13]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoug2020/p/5904206.html">https://www.cnblogs.com/zhoug2020/p/5904206.html</a><br>[14]<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html">https://cmake.org/cmake/help/v3.0/manual/cmake-variables.7.html</a><br>[15]<a target="_blank" rel="noopener" href="https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html">https://zilongshanren.com/blog/2014-08-31-how-to-use-cmake-to-compile-static-library.html</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/29/CMake/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/9/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/11/">下一页</a>
@@ -617,15 +587,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -665,11 +635,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">

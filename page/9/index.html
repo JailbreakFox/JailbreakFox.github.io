@@ -156,6 +156,93 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/29/CRLF%E4%B8%8ELF/">CRLF与LF</a>
+    </h1>
+  
+
+        
+        <a href="/2019/08/29/CRLF%E4%B8%8ELF/" class="archive-article-date">
+  	<time datetime="2019-08-29T05:41:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-29</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;CRLF, LF 是用来表示文本换行的方式。CR(Carriage Return) 代表回车，对应字符 ‘\r’；LF(Line Feed) 代表换行，对应字符 ‘\n’。<br>&emsp;&emsp;不同操作系统会使用不同的换行方式，这也是导致我们传输文件时出现乱码的原因之一。目前主流的操作系统中，Windows使用的是CRLF, Unix系统(包括Linux, MacOS近些年的版本)使用的是LF。</p>
+<h3 id="0x01-Git换行符"><a href="#0x01-Git换行符" class="headerlink" title="0x01 Git换行符"></a><em>0x01 Git换行符</em></h3><p>&emsp;&emsp;Git服务器使用的换行方式是LF。  </p>
+<p><strong><em>1、换行符自动转换</em></strong><br>&emsp;&emsp;由于要考虑操作系统区别，Git提供了一个”<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33275327/article/details/81485051">换行符自动转换</a><sup>[1]</sup>“(AutoCRLF)功能，即当Windows用户向Git提交代码时，自动将CRLF格式转换为LF格式，当Windows用户拉代码时，又自动将代码转换为CRLF格式。<br>&emsp;&emsp;AutoCRLF使用方法如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##Windows系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时转换为CRLF</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">##Unix系统</span></span><br><span class="line"><span class="comment">#提交时转换为LF，检出时不转换</span></span><br><span class="line">git config --global core.autocrlf input</span><br><span class="line"><span class="comment">##None</span></span><br><span class="line"><span class="comment">#提交、检出均不转换</span></span><br><span class="line">git config --global core.autocrlf <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p><strong><em>2、禁止/警告不可逆转换</em></strong><br>&emsp;&emsp;由于没有一个绝对有效的算法来判断一个文件是否采用多种换行符混合模式，因此Git还提供了”<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ec9564fe1c2b">禁止/警告不可逆转换</a><sup>[2]</sup>“的配置，可以自动完成标准化与转换。它的设置方式如下：<br>&emsp;&emsp;SafeCRLF使用方法如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#拒绝提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">true</span></span><br><span class="line"><span class="comment">#允许提交包含混合换行符的文件</span></span><br><span class="line">git config --global core.safecrlf <span class="literal">false</span></span><br><span class="line"><span class="comment">#提交包含混合换行符的文件时给出警告</span></span><br><span class="line">git config --global core.safecrlf warn</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-换行符格式转换工具"><a href="#0x02-换行符格式转换工具" class="headerlink" title="0x02 换行符格式转换工具"></a><em>0x02 换行符格式转换工具</em></h3><p>&emsp;&emsp;由于日常工作的时候会经常下载到不同换行符格式的文件，导致出现乱码或无法编译。现使用Unix下的一个转换工具<a target="_blank" rel="noopener" href="https://blog.csdn.net/yonggang7/article/details/38459143">dos2unix</a><sup>[3]</sup>，它能将LF、CRLF格式文件进行相互转换。安装方式较为简单：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install dos2unix</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;另外附上其常用的使用方法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-k 保持源文件mtime</span></span><br><span class="line"><span class="comment">#-n 保留旧文件，转换结果输出到新文件。</span></span><br><span class="line">dos2unix -k -n file newfile</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33275327/article/details/81485051">https://blog.csdn.net/weixin_33275327/article/details/81485051</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ec9564fe1c2b">https://www.jianshu.com/p/ec9564fe1c2b</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/yonggang7/article/details/38459143">https://blog.csdn.net/yonggang7/article/details/38459143</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/08/29/CRLF%E4%B8%8ELF/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-设计模式-创建型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -354,105 +441,6 @@
 
 
   
-    <article id="post-环境配置-机器学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">环境配置-机器学习(待完成)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2019-05-16T13:37:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-16</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 机器学习常用库TensorFlow和PyTorch，为避免忘记开发环境的配置，这里记录一下。</p>
-<h3 id="0x01-Tensorflow环境配置"><a href="#0x01-Tensorflow环境配置" class="headerlink" title="0x01 Tensorflow环境配置"></a><em>0x01 Tensorflow环境配置</em></h3><p>&emsp;&emsp; TensorFlow由谷歌人工智能团队谷歌大脑开发和维护，是一种开源的神经网络算法库。由于网上的配置资料又多而且奇葩，这里以<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes的安装教程</a>为例，解释如何配置。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 Win10环境下安装</span><br><span class="line">  1.1 Anaconda安装</span><br><span class="line">  1.2 Anaconda环境生成</span><br><span class="line">  1.3 Git和VSCode安装</span><br><span class="line">  1.4 DeepFakes</span><br><span class="line">  1.5 TensorFlow</span><br><span class="line">  1.6 VSCode配置</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、Win10环境下安装</em></strong>  </p>
-<p><strong><em>1.1、Anaconda安装</em></strong><br>&emsp;&emsp; Anaconda是一个开源的包、环境管理器，它的优势在于能够配置不同版本python环境，同时集成一键安装各种依赖包和IDE等常用工具，其中包括我们常用的Git、VSCode等软件，所以以后装机的时候完全可以先装一个Anaconda，再用它去管理我们的常用开发工具。<br>&emsp;&emsp;其安装方式较简单，查阅<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/0202781124ef4a1bcc9ce5cd.html">百度经验</a>，注意事项如下：<br>&emsp;&emsp;1)右键管理员权限方式打开安装包;<br>&emsp;&emsp;2)个人计算机还是勾选Just Me;<br>&emsp;&emsp;3)取消勾选Add Anaconda to my PATH environment variable。由于该项勾选后，后续需要卸载Anaconda时，将需要手动删除很多路径，因此推荐在安装完毕后自己手动添加环境变量(其实就是系统的链接库查询路径)。<br>&emsp;&emsp;安装完成后，根据需要<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jpfss/p/8608204.html">手动添加环境变量</a>，目的就是为了在CMD或PowerShell环境下识别Conda指令，但实际上也没有必要，原因如下：<br>&emsp;&emsp;1)我们通常情况下会使用Anaconda自带的终端环境Anaconda Powershell Prompt，这不会产生任何错误;<br>&emsp;&emsp;2)就算按上述手动添加环境变量，在CMD或PowerShell环境下还是不能使用”conda activate”或”conda deactivate”命令，还需要在终端运行”conda init”指令，该指令是用来初始化终端和Anaconda环境链接关系的;<br>&emsp;&emsp;3)就算运行“conda init”指令了，CMD变得可以使用”conda activate”或”conda deactivate”命令，但是PowerShell仍然不行，还需要借用<a target="_blank" rel="noopener" href="http://yuhao.me/zai-powershellzhong-shi-yong-condade-activate.html">其他的技术</a>，我已经踩坑这里就别试了，这个方法用完之后，在我的CMD里添加了初始化运行环境，不知道怎么删(类似于Ubuntu下的/.bashrc)，导致每次打开终端都会显示一段错误提示。<br>&emsp;&emsp;总结，不改配置环境也行，使用Anaconda自带的终端环境Anaconda Powershell Prompt，且在后续我会介绍怎么配置VSCode内运行Prompt。<br>&emsp;&emsp;若要添加环境变量，如下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Anaconda3为安装目录</span></span><br><span class="line">\Anaconda3</span><br><span class="line">\Anaconda3\Scripts</span><br><span class="line">\Anaconda3\Library\bin</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.2、Anaconda环境生成</em></strong><br>&emsp;&emsp;Anaconda最大的优势就在于能配置多个Python环境，而由于TensorFlow不同版本只能运行在指定Python版本下，比如这里我们就需要Python3.6的环境，那么就使用Anaconda生成一个独立的环境(注意，每个环境都有自己独立的开发工具，比如就算在base环境下安装了Git，那么在新环境下仍然重新安装)。具体操作流程查阅<a target="_blank" rel="noopener" href="https://www.cnblogs.com/W-Yentl/p/7783933.html">博文</a>，这里简单码一下代码：  </p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先打开Anaconda Prompt</span></span><br><span class="line"><span class="comment">#添加配置清华源</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --set show_channel_urls yes</span><br><span class="line"><span class="comment">#直接添加一个环境，取名为faceswap，且依赖于Python3.6</span></span><br><span class="line">conda create -n faceswap python=<span class="number">3.6</span></span><br><span class="line"><span class="comment">#启动该环境</span></span><br><span class="line">conda activate faceswap</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;注意，每次打开Prompt或者Anaconda都需要重新激活环境，当然我们也可以使用Anaconda Navigater直接界面模式操作(配置包的时候推荐这么做，很方便快捷)。  </p>
-<p><strong><em>1.3、Git和VSCode安装</em></strong><br>&emsp;&emsp;正如之前所说，开发环境最后都在Anaconda内配置，所以如果电脑上未安装Git，这里可以直接从Anaconda Navigater里在该环境下添加Git。但是如果电脑里已经有了Git，那么最好不要重复安装，否则由于注册表或者环境变量的问题，会导致电脑不知道运行哪个好，且软件版本不好控制，对电脑的速度也会有影响。<br>&emsp;&emsp;我还是推荐自己独立去安装Git和VSCode，然后再自己做配置。对于本教程来说，Git用来clone DeepFakes，VSCode用来搭建编译环境。  </p>
-<p><strong><em>1.4、DeepFakes</em></strong><br>&emsp;&emsp;由于本教程是以DeepFakes软件安装为例，所以这里添加该节，如果不需要玩AI换脸，则跳过此节。安装细节全在<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap/blob/master/INSTALL.md">DeepFakes git库</a>，<strong>其实本文基本上是在该安装指导下完成的，但是它有一个小坑，是在pip安装TensorFlow那步，后面叙述</strong>。现在讲一下其下载过程：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首先clone DeepFakes，由于我的Git是安装在Anaconda外的，因此自行打开Git Bash，clone至任意位置</span></span><br><span class="line">git clone --depth <span class="number">1</span> https://github.com/deepfakes/faceswap.git</span><br><span class="line"><span class="comment">#打开Anaconda Prompt并进入faceswap环境</span></span><br><span class="line"><span class="comment">#由于我直接放在初始位置下，所以直接cd</span></span><br><span class="line">cd faceswap</span><br><span class="line"><span class="comment">#这步重要，不管你打不打算Manual install，都要试一遍Easy install，若失败再手动安装</span></span><br><span class="line">python setup.py</span><br><span class="line"><span class="comment">#成功则结束，不成功继续手动安装。若没有试过简易安装，则requirements.txt安装不了，不知为何</span></span><br><span class="line">conda install tk</span><br><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.5、TensorFlow</em></strong><br>&emsp;&emsp;最后一步，也是最重要的一步，花费时间较长。注意这里有坑，如果直接再Anaconda里用pip安装tensorflow，则运行py文件时，会导致无法找到TensorFlow链接库(至今不知道如何解决，原则上直接在环境变量下添加其下载位置即可，到那时又不知道怎么加)，因此我们改为直接使用Conda方法将TensorFlow安装至我们在1.2节配置的环境之下，这样Anacodna Prompt终端会自动识别这些新的包。<br>&emsp;&emsp;这里要注意我们首先要确定自己的电脑显卡究竟适合GPU还是CPU版本的TensorFlow，<strong>同样的任务前者计算时间需要几小时，后者可能就是一星期</strong>。GPU版本需要先安装CUDA和CUDNN，如果想使用，首先要查看显卡究竟适不适合GPU运算，其对应CUDA的算力直接查阅<a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">NVIDIA官网</a>(现在只有NVIDIA开源了其CUDA编译器，所以才能够借用GPU之力做机器学习，<strong>且必须选用对应算力的CUDA与CUDNN，否则报错</strong>)。<br>具体安装方式如下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据需要安装自己想要的版本</span></span><br><span class="line"><span class="comment">#GPU版TensorFlow</span></span><br><span class="line">conda install tensorflow-gpu</span><br><span class="line"><span class="comment">#CPU版TensorFlow</span></span><br><span class="line">conda install tensorflow</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.6、VSCode配置</em></strong><br>&emsp;&emsp;VSCode应该是目前用过最节简的IDE了，体积小，运行快，可自动添加各种插件还开源。如果总是使用Anaconda Prompt或者从Anaconda Navigator运行环境则稍显麻烦，这里简述一下如何将Anaconda环境外安装的VSCode链接至Anaconda并搭建自己的环境。<br>&emsp;&emsp;1)首先下载依赖包-Python;<br>&emsp;&emsp;2)选择File-Preferences-Settings，键入python.python Path，修改路径为/Anaconda3/python.exe，即根目录下的python可执行文件;<br>&emsp;&emsp;3)此时在IDE内打开任意.py文件，IDE左下角便可以选择使用哪个版本Python，点击选择我们在1.2节中搭建环境的Python3.6版本;<br>&emsp;&emsp;4)键入快捷键”CTRL + ~”，打开终端界面，默认使用PowerShell(前面介绍过，使用该终端并不能activate环境)，但是应该会提示更换Prompt版本终端，更改之后就相当于一款内置于VSCode的Anaconda Prompt了。</p>
-<h3 id="0x02-PyTorch环境配置"><a href="#0x02-PyTorch环境配置" class="headerlink" title="0x02 PyTorch环境配置"></a><em>0x02 PyTorch环境配置</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、PyTorch安装</span><br><span class="line">2、PyCharm安装</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1 PyTorch安装</em></strong><br>&emsp;&emsp;PyTorch基于Ubuntu16.04配置环境。  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先安装pip3</span></span><br><span class="line">sudo apt-get install python3-pip</span><br><span class="line"><span class="comment">#更新pip3版本</span></span><br><span class="line">sudo pip3 install --upgrade pip</span><br><span class="line"><span class="comment">#去官网 https://pytorch.org 查安装代码(根据个人系统情况)</span></span><br><span class="line">pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html</span><br><span class="line"><span class="comment">#安装numpy</span></span><br><span class="line">pip3 install --upgrade numpy</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2 PyCharm安装</em></strong><br>&emsp;&emsp;PyCharm安装，用于编写python程序的IDE，具体安装方式查阅Ubuntu16.04配置sh包。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">配置</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
@@ -574,15 +562,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,11 +610,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
