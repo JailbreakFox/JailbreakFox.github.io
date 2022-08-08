@@ -156,6 +156,96 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-设计模式-生产者消费者模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">设计模式-生产者消费者模式</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2022-08-08T10:55:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;生产者-消费者模式是一个十分经典的<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">多线程并发协作</a><sup>[1]</sup>的模式，严格地讲并不属于设计模式的范畴。<br>&emsp;&emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。  </p>
+<div align="center">
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg" width="400" height="80">
+<div align="left">
+
+<h3 id="0x01-生产者消费者模式"><a href="#0x01-生产者消费者模式" class="headerlink" title="0x01 生产者消费者模式"></a><em>0x01 生产者消费者模式</em></h3><p>&emsp;&emsp;更复杂的生产者消费者模式应该能实现一部分线程被用于去生产数据，另一部分线程去处理数据。这里，我们将只有一个生产者线程和一个消费者线程的情况称为单缓冲，将多生产者线程、多消费者线程的情况称为多缓冲。  </p>
+<div align="center">
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/生产者消费者模式.png" width="700" height="200">
+<div align="left">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单缓冲</span><br><span class="line">2 多缓冲</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、单缓冲</em></strong>  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sem_t</span> empty_sem; <span class="comment">// 同步信号量， 当满了时阻止生产者放产品</span></span><br><span class="line"><span class="keyword">sem_t</span> full_sem; <span class="comment">// 同步信号量， 当没产品时阻止消费者消费</span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex; <span class="comment">// 互斥信号量， 一次只有一个线程访问缓冲</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">buffer</span> = <span class="number">0</span>; <span class="comment">//单缓冲</span></span><br><span class="line"><span class="keyword">int</span> product_id = <span class="number">0</span>; <span class="comment">//生产者id</span></span><br><span class="line"><span class="keyword">int</span> consumer_id = <span class="number">0</span>; <span class="comment">//消费者id</span></span><br><span class="line"><span class="keyword">int</span> product_sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> consumer_sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">start</span>;</span> <span class="comment">//记录时间</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">end</span>;</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> timer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">product</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++product_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;empty_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        product_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld product_%d is producing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               product_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;full_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++consumer_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;full_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        consumer_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld consumer_%d is consumeing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               consumer_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;empty_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span> </span>&#123;</span><br><span class="line">    gettimeofday(&amp;start, <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    sem_init(&amp;empty_sem, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;full_sem, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">pthread_t</span> id1[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">pthread_t</span> id2[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> T1 = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> T2 = <span class="number">1</span>;</span><br><span class="line">    pthread_create(&amp;id1[<span class="number">1</span>], <span class="literal">NULL</span>, product, &amp;T1);</span><br><span class="line">    pthread_create(&amp;id2[<span class="number">1</span>], <span class="literal">NULL</span>, consumer, &amp;T2);</span><br><span class="line">    pthread_join(id1[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(id2[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">https://jenkov.com/tutorials/java-concurrency/producer-consumer.html</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-LinuxIO模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -393,94 +483,6 @@
 
 
   
-    <article id="post-设计模式-行为型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式-行为型模式</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2022-07-28T09:38:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-28</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">设计模式-可复用的面向对象软件元素</a><sup>[1]</sup>，以及<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">菜鸟教程</a><sup>[2]</sup>上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。</p>
-<h3 id="0x01-观察者模式"><a href="#0x01-观察者模式" class="headerlink" title="0x01 观察者模式"></a><em>0x01 观察者模式</em></h3><p>&emsp;&emsp;观察者模式定义了对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知，并自动更新。<br>&emsp;&emsp;订阅-发布模式是由观察者模式衍生出来的，前者新增了第三个组件，称为调度中心或事件通道，它维持着发布者和订阅者之间的联系，过滤所有发布者传入的消息并相应地分发它们给订阅者。  </p>
-<div align="center">
-<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/观察者模式.png">
-<div align="left">  
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 观察者模式</span><br><span class="line">2 订阅-发布模式</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、观察者模式</em></strong><br>&emsp;&emsp;观察者模式有两个重要的角色，即目标和观察者，在目标和观察者之间是没有事件通道的。一方面，观察者要想订阅目标事件，由于没有事件通道，因此必须将自己添加到目标(Subject) 中进行管理；另一方面，目标在触发事件的时候，也无法将通知操作(notify) 委托给事件通道，因此只能亲自去通知所有的观察者。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Observer* observer)</span> </span>&#123;</span><br><span class="line">        m_observers.push_back(observer);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_observers.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            m_observers[i]-&gt;update(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Observer*&gt; m_observers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建观察者ob1</span></span><br><span class="line">    Observer* ob1 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建观察者ob2</span></span><br><span class="line">    Observer* ob2 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建目标sub</span></span><br><span class="line">    Subject* sub = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob1 （目标和观察者建立了依赖关系）</span></span><br><span class="line">    sub-&gt;add(ob1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob2</span></span><br><span class="line">    sub-&gt;add(ob2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub触发SMS事件（目标主动通知观察者）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I fired SMS event&quot;</span>;</span><br><span class="line">    sub-&gt;notify(&amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、订阅-发布模式</em></strong><br>&emsp;&emsp;发布-订阅模式是面向调度中心编程的，只需要写一个类专门用于控制信息的发布。其优点在于去中心化，即不在乎谁是发布者，而且能管理多个事件。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(* CALLBACK)</span><span class="params">(<span class="keyword">void</span> *param)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PubSub</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, CALLBACK callback)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">            m_subscribers[topic].push_back(callback);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">publish</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, <span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; cb = m_subscribers[topic];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cb.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            CALLBACK cbFunc = cb[i];</span><br><span class="line">            cbFunc(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; &gt; m_subscribers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">void</span>* param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建事件调度中心，为订阅者和发布者提供调度服务</span></span><br><span class="line">    PubSub* pubSub = <span class="keyword">new</span> PubSub();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A订阅了SMS事件（A只关注SMS本身，而不关心谁发布这个事件）</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// B订阅了SMS事件</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// C发布了SMS事件（C只关注SMS本身，不关心谁订阅了这个事件）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I published SMS event&quot;</span>;</span><br><span class="line">    pubSub-&gt;publish(<span class="string">&quot;SMS&quot;</span>, &amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a></p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
@@ -602,15 +604,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,11 +652,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">

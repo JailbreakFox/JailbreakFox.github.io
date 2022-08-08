@@ -156,6 +156,146 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-DBus" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/03/21/DBus/">DBus</a>
+    </h1>
+  
+
+        
+        <a href="/2020/03/21/DBus/" class="archive-article-date">
+  	<time datetime="2020-03-21T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;DBus是针对桌面环境优化的IPC(Interprocess Communication )机制，用于进程间的通信或进程与内核的通信。</p>
+<div align="center">
+<img src="/2020/03/21/DBus/DBus框架.png" width="700" height="400">
+<div align="left">  
+
+<h3 id="0x01-DBus简介"><a href="#0x01-DBus简介" class="headerlink" title="0x01 DBus简介"></a><em>0x01 DBus简介</em></h3><p>&emsp;&emsp;DBus是基于socket开发的机制，有低时延、低消耗等优点，提供了一对一的对等通讯；使用dbus-daemon作为后台进程时，可实现多对多通讯。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 运行机制</span><br><span class="line">2 重要ID</span><br></pre></td></tr></table></figure>
+<p><em>1、运行机制</em>  </p>
+<ul>
+<li>DBus-daemon : 运行一个DBus-daemon就是创建了一条通信的总线Bus。总线分为 系统总线(system daemon)/会话总线(session daemon) 两类，例如Ubuntu系统开启时会自动拉起一个系统总线和会话总线。</li>
+<li>Connection : 当一个进程(Application)连接到Bus总线上面时，就产生了连接(Connection)。</li>
+<li>Application : 每个进程即为一个Application。DBus能实现进程间通信，且其实现是基于socket的，因此总有一个等待连接的Server APP，以及一个主动连接的Client APP。</li>
+<li>Object : 可理解为程序员希望用DBus实现的进程间通信类。</li>
+<li>Interface : 可理解为每个Object内的类成员。</li>
+<li>通信方式 : D-bus里面支持的通信方式有signal/method两种。前者其实就是广播(UDP,一对多的通信方式);后者则是一问一答(TCP，一对一的通信),这种方式有点像远程调用，Client APP1调用Server APP2的method并传递参数给这个method，获取到这个method返回的结果。</li>
+</ul>
+<p><em>2、重要ID</em><br>&emsp;&emsp;在DBus具体实现中，经常会用到一些标志ID，用于寻找指定的进程或方法，具体内容可<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">参考教程</a><sup>[1]</sup>。</p>
+<ul>
+<li>Address : 用于标识DBus-daemon。当一个DBus-daemon运行以后，其他的app该怎么连接到这个DBus-daemon，靠的就是address。格式如/com/polkit/qt/example/dbus。</li>
+<li>BusName : 用于标志Application。当一个进程连接上DBus-daemon，就需要注册一个BusName方便其他进程找到自己。格式如com.polkit.qt.example.dbus。</li>
+<li>Object Path : 用于标识Object类。当Client APP1的Object要跟Server APP2的Object通信时，就要告诉DBus-daemon目标的Object Path。格式如/com/polkit/qt/example/dbus。</li>
+<li>Interface name : 用于标志Object类成员。格式如com.polkit.qt.example.dbus。</li>
+<li>Member name : 用于标志通信类型信息。无特殊格式。</li>
+</ul>
+<h3 id="0x02-QDBus简介"><a href="#0x02-QDBus简介" class="headerlink" title="0x02 QDBus简介"></a><em>0x02 QDBus简介</em></h3><p>&emsp;&emsp;Qt有DBus的具体实现库，即QDBus。QDBus可参考QtLearning/QDbus里的实现代码，具体使用方式如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用命令qdbuscpp2xml生成dbus.h的xml文件</span></span><br><span class="line"><span class="comment"># dbus类为客户端用来调用服务端的接口</span></span><br><span class="line">qdbuscpp2xml dbus.h -A -o com.polkit.qt.example.dbus.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-DBus工具"><a href="#0x03-DBus工具" class="headerlink" title="0x03 DBus工具"></a><em>0x03 DBus工具</em></h3><p>&emsp;&emsp;下面介绍一些用来生成DBus或查看DBus运行状态的工具。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 QDBus文件生成工具</span><br><span class="line">  1.1 qdbuscpp2xml</span><br><span class="line">  1.2 qdbusxml2cpp</span><br><span class="line">2 DBus状态分析工具</span><br><span class="line">  2.1 D-feet</span><br><span class="line">  2.2 dbus-send&#x2F;dbus-monitor</span><br><span class="line">  2.3 busctl</span><br><span class="line">  2.4 qdbus --literal</span><br></pre></td></tr></table></figure>
+<p><em>1、QDBus文件生成工具</em><br>&emsp;&emsp;如上一章所示，QDBus的进程间通信类实现需要先根据该类生成xml文件，再根据xml生成用于Server APP的adaptor以及用于Client APP的interface。<br><em>1.1、qdbuscpp2xml</em><br>&emsp;&emsp;qdbuscpp2xml会解析QObject派生类的C++头文件或是源文件，生成DBus的内省xml文件。qdbuscpp2xml会区分函数的输入输出，如果参数声明为const则会是输入，否则可能会被当作输出。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qdbuscpp2xml使用语法如下：</span></span><br><span class="line">qdbuscpp2xml [options...] [files...]</span><br><span class="line"><span class="comment"># Options参数如下：</span></span><br><span class="line"><span class="comment"># -p|-s|-m：只解析脚本化的属性、信号、方法(槽函数)</span></span><br><span class="line"><span class="comment"># -P|-S|-M：解析所有的属性、信号、方法(槽函数) </span></span><br><span class="line"><span class="comment"># -a：输出所有的脚本化内容，等价于-psm </span></span><br><span class="line"><span class="comment"># -A：输出所有的内容，等价于-PSM    </span></span><br><span class="line"><span class="comment"># -o filename：输出内容到filename文件</span></span><br></pre></td></tr></table></figure>
+<p><em>1.2、qdbusxml2cpp</em><br>&emsp;&emsp;qdbusxml2cpp能根据上一节生成的xml文件生成用于Server APP的adaptor以及用于Client APP的interface。  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractAdaptor的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于服务端的适配器dbus_adaptor.h/dbus_adaptor.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -i dbus.h -a dbus_adaptor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从XML文件生成继承自QDBusAbstractInterface的类</span></span><br><span class="line"><span class="comment"># 用命令qdbusxml2cpp生成用于客户端的接口dbus_interface.h/dbus_interface.cpp</span></span><br><span class="line">qdbusxml2cpp com.polkit.qt.example.dbus.xml -p dbus_interface</span><br></pre></td></tr></table></figure>
+
+<p><em>2、DBus状态分析工具</em><br>&emsp;&emsp;DBus运行过程中，需要用调试工具观察运行状态，这里介绍两种工具，分别是D-feet以及dbus_send/dbus_monitor。<br><em>2.1、D-feet</em><br>&emsp;&emsp;D-feet是Red Hat公司研发的DBus调试工具。当你准备用DBus来写你的程序时，D-feet是非常用的，它可以显示service提供的所有对象、信号、和方法，另外还可以通过它实现方法调用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装D-feet</span></span><br><span class="line">sudo apt-get install d-feet</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">d-feet</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/2020/03/21/DBus/D-feet.png" width="700" height="400">
+<div align="left">  
+
+<p><em>2.2、dbus-send/dbus-monitor</em><br>&emsp;&emsp;有时在tty模式或无法打开图形界面的情况下，d-feet还无法满足我们的需求。<br><strong>dbus-send</strong><br>&emsp;&emsp;dbus-send是dbus提供的一个工具程序，用来向dbus维护的消息总线或会话总线发送消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">dbus-send [--system | --session] --<span class="built_in">type</span>=[method_call | signal] --<span class="built_in">print</span>-reply --dest=服务名 对象路径 接口名.方法名 参数类型:参数值 参数类型:参数值</span><br><span class="line"></span><br><span class="line"><span class="comment"># 举例1</span></span><br><span class="line">dbus-send --system --<span class="built_in">type</span>=method_call --<span class="built_in">print</span>-reply --dest=org.bluez /org/bluez/audio org.bluez.audio.Manager.CreateDevice byte:0x01 byte:0x02</span><br><span class="line"><span class="comment"># 举例2-获取property值</span></span><br><span class="line"><span class="comment"># 这个关键在于读取属性调用的是org.freedesktop.DBus.Properties.GetAll</span></span><br><span class="line">dbus-send --system --<span class="built_in">print</span>-reply --dest=org.freedesktop.Accounts /org/freedesktop/Accounts/User1000 org.freedesktop.DBus.Properties.GetAll string:<span class="string">&quot;org.freedesktop.Accounts.User&quot;</span></span><br><span class="line"><span class="comment"># 举例3-观察property值改变</span></span><br><span class="line">dbus-monitor interface=org.freedesktop.DBus.Properties,path=/com/deepin/dde/daemon/Launcher,member=PropertiesChanged</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–system / –session<br>将命令发向系统总线或会话总线  </li>
+<li>–type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>–print-reply<br>打印返回结果</li>
+<li>–dest<br>服务名</li>
+<li>对象路径<br>/org/bluez/audio</li>
+<li>接口名<br>org.bluez.audio.Manager.CreateDevice</li>
+<li>参数类型:参数值<br>byte:0x01 byte:0x02</li>
+</ul>
+<p><strong>dbus-monitor</strong><br>&emsp;&emsp;dbus-monitor用于监听消息总线或会话总线发送的消息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbus-monitor --system <span class="string">&quot;type=&#x27;signal&#x27;, sender=&#x27;org.gnome.TypingMonitor&#x27;, interface=&#x27;org.gnome.TypingMonitor&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>type<br>设置为信号signal，或者方法调用memthod_call</li>
+<li>sender<br>要监听的服务名</li>
+<li>interface<br>要监听的对象路径</li>
+</ul>
+<p><em>2.3、busctl</em><br>&emsp;&emsp;busctl set-property能够用来设置dbus的参数</p>
+<p><em>2.4、qdbus –literal</em><br>&emsp;&emsp;可用该方法更改session的属性，比如修改背景图片: </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qdbus --literal com.deepin.wm /com/deepin/wm com.deepin.wm.ChangeCurrentWorkspaceBackground <span class="string">&quot;图片地址&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-GSettings配置"><a href="#0x04-GSettings配置" class="headerlink" title="0x04 GSettings配置"></a><em>0x04 GSettings配置</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件路径</span></span><br><span class="line"><span class="comment"># /usr/share/glib-2.0/schemas/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出所有schema</span></span><br><span class="line">gsettings list-schemas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找某个schema下的所有key</span></span><br><span class="line">gsettings list-keys <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某个schema下某个key的值,假如要获取priority</span></span><br><span class="line">gsettings get <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> priority</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置某个schema下某个key的值,假如要设置active</span></span><br><span class="line">gsettings <span class="built_in">set</span> <span class="string">&quot;org.gnome.settings-daemon.plugins.keyboard&quot;</span> active <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-引用文献"><a href="#0x05-引用文献" class="headerlink" title="0x05 引用文献"></a><em>0x05 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html">https://www.cnblogs.com/muxue/archive/2012/12/06/2806305.html</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/03/21/DBus/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-装机指南" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -363,157 +503,6 @@
 
 
   
-    <article id="post-UML" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/28/UML/">UML</a>
-    </h1>
-  
-
-        
-        <a href="/2019/09/28/UML/" class="archive-article-date">
-  	<time datetime="2019-09-28T01:55:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;UML(Unified Modeling Language)是一种统一建模语言，其优点在于可使用代码的形式快速绘制线框图。<br>&emsp;&emsp;用于绘制UML图形的语言包括Mermaid、Flow、PlantUML、yUML等，下面逐个介绍各个语言。</p>
-<h3 id="0x01-Mermaid"><a href="#0x01-Mermaid" class="headerlink" title="0x01 Mermaid"></a><em>0x01 Mermaid</em></h3><p>&emsp;&emsp;语法超级简单，支持html标签及流行的markdown，可惜的是目前不支持类图的UML，但支持的流程图，甘特图以及时序图都是十分不错的。<br>&emsp;&emsp;在VSCode中配置非常方便，只需要安装Markdown Preview Enhanced插件(该插件还支持导出html与pdf)。并且支持markdown文件，方便写博客，另外hexo也支持Mermaid语法显示，以及Github官方也开始支持Mermaid语法(这意味着在Github官网也能够预览Mermaid语法绘制的图形)。</p>
-<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Mermaid的语法(需要加’```mermaid’前缀)，摘自<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">文献</a><sup>[1]</sup>:   </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">1.横向流程图:</span><br><span class="line">graph LR</span><br><span class="line">A[方形] --&gt;B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt;|a=1| D[结果1]</span><br><span class="line">    C --&gt;|a=2| E[结果2]</span><br><span class="line">    F[横向流程图]</span><br><span class="line"></span><br><span class="line">2.竖向流程图:</span><br><span class="line">graph TD</span><br><span class="line">A[方形] --&gt; B(圆角)</span><br><span class="line">    B --&gt; C&#123;条件a&#125;</span><br><span class="line">    C --&gt; |a=1| D[结果1]</span><br><span class="line">    C --&gt; |a=2| E[结果2]</span><br><span class="line">    F[竖向流程图]</span><br><span class="line"></span><br><span class="line">3.时序图:</span><br><span class="line">sequenceDiagram</span><br><span class="line">participant 张三</span><br><span class="line">participant 李四</span><br><span class="line">张三-&gt;王五: 王五你好吗？</span><br><span class="line">loop 健康检查</span><br><span class="line">    王五-&gt;王五: 与疾病战斗</span><br><span class="line">end</span><br><span class="line">Note right of 王五: 合理 食物 &lt;br/&gt;看医生...</span><br><span class="line">李四--&gt;&gt;张三: 很好!</span><br><span class="line">王五-&gt;李四: 你怎么样?</span><br><span class="line">李四--&gt;王五: 很好!</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-Flow"><a href="#0x02-Flow" class="headerlink" title="0x02 Flow"></a><em>0x02 Flow</em></h3><p>&emsp;&emsp;Flow是专门用来画标准流程图的语言，但是Mermaid实际上也能画流程图，并且从渲染上来看Mermaid更胜一筹，因此推荐使用Mermaid。<br>&emsp;&emsp;在VSCOde中使用Flow，也需要先安装Markdown Preview Enhanced插件。能直接在markdown文件中编写。</p>
-<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;在VSCode中的使用方法(需要加’```flow’前缀):  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: 开始框</span><br><span class="line">op=&gt;operation: 处理框</span><br><span class="line">cond=&gt;condition: 判断框(是或否?)</span><br><span class="line">sub1=&gt;subroutine: 子流程</span><br><span class="line">io=&gt;inputoutput: 输入输出框</span><br><span class="line">e=&gt;end: 结束框</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;io-&gt;e</span><br><span class="line">cond(no)-&gt;sub1(right)-&gt;op</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-PlantUML"><a href="#0x03-PlantUML" class="headerlink" title="0x03 PlantUML"></a><em>0x03 PlantUML</em></h3><p>&emsp;&emsp;PlantUML可以很好地绘制用例图、类图、活动图、组件图、状态图、对象图、时序图，语法非常简洁。<br>&emsp;&emsp;其在VSCode中配置较麻烦(推荐在线画图并生成图片)。需要安装PlantUML插件、去graphviz官网下载其安装包以及安装JAVA。而且只支持特殊的后缀文件，如.pu / .puml。<br>&emsp;&emsp;其可绘制的图形如下(使用PlantUML思维导图绘制):  </p>
-<div align="center">
-<img src="/2019/09/28/UML/UML可绘制图.png">
-<div align="left">  
-
-<p>&emsp;&emsp;下面讲解各个图的绘制基础语法，推荐查看<a target="_blank" rel="noopener" href="https://plantuml.com/zh">PlantUML官网</a><sup>[2]</sup>，以及<a target="_blank" rel="noopener" href="https://www.planttext.com/">在线绘制PlantUML</a><sup>[3]</sup></p>
-<p><strong><em>1、活动图</em></strong><br>&emsp;&emsp;活动图<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">基础用法</a><sup>[4]</sup>，在学习完基础用法后，实现一个复杂的活动图:  </p>
-<pre><code class="sh">@startuml
-start
-#00FF00:while 0;
-note left
-遍历检查/proc/&#39;PID号&#39;
-end note
-repeat
-    if(是否为Shell进程) then (Y)
-        #A020F0:while 1;
-        while (循环查看该进程fd0与fd1 ?) is (未检查完)
-            if(当前fd是否重定向到socket) then (Y)
-                if(socket号是否连接到外界IP) then (Y)
-                    #A020F0:goto [while 1];
-                    detach
-                else (N)
-                    #00FF00:goto [while 0];
-                    detach
-                endif
-            else (N)
-                if(当前fd是否重定向到管道) then (Y)
-                    :继续检查管道对端进程当前fd的连接;
-                    note left
-                    对应以下四种情况分别执行
-                    ====
-                    * 1.连接socket未外连IP(正常)
-                    * 2.连接socket且外连IP(可疑)
-                    * 3.连接到管道文件(可疑)
-                    * 4.连接到匿名管道(可疑)
-                    end note
-                    #A020F0:goto [while 1];
-                    detach
-                else (N)
-                    #00FF00:goto [while 0];
-                    detach
-                endif
-            endif
-        endwhile (检查完)
-    else (N)
-        #00FF00:goto [while 0];
-        detach
-    endif
-if(Shell进程fd0与fd1均外联?) then (Y)
-    #HotPink:打日志并上报警告;
-else (N)
-    :结束检查该进程;
-endif
-repeat while (检查下一个Shell进程)
-@enduml</code></pre>
-<div align="center">
-<img src="/2019/09/28/UML/复杂活动图.png">
-<div align="left">  
-
-
-<h3 id="0x04-yUML"><a href="#0x04-yUML" class="headerlink" title="0x04 yUML"></a><em>0x04 yUML</em></h3><p>&emsp;&emsp;yUML支持类图、活动图、用例图、状态图、部署图、包图以及时序图(Sequnce)。<br>&emsp;&emsp;在VSCOde中使用yUML，需要先安装yUML插件，并且其文件后缀必须为.yuml。<br>&emsp;&emsp;然而Markdown Preview Enhanced插件支持其使用时序图(Sequnce)。  </p>
-<p><strong><em>1、基础语法</em></strong><br>&emsp;&emsp;下面介绍几个简单的VSCode中撰写Sequnce的语法(需要加’```sequnce’前缀):  </p>
-<pre><code class="sh">对象A-&gt;对象B: 对象B你好吗?（请求）
-Note right of 对象B: 对象B的描述
-Note left of 对象A: 对象A的描述(提示)
-对象B--&gt;对象A: 我很好(响应)
-对象A-&gt;对象B: 你真的好吗？</code></pre>
-<h3 id="0x05-参考文献"><a href="#0x05-参考文献" class="headerlink" title="0x05 参考文献"></a><em>0x05 参考文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.runoob.com/markdown/md-advance.html">https://www.runoob.com/markdown/md-advance.html</a><br>[2]<a target="_blank" rel="noopener" href="https://plantuml.com/zh">https://plantuml.com/zh</a><br>[3]<a target="_blank" rel="noopener" href="https://www.planttext.com/">https://www.planttext.com</a><br>[4]<a target="_blank" rel="noopener" href="https://plantuml.com/zh/activity-diagram-beta">https://plantuml.com/zh/activity-diagram-beta</a></p>
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/28/UML/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/7/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/9/">下一页</a>
@@ -635,15 +624,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -683,11 +672,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Jesse Tsui的博客</title>
+  <title>设计模式-生产者消费者模式 | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/page/5/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;生产者-消费者模式是一个十分经典的多线程并发协作[1]的模式，严格地讲并不属于设计模式的范畴。&amp;emsp;&amp;emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。       0x01 生产">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式-生产者消费者模式">
+<meta property="og:url" content="http://yoursite.com/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;生产者-消费者模式是一个十分经典的多线程并发协作[1]的模式，严格地讲并不属于设计模式的范畴。&amp;emsp;&amp;emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。       0x01 生产">
 <meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/生产者消费者模式.png">
+<meta property="article:published_time" content="2022-08-08T10:55:45.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:05:33.931Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
   
@@ -154,477 +159,48 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Linux进程防杀" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-设计模式-生产者消费者模式" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/">Linux进程防杀</a>
+    <h1 class="article-title" itemprop="name">
+      设计模式-生产者消费者模式
     </h1>
   
 
         
-        <a href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/" class="archive-article-date">
-  	<time datetime="2021-07-05T09:22:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-05</time>
+        <a href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2022-08-08T10:55:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
 </a>
         
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;本文主要研究Linux下如果防止进程被kill的方法。<br>&emsp;&emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。<br>&emsp;&emsp;当 kill 被调用时，这一切都发生在内核中。如果要实现进程防杀，只有使内核代码介于发送信号的进程和接收信号的进程之间。<br>&emsp;&emsp;Linux系统下，要实现系统防杀可以从<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">两个角度</a><sup>[1]</sup>考虑，控制接收kill流程与控制被kill进程的状态。</p>
-<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 sys_kill劫持</span><br><span class="line">3 其他方法</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、LD_PRELOAD注入程序</em></strong><br>&emsp;&emsp;这里主要叙述的是<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD注入程序</a><sup>[2]</sup>这个方法。如果杀手进程是链接动态库的，就可以通过修改LD_PRELOAD(是个环境变量，用于动态库的加载)注入拒绝杀死指定PID的代码，并替换 kill 系统调用(您可能需要对 tkill或pkill执行相同的操作，具体取决于杀手实际发送信号的方式)。  </p>
-<p><strong><em>1.1、简单使用</em></strong><br>&emsp;&emsp;首先写一个任意生成十个数字random.cpp文件(注意进程可以用.cpp或.c做后缀):</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  srand(time(<span class="literal">NULL</span>));</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">while</span>(i--) <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,rand()%<span class="number">100</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后进行编译:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc random.cpp -o random</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后写一个用于注入为动态库的源文件unrandom.c文件(*注意进程不可以用.cpp做后缀，必须用.c，原因未知):</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rand</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后生成动态库:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic unrandom.c -o unrandom.so</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后执行如下命令，发现生成随机数均为42，且已经链接到unrandom.so上了</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so ldd random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/unrandom.so</span><br><span class="line">$ ./random</span><br><span class="line"><span class="comment"># 可以观察链接的库</span></span><br><span class="line">ldd random</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.2、防止递归调用</em></strong><br>&emsp;&emsp;假如我们要封装一个open函数的动态库，很明显open函数将被递归调用:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int open(const char *pathname, int flags)&#123;</span><br><span class="line">  <span class="built_in">return</span> open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;我们将使用dlfcn.h的dlsym函数来解决递归问题，修改后的注入源码如下:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE <span class="comment">// 指示编译器启用一些非标准</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数指针</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*orig_open_f_type)</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> flags, ...)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 此处可加注入的程序</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;The victim used open(...) to access &#x27;%s&#x27;!!!\n&quot;</span>, pathname); </span><br><span class="line"></span><br><span class="line">    orig_open_f_type orig_open;</span><br><span class="line">    <span class="comment">// RTLD_DEFAULT是在当前库中查找函数，而RTLD_NEXT则是在当前库之后查找第一次出现的函数</span></span><br><span class="line">    orig_open = (orig_open_f_type)dlsym(RTLD_NEXT, <span class="string">&quot;open&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> orig_open(pathname,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectopen.c -o injectopen.so -ldl</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;新建一个调用open()函数的.cpp源文件:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">2</span> != argc) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: ./opener + &#x27;file path&#x27; \n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    errno = <span class="number">0</span>;</span><br><span class="line">    fd = <span class="built_in">open</span>(argv[<span class="number">1</span>], O_RDONLY | O_CREAT, S_IRWXU);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">-1</span> == fd) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() failed with error [%s]\n&quot;</span>,strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;open() Successful.\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后进行编译:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc opener.cpp -o opener</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;注入与不注入动态库的输出结果如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注入动态库</span></span><br><span class="line">$ ./opener test.md</span><br><span class="line">open() Successful.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不注入动态库</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/inspect_open.so ./opener test.md</span><br><span class="line">The victim used open(...) to access <span class="string">&#x27;test.md&#x27;</span>!!!</span><br><span class="line">open() Successful.</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1.3、进程防杀示例</em></strong><br>&emsp;&emsp;接下来记录一个完整的<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">防杀示例</a><sup>[3]</sup>，能够记录下杀手进程终端、杀手进程、被杀进程的详细信息。首先，实现注入进程的源码injectkill.c :</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*KILL)</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TMP_BUF_SIZE 256</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 获取进程命令行参数 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_cmd_by_pid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[TMP_BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">snprintf</span>(buf, TMP_BUF_SIZE, <span class="string">&quot;/proc/%d/cmdline&quot;</span>, pid);</span><br><span class="line">    FILE* fp = fopen(buf, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, TMP_BUF_SIZE);</span><br><span class="line">    <span class="keyword">size_t</span> ret = fread(cmd, <span class="number">1</span>, TMP_BUF_SIZE - <span class="number">1</span>, fp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; ret != <span class="number">0</span> &amp;&amp; i &lt; ret - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cmd[i] == <span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">            cmd[i] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(fp);</span><br><span class="line">    cmd[TMP_BUF_SIZE - <span class="number">1</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kill</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> KILL orign_kill = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收kill命令的进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_des[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(pid, buf_des);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取当前进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_org[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getpid(), buf_org);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取父进程信息</span></span><br><span class="line">    <span class="keyword">char</span> buf_porg[TMP_BUF_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    get_cmd_by_pid(getppid(), buf_porg);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hook kill(sig:%d): [%s(%d) -&gt; %s(%d)] -&gt; [%s(%d)]\n&quot;</span>,</span><br><span class="line">           sig, buf_porg, getppid(), buf_org, getpid(), buf_des, pid);</span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span>(!orign_kill)</span><br><span class="line">        orign_kill = (KILL)dlsym(RTLD_NEXT, <span class="string">&quot;kill&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> orign_kill(pid, sig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后生成动态库(注意使用dlsym需要添加 ‘-ldl’ 编译属性):</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic injectkill.c -o injectkill.so -ldl</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;为了验证kill注入程序有起到作用，需要先写一个被杀的进程killed.cpp:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_handler</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signo == SIGINT)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;received SIGINT\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (signal(SIGINT, sig_handler) == SIG_ERR)</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\ncan&#x27;t catch SIGINT\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后进行编译:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc killed.cpp -o killed</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后来验证一下注入效果:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行被杀进程</span></span><br><span class="line">$ ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察被杀进程PID</span></span><br><span class="line">$ ps -ef |grep killed</span><br><span class="line">xyh        9169   8440  0 13:53 pts/8    00:00:00 ./killed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行kill / pkill / tkill方法</span></span><br><span class="line"><span class="comment"># 可观察到杀手进程是bash(9118)下运行的kill(9173)，被杀进程是killed(9169)</span></span><br><span class="line"><span class="comment"># 注意这里必须调用/bin/kill，而不是直接运行kill(这是使用bash内建kill程序)</span></span><br><span class="line">$ LD_PRELOAD=<span class="variable">$PWD</span>/injectkill.so /bin/<span class="built_in">kill</span> 9169</span><br><span class="line">hook <span class="built_in">kill</span>(sig:15): [-bash(9118) -&gt; /bin/<span class="built_in">kill</span> 9169(9173)] -&gt; [./killed(9169)]</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、sys_kill劫持</em></strong><br>&emsp;&emsp;LD_PRELOAD方法本质是劫持用户态的kill，但是仍然有些<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10312787/setting-the-ld-preload-environment-variable-for-commands-run-without-typing-the">不足的地方</a>，比如当用户直接调用kill就无法劫持了。如果想验证两者区别，可以用以下方法分析，两者输出是不同的因此不是同一个进程:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 内建kill</span></span><br><span class="line">$ <span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin目录下的kill程序</span></span><br><span class="line">$ /bin/<span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想要shell关闭内建kill，可以用enable来禁止使用内建kill</span></span><br><span class="line"><span class="built_in">enable</span> -n <span class="built_in">kill</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
-<h3 id="0x02-控制被kill进程状态"><a href="#0x02-控制被kill进程状态" class="headerlink" title="0x02 控制被kill进程状态"></a><em>0x02 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简单的Unix权限</span><br><span class="line">2 基础知识构建</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、简单的Unix权限</em></strong><br>&emsp;&emsp;引用 Linux 上的 kill(2) 手册页：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一个进程要有发送信号的权限，它要么是有root用户（Linux下：在目标进程的用户命名空间中具有CAP_KILL能力），要么发送进程的真实或有效用户ID必须等于真实或保存的目标进程的 <span class="built_in">set</span>-user-ID。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">以与杀手进程不同的用户身份运行被杀死的进程（假设杀手不是以 root 身份运行）</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、Linux安全模块</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LSM 可以（至少对 Smack、SELinux 和 apparmor 可以）过滤可能向什么发送信号的内容。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">使用 LSM。 例如，当使用 Smack（以 security=smack 作为内核参数启动）时，为受害进程设置不同的标签就足以让其他进程无法看到它，更不用说杀死它了。</span><br><span class="line">sudo zsh -c <span class="string">&#x27;echo unkillable &gt; /proc/self/attr/current &amp;&amp; exec sleep 1000&#x27;</span></span><br><span class="line">上述操作会在unkillable域中运行 sleep（名称可以是任何东西，关键是目前没有定义的规则允许以任何方式干扰该域），甚至以相同 uid 运行的进程也无法杀死它，root用户也一样。</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、一些进程对杀戮免疫</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Linux上id为1（init）的进程就是这种情况。其他子命名空间的根进程也不受其命名空间中其他进程发送的信号的影响。内核任务也不受信号影响。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line"><span class="comment"># 以终端为例</span></span><br><span class="line">$ sudo unshare -p --fork --mount-proc zsh</span><br><span class="line">$ <span class="built_in">kill</span> -s KILL <span class="string">&quot;$$&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、内核检测机制(未仔细研究)</em></strong><br>&emsp;&emsp;还有类似于 SystemTap 使用的内核检测机制，它允许您影响内核的行为，在这里可以用来劫持信号传递。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SystemTap 可以在这里使用。 但是请注意，您需要内核符号（Debian 上的 linux-image-&lt;version&gt;-dbgsym）才能使用它，并且 SystemTap 或您的 stap 脚本将挂钩的内部内核函数可能会发生变化。 所以可能不是最稳定的选择。 Guru 模式也应该小心使用（不要尝试做任何太花哨的事情）。</span><br><span class="line">使用 stap，您可以在正在运行的内核中的不同点注入代码。 例如，您可以挂钩处理 <span class="built_in">kill</span>() 或 tkill() 系统调用的内核函数，并告诉它当 pid 是您的受害者时将信号更改为 0（无害）。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;sys_kill&quot;) &#123; if ($pid == 12345) $sig = 0; &#125;&#x27;</span></span><br><span class="line">（这里对于任何信号，如果您只想覆盖 SIGKILL，您也可以检查 <span class="variable">$sig</span> == 9）。 现在，当使用 tkill() 或使用受害者的进程组 ID 调用 <span class="built_in">kill</span>() 时，这不起作用，因此我们需要扩展它。 这不包括信号由内核本身发送的情况。</span><br><span class="line">但是我们也可以查看内核代码，看看我们是否可以在内核检查发送信号权限的地方钩住自己。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">           if (@entry($t-&gt;pid) == 12345) $return = -1; &#125;&#x27;</span></span><br><span class="line">我们返回 -1 (-EPERM) ，当请求的 pid 是我们目标的 pid 时（这里以 12345 为例），它还有一个好处是让杀手知道它的 <span class="built_in">kill</span>() 失败了。</span><br><span class="line">~$ sleep 1000 &amp;</span><br><span class="line">[1] 8508</span><br><span class="line">~$ sudo stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($t-&gt;pid) == &#x27;</span><span class="string">&quot;$!&quot;</span><span class="string">&#x27;) $return = -1; &#125;&#x27;</span> &amp;</span><br><span class="line">[2] 8510</span><br><span class="line">~$ <span class="built_in">kill</span> -s KILL 8508</span><br><span class="line"><span class="built_in">kill</span>: <span class="built_in">kill</span> 8508 failed: operation not permitted</span><br><span class="line">它也适用于内核自行发送信号的某些情况，但不是全部。 为此，我们需要深入到内核代码中进行信号传递的最底层函数：__send_signal()（至少在当前版本的 Linux 内核中）。</span><br><span class="line">一种方法是挂钩 __send_signal() 在开始时调用的 prepare_signal() 函数（如果返回 0 则退出）；</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;prepare_signal&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($p-&gt;pid) == 12345) $return = 0; &#125;&#x27;</span></span><br><span class="line">然后，只要该 stap 进程存在，pid 12345 将是不可杀死的。</span><br><span class="line">请注意，内核通常假设 SIGKILL 会起作用，因此在某些极端情况下，上述内容可能会产生意想不到的副作用（例如，如果 oom-killer 继续选择无法杀死的受害者，则它会变得无效）。</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process</a><br>[2]<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/</a><br>[3]<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">https://www.52coder.net/post/ld-preload</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/07/05/Linux%E8%BF%9B%E7%A8%8B%E9%98%B2%E6%9D%80/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-deb与rpm打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">deb与rpm打包</a>
-    </h1>
-  
-
-        
-        <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2021-06-24T02:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。</p>
-<h3 id="0x01-rpm打包"><a href="#0x01-rpm打包" class="headerlink" title="0x01 rpm打包"></a><em>0x01 rpm打包</em></h3><p>&emsp;&emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">  2.4 SPEC文件执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; 这里以centos7为rpm打包平台，具体的环境配置已经在仓库里面，可以自行<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">查阅资料</a><sup>[1]</sup>。  </p>
-<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、rpm打包文件结构</em></strong><br>&emsp;&emsp; rpmdev-setuptree命令由工具rpmdevtools提供，可以直接在/root/rpmbuild/目录下生成rpm打包所需的目录结构。下面具体描述各个文件夹的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tree /root/rpmbuild</span><br><span class="line">rpmbuild</span><br><span class="line">├── SOURCES    <span class="comment"># 源码路径</span></span><br><span class="line">├── BUILD      <span class="comment"># 源码编译路径</span></span><br><span class="line">├── SPECS      <span class="comment"># rpm生成规则存放路径</span></span><br><span class="line">├── RPMS       <span class="comment"># rpm包生成路径</span></span><br><span class="line">└── SRPMS      <span class="comment"># rpm源码包生成路径</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>SOURCES - 如果是用源码打包，则只需要将源码的tar.gz文件存放于此即可;</li>
-<li>BUILD - rpmbuild工具会自行将SOURCES目录中的源码在此处解压，该文件无需手动修改，具体编译方法需要在SPECS下的.spec文件中描述;</li>
-<li>SPECS - 需要人工操作的只有该文件夹，里面可以存放各种rpm打包规则的.spec文件，后面详细介绍;</li>
-<li>RPMS - 当打包完成，会在此处生成release与debug版的.rpm包;</li>
-<li>SRPMS - 当打包完成，会在此处生成源码.rpm包;</li>
-<li>*BUILDROOT - 该目录是在SPECS打包过程中自动生成的，其重要性是最后打完的包需要安装的文件及其路径都以该目录为模板。  </li>
-</ul>
-<p><strong><em>2.2、rpm目录路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>目录</th>
-<th>宏代码</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/root/rpmbuild/SOURCES</td>
-<td>%_sourcedir</td>
-<td>保存源码包（如 .tar 包）和所有 patch 补丁</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILD</td>
-<td>%_builddir</td>
-<td>源码包被解压至此，并在该目录的子目录完成编译</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILDROOT</td>
-<td>%_buildrootdir</td>
-<td>保存 %install 阶段安装的文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SPECS</td>
-<td>%_specdir</td>
-<td>保存 RPM 包配置（.spec）文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/RPMS</td>
-<td>%_rpmdir</td>
-<td>生成/保存二进制 RPM 包</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SRPMS</td>
-<td>%_srcrpmdir</td>
-<td>生成/保存源码 RPM 包(SRPM)</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.3、rpm常用路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>路径</th>
-<th>宏</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/etc</td>
-<td>%{_sysconfdir}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_prefix}</td>
-</tr>
-<tr>
-<td>%{_prefix}</td>
-<td>%{_exec_prefix}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/bin</td>
-<td>%{_bindir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/%{_lib}</td>
-<td>%{_libdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/libexec</td>
-<td>%{_libexecdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/sbin</td>
-<td>%{_sbindir}</td>
-</tr>
-<tr>
-<td>/var/lib</td>
-<td>%{_sharedstatedir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/share</td>
-<td>%{_datarootdir}</td>
-</tr>
-<tr>
-<td>%{_datarootdir}</td>
-<td>%{_datadir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/include</td>
-<td>%{_includedir}</td>
-</tr>
-<tr>
-<td>/usr/share/info</td>
-<td>%{_infodir}</td>
-</tr>
-<tr>
-<td>/usr/share/man</td>
-<td>%{_mandir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_localstatedir}</td>
-</tr>
-<tr>
-<td>%{_sysconfdir}/rc.d/init.d</td>
-<td>%{_initddir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_var}</td>
-</tr>
-<tr>
-<td>%{_var}/tmp</td>
-<td>%{_tmppath}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_usr}</td>
-</tr>
-<tr>
-<td>%{_usr}/src</td>
-<td>%{_usrsrc}</td>
-</tr>
-<tr>
-<td>lib (lib64 on 64bit multilib systems)</td>
-<td>%{_lib}</td>
-</tr>
-<tr>
-<td>%{_datadir}/doc</td>
-<td>%{_docdir}</td>
-</tr>
-<tr>
-<td>%{_buildrootdir}/%{name}-%{version}-%{release}.%{_arch}</td>
-<td>%{buildroot}</td>
-</tr>
-<tr>
-<td>%{buildroot}</td>
-<td>$RPM_BUILD_ROOT</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.4、SPEC文件执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 升级时完整执行流程：</span></span><br><span class="line">1、执行新包spec文件中 %pre 段.</span><br><span class="line">2、安装新包的相关依赖包.</span><br><span class="line">3、执行新包spec文件中的 %post 段.</span><br><span class="line">4、执行旧包spec文件中的 %preun 段.</span><br><span class="line">5、删除新包中不需要的旧文件。</span><br><span class="line">6、执行旧包spec文件中的 %postun 段.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整参数传递：</span></span><br><span class="line">%pre和%post段</span><br><span class="line">当传递的第一个参数为1时，表示新安装一个rpm包。</span><br><span class="line">当传递的第一个参数为2时，表示升级一个已经存在的包。</span><br><span class="line">%preun和%postun段</span><br><span class="line">当传递的第一个参数为0时，表示删除一个包。</span><br><span class="line">当传递的第一个参数为1时，表示更新一个包。</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、源码打包方法</em></strong><br>&emsp;&emsp; SPECS撰写方法参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">文献</a><sup>[3]</sup>，这里以最后实现的一个rpm项目打包为例。首先要在/root/rpmbuild/SPECS/目录下新建一个.spec文件，并且内部需要实现一些字段，下面解释各个部分的作用:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目名</span></span><br><span class="line">name: CTest</span><br><span class="line"><span class="comment"># 项目版本</span></span><br><span class="line">Version: 1.0</span><br><span class="line"><span class="comment"># 发布序列号</span></span><br><span class="line">Release: 1%&#123;?dist&#125;</span><br><span class="line"><span class="comment"># 概要</span></span><br><span class="line">Summary: The <span class="string">&quot;CTest&quot;</span> program from GNU</span><br><span class="line">Summary(zh_CN):  GNU <span class="string">&quot;Hello World&quot;</span> 程序</span><br><span class="line"><span class="comment"># 开源协议</span></span><br><span class="line">License: GPLv3+</span><br><span class="line"><span class="comment"># 源代码路径，即放在SOURCES目录下的tar包名</span></span><br><span class="line">Source0: %&#123;name&#125;.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介</span></span><br><span class="line">%description</span><br><span class="line">The <span class="string">&quot;CTest&quot;</span> program</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介中文</span></span><br><span class="line">%description -l zh_CN</span><br><span class="line"><span class="string">&quot;CTest&quot;</span> 程序</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装前执行的脚本</span></span><br><span class="line">%prep</span><br><span class="line"><span class="comment"># 作用: 将解压后的源码重命名为/root/rpmbuild/BUILD/CTest/</span></span><br><span class="line">%setup -n CTest</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装后执行的脚本</span></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载前执行的脚本</span></span><br><span class="line">%preun</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载后执行的脚本</span></span><br><span class="line">%postun</span><br><span class="line"></span><br><span class="line"><span class="comment"># build默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line">%build</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make %&#123;?_smp_mflags&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># install默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line"><span class="comment"># 开始把软件安装到虚拟的根目录中，正规写法应该是在MakeFile里面些install</span></span><br><span class="line"><span class="comment"># 虚拟根目录即 /root/rpmbuild/BUILDROOT/’包名‘</span></span><br><span class="line"><span class="comment"># 可以用宏 $RPM_BUILD_ROOT 或 %&#123;buildroot&#125; 代替</span></span><br><span class="line">%install</span><br><span class="line">mkdir -p %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cp CTest %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line"><span class="comment"># !!files默认 cd /root/rpmbuild/BUILDROOT/&#x27;包名&#x27;/ 目录下</span></span><br><span class="line"><span class="comment"># %defattr(文件权限,用户名,组名,目录权限),其中&#x27;-&#x27;表示默认权限</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%&#123;_bindir&#125;/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变更日志</span></span><br><span class="line">%changelog</span><br><span class="line">* Sun MAY 4 2021 Your Name &lt;youremail@xxx.xxx&gt; - 1.0</span><br><span class="line">- Update to 1.0</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、非源码打包方法</em></strong><br>&emsp;&emsp; 如果无源码，只有一些已经编译完成的链接库与可执行文件，则可以借用打包机制，跳过编译步骤，直接将需要打入rpm包的文件拷贝到/root/rpmbuild/BUILDROOT/目录下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line">mkdir -p %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">cp -r <span class="string">&#x27;要存放的文件夹&#x27;</span> %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%<span class="string">&#x27;需要打包的路径&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-deb打包"><a href="#0x02-deb打包" class="headerlink" title="0x02 deb打包"></a><em>0x02 deb打包</em></h3><p>&emsp;&emsp;虽然deb打包的网上资料较少，但是实际上也是能实现源码与非源码打包的，并且天然支持CMake。可以参考下<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">debian维护手册</a><sup>[4]</sup>。<br>&emsp;&emsp;打包方法总共有三种:  </p>
-<ul>
-<li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
-<li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><strong><em>1、环境搭建</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、deb打包文件结构</em></strong><br>&emsp;&emsp; 在已有tar.gz包的情况下(无论里面放源码还是编译生成后文件，自动生成debian目录只需要得到tar包名字)，可以使用dh_make工具自动生成debian目录(具体方法在下面几节)。下面具体描述debian文件夹各文件的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># deb源码打包示例项目的最终结构如下</span></span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">│       ├── changelog</span><br><span class="line">│       ├── compat</span><br><span class="line">│       ├── control</span><br><span class="line">│       ├── rules</span><br><span class="line">│       └── <span class="built_in">source</span></span><br><span class="line">│           └── format</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># debian目录是自动生成的，初始生成结构如下</span></span><br><span class="line"><span class="comment"># 需要注意dpkg-buildpackage指令使用小写debian</span></span><br><span class="line"><span class="comment"># dpkg-deb指令使用大写DEBIAN文件夹</span></span><br><span class="line">debian/</span><br><span class="line">├── changelog          <span class="comment"># 包的更新历史，后面可以使用dch -i指令修改</span></span><br><span class="line">├── compat             <span class="comment"># 包的兼容性，与debian policy版本有关</span></span><br><span class="line">├── control            <span class="comment"># 包的描述信息</span></span><br><span class="line">├── copyright          <span class="comment"># 包的版权信息</span></span><br><span class="line">├── ctest.cron.d.ex</span><br><span class="line">├── ctest.default.ex</span><br><span class="line">├── ctest.doc-base.EX</span><br><span class="line">├── ctest-docs.docs</span><br><span class="line">├── init.d.ex</span><br><span class="line">├── manpage.1.ex</span><br><span class="line">├── manpage.sgml.ex</span><br><span class="line">├── manpage.xml.ex</span><br><span class="line">├── menu.ex</span><br><span class="line">├── postinst.ex        <span class="comment"># 安装后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── postrm.ex          <span class="comment"># 卸载后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── preinst.ex         <span class="comment"># 安装前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── prerm.ex           <span class="comment"># 卸载前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── README.Debian</span><br><span class="line">├── README.source</span><br><span class="line">├── rules              <span class="comment"># 包的编译方法</span></span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">│   └── format         <span class="comment"># 包的版本</span></span><br><span class="line">└── watch.ex           <span class="comment"># 包的升级链接，使用前去掉.ex后缀</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.2、debian/control文件详解</em></strong><br>&emsp;&emsp;其他文件均可自行研究，但是control文件是最重要的，与初始状态不一致，已经改过，这边有必要解释一下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ cat debbuild/ctest-1.0/debian/control </span><br><span class="line">Source: ctest  <span class="comment"># 这就是根据tar.gz包名自动生成的项目名</span></span><br><span class="line">Section: unknown  <span class="comment"># 该源码包要进入发行版中的分类</span></span><br><span class="line">Priority: optional  <span class="comment"># 描述用户安装该包的重要程度</span></span><br><span class="line">Maintainer: xyh &lt;yhxu94@126.com&gt;  <span class="comment"># 源码维护者的名字和邮箱</span></span><br><span class="line">Build-Depends: debhelper (&gt;=9)  <span class="comment"># 编译依赖</span></span><br><span class="line"> cmake,</span><br><span class="line"> qtbase5-dev</span><br><span class="line">Standards-Version: 3.9.6  <span class="comment"># 此软件包所依据的“Debian Policy Manual”标准版本号</span></span><br><span class="line">Homepage: https://jailbreakfox.github.io/</span><br><span class="line"></span><br><span class="line">Package: ctest  <span class="comment"># 二进制软件包的名称。通常情况下与源代码包相同，但不是必须的</span></span><br><span class="line">Architecture: any  <span class="comment"># 目标机架构，可以是其他架构，比如amd64</span></span><br><span class="line"><span class="comment"># Debian软件包系统最强大的特性之一。每个软件包都可以和其他软件包有各种不同的关系</span></span><br><span class="line">Depends: <span class="variable">$&#123;shlibs:Depends&#125;</span>, <span class="variable">$&#123;misc:Depends&#125;</span>  <span class="comment"># 运行时依赖</span></span><br><span class="line">Recommends: XXXX(&gt;=5.1.0.0)   <span class="comment"># 建议依赖，不影响使用</span></span><br><span class="line">Description:  <span class="comment"># 软件的简短描述</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.3、debian/rules文件粗解</em></strong><br>&emsp;&emsp;网上都说control是debian目录下的核心文件，但其实还有一个很重要的文件就是rules，但由于目前精力有限，只能大致窥探其作用。在不知道如何使用的情况下，使用初始化的rules文件即可。<br>&emsp;&emsp;rules文件本质上是一个Makefile文件，这个Makefile文件定义了创建deb格式软件包的规则。打包工具按照rules文件指定的规则，完成编译，将软件安装到临时安装目录，清理编译目录等操作，并依据安装到临时目录的文件来生成deb格式的软件包。<br>dh_make 会生成一个使用 dh 命令的非常简单但非常强大的默认的 rules 文件:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/make -f</span></span><br><span class="line"><span class="comment"># -*- makefile -*-</span></span><br><span class="line"><span class="comment"># Uncomment this to turn on verbose mode.</span></span><br><span class="line"><span class="comment">#export DH_VERBOSE=1  打开后编译输出更详细</span></span><br><span class="line"><span class="comment">#export DH_BUILD_OPTIONS=nocheck  可以跳过编译后的测试，对于某些编译不过的包有效</span></span><br><span class="line"></span><br><span class="line">%:</span><br><span class="line">  dh <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;实际上rules文件的dh语言是由debhelper工具来解析的，不要看上面只有短短一行语句，但实际上它的进化简化过程很漫长:  </p>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;生产者-消费者模式是一个十分经典的<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">多线程并发协作</a><sup>[1]</sup>的模式，严格地讲并不属于设计模式的范畴。<br>&emsp;&emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。  </p>
 <div align="center">
-<img src="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/debhelper进化.png">
-<div align="left">  
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg" width="400" height="80">
+<div align="left">
 
-<p>&emsp;&emsp;甚至有些指令会在实际打包的时候用到，从中可以窥见其运行的过程:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打包结束后，打包目录下是非常乱的</span></span><br><span class="line">$ tree debian</span><br><span class="line">debian/</span><br><span class="line">├── changelog</span><br><span class="line">├── compat</span><br><span class="line">├── control</span><br><span class="line">├── ctest</span><br><span class="line">│   ├── DEBIAN</span><br><span class="line">│   │   ├── control</span><br><span class="line">│   │   └── md5sums</span><br><span class="line">│   └── usr</span><br><span class="line">│       ├── bin</span><br><span class="line">│       │   └── CTest</span><br><span class="line">│       └── share</span><br><span class="line">│           └── doc</span><br><span class="line">│               └── ctest</span><br><span class="line">│                   └── changelog.Debian.gz</span><br><span class="line">├── ctest.debhelper.log</span><br><span class="line">├── ctest.substvars</span><br><span class="line">├── debhelper-build-stamp</span><br><span class="line">├── files</span><br><span class="line">├── rules</span><br><span class="line">└── <span class="built_in">source</span></span><br><span class="line">    └── format</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时可以在打包目录下执行dh clean，清理打包产生的文件</span></span><br><span class="line"><span class="comment"># 实际上dh clean就是执行了下面三个指令</span></span><br><span class="line">$ dh clean</span><br><span class="line">output:</span><br><span class="line">   dh_testdir</span><br><span class="line">   dh_auto_clean</span><br><span class="line">   dh_clean</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.4、debian/install + debian/postinst的使用</em></strong><br>&emsp;&emsp;还有一个文件对于非源码打包作用很大，即debian/install。如果你的软件包需要那些标准的make install没有安装的文件，你可以把文件名和目标路径写入 debian/install文件，它们将被 dh_install安装:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设有个空文件的tar.gz包，文件结构如下</span></span><br><span class="line">$ tree <span class="built_in">test</span>-1.0</span><br><span class="line"><span class="built_in">test</span>-1.0/</span><br><span class="line">├── debian</span><br><span class="line">│   └── install</span><br><span class="line">└── 1.md</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;install的初始位置就是在打包根目录下，install文件可以这样写(注意install文件的属性、所属者必须与其他文件一致):</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">cp 1.md /home</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;如果想在安装成功后修改文件的权限，则需要修改postinst文件，可以这样写:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">chmod 777 /home/1.md</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;目前还有一个遗留问题，就是打包前给的777权限，安装后权限变成了755。</p>
-<p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3.1、源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;deb源码打包一个优点是能够识别CMake文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码结构</span></span><br><span class="line"><span class="comment"># 注意源码根文件夹名不能有大写</span></span><br><span class="line"><span class="comment"># 根文件名一般取 项目名称 + &#x27;-&#x27; + 版本号，例如ctest-1.0</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── CTest.cpp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成tar.gz包</span></span><br><span class="line">$ tar -zcvf debbuild/ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── CTest.cpp</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ dh_make -f ../ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   ├── debian</span><br><span class="line">│   └── obj-x86_64-linux-gnu</span><br><span class="line">├── ctest_1.0-1_amd64.deb</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;值得注意的是，目前仍不知道如何使用rules文件，因此源码打包流程中所有的make install过程均在CMakeList.txt实现(实际上也应该这么实现)。</p>
-<p><strong><em>4.1、非源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;非源码打包需要使用debian/install与debian/rules文件的作用。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打一个空tar包</span></span><br><span class="line"><span class="comment"># 并在打包根目录下新建一个1.md的文档</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── 1.md</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加debian/install文件，内容如下</span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"><span class="string">#!/bin/bash</span></span><br><span class="line"><span class="string">cp 1.md /home</span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用dpkg-buildpackage去生成deb包</span></span><br><span class="line"><span class="comment"># 观察debian的目录结构，发现有一个ctest文件夹，该目录就是创建的假根目录</span></span><br><span class="line"><span class="comment"># 而1.md文件已经被放了进去</span></span><br><span class="line">$ tree debian</span><br><span class="line">debian/</span><br><span class="line">└── ctest</span><br><span class="line">    ├── DEBIAN</span><br><span class="line">    │   ├── control</span><br><span class="line">    │   └── md5sums</span><br><span class="line">    ├── home</span><br><span class="line">    │   └── 1.md</span><br><span class="line">    └── usr</span><br><span class="line">        └── share</span><br><span class="line">            └── doc</span><br><span class="line">                └── ctest</span><br><span class="line">                    ├── changelog.Debian.gz</span><br><span class="line">                    ├── copyright</span><br><span class="line">                    └── README.Debian</span><br><span class="line"><span class="comment"># 另外也可以观察生成的deb包，文件确实已经打进deb包</span></span><br><span class="line">$ dpkg -c ctest_1.0-1_amd64.deb</span><br><span class="line">output:</span><br><span class="line">drwxr-xr-x root/root         0 2021-06-25 17:17 ./home/</span><br><span class="line">-rwxr-xr-x root/root         0 2021-06-25 17:03 ./home/1.md</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4.2、非源码打包方法 - dpkg-deb</em></strong><br>&emsp;&emsp;该方法只适用于非源码打包，但是优点是不需要写make install，因为它的DEBIAN文件同级目录下的其他目录结构就代表了需要install的路径:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先搭建一个打包目录</span></span><br><span class="line"><span class="comment"># 注意DEBIAN文件夹必须大写，且DEBIAN/control文件与自动生成的格式不同</span></span><br><span class="line">$ tree dpkgdeb</span><br><span class="line">dpkgdeb/</span><br><span class="line">├── CTest                   <span class="comment"># 源码包</span></span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── build               <span class="comment"># 手动编译结果存放文件夹</span></span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── DEBIAN              <span class="comment"># 手动生成的DEBIAN文件</span></span><br><span class="line">    │   ├── changelog</span><br><span class="line">    │   ├── compat</span><br><span class="line">    │   ├── control</span><br><span class="line">    │   └── rules</span><br><span class="line">    └── usr                 <span class="comment"># DEBIAN同级目录下的其他文件夹，即最终安装位置</span></span><br><span class="line">        └── bin</span><br><span class="line">            └── CTest       <span class="comment"># 编译出来的可执行程序，从CTest/build文件夹下拷贝</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DEBIAN/control文件格式</span></span><br><span class="line">$ cat DEBIAN/control</span><br><span class="line">Package: ctest</span><br><span class="line">Version: 1.0</span><br><span class="line">Architecture: any</span><br><span class="line">Maintainer: xuyanghe &lt;yhxu94@126.com&gt;</span><br><span class="line">Section: devel</span><br><span class="line">Priority: optional</span><br><span class="line">Homepage: https://jailbreakfox.github.io</span><br><span class="line">Description: deb package make tutorial</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在打包根目录的父目录执行dpkg-deb</span></span><br><span class="line">$ <span class="built_in">cd</span> dpkgdeb</span><br><span class="line">$ fakeroot dpkg-deb -b ctest-1.0 ctest-1.0.deb</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md</a><br>[2]<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">https://blog.csdn.net/get_set/article/details/53453320</a><br>[3]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">https://www.cnblogs.com/SQL888/p/5776442.html</a><br>[4]<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html</a></p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，打包工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-IPV4与IPV6" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/11/IPV4%E4%B8%8EIPV6/">IPV4与IPV6</a>
-    </h1>
-  
-
-        
-        <a href="/2021/04/11/IPV4%E4%B8%8EIPV6/" class="archive-article-date">
-  	<time datetime="2021-04-11T10:01:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-11</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;IPV4地址将耗尽，以后的IP地址管理将使用IPV6。二者最大的区别是它们生成的地址数量，IPv4只是采用32位来表示，而IPv6采用128位来表示。</p>
-<h3 id="0x01-区别"><a href="#0x01-区别" class="headerlink" title="0x01 区别"></a><em>0x01 区别</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 协议地址长度</span><br><span class="line">2 协议地址类型</span><br><span class="line">3 常用地址</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、协议地址长度</em></strong><br>&emsp;&emsp;IPv4协议具有32位（4字节）地址长度；IPv6协议具有128位（16字节）地址长度。</p>
+<h3 id="0x01-生产者消费者模式"><a href="#0x01-生产者消费者模式" class="headerlink" title="0x01 生产者消费者模式"></a><em>0x01 生产者消费者模式</em></h3><p>&emsp;&emsp;更复杂的生产者消费者模式应该能实现一部分线程被用于去生产数据，另一部分线程去处理数据。这里，我们将只有一个生产者线程和一个消费者线程的情况称为单缓冲，将多生产者线程、多消费者线程的情况称为多缓冲。  </p>
 <div align="center">
-<img src="/2021/04/11/IPV4%E4%B8%8EIPV6/地址长度.jpg" width="400" height="250">
-<div align="left">  
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/生产者消费者模式.png" width="700" height="200">
+<div align="left">
 
-<p><strong><em>2、协议地址类型</em></strong><br>&emsp;&emsp;IPv4地址有单播、组播、广播等几种类型，IPV6地址有单播、组播和任播地址。</p>
-<p><strong><em>3、常用地址</em></strong><br>| 名称       | IPV4  | IPV6                   |<br>| ———— | —————————————– | ———————- |<br>| 本网络    | 0.0.0.0/8   | ::/128                 |<br>| 环回地址 | 127.0.0.0/8  | ::1/128                |<br>| 多播地址 | 224.0.0.0/4  | FF00::/8               |<br>| 链路本地地址 | 169.254.0.0/16   | FE80::/10              |<br>| 唯一本地地址 | 10.0.0.0/8 ; 172.16.0.0/12 ; 192.168.0.0/16 | FD00::/8               |<br>| 全球地址 | 除去上述地址的其他地址   | 除去上述地址的其他地址 |</p>
-<h3 id="0x02-IPV6地址类型"><a href="#0x02-IPV6地址类型" class="headerlink" title="0x02 IPV6地址类型"></a><em>0x02 IPV6地址类型</em></h3><p>&emsp;&emsp;IPV6地址可分为三大类: 单播地址，组播地址和任播地址。</p>
-<div align="center">
-<img src="/2021/04/11/IPV4%E4%B8%8EIPV6/IPV6地址类型.png" width="700" height="350">
-<div align="left">  
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单缓冲</span><br><span class="line">2 多缓冲</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 单播地址</span><br><span class="line">2 组播地址</span><br><span class="line">3 任播地址</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、单缓冲</em></strong>  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sem_t</span> empty_sem; <span class="comment">// 同步信号量， 当满了时阻止生产者放产品</span></span><br><span class="line"><span class="keyword">sem_t</span> full_sem; <span class="comment">// 同步信号量， 当没产品时阻止消费者消费</span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex; <span class="comment">// 互斥信号量， 一次只有一个线程访问缓冲</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">buffer</span> = <span class="number">0</span>; <span class="comment">//单缓冲</span></span><br><span class="line"><span class="keyword">int</span> product_id = <span class="number">0</span>; <span class="comment">//生产者id</span></span><br><span class="line"><span class="keyword">int</span> consumer_id = <span class="number">0</span>; <span class="comment">//消费者id</span></span><br><span class="line"><span class="keyword">int</span> product_sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> consumer_sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">start</span>;</span> <span class="comment">//记录时间</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">end</span>;</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> timer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">product</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++product_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;empty_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        product_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld product_%d is producing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               product_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;full_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++consumer_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;full_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        consumer_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld consumer_%d is consumeing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               consumer_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;empty_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span> </span>&#123;</span><br><span class="line">    gettimeofday(&amp;start, <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    sem_init(&amp;empty_sem, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;full_sem, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">pthread_t</span> id1[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">pthread_t</span> id2[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> T1 = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> T2 = <span class="number">1</span>;</span><br><span class="line">    pthread_create(&amp;id1[<span class="number">1</span>], <span class="literal">NULL</span>, product, &amp;T1);</span><br><span class="line">    pthread_create(&amp;id2[<span class="number">1</span>], <span class="literal">NULL</span>, consumer, &amp;T2);</span><br><span class="line">    pthread_join(id1[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(id2[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、单播地址</em></strong><br>&emsp;&emsp;单播地址还可分为几类：可集聚全球单播地址，链路本地单播地址和站点本地单播地址</p>
-<h3 id="0x03-IPV6地址管理"><a href="#0x03-IPV6地址管理" class="headerlink" title="0x03 IPV6地址管理"></a><em>0x03 IPV6地址管理</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 压缩表示</span><br><span class="line">2 配置方式</span><br><span class="line">3 查询方式</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、压缩表示</em></strong><br>&emsp;&emsp;如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例</span></span><br><span class="line">2001:DB8:0:0:8:800:200C:417A</span><br><span class="line"><span class="comment"># --&gt;</span></span><br><span class="line">2001:DB8::8:800:200C:417A</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、配置方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡</span></span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改/etc/sysconfig/network-script/ifcfg-ethX文件</span></span><br><span class="line"><span class="comment"># 修改如下字段，没有的手动添加</span></span><br><span class="line">IPV6INIT=yes <span class="comment"># 是否开机启用IPV6地址</span></span><br><span class="line">IPV6_AUTOCONF=no <span class="comment"># 是否使用IPV6地址的自动配置</span></span><br><span class="line">IPV6_FAILURE_FATAL=no <span class="comment"># 如果配置失败，不会关闭网口，保证IPV4的配置还能生效</span></span><br><span class="line">IPV6ADDR=2001:250:250:250:250:250:250:222/64 <span class="comment"># IPV6地址</span></span><br><span class="line">IPV6_DEFAULTGW=2001:250:250:250::1 <span class="comment"># IPV6地址网关</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、查询方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ping6方式 - 链路本地单播地址</span></span><br><span class="line">$ ping6 <span class="string">&#x27;fe80:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span>%<span class="string">&#x27;网卡号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ping6方式 - 全球单播地址</span></span><br><span class="line">$ ping6 <span class="string">&#x27;2001:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># traceroute6方式</span></span><br><span class="line">$ traceroute6 <span class="string">&#x27;2001:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span></span><br></pre></td></tr></table></figure></div></div></div></div>
+<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">https://jenkov.com/tutorials/java-concurrency/producer-consumer.html</a></p>
+</div></div></div></div>
       
 
       
@@ -646,16 +222,24 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/04/11/IPV4%E4%B8%8EIPV6/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2022/08/04/LinuxIO%E6%A8%A1%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LinuxIO模型</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -670,17 +254,32 @@
         </div>
         
         
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">0x01 生产者消费者模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">3.</span> <span class="toc-text">0x02 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
     </div>
 </aside>
 
 
 
+  
+  
+  
 
   
+
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
-    </nav>
+
   
 
 
@@ -706,8 +305,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
