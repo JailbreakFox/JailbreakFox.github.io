@@ -156,6 +156,321 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Rsync备份还原" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">Rsync备份还原</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/" class="archive-article-date">
+  	<time datetime="2022-07-10T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-10</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在Linux中，cp命令可实现本机文件的全量复制，scp命令可实现远程文件的全量复制。而<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">Rsync</a><sup>[1]</sup>(Remote Synchronizetion)可实现本地、远程文件的增量复制(只复制不同的文件)。<br>&emsp;&emsp;本文在Rsync技术的基础上，详细介绍一套备份还原功能的设计。  </p>
+<h3 id="0x01-Rsync使用方法"><a href="#0x01-Rsync使用方法" class="headerlink" title="0x01 Rsync使用方法"></a><em>0x01 Rsync使用方法</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 常用参数</span><br><span class="line">2 使用方式</span><br><span class="line">  2.1 本地方式</span><br><span class="line">  2.2 远程方式</span><br><span class="line">  2.3 守护进程方式</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、常用参数</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>归档模式传输, 等于-tropgDl -t -r -o -p -g -D -l</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>详细模式输出, 打印速率, 文件数量等</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>输出一个摘要信息</td>
+</tr>
+<tr>
+<td>-q</td>
+<td>精简输出</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>传输时进行压缩以提高效率</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>递归传输目录及子目录，即目录下得所有目录都同样传输</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>保持文件时间信息</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>保持文件属主信息</td>
+</tr>
+<tr>
+<td>-g</td>
+<td>保持文件属组信息</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>保持文件权限</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>保留软连接</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>保留硬连接</td>
+</tr>
+<tr>
+<td>-X</td>
+<td>保留拓展属性</td>
+</tr>
+<tr>
+<td>-P</td>
+<td>显示同步的过程及传输时的进度等信息</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>保持设备文件信息</td>
+</tr>
+<tr>
+<td>-L</td>
+<td>保留软连接指向的目标文件</td>
+</tr>
+<tr>
+<td>-e</td>
+<td>使用的信道协议,指定替代rsh的shell程序</td>
+</tr>
+<tr>
+<td>–append</td>
+<td>指定文件接着上次传输中断处继续传输</td>
+</tr>
+<tr>
+<td>–append-verify</td>
+<td>使用参数续传（在断点续传之后，验证一下文件，如果不同，修复文件）</td>
+</tr>
+<tr>
+<td>–exclude=文件名</td>
+<td>指定排除不需要传输的文件</td>
+</tr>
+<tr>
+<td>–exclude-from=文件名</td>
+<td>排除文件内写的文件名(文件内可以写多个文件名)</td>
+</tr>
+<tr>
+<td>–bwlimit=传输速度</td>
+<td>限速传输（单位：MB）</td>
+</tr>
+<tr>
+<td>–delete</td>
+<td>让目标目录和源目录数据保持一致</td>
+</tr>
+<tr>
+<td>–password-file=文件名</td>
+<td>使用密码文件(文件内要写密码)</td>
+</tr>
+<tr>
+<td>–port</td>
+<td>指定端口传输</td>
+</tr>
+<tr>
+<td>–modify-window=NUM</td>
+<td>决定文件是否时间相同时使用的时间戳窗口，默认为0</td>
+</tr>
+</tbody></table>
+<hr>
+<blockquote>
+<p><font size="2">1.与scp类似，Rsync可实现”推”、”拉”两种方式;<br>2.rsync不管是推还是拉，推送目录的时候带/和不带/是有区别的。例如/etc/，代表推拉etc目录下所有文件(不包括etc文件夹本身)。/etc，代表推拉包括etc目录整体<br>3.Windows的FAT文件系统(此文件系统有2秒范围内的精确度差异)传输数据时，设置”–modify-window=1”将非常有用(允许文件时间戳有1秒的差异)</font> </p>
+</blockquote>
+<p><strong><em>2、使用方式</em></strong><br><strong><em>2.1、本地方式</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;目标文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.2、远程方式</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span> <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.3、守护进程方式</em></strong><br>&emsp;&emsp;首先任意创建一个配置文件rsyncd.conf:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">uid = 0</span><br><span class="line">gid = 0</span><br><span class="line">use chroot = no                 <span class="comment"># 禁锢目录，不允许操作指定目录之外的目录</span></span><br><span class="line"><span class="built_in">log</span> file = /rsync.log           <span class="comment"># 日志目录</span></span><br><span class="line">port = 7888                     <span class="comment"># rsync使用的端口</span></span><br><span class="line">auth users = My_Rsync           <span class="comment"># rsync远程传输时的登陆用户</span></span><br><span class="line">secrets file = /rsync.password  <span class="comment"># rsync远程传输时的密码文件</span></span><br><span class="line">reverse lookup = <span class="literal">false</span>         <span class="comment"># DNS反查</span></span><br><span class="line">strict modes = <span class="literal">false</span>            <span class="comment"># 检查secrets file的文件权限是否为600</span></span><br><span class="line"><span class="built_in">read</span> only = <span class="literal">false</span>               <span class="comment"># 关闭只读，对备份数据可读写</span></span><br><span class="line"><span class="comment">###########################</span></span><br><span class="line">[<span class="string">&#x27;模块名&#x27;</span>]</span><br><span class="line">path = /backup/</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在服务端开启rsync服务:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆用户名&#x27;:&#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync:My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启服务</span></span><br><span class="line">$ rsync --daemon --config=/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭服务直接kill进程即可</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在客户端执行rsync远程传输文件:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块推送文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块拉取文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-备份还原功能设计"><a href="#0x02-备份还原功能设计" class="headerlink" title="0x02 备份还原功能设计"></a><em>0x02 备份还原功能设计</em></h3><div align="center">
+<img src="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/Rsync备份还原功能设计.png" width="500" height="200">
+<div align="left">  
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">https://www.cnblogs.com/zonghan/p/15746569.html</a></p>
+</div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-ROS2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/06/21/ROS2/">ROS2</a>
+    </h1>
+  
+
+        
+        <a href="/2022/06/21/ROS2/" class="archive-article-date">
+  	<time datetime="2022-06-21T01:44:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-21</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;ROS是用于编写机器人软件程序的一种具有高度灵活性的软件架构。相对于ROS1，ROS2在架构上做出了很大的更新。</p>
+<h3 id="0x01-ROS1与ROS2的区别"><a href="#0x01-ROS1与ROS2的区别" class="headerlink" title="0x01 ROS1与ROS2的区别"></a><em>0x01 ROS1与ROS2的区别</em></h3><p>&emsp;&emsp;ROS1与ROS2的大致区别可以用下图展示:  </p>
+<div align="center">
+<img src="/2022/06/21/ROS2/ROS1vsROS2.png" width="600" height="350">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">1.系统架构进行了颠覆性的变化。ROS1中所有节点都需要在节点管理器ROS Master的管理下进行工作，一旦Master出现问题，系统就面临宕机的风险，ROS2实现了真正的分布式，不再有Master这个角色，借助一种全新的<strong>通信框架DDS</strong>，为所有节点的通信提供可靠保障。<br>2.软件API进行了重新设计。ROS1原有的接口已经无法满足需求，ROS2结合C++最新标准和Python3语言特性，设计了更具通用性的API，虽然导致原有ROS1的代码无法直接在ROS2中运行，但是尽量保留了类似的使用方法，同时提供了大量移植的说明。<br>3.编译系统进行了升级。ROS1中使用的rosbuild和catkin问题诸多，尤其是针对代码较多的大项目以及Python编写的项目，编译、链接经常会出错，ROS2对这些问题也进行了优化，重新优化后的编译系统叫做ament和colcon。节点的编译仍然是CMake。</font>  </p>
+</blockquote>
+<p>&emsp;&emsp;其中最大的区别当属通信框架DDS，DDS其实是物联网中广泛应用的一种通信协议，其替换了原先的TCP协议。  </p>
+<div align="center">
+<img src="/2022/06/21/ROS2/DDS.png" width="600" height="300">
+<div align="left">  
+
+<p>&emsp;&emsp;为了解决ROS1通信能力定制化能力低、实时性差的问题，ROS2设计了一个ROS Middleware，简称RMW，也就是指定一个标准的接口，比如如何发数据，如何收数据，数据的各种属性如何配置，都定义好了，如果厂家想要接入ROS社区，就得按照这个标准写一个适配的接口，把自家的DDS给移植过来，这样就把问题交给了最熟悉自家DDS的厂商。对于我们这些用户来讲，某一个DDS用的不爽，只要安装另一个，然后做一个简单的配置，程序一行的都不用改，轻松更换底层的通信系统。</p>
+<h3 id="0x02-ROS2的常用命令"><a href="#0x02-ROS2的常用命令" class="headerlink" title="0x02 ROS2的常用命令"></a><em>0x02 ROS2的常用命令</em></h3><p><strong><em>ros run</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行节点</span></span><br><span class="line">ros2 run <span class="string">&#x27;功能包&#x27;</span> <span class="string">&#x27;功能节点&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>ros node</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看运行中的节点</span></span><br><span class="line">ros2 node list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定节点信息</span></span><br><span class="line">ros2 node info</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>ros topic</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看使用中的话题</span></span><br><span class="line">ros2 topic list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 订阅并打印指定话题</span></span><br><span class="line">ros2 topic <span class="built_in">echo</span> <span class="string">&#x27;话题&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对指定话题发布信息</span></span><br><span class="line">ros2 topic pub <span class="string">&#x27;xxx&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>ros service</em></strong><br>&emsp;&emsp;类似于rpc服务，能够调用指定库的函数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可使用服务</span></span><br><span class="line">ros2 service list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用指定服务</span></span><br><span class="line">ros2 service call <span class="string">&#x27;xxx&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>ros bag</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 记录一段时间内的话题数据</span></span><br><span class="line">ros2 bag record</span><br><span class="line"></span><br><span class="line"><span class="comment"># 播放数据文件</span></span><br><span class="line">ros2 bag play <span class="string">&#x27;数据文件路径&#x27;</span></span><br></pre></td></tr></table></figure></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">机器人</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/06/21/ROS2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-进程间通信与线程间通信" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -233,350 +548,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux文件事件监控" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">Linux文件事件监控</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/" class="archive-article-date">
-  	<time datetime="2022-04-22T07:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-22</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。<br>&emsp;&emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操作上报给应用层的监听进程。  </p>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg" width="500" height="250">
-<div align="left">  
-
-<h3 id="0x01-dnotify"><a href="#0x01-dnotify" class="headerlink" title="0x01 dnotify"></a><em>0x01 dnotify</em></h3><ul>
-<li>dnotify<ul>
-<li>支持内核: 内核2.4.0以上版本</li>
-<li>缺陷:<ul>
-<li>只能监控文件夹，并且对每个目标文件夹都需要添加监控点</li>
-<li>文件夹umount时有影响</li>
-<li>使用信号的方式通知文件系统事件</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x02-inotify"><a href="#0x02-inotify" class="headerlink" title="0x02 inotify"></a><em>0x02 inotify</em></h3><ul>
-<li>inotify<ul>
-<li>支持内核: 内核2.6.13以上版本</li>
-<li>优点:<ul>
-<li>既可以监视文件，也可以监视目录</li>
-<li>不打开目标对象描述符，所以目标umount时不影响，且生成umount事件通知</li>
-<li>使用系统调用的方式通知文件系统事件，效率高于dnotify</li>
-</ul>
-</li>
-<li>缺点:<ul>
-<li>监控文件夹时不能同时监控子文件夹或子文件，需要添加监控点</li>
-<li>监控点有上限，如果监控目录过深，会影响监控能力</li>
-<li>只能记录或通知文件事件，不能阻止该操作</li>
-<li>不能记录更详细的信息，比如对文件执行操作的进程PID</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x03-fanotify"><a href="#0x03-fanotify" class="headerlink" title="0x03 fanotify"></a><em>0x03 fanotify</em></h3><ul>
-<li>fanotify<ul>
-<li>支持内核: 内核2.6.37以上版本</li>
-<li>优点:<ul>
-<li>能同时监控子文件夹或子文件</li>
-<li>无限监控点</li>
-<li>允许介入并改变文件事件的行为</li>
-<li>获取更详细的信息</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg" width="450" height="250">
-<div align="left">  
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man7/fanotify.7.html">https://www.man7.org/linux/man-pages/man7/fanotify.7.html</a><br>[2]<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/186027813">https://zhuanlan.zhihu.com/p/186027813</a></p>
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-端口扫描" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/">端口扫描</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" class="archive-article-date">
-  	<time datetime="2022-04-12T06:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-12</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;端口扫描是指向目标机器发送一组连接端口的数据包，根据目标机器返回结果判断该机器的指定端口是否开放。端口扫描是黑客入侵前获取目标机器的重要手段。</p>
-<h3 id="0x01-网络连接过程"><a href="#0x01-网络连接过程" class="headerlink" title="0x01 网络连接过程"></a><em>0x01 网络连接过程</em></h3><p>&emsp;&emsp;UDP协议和TCP协议都是传输层的协议，TCP协议提供可靠的通信传输，而UDP则是常常被用于让广播和细节控制的交给应用的通信传输。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 TCP连接过程</span><br><span class="line">2 UDP连接过程</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP连接过程</em></strong><br>&emsp;&emsp;TCP协议在连接过程中要完成经典的三次握手、四次挥手，其具体过程如下图:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP连接过程.png" width="500" height="600">
-<div align="left">  
-
-<p><strong><em>2、TCP连接过程</em></strong><br>&emsp;&emsp;UDP协议为单向传播，接收端接收到来自发送端的数据包之后，不会做反馈:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP连接过程.png" width="250" height="300">
-<div align="left">  
-
-<h3 id="0x02-数据包构成"><a href="#0x02-数据包构成" class="headerlink" title="0x02 数据包构成"></a><em>0x02 数据包构成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 TCP网络数据包构成</span><br><span class="line">2 UDP网络数据包构成</span><br><span class="line">3 DNS网络数据包构成</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。</p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP网络数据包.png" width="700" height="250">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">URG：紧急指针有效位。<br>ACK：当ACK=1时，确认序列号字段有效。ACK=0时，确认序列无效。<br>PSH：标志位为1时要求接受方尽快将数据送达应用层。<br>PST：当PST值为1时通知重新建立TCP连接。<br>SYN：同步序号位，TCP需要建立连接时将这个值设为1。<br>FIN：当FIN值为1时，表示请求断开连接。</font>  </p>
-</blockquote>
-<p><strong><em>2、UDP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。</p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP网络数据包.png" width="700" height="250">
-<div align="left">  
-
-<p><strong><em>3、DNS网络数据包构成</em></strong><br>&emsp;&emsp;DNS网络数据包是在UDP网络数据包基础上实现的，其不同的位置在于data部分，data部分的字段如下:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/DNS网络数据包.jpg" width="400" height="250">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">注意1: 在解析IP网络数据包的时候要注意’报头长度4位’字段，该字段表示’选项(可选)32位’字段的实际长度(最多能表示15个32bit的的字，即4*15=60个字节的首部长度)。<br>注意2: 当’选项(可选)32位’字段长度为0时，UDP(DNS)网络数据包除去data部分的数据封包总长度为42字节。</font> </p>
-</blockquote>
-<h3 id="0x03-端口扫描原理"><a href="#0x03-端口扫描原理" class="headerlink" title="0x03 端口扫描原理"></a><em>0x03 端口扫描原理</em></h3><p>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
-<table>
-<thead>
-<tr>
-<th>协议</th>
-<th>端口扫描类型</th>
-<th>标志位</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>TCP - 非隐蔽</td>
-<td>SYN扫描</td>
-<td>SYN</td>
-<td>不用实现完成三次握手，扫描速度快</td>
-<td>扫描行为容易被发现、可能丢包</td>
-</tr>
-<tr>
-<td></td>
-<td>TCP全连接扫描</td>
-<td>-</td>
-<td>稳定可靠，端口状态的判定结果准确</td>
-<td>扫描行为明显，失败请求和错误信息暴露在日志中，攻击成功后容易被溯源</td>
-</tr>
-<tr>
-<td></td>
-<td>ACK扫描</td>
-<td>ACK</td>
-<td>可以辅助SYN的方式来判断目标主机防火墙的状况</td>
-<td>只能用于判断防火墙是否屏蔽，扫描行为容易被发现</td>
-</tr>
-<tr>
-<td>TCP - 隐蔽</td>
-<td>FIN扫描</td>
-<td>FIN</td>
-<td>扫描隐蔽</td>
-<td>需等待超时，扫描时间长，可能丢包。windows不支持</td>
-</tr>
-<tr>
-<td></td>
-<td>NULL扫描</td>
-<td>全部置为0</td>
-<td>同上</td>
-<td>同上</td>
-</tr>
-<tr>
-<td></td>
-<td>XMAS扫描</td>
-<td>FIN URG PSH</td>
-<td>同上</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>UDP</td>
-<td>UDP扫描</td>
-<td>-</td>
-<td>跨平台</td>
-<td>速度相对于TCP的FIN,SYN扫描要慢一些、可能丢包</td>
-</tr>
-</tbody></table>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 TCP端口扫描</span><br><span class="line">  1.1 非隐蔽性扫描</span><br><span class="line">  1.2 隐蔽性扫描</span><br><span class="line">2 UDP端口扫描</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP端口扫描</em></strong><br><strong><em>1.1、非隐蔽性扫描</em></strong>  </p>
-<ul>
-<li><p>SYN扫描: 该方式发送只有SYN标志的包到目标端口</p>
-<ul>
-<li>如果收到SYN/ACK回复，那么判断该端口是开放的</li>
-<li>如果收到RST包，那么判断该端口是关闭</li>
-<li>如果没收到回复，那么判断该端口是被屏蔽</li>
-</ul>
-</li>
-<li><p>TCP全连接扫描: 实现TCP三次握手，实现的方法通常使使用操作系统提供的connect函数</p>
-<ul>
-<li>如果无法连接，说明该端口关闭</li>
-</ul>
-</li>
-<li><p>ACK扫描: 向目标主机的端口发送只有ACK标志的包</p>
-<ul>
-<li>如果收到RST包，说明该端口没有被防火墙屏蔽</li>
-<li>没有收到RST包，说明被屏蔽</li>
-</ul>
-</li>
-</ul>
-<p><strong><em>1.2 隐蔽性扫描</em></strong>  </p>
-<ul>
-<li>FIN扫描: 向目标主机的端口发送只有FIN标志的包</li>
-<li>NULL扫描: 向目标主机的端口发送没有标志位的包</li>
-<li>XMAS扫描: 向目标主机的端口发送具有FIN、URG与PSH标志的包<ul>
-<li>如果收到对方RST回复包，那么说明该端口是关闭的</li>
-<li>没有收到RST包说明端口可能是开放的或被屏蔽的</li>
-</ul>
-</li>
-</ul>
-<p><strong><em>2、UDP端口扫描</em></strong>  </p>
-<ul>
-<li>UDP扫描: 向目标主机的UDP端口发送探测包<ul>
-<li>如果收到回复“ICMP port unreachable”就说明该端口是关闭的</li>
-<li>如果没有收到回复，那说明UDP端口可能是开放的或屏蔽的</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x04-端口扫描工具-NMap"><a href="#0x04-端口扫描工具-NMap" class="headerlink" title="0x04 端口扫描工具 - NMap"></a><em>0x04 端口扫描工具 - NMap</em></h3><h3 id="0x05-端口扫描防护"><a href="#0x05-端口扫描防护" class="headerlink" title="0x05 端口扫描防护"></a><em>0x05 端口扫描防护</em></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><em>0x06 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/90abebfe0014">https://www.jianshu.com/p/90abebfe0014</a><br>[3]port scan detect</p>
-</div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/">展开全文 >></a>
         </p>
       
 
@@ -743,11 +714,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -759,11 +734,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -771,7 +742,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -787,19 +766,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
