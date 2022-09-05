@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为设计模式-可复用的面向对象软件元素[1]，以及菜鸟教程[2]上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。 0x01 创建型模式&amp;emsp;&amp;">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-07-17T10:28:05.000Z">
-<meta property="article:modified_time" content="2022-07-28T09:35:40.827Z">
+<meta property="article:modified_time" content="2022-09-01T06:22:19.353Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
@@ -198,8 +198,8 @@
 <p><strong><em>3.1.1 加锁的懒汉式</em></strong><br>&emsp;&emsp;那么如何解决上述遇到的重复构造问题呢，实际上加个锁即可，代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                mutex.lock();</span><br><span class="line">                <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                    p = <span class="keyword">new</span> CSingleton();</span><br><span class="line">                    <span class="keyword">return</span> p;</span><br><span class="line">                &#125;</span><br><span class="line">                mutex.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;该方案也存在劣势，即会导致程序运行速度减慢，所以说懒汉式比较适用于访问量较小的情况。  </p>
-<p><strong><em>3.1.2、内部静态变量的懒汉式</em></strong><br>&emsp;&emsp;还有一种方法也能解决重复构造的问题，且没有像加锁那样的减速缺点，但是需要在C++11及之后的版本使用，否则可能会导致多次构造函数调用。这种方法即以静态变量的方式实例化对象，这样就不会重复实例化了，代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">static</span> CSingleton s;</span><br><span class="line">            <span class="keyword">return</span> &amp;s;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong><em>3.1.2、内部静态变量的懒汉式(推荐)</em></strong><br>&emsp;&emsp;还有一种方法也能解决重复构造的问题，且没有像加锁那样的减速缺点，但是需要在C++11及之后的版本使用，否则可能会导致多次构造函数调用。这种方法即以静态变量的方式实例化对象，这样就不会重复实例化了，代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    static CSingleton* GetInstance()</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        static CSingleton s;</span></span><br><span class="line"><span class="comment">        return &amp;s;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> CSingleton&amp; <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> CSingleton s;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    CSingleton() = <span class="keyword">default</span>; <span class="comment">// 默认构造</span></span><br><span class="line">    ~CSingleton() = <span class="keyword">default</span>; <span class="comment">// 默认构造</span></span><br><span class="line">    CSingleton(<span class="keyword">const</span> CSingleton&amp; other) = <span class="keyword">delete</span>; <span class="comment">// 声明但不使用</span></span><br><span class="line">    CSingleton&amp; <span class="keyword">operator</span> = (<span class="keyword">const</span> CSingleton&amp;) = <span class="keyword">delete</span>; <span class="comment">// 声明但不使用</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3.2、饿汉式</em></strong><br>&emsp;&emsp;饿汉式是指在类加载的时候即new出该类对象，代码如下:  </p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">        CSingleton* CSingleton::p = <span class="keyword">new</span> CSingleton;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -418,11 +418,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -434,11 +434,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -446,19 +446,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -466,7 +458,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -474,11 +466,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -486,7 +478,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -494,11 +490,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -177,17 +177,86 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Hook即是函数调用劫持(用自己写的函数替换目标库中的函数)，在Hook成功后就可以在自己的函数去实现监控程序执行、参数检查、过滤、拦截、修改、放行等操作。<br>&emsp;&emsp;目前Linux上实现用户态Hook的主流方法主要有**库打桩(Library Interpositioning)、注入(Inject)**。  </p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RING0&#x2F;RING3</span><br><span class="line">2 LD_PRELOAD环境变量</span><br><span class="line">3 共享内存</span><br></pre></td></tr></table></figure>
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Hook即是函数调用劫持(用自己写的函数替换目标库中的函数)，在Hook成功后就可以在自己的函数去实现监控程序执行、参数检查、过滤、拦截、修改、放行等操作。<br>&emsp;&emsp;目前Linux上实现用户态Hook的主流方法主要有两种: <strong>库打桩</strong>、<strong>注入与热更新</strong>。  </p>
+<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 RING0&#x2F;RING3</span><br><span class="line">2 LD_PRELOAD环境变量</span><br><span class="line">3 ELF文件结构</span><br><span class="line">4 PLT与GOT</span><br><span class="line">  4.1 动态库函数寻址流程</span><br><span class="line">  4.2 相关节</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、RING0/RING3</em></strong><br>&emsp;&emsp;Intel的CPU将特权级别分为<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">四个级别</a>: RING0,RING1,RING2,RING3。Linux系统包含上述所有级别，Windows系统只使用RING0和RING3。<br>&emsp;&emsp;内核的代码运行在最高运行级别RING0(内核态)上，可以使用特权指令，控制中断、修改页表、访问设备等等。应用程序的代码运行在最低运行级别上RING3(用户态)上，不能做受控操作，如果要访问磁盘，写文件，那必须通过执行系统调用。</p>
+<p><strong><em>1、RING0/RING3</em></strong><br>&emsp;&emsp;Intel的CPU将特权级别分为<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">四个级别</a><sup>[1]</sup>: RING0,RING1,RING2,RING3。Linux系统包含上述所有级别，Windows系统只使用RING0和RING3。<br>&emsp;&emsp;内核的代码运行在最高运行级别RING0(内核态)上，可以使用特权指令，控制中断、修改页表、访问设备等等。应用程序的代码运行在最低运行级别上RING3(用户态)上，不能做受控操作，如果要访问磁盘，写文件，那必须通过执行系统调用。</p>
 <div align="center">
 <img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/RING级别.png" width="500" height="300">
 <div align="left">  
 
 <p><strong><em>2、LD_PRELOAD环境变量</em></strong><br>&emsp;&emsp;LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接，它允许你定义在程序运行前优先加载的动态链接库。其优先级甚至高于LD_LIBRARY_PATH环境变量(指定动态库搜索路径)。  </p>
-<p><strong><em>3、共享内存</em></strong>  </p>
-<h3 id="0x02-库打桩"><a href="#0x02-库打桩" class="headerlink" title="0x02 库打桩"></a><em>0x02 库打桩</em></h3><p>&emsp;&emsp;Linux系统下的库打桩功能允许你拦截对系统标准库中某个目标函数的调用，取而代之执行自己的包装函数。  </p>
+<p><strong><em>3、ELF文件结构</em></strong><br>&emsp;&emsp;ELF(Executableand Linking Format)即为可执行和链接格式，在Unix系统中，ELF文件包括.o .so以及可执行程序。ELF格式文件的基本结构如下:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF文件格式.png" width="700" height="600">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">ELF Header - ELF头: 存储着一些机器和该ELF文件的基本信息。指出了段头表与节头表在文件中的位置;<br>ELF Program Header Table - 段头表(程序头): 保存了所有段描述信息;<br>ELF Section Header Table - 节头表: 保存了所有节描述信息;</font>  </p>
+</blockquote>
+<p>&emsp;&emsp;可执行程序的内容是由段(Segment)组成的(程序执行必须要包含段)，.o文件的内容是由节(Section)组成的。段由一个或多个具有相同属性的节组成，节头表中保存了在链接阶段(从.o文件生成可执行程序)具体需要将节连接到哪个段的信息。可执行文件载入内存时，会分为由段组织的内存块，这些内存块信息都会保存在段头表中。<br>&emsp;&emsp;在Linux中，如果向看ELF文件的详细信息，可以使用readelf工具:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -e <span class="string">&#x27;ELF文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、PLT与GOT</em></strong><br>&emsp;&emsp;PLT(Procedure Linkage Table)即过程链接表在链接阶段被链接到数据段，GOT(Global Offset Table)即全局偏移量表在链接阶段被链接到代码段。前者在ELF中主要包括.plt节、.rela.plt节，后者在ELF中主要包括.got节、.got.plt节，二者共同作用于将动态库函数链接到程序中。<br>**<em>4.1 动态库函数寻址流程**</em><br>&emsp;&emsp;现在思考一个问题: ELF是怎么找到函数地址的呢?<br>&emsp;&emsp;要理解这个问题，首先我们得明确这个需要执行的函数究竟在哪里实现，基本可以分为以下三种情况:  </p>
+<ul>
+<li>函数定义在其它.o中。链接阶段可直接重定位</li>
+<li>函数定义在动态库内，动态库<strong>动态链接</strong>。链接阶段无法直接重定位，这种情况我们在热更新中会解释</li>
+<li>函数定义在动态库内，动态库<strong>动态加载</strong>。链接阶段无法直接重定位</li>
+</ul>
+<p>&emsp;&emsp;为了解决上述第三种情况，我们需要使用到PLT与GOT，下图是动态库函数寻址的过程:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/PLT与GOT.png" width="700" height="400">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">1.直接重定位: 链接阶段，链接器直接在其他.o文件找到函数地址并替换原任意地址;<br>2.链接时重定位: 链接阶段，链接器生成一小段额外的stub代码片段(这段代码能够在运行阶段获取函数真是地址)，并将stub函数地址替换原任意地址，并将此地址记录到PLT相关节中;<br>3.运行时重定位: 运行阶段，将库加载到内存中，并获取到目标函数在库中的位置，并将stub函数实现内的目标函数地址替换为内存中的真实地址，并最终执行目标函数。</font>  </p>
+</blockquote>
+<p><strong><em>4.2 相关节</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>节名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>动态链接</td>
+<td>.dynamic</td>
+<td>非外部调用符号的基本信息，可用 readelf -d 查看</td>
+</tr>
+<tr>
+<td></td>
+<td>.rela.dyn</td>
+<td>非外部调用符号的重定位信息</td>
+</tr>
+<tr>
+<td>动态加载PLT</td>
+<td>.dynsym</td>
+<td>外部调用符号的基本信息</td>
+</tr>
+<tr>
+<td></td>
+<td>.dynstr</td>
+<td>外部调用符号的字符名，与.dynsym序号对应，与.rela.plt节中的序号成映射关系</td>
+</tr>
+<tr>
+<td></td>
+<td>.rela.plt</td>
+<td>PLT新生成桩(stub)函数的偏移地址，其指向位置存在于.got.plt节中</td>
+</tr>
+<tr>
+<td>动态加载GOT</td>
+<td>.rela.got</td>
+<td>GOT最终函数地址的偏移地址</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font size="2">注意: 非外部调用与外部调用区别<br>1.非外部调用(动态链接): 在编译时声明动态库的存在，在运行期间链接动态库，意味着动态库在编译时对编译器可见;<br>2.外部调用(动态加载): 在运行期间动态加载库，是由用户自己链接而不是由链接器(动态库都用extern “C”修饰，并在进程中用dlopen动态加载)，在编译期间可以不需要知道动态库的存在。</font> </p>
+</blockquote>
+<h3 id="0x02-库打桩"><a href="#0x02-库打桩" class="headerlink" title="0x02 库打桩"></a><em>0x02 库打桩</em></h3><p>&emsp;&emsp;Linux系统下的库打桩(Library Interpositioning)功能允许你拦截对系统标准库中某个目标函数的调用，取而代之执行自己的包装函数。  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单进程库打桩</span><br><span class="line">2 全局库打桩</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、单进程库打桩</em></strong><br>&emsp;&emsp;单进程库打桩只替换某进程中调用的系统函数，但是前提是必须获得其源码或.o文件。<br>&emsp;&emsp;execve函数在父进程中fork一个子进程，在子进程中调用exec函数启动新的程序。exec函数族一共有六个，其中execve为内核级系统调用，所有其他函数最终都会调用到它。在这里我们直接拦截execve函数:  </p>
@@ -197,7 +266,7 @@
 <p>&emsp;&emsp;在编译时，只需要包含hook.c即可:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line"><span class="comment"># 情况一: 源码编译</span></span><br><span class="line">$ gcc main.cpp hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况二: .o文件编译</span></span><br><span class="line">$ gcc main.o hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况三: 直接修改elf库</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ patchelf --add-needed <span class="variable">$PWD</span>/hook.so <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、全局库打桩</em></strong><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">全局库打桩</a>实际上实现方式与单进程库打桩一致，只是其利用了在Linux系统下LD_PRELOAD环境变量能够允许所有进程优先加载指定函数的特性，实现了<strong>libc(系统)函数调用劫持</strong>。其执行流程如下:  </p>
+<p><strong><em>2、全局库打桩</em></strong><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">全局库打桩</a><sup>[2]</sup>实际上实现方式与单进程库打桩一致，只是其利用了在Linux系统下LD_PRELOAD环境变量能够允许所有进程优先加载指定函数的特性，实现了<strong>libc(系统)函数调用劫持</strong>。其执行流程如下:  </p>
 <div align="center">
 <img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/全局库打桩流程.png" width="600" height="350">
 <div align="left">  
@@ -205,7 +274,37 @@
 <p>&emsp;&emsp;代码无需改动，只是在编译时，修改LD_PRELOAD环境变量即可:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ gcc main.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将hook.so写入LD_PRELOAD</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/hook.so</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x03-注入"><a href="#0x03-注入" class="headerlink" title="0x03 注入"></a><em>0x03 注入</em></h3></div></div></div></div>
+<h3 id="0x03-注入与热更新"><a href="#0x03-注入与热更新" class="headerlink" title="0x03 注入与热更新"></a><em>0x03 注入与热更新</em></h3><p>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">注入与热更新</a><sup>[3]</sup>实现Hook的方法，是为了将目标进程外部调用的动态库中的某个函数替换为其他动态库中的某个函数。其Hook思路，可以简单地理解为首先将hook.so注入到目标进程内存空间中，然后使用hook.so中的函数地址热更新替代target.so中的函数地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 注入</span><br><span class="line">2 热更新</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、注入</em></strong><br>&emsp;&emsp;目标进程Test在最开始时并不能直接运行hook.so中的函数，因为hook.so并不在进程的内存空间，因此我们需要实现的第一步就是将hook.so注入到Test内存空间中。比较简单的实现方法是，假设Test依赖libc库，那么我们可以劫持进程执行系统调用dlopen，并加载我们的hook库。<br>&emsp;&emsp;至于如何使进程执行系统调用dlopen，只需要修改CPU寄存器即可:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/系统调用流程.png" width="750" height="300">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">rdi / rsi / rdx / r10 / r8 / r9：参数1~6<br>rax：系统调用号<br>rip：执行代码地址</font>  </p>
+</blockquote>
+<p><strong><em>2、热更新</em></strong><br>&emsp;&emsp;在将hook.so注入目标进程Test后，我们需要使用hook.so中的函数替换掉动态库target.so中的某个函数。<br>&emsp;&emsp;为了实现这个目的，我们必须先理解ELF调用外部函数的关系图(注意foo1与foo2调用区别):  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF外部函数调用关系图.png" width="800" height="430">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">注意: 外部调用寻找函数地址也不一定用到PLT与GOT<br>1.foo1: 不需要PLT与GOT寻址。比如直接在target.so中实现的函数<br>2.foo2: 需要PLT与GOT寻址。比如在target.so中调用的libc库函数</font>  </p>
+</blockquote>
+<p>&emsp;&emsp;根据上图，在调用foo1和foo2的真正实现中，其调用过程是:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># foo1</span></span><br><span class="line">.dynstr中记录了所有外部函数字符，找到foo1字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">.dynsym中记录foo1函数偏移地址，其指向位置存在于.text节中;</span><br><span class="line"></span><br><span class="line"><span class="comment"># foo2</span></span><br><span class="line">.dynstr中记录了所有外部函数字符，找到foo2字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">.dynsym中记录foo2函数偏移地址，其指向位置不存在于.text节中;</span><br><span class="line">根据foo2序号，找到在.rela.plt节中映射的新序号，确定foo2在.rela.plt节中位置;</span><br><span class="line">属PLT: .rela.plt节真正保存foo2_stub函数偏移地址，其指向位置存在于.rela.got节中;</span><br><span class="line">属GOT: .rela.got节真正保存foo2偏移地址。</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;在理解了ELF调用外部函数的过程之后，我们针对foo1与foo2两种情况，可采用如下方法对目标函数进行热更新:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/热更新原理图.png" width="800" height="430">
+<div align="left">  
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">https://blog.csdn.net/weixin_43742894/article/details/90180219</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">https://www.cnblogs.com/lion-cheng/p/16018700.html#库打桩机制</a><br>[3]<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">https://cloud.tencent.com/developer/article/1759520</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -648,11 +747,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -664,11 +763,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -676,19 +775,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -696,7 +787,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -704,11 +795,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -716,7 +807,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -724,11 +819,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
