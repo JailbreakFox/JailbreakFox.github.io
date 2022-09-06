@@ -23,7 +23,7 @@
 <meta property="og:image" content="http://yoursite.com/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF外部函数调用关系图.png">
 <meta property="og:image" content="http://yoursite.com/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/热更新原理图.png">
 <meta property="article:published_time" content="2022-08-27T02:40:13.000Z">
-<meta property="article:modified_time" content="2022-09-05T02:39:46.948Z">
+<meta property="article:modified_time" content="2022-09-06T11:45:31.351Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux 计算机技术">
 <meta name="twitter:card" content="summary">
@@ -235,17 +235,7 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>动态链接</td>
-<td>.dynamic</td>
-<td>非外部调用符号的基本信息，可用 readelf -d 查看</td>
-</tr>
-<tr>
-<td></td>
-<td>.rela.dyn</td>
-<td>非外部调用符号的重定位信息</td>
-</tr>
-<tr>
-<td>动态加载PLT</td>
+<td>字符信息</td>
 <td>.dynsym</td>
 <td>外部调用符号的基本信息</td>
 </tr>
@@ -255,18 +245,23 @@
 <td>外部调用符号的字符名，与.dynsym序号对应，与.rela.plt节中的序号成映射关系</td>
 </tr>
 <tr>
-<td></td>
+<td>PLT</td>
 <td>.rela.plt</td>
 <td>PLT新生成桩(stub)函数的偏移地址，其指向位置存在于.got.plt节中</td>
 </tr>
 <tr>
-<td>动态加载GOT</td>
+<td></td>
+<td>.rela.dyn</td>
+<td>已保存的重定位信息</td>
+</tr>
+<tr>
+<td>GOT</td>
 <td>.rela.got</td>
 <td>GOT最终函数地址的偏移地址</td>
 </tr>
 </tbody></table>
 <blockquote>
-<p><font size="2">注意: 非外部调用与外部调用区别<br>1.非外部调用(动态链接): 在编译时声明动态库的存在，在运行期间链接动态库，意味着动态库在编译时对编译器可见;<br>2.外部调用(动态加载): 在运行期间动态加载库，是由用户自己链接而不是由链接器(动态库都用extern “C”修饰，并在进程中用dlopen动态加载)，在编译期间可以不需要知道动态库的存在。</font> </p>
+<p><font size="2">注意: 外部调用分为动态链接、动态加载<br>1.动态链接: 在编译时声明动态库的存在，在运行期间链接动态库，意味着动态库在编译时对编译器可见。动态链接的库函数字符名与源代码中不一致(比如print_str函数会变为_Z9print_stri)，查询字符可使用 readelf -a ‘ELF路径’ |grep ‘函数名’;<br>2.动态加载: 在运行期间动态加载库，是由用户自己链接而不是由链接器(动态库都用extern “C”修饰，并在进程中用dlopen动态加载)，在编译期间可以不需要知道动态库的存在。动态加载的库函数字符名即为源代码中的函数名</font> </p>
 </blockquote>
 <h3 id="0x02-库打桩"><a href="#0x02-库打桩" class="headerlink" title="0x02 库打桩"></a><em>0x02 库打桩</em></h3><p>&emsp;&emsp;Linux系统下的库打桩(Library Interpositioning)功能允许你拦截对系统标准库中某个目标函数的调用，取而代之执行自己的包装函数。  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单进程库打桩</span><br><span class="line">2 全局库打桩</span><br></pre></td></tr></table></figure>
@@ -513,11 +508,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -541,11 +536,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -553,11 +548,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">机器人</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -569,7 +564,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -577,7 +572,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
