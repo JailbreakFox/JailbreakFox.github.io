@@ -6,17 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 工具， 信息聚合 | Jesse Tsui的博客</title>
+  <title>ShellCode | Jesse Tsui的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jesse Tsui的博客">
-<meta property="og:url" content="http://yoursite.com/tags/%E5%B7%A5%E5%85%B7%EF%BC%8C-%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88/index.html">
+  <meta name="description" content="0x00 引言&amp;emsp;&amp;emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。&amp;emsp;&amp;emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShellCode">
+<meta property="og:url" content="http://yoursite.com/2022/06/09/ShellCode/index.html">
 <meta property="og:site_name" content="Jesse Tsui的博客">
-<meta property="og:description" content="燕山大学在读研究生，创造出风靡全球的机器人产品是我毕生的追求。">
+<meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。&amp;emsp;&amp;emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地">
 <meta property="og:locale">
+<meta property="article:published_time" content="2022-06-09T09:06:31.000Z">
+<meta property="article:modified_time" content="2022-09-09T11:50:17.845Z">
 <meta property="article:author" content="JailbreakFox">
-<meta property="article:tag" content="极客,geek,开源,机器人,robot,游戏制作,game,hacker,黑客,口琴,布鲁斯,blues">
+<meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jesse Tsui的博客" type="application/atom+xml">
@@ -154,60 +156,139 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-ShellCode" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/" class="archive-article-date">
-  	<time datetime="2019-05-10T08:47:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">信息聚合工具-RSS</a>
+    <h1 class="article-title" itemprop="name">
+      ShellCode
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2022/06/09/ShellCode/" class="archive-article-date">
+  	<time datetime="2022-06-09T09:06:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-09</time>
+</a>
+        
+        
+          <span class="archive-article-date">
+            阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。<br>&emsp;&emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地Shell，也可以是反弹到攻击机器的远程Shell。<br>&emsp;&emsp;ShellCode通常有以下三种存在形式: C生成的ELF文件、汇编生成的.asm文件以及<strong>纯十六进制的.bin文件</strong>。<br>&emsp;&emsp;而黑客偏爱十六进制ShellCode的原因，就是希望核心恶意代码既小又可执行(这允许它在尽可能广泛的情况下使用)。比如我们可以为他加壳、使他作为数据动态地加载到进程中，这样就更不容易被杀软发现。  </p>
+<h3 id="0x01-ShellCode生成"><a href="#0x01-ShellCode生成" class="headerlink" title="0x01 ShellCode生成"></a><em>0x01 ShellCode生成</em></h3><p>&emsp;&emsp;由于目前能力有限，这边只介绍两种简单的<strong>纯十六进制ShellCode生成</strong>方法。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 C&#x2F;C++与objdump</span><br><span class="line">2 ShellCode生成器</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、C/C++与objdump</em></strong><br>&emsp;&emsp;objdump是一款linux下的反编译工具，下面以一个最简单的本地Shell获取代码为例介绍如何用该工具生成纯十六进制的ShellCode:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    execve(<span class="string">&quot;/bin/sh&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;首先生成ELF文件，然后使用objdump生成ShellCode:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line">$ gcc test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用objdump生成ShellCode</span></span><br><span class="line"><span class="comment"># 打印的字符串即为ShellCode</span></span><br><span class="line">$ objdump -d ./<span class="built_in">test</span> |grep <span class="string">&#x27;[0-9a-f]:&#x27;</span>|grep -v <span class="string">&#x27;file&#x27;</span>|cut -f2 -d:|cut -f1-6 -d<span class="string">&#x27; &#x27;</span>|tr -s <span class="string">&#x27; &#x27;</span>|tr <span class="string">&#x27;\t&#x27;</span> <span class="string">&#x27; &#x27;</span>|sed <span class="string">&#x27;s/ $//g&#x27;</span>|sed <span class="string">&#x27;s/ /\\x/g&#x27;</span>|paste -d <span class="string">&#x27;&#x27;</span> -s |sed <span class="string">&#x27;s/^/&quot;/&#x27;</span>|sed <span class="string">&#x27;s/$/&quot;/g&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、ShellCode生成器</em></strong><br>&emsp;&emsp;Github上可以找到<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">ShellCode生成器</a>，可以实现从C/C++代码生成汇编代码(.asm)或十六进制文件(.bin):  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写入源txt文件</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;execve(\&quot;/bin/sh\&quot;, 0, 0);&quot;</span> &gt; sh.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成.asm与.bin文件</span></span><br><span class="line">&amp; ./ShellCodeGenerator -p linux_x64 -r sh.txt -a Assembly.asm -o Shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用hex编辑器查看生成的Shellcode.bin文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-ShellCode运行"><a href="#0x02-ShellCode运行" class="headerlink" title="0x02 ShellCode运行"></a><em>0x02 ShellCode运行</em></h3><p>&emsp;&emsp;为了测试上一步获取到的纯十六进制ShellCode的效果，除了直接使用上述生成器的’-t’参数，我们还可以直接写一个用于测试的.cpp文件:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;code)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;上述的code变量即为生成的十六进制ShellCode，接下来测试其效果:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line"><span class="comment"># code变量内容在数据段，由于NX保护机制存在，无法直接在数据段运行指令</span></span><br><span class="line"><span class="comment"># &#x27;-z execstack&#x27;参数可关闭NX保护机制</span></span><br><span class="line">$ gcc -z execstack test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">$ ./<span class="built_in">test</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-ShellCode加壳"><a href="#0x03-ShellCode加壳" class="headerlink" title="0x03 ShellCode加壳"></a><em>0x03 ShellCode加壳</em></h3><h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">https://github.com/NytroRST/ShellcodeCompiler</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">工具， 信息聚合</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2022/06/21/ROS2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          ROS2
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">进程间通信与线程间通信</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-ShellCode%E7%94%9F%E6%88%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 ShellCode生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-ShellCode%E8%BF%90%E8%A1%8C"><span class="toc-number">3.</span> <span class="toc-text">0x02 ShellCode运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-ShellCode%E5%8A%A0%E5%A3%B3"><span class="toc-number">4.</span> <span class="toc-text">0x03 ShellCode加壳</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -233,9 +314,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

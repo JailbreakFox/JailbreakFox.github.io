@@ -156,6 +156,109 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-仓库源管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">仓库源管理</a>
+    </h1>
+  
+
+        
+        <a href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/" class="archive-article-date">
+  	<time datetime="2020-05-14T06:22:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-14</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;软件仓库是一个预备好的目录，或是一系列存放软件的服务器，或是一个网站，包含了软件包和索引文件。多数Linux发行版都有自己的软件安装、配置方案，同时还有各自的软件包管理系统。为了省去用户四处寻找合适软件安装包的麻烦，这些发行版将常用的软件集中到一个服务器上，并为用户提供了自动下载、安装软件的接口，这就是我们所说的“软件仓库”。为了方便大众访问，人们为这些软件仓库建立了大量的“镜像”，使世界各地的用户都能方便地使用。不同发行版的软件仓库一般不同，如用户接口各异、软件丰富程度不同、镜像分布不同等等。</p>
+<h3 id="0x01-仓库源地址"><a href="#0x01-仓库源地址" class="headerlink" title="0x01 仓库源地址"></a><em>0x01 仓库源地址</em></h3><p>&emsp;&emsp;源地址通常是很长的一串地址，由四个部分组成，例如下述源地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://10.0.10.25/uos eagle main contrib non-free</span><br><span class="line">deb-src http://10.0.10.25/uos eagle main contrib non-free</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>deb/deb-src : 表示deb包地址/源码包地址。当你要 ‘apt-get source’ 源码时，必须使用 ‘deb-src’ 。当你要 ‘apt-get install’ 软件时，则必须使用deb。</li>
+<li><a target="_blank" rel="noopener" href="http://10.0.10.25/uos">http://10.0.10.25/uos</a> : 这个字段是仓库的http访问地址。</li>
+<li>eagle : 这个段是表示仓库的codename。可用 ‘lsb_release -a’ 指令查询。</li>
+<li>main contrib non-free : 这个字段是仓库的分组目录，linux根据软件不同属性进行分组。</li>
+</ul>
+<h3 id="0x02-源管理文件"><a href="#0x02-源管理文件" class="headerlink" title="0x02 源管理文件"></a><em>0x02 源管理文件</em></h3><p>&emsp;&emsp;Linux中的源管理文件主要是sources.list，它是一个普通可编辑的文本文件，保存了ubuntu软件更新的源服务器的地址:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑sources.list</span></span><br><span class="line">sudo vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;除了使用sources.list文件来管理源地址，同时 sources.list.d/ 路径为单独在文件中写入源的地址提供了一种方式，通常用来安装第三方的软件。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 到 /etc/apt/sources.list.d/ 路径下新建 *.list</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt</span><br><span class="line">sudo vim *.list</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-软件包首选配置"><a href="#0x03-软件包首选配置" class="headerlink" title="0x03 软件包首选配置"></a><em>0x03 软件包首选配置</em></h3><p>&emsp;&emsp;关于软件包的版本管理，可通过修改<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">AptConfigure</a><sup>[1]</sup>来配置。<br><strong>查看软件包版本信息</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看某个软件包的版本号、可选的版本包以及对应的仓库</span></span><br><span class="line">apt policy <span class="string">&#x27;软件包名&#x27;</span></span><br><span class="line"></span><br><span class="line">    apt policy claws-mail</span><br><span class="line"></span><br><span class="line">    claws-mail:</span><br><span class="line">    Installed : (none)</span><br><span class="line">    Candidate : 3.14.1-3+b1</span><br><span class="line">    Version table :</span><br><span class="line">        3.17.1-1~bpo9+1 100</span><br><span class="line">            100 https://deb.debian.org/debian stretch-backports/main amd64 Packages</span><br><span class="line">        3.14.1-3+b1 500</span><br><span class="line">            500 https://deb.debian.org/debian stretch/main amd64 Package</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看所有仓库源信息</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有仓库源信息</span></span><br><span class="line">apt policy</span><br><span class="line"></span><br><span class="line">    Package files: </span><br><span class="line">    500 https://deb.debian.org/debian stable/main amd64 Packages</span><br><span class="line">        o=Debian,n=stable,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br><span class="line"></span><br><span class="line">    500 https://deb.debian.org/debian stable-updates/main amd64 Packages</span><br><span class="line">        release o=Debian,a=oldstable-updates,n=stable-updates,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br></pre></td></tr></table></figure>
+
+<p><strong>新建首选配置文件</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 /etc/apt/preferences.d/ 路径下新建配置文件(无后缀)</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt/preferences.d/</span><br><span class="line">sudo vim <span class="string">&#x27;配置文件名&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;比如新建一个名为99debian-backports的配置文件，并输入如下内容，可以让claws-mail以后所有的更新包都按照a=stretch-backports的源来更新，900即为该源的置信值，值越高越是首选：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: claws-mail</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;同样，也可以为所有的软件包都设置该源为首选项：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: *</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">https://wiki.debian.org/AptConfiguration</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-DBus" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -395,117 +498,9 @@
 
 
   
-    <article id="post-流媒体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">流媒体</a>
-    </h1>
-  
-
-        
-        <a href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/" class="archive-article-date">
-  	<time datetime="2020-01-31T03:16:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-31</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;最近几年直播平台崛起迅速，如主流的斗鱼、熊猫及YY等。这里我们从技术层面来从头搭建一个直播平台，方便播放”不合规”的视频。<br>&emsp;&emsp;要实现一个直播系统，需要实现三个技术，分别为流媒体服务器以及推流与拉流。流媒体服务器作为流的中转站可以实现推拉流，推流可以认为是主播使用的技术软件，能实现视频、音频以及摄像头的信息采集功能，而拉流则是视频订阅者从服务器获取视频的技术。<br>&emsp;&emsp;由于流媒体服务器需要公网IP，这里直接使用阿里云服务器。  </p>
-<h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a><em>0x01 环境搭建</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 流媒体服务器</span><br><span class="line">  1.1 云服务器搭建</span><br><span class="line">  1.2 srs部署</span><br><span class="line">2 OBS推流部署</span><br><span class="line">3 VLC拉流部署</span><br></pre></td></tr></table></figure>
-<p><strong><em>1 流媒体服务器</em></strong><br><strong><em>1.1 云服务器搭建</em></strong><br>&emsp;&emsp;这里用的是<a target="_blank" rel="noopener" href="https://www.aliyun.com/">阿里云服务器</a><sup>[1]</sup>，由于考虑到只是测试使用，因此买了一款1核2G，1Mbps的服务器。运行远程主机以后，记得<strong>添加安全组并开启1935端口</strong>，因为后面的srs需要用到该端口来交互信息。<br>&emsp;&emsp;值得注意的是，阿里云已经为用户提供了直播控制台，也就是说没必要自己部署流媒体服务器，但是由于要收费，我们这里还是部署开源的框架。  </p>
-<p><strong><em>1.2 srs部署</em></strong><br>&emsp;&emsp;流媒体服务器目前有很多优秀的开源框架，知乎上也有对比不同框架的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">文章</a><sup>[2]</sup>，这里我们选用srs。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/流媒体开源框架.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;从上图可以看到，srs部署在Ubuntu下，网上有很多<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">技术博客</a><sup>[3]</sup>已经具体介绍了其安装方式:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先去Git上clone</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ossrs/srs.git</span><br><span class="line"><span class="built_in">cd</span> srs/trunk</span><br><span class="line"><span class="comment">#配置</span></span><br><span class="line">./configure</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line">make</span><br><span class="line"><span class="comment">#开启服务，第一次需要输入</span></span><br><span class="line">./objs/srs -c conf/srs.conf</span><br><span class="line"><span class="comment">#以后只需要输入 ./etc/init.d/srs start</span></span><br><span class="line"><span class="comment">#关闭服务为./etc/init.d/srs stop</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2 OBS推流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是OBS，非常好用快速，该软件可从<a target="_blank" rel="noopener" href="https://obsproject.com/">官网</a><sup>[4]</sup>免费下载。第一次使用，需要修改一些关键设置:<br>&emsp;&emsp;1)推流设置<br>&emsp;&emsp;这是最重要的设置内容，拉流的时候需要用到该地址。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs推流.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;推流地址的设置格式如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户名</span></span><br><span class="line">rtmp://你的ip/你喜欢的url</span><br><span class="line"><span class="comment">#串流密钥(适用于开源框架，不适用于阿里云的直播控制台)</span></span><br><span class="line">你喜欢的任意字符串</span><br><span class="line"><span class="comment">#上述两者合起来就是你的流地址</span></span><br><span class="line"><span class="comment">#例如rtmp://11.11.11.11/xyh/tiancai</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;2)输出设置<br>&emsp;&emsp;这个设置关系到你直播内容的清晰度、流量使用量等，设置方法可以参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">B站大佬的教程</a><sup>[5]</sup>。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs输出.png">
-<div align="left">  
-
-<p>&emsp;&emsp;x264是一个开源的H.264/MPEG-4 AVC视频编码函数库(不明觉厉就选它)。CBR是以恒定比特率方式进行编码(具体内容请自行查阅，由于服务器流量少，只能给500 Kbps)。CPU使用预设可根据自己电脑配置做调整。  </p>
-<p>&emsp;&emsp;3)视频设置<br>&emsp;&emsp;基础分辨率为电脑的分辨率，输出分辨率为拉流端的分辨率，如果流媒体服务器流量小，可以选择较小的输出分辨率。FPS值为刷新频率，普通人人眼能识别的帧率只需25帧，这里给30帧，也是为了考虑流量问题。  </p>
-<div align="center">
-<img src="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/obs视频.png">
-<div align="left">  
-
-<p>&emsp;&emsp;设置完成后，只需要点击”开始推流”即可。</p>
-<p><strong><em>3 VLC拉流部署</em></strong><br>&emsp;&emsp;这里使用的推流软件是VLC，PC端也可以从官网上直接下载，安卓端可以从APKPure下载。下载完成后在”串流”菜单中输入 1.2 节中设置的流地址，就能连上流媒体服务器，进行拉流动作。</p>
-<h3 id="0x02-常见问题"><a href="#0x02-常见问题" class="headerlink" title="0x02 常见问题"></a><em>0x02 常见问题</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 黑屏</span><br></pre></td></tr></table></figure>
-<p><strong><em>1 黑屏</em></strong><br>&emsp;&emsp;OBS推流时，设置”显示器捕获”与”窗口捕获”，打开以后显示黑屏。有多种问题源，因此有多种解决方法，常见原因参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">B站up主教程</a><sup>[6]</sup>。<br>&emsp;&emsp;我的电脑原因可能是obs渲染采用的是集成显卡，解决方法查阅<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">贴吧</a><sup>[7]</sup>。Windows10 设置，系统，显示，最下边图形设置。图形性能首选项里边，经典应用，浏览添加OBS应用程序，OBS选项设置为节能（反正我的节能是集成图形输出，设置完毕之后就可以用）。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.aliyun.com/">https://www.aliyun.com</a><br>[2]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31160392/answer/256141081">https://www.zhihu.com/question/31160392/answer/256141081</a><br>[3]<a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/77937483">https://blog.csdn.net/lmj623565791/article/details/77937483</a><br>[4]<a target="_blank" rel="noopener" href="https://obsproject.com/">https://obsproject.com</a><br>[5]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av52560685">https://www.bilibili.com/video/av52560685</a><br>[6]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av65194185">https://www.bilibili.com/video/av65194185</a><br>[7]<a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/6364329041">http://tieba.baidu.com/p/6364329041</a></p>
-</div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具，流</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/31/%E6%B5%81%E5%AA%92%E4%BD%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
     </nav>
   
 
@@ -672,11 +667,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -689,14 +684,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -717,6 +704,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

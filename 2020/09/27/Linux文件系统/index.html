@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2022-07-04T11:32:29.940Z">
+<meta property="article:modified_time" content="2022-09-09T00:58:17.917Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -571,7 +571,10 @@
 </blockquote>
 <p><strong><em>3、MSVC编译参数 /MT /MD</em></strong><br>&emsp;&emsp;这两个参数是Windows下的MSVC编译器参数，在编译静态库时被用到。<br>&emsp;&emsp;/MD: 表示运行时库由操作系统提供一个DLL，程序里不集成。编译出来的文件比较小。使用的库文件是MSVCRT.lib<br>&emsp;&emsp;/MT: 表示运行时库由程序集成。编译出来的文件比较大。在运行的机器上不需要安装依赖的VS的动态库，使用的库文件是LIBCMT.lib</p>
 <p><strong><em>4、编译参数 -Wl,-rpath=./ -Wl,-Bsymbolic</em></strong><br>&emsp;&emsp;是在gcc编译的时候为二进制添加rpath的参数</p>
-</div></div>
+<h3 id="0x09-用户信息"><a href="#0x09-用户信息" class="headerlink" title="0x09 用户信息"></a><em>0x09 用户信息</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 ID</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、ID</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RUID</span></span><br><span class="line">用于在系统中标识一个用户是谁，当用户使用用户名和密码成功登录后一个UNIX系统后就唯一确定了他的RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># EUID</span></span><br><span class="line">用于系统决定用户对系统资源的访问权限，通常情况下等于RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># SUID</span></span><br><span class="line">用于对外权限的开放。跟RUID及EUID是用一个用户绑定不同，它是跟文件而不是跟用户绑定。</span><br></pre></td></tr></table></figure></div></div>
       
 
       
@@ -641,7 +644,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">0x01 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">3.</span> <span class="toc-text">0x02 常用目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">0x03 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E4%BE%9D%E8%B5%96"><span class="toc-number">5.</span> <span class="toc-text">0x04 依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87%E7%94%9F%E6%88%90"><span class="toc-number">6.</span> <span class="toc-text">0x05 桌面图标生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-number">7.</span> <span class="toc-text">0x06 文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="toc-number">8.</span> <span class="toc-text">0x07 开机自启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3"><span class="toc-number">9.</span> <span class="toc-text">0x08 编译相关</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">0x01 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">3.</span> <span class="toc-text">0x02 常用目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">0x03 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E4%BE%9D%E8%B5%96"><span class="toc-number">5.</span> <span class="toc-text">0x04 依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87%E7%94%9F%E6%88%90"><span class="toc-number">6.</span> <span class="toc-text">0x05 桌面图标生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-number">7.</span> <span class="toc-text">0x06 文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="toc-number">8.</span> <span class="toc-text">0x07 开机自启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3"><span class="toc-number">9.</span> <span class="toc-text">0x08 编译相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x09-%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-number">10.</span> <span class="toc-text">0x09 用户信息</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -825,11 +828,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -842,14 +845,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -870,6 +865,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
