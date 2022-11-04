@@ -22,8 +22,19 @@
 <meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/boot.png">
 <meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/home.png">
 <meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/root.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/vmware-convert.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/windows-installer.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang1.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang2.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang3.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang4.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang5.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang6.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang7.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang8.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang9.png">
 <meta property="article:published_time" content="2018-08-01T12:41:00.000Z">
-<meta property="article:modified_time" content="2021-01-08T09:40:03.782Z">
+<meta property="article:modified_time" content="2022-11-04T02:27:06.517Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="技巧">
 <meta name="twitter:card" content="summary">
@@ -327,10 +338,57 @@
 <p><strong><em>1、VirtualBox安装Kali</em></strong><br>&emsp;&emsp;VirtualBox 是一款开源虚拟机软件，在Docker中被默认使用。Kali是一款用于信息安全的操作系统，具体的安装流程可看<a target="_blank" rel="noopener" href="https://blog.csdn.net/JaydenWang5310/article/details/78104472">博客</a></p>
 <h3 id="0x06-Docker容器技术"><a href="#0x06-Docker容器技术" class="headerlink" title="0x06 Docker容器技术"></a><em>0x06 Docker容器技术</em></h3><p>&emsp;&emsp;Docker容器技术与虚拟机一样，是在当前系统下使用其他系统软件的方法，但它更方便快捷，占用体积更小，运行目标程序只需要拥有一个配置好环境的镜像文件即可。关于Docker可以参考<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-hello-world.html">教程</a>。另外比较重要的一点是Docker所使用的<a target="_blank" rel="noopener" href="https://blog.51cto.com/11880730/2115614">四种网络连接方式</a>，比较幸运的是其默认使用桥接模式，方便信息安全方面的技术研究。<br>&emsp;&emsp;如教程所示，Win10专业版有较方便的安装方法，但是普通版本的Win10安装Docker还有许多坑在那儿。这里讲一讲Win10安装Docker的步骤<br>&emsp;&emsp;1)从<a target="_blank" rel="noopener" href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/">阿里云镜像</a>种下载最新的Docker toolbox，这个ce版本在Win10上是支持的。<br>&emsp;&emsp;2)安装下载文件，git可以选用自己以前安装的，所以不用下载，只需在安装完成后，右键Docker Quickstart Terminal属性，并修改目标git的bash.exe路径即可。<br>&emsp;&emsp;3)右键管理员方式启动Docker Quickstart Terminal，发现程序一直<a target="_blank" rel="noopener" href="https://blog.csdn.net/dhaiuda/article/details/81975550">卡死在boot2docker.iso的下载</a>，只需按链接里的方法即可解决，原因就是没有翻墙，也可以ss开启全局模式下载。<br>&emsp;&emsp;4)每次运行都需要右键管理员模式运行。  </p>
 <h3 id="0x07-软件安装脚本与镜像制作"><a href="#0x07-软件安装脚本与镜像制作" class="headerlink" title="0x07 软件安装脚本与镜像制作"></a><em>0x07 软件安装脚本与镜像制作</em></h3><p>&emsp;&emsp;由于各种原因，经常需要在不同的电脑上安装不同的系统，但是每次重装以后都会导致需要重新安装软件以及修改配置，为了节约时间，这里提出两种解决办法:1)软件安装脚本编写。即将各个软件的下载步骤写成脚本文件，一键安装;2)镜像制作。即将已经配置好的系统生成一个镜像，并使用U盘安装，也被称为非纯净系统。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 软件安装脚本</span><br><span class="line">  1.1 Ubuntu14.04安装脚本</span><br><span class="line">2 镜像制作</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 软件安装脚本</span><br><span class="line">2 镜像制作</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>1、软件安装脚本</em></strong><br><strong><em>1.1、Ubuntu14.04安装脚本</em></strong><br>&emsp;&emsp;由于工作需要，该系统下的软件安装脚本，本人已在git上屯了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh">仓库</a>，并会不时地维护，如果想加入的小伙伴可以Fork一下。</p>
-<p><strong><em>2、镜像制作</em></strong><br>&emsp;&emsp;</p>
+<p><strong><em>1、软件安装脚本</em></strong><br>&emsp;&emsp;由于工作需要，该系统下的软件安装脚本，本人已在git上屯了一个<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Ubuntu14.04-LTS-sh">仓库</a>，并会不时地维护，如果想加入的小伙伴可以Fork一下。</p>
+<p><strong><em>2、镜像制作</em></strong><br>&emsp;&emsp;非纯净系统，这里以Windows为例，假如希望将自己的环境完完整整地克隆成一个镜像，可以使用VMware Convert工具。使用方法如下:<br>1.直接安装(已在硬盘中)<br>2.如果安装过程遇到如下报错，需要打开Windows Installer服务  </p>
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/vmware-convert.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/windows-installer.jpg">
+<div align="left">  
+
+<p>3.安装过程中，可能还会碰到提示“Could not start service”,这是因为服务启动超时了，可无视此问题，点击确定。然后到服务管理器中，手动启动服务  </p>
+<p>4.以”管理员权限”启动  </p>
+<p>5.生成镜像文件  </p>
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang1.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang2.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang3.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang4.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang5.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang6.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang7.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang8.png">
+<div align="left">  
+
+<div align="center">
+<img src="/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/anzhuang9.png">
+<div align="left">  
+
 <h3 id="0x08-开发环境部署"><a href="#0x08-开发环境部署" class="headerlink" title="0x08 开发环境部署"></a><em>0x08 开发环境部署</em></h3><p>&emsp;&emsp;添加源:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 国内其他源地址 --- 按需添加</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 163镜像源</span></span><br><span class="line">deb http://mirrors.163.com/debian/ stretch main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian-security/ stretch/updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian-security/ stretch/updates main non-free contrib</span><br><span class="line"></span><br><span class="line"><span class="comment">## 中科大镜像源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 阿里云镜像站</span></span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line"></span><br><span class="line"><span class="comment">## 华为镜像站</span></span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.huaweicloud.com/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.huaweicloud.com/debian/ stretch-backports main contrib non-free </span><br><span class="line"></span><br><span class="line"><span class="comment">## 清华大学镜像站</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 兰州大学镜像站</span></span><br><span class="line">deb http://mirror.lzu.edu.cn/debian stable main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian stable main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian stable-updates main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian stable-updates main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb http://mirror.lzu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src http://mirror.lzu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line"></span><br><span class="line"><span class="comment">## 上海交大镜像站</span></span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch-updates main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian/ stretch-backports main contrib non-free</span><br><span class="line">deb https://mirror.sjtu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br><span class="line">deb-src https://mirror.sjtu.edu.cn/debian-security/ stretch/updates main contrib non-free</span><br></pre></td></tr></table></figure>
 
@@ -343,7 +401,7 @@
 <p>&emsp;&emsp;配置VScode开发环境:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#===========VScode安装============</span></span><br><span class="line"><span class="comment"># 下载deb包</span></span><br><span class="line"><span class="comment"># https://code.visualstudio.com/Download</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line"><span class="comment"># sudo dpkg -i ...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line"><span class="comment"># code</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#------c++环境搭建------</span></span><br><span class="line"><span class="comment"># VScode安装以下两个插件</span></span><br><span class="line"><span class="comment"># 1.C++ 2.CMake Tools 3.CMake(高亮显示)</span></span><br><span class="line"><span class="comment"># 注意：打开工程文件夹的时候会提示生成Intellisense文件，确认即可（会自动include一些库文件，比如Qt）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#------python环境搭建------</span></span><br><span class="line"><span class="comment"># VScode安装以下插件</span></span><br><span class="line"><span class="comment"># 1.Python</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x09-引用文献"><a href="#0x09-引用文献" class="headerlink" title="0x09 引用文献"></a><em>0x09 引用文献</em></h3></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+<h3 id="0x09-引用文献"><a href="#0x09-引用文献" class="headerlink" title="0x09 引用文献"></a><em>0x09 引用文献</em></h3></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -573,19 +631,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -597,11 +651,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -613,15 +675,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -638,10 +700,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。&amp;emsp;&amp;emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地">
 <meta property="og:locale">
 <meta property="article:published_time" content="2022-06-09T09:06:31.000Z">
-<meta property="article:modified_time" content="2022-09-09T11:50:17.845Z">
+<meta property="article:modified_time" content="2022-09-19T01:14:07.118Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术">
 <meta name="twitter:card" content="summary">
@@ -194,11 +194,21 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写入源txt文件</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;execve(\&quot;/bin/sh\&quot;, 0, 0);&quot;</span> &gt; sh.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成.asm与.bin文件</span></span><br><span class="line">&amp; ./ShellCodeGenerator -p linux_x64 -r sh.txt -a Assembly.asm -o Shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用hex编辑器查看生成的Shellcode.bin文件</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="0x02-ShellCode运行"><a href="#0x02-ShellCode运行" class="headerlink" title="0x02 ShellCode运行"></a><em>0x02 ShellCode运行</em></h3><p>&emsp;&emsp;为了测试上一步获取到的纯十六进制ShellCode的效果，除了直接使用上述生成器的’-t’参数，我们还可以直接写一个用于测试的.cpp文件:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;code)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;code)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;上述的code变量即为生成的十六进制ShellCode，接下来测试其效果:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line"><span class="comment"># code变量内容在数据段，由于NX保护机制存在，无法直接在数据段运行指令</span></span><br><span class="line"><span class="comment"># &#x27;-z execstack&#x27;参数可关闭NX保护机制</span></span><br><span class="line">$ gcc -z execstack test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">$ ./<span class="built_in">test</span> </span><br></pre></td></tr></table></figure>
 
-<h3 id="0x03-ShellCode加壳"><a href="#0x03-ShellCode加壳" class="headerlink" title="0x03 ShellCode加壳"></a><em>0x03 ShellCode加壳</em></h3><h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">https://github.com/NytroRST/ShellcodeCompiler</a></p>
+<h3 id="0x03-ShellCode加密"><a href="#0x03-ShellCode加密" class="headerlink" title="0x03 ShellCode加密"></a><em>0x03 ShellCode加密</em></h3><p>&emsp;&emsp;对ShellCode加密的方式很多，比如代码混淆、加密算法、虚拟化等。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 xor加密</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、xor加密</em></strong><br>&emsp;&emsp;异或运算符’^’，可以用来判断两个值是否不同。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 ^ 0 = 0</span><br><span class="line">0 ^ 1 = 1</span><br><span class="line">1 ^ 0 = 1</span><br><span class="line">1 ^ 1 = 0</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;异或运算的特点是，如果对一个值连续做两次xor，则会返回这个值本身。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1010异或后结果</span></span><br><span class="line">1010 ^ 1111 = 0101</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0101异或后结果</span></span><br><span class="line">0101 ^ 1111 = 1010</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;上述这种特性使得它可以用于信息的加密。同样也意味着，可以加密我们的十六进制ShellCode:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KEY 0x86</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span>* <span class="title">algorithm_xor</span><span class="params">(<span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> str[], <span class="keyword">int</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> encode_str[<span class="built_in">size</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">size</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        encode_str[i] =  str[i] ^ KEY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* ret = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="built_in">size</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(ret, encode_str, <span class="built_in">size</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* encode_str;</span><br><span class="line">    encode_str = algorithm_xor(code, <span class="keyword">sizeof</span>(code));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">https://github.com/NytroRST/ShellcodeCompiler</a></p>
 
       
 
@@ -231,11 +241,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/06/21/ROS2/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          ROS2
+          加壳与脱壳
         
       </div>
     </a>
@@ -269,7 +279,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-ShellCode%E7%94%9F%E6%88%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 ShellCode生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-ShellCode%E8%BF%90%E8%A1%8C"><span class="toc-number">3.</span> <span class="toc-text">0x02 ShellCode运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-ShellCode%E5%8A%A0%E5%A3%B3"><span class="toc-number">4.</span> <span class="toc-text">0x03 ShellCode加壳</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-ShellCode%E7%94%9F%E6%88%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 ShellCode生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-ShellCode%E8%BF%90%E8%A1%8C"><span class="toc-number">3.</span> <span class="toc-text">0x02 ShellCode运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-ShellCode%E5%8A%A0%E5%AF%86"><span class="toc-number">4.</span> <span class="toc-text">0x03 ShellCode加密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">0x04 引用文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -429,19 +439,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -453,11 +459,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -469,15 +483,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -494,10 +508,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
