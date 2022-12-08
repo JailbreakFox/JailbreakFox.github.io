@@ -156,6 +156,90 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux驱动内核模块" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/">Linux驱动内核模块</a>
+    </h1>
+  
+
+        
+        <a href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/" class="archive-article-date">
+  	<time datetime="2021-07-16T02:08:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-16</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在Linux中，驱动的本质就是一个内核模块。Shell中有关于mod的几个命令insmod/lsmod/rmmod/modinfo就是对内核模块的操作，另外dmesg命令能够显示内核所有的打印信息。<br>&emsp;&emsp;模块可以被选择”静态编译”或”模块化编译”，两者区别:前者将模块代码集成到内核源码包中，跟随Linux内核一块编译;后者独立编译，编译时只需要内核头文件与Makefile。<br>&emsp;&emsp;本文主要针对模块化编译入手讲解，其他方法<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52287792">查阅资料</a><sup>[1]</sup>。<br>&emsp;&emsp;一个最简单的模块只需要Makefile与模块文件，下面从这两个文件的最简写法入手。</p>
+<h3 id="0x01-内核态Makefile"><a href="#0x01-内核态Makefile" class="headerlink" title="0x01 内核态Makefile"></a><em>0x01 内核态Makefile</em></h3><p>&emsp;&emsp;用户态的Makefile与内核态的Makefile不同，其实也很好理解，在Linux中内核态编译需要生成.ko文件，所以也自带了一套生成规则。实际上驱动模块的内核态Makefile是非常模式化的，要改动的地方很少:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定&quot;内核头文件所在目录&quot;</span></span><br><span class="line"><span class="comment"># 比如/usr/src/linux-headers-4.4.0-generic</span></span><br><span class="line">KERNELDIR ?= <span class="string">&#x27;内核头文件路径&#x27;</span></span><br><span class="line">PWD := $(shell <span class="built_in">pwd</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定模块名称是testModule.ko</span></span><br><span class="line">obj-m += testModule.o</span><br><span class="line"><span class="comment"># 所有.c文件包括模块代码，需要添加到下述命令</span></span><br><span class="line">testModule-objs := main.o</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下面这句真正开始编译</span></span><br><span class="line">all:</span><br><span class="line">    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提供复制功能，将.ko文件复制到nfs根文件系统中</span></span><br><span class="line">cp:</span><br><span class="line">    cp -f *.ko <span class="string">&#x27;目标路径&#x27;</span></span><br><span class="line"></span><br><span class="line">.PHONY: clean <span class="comment"># 此字段告诉Makefile，clean不是文件名</span></span><br><span class="line">clean:</span><br><span class="line">    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules clean</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-模块文件"><a href="#0x02-模块文件" class="headerlink" title="0x02 模块文件"></a><em>0x02 模块文件</em></h3><p>&emsp;&emsp;一个最简单的内核模块一共由三部分组成:实现函数,注册功能以及模块描述，摘自<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52279934">文献</a><sup>[2]</sup>。具体写法如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;   </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt; </span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 外部传参</span></span><br><span class="line"><span class="comment"> * 第一个参数是变量名，第二个参数是类型，第三个参数是读写权限</span></span><br><span class="line"><span class="comment"> * 用户态可以使用insmod test.ko var=123来传参</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> var = <span class="number">666</span>;</span><br><span class="line">module_param(var, <span class="keyword">int</span>, S_IRUGO);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 自定义的加载函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">func_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;func init\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 自定义的卸载函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">func_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;func exit\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 加载、卸载函数的注册</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">module_init(func_init);</span><br><span class="line">module_exit(func_exit);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 模块描述信息</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);       <span class="comment">// 模块许可证</span></span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;xyh&quot;</span>);        <span class="comment">// 模块作者</span></span><br><span class="line">MODULE_DESCRIPTION(<span class="string">&quot;test&quot;</span>);  <span class="comment">// 模块介绍信息</span></span><br><span class="line">MODULE_ALIAS(<span class="string">&quot;xxx&quot;</span>);         <span class="comment">// 模块别名信息</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-使用方法"><a href="#0x03-使用方法" class="headerlink" title="0x03 使用方法"></a><em>0x03 使用方法</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译内核模块</span></span><br><span class="line"><span class="comment"># 内核头文件路径需要根据当前系统来，酌情替换</span></span><br><span class="line">make KERNELDIR=/usr/src/linux-headers-4.15.0-142-generic</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载、卸载模块</span></span><br><span class="line">insmod testModule.ko</span><br><span class="line">rmmod testModule.ko</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察输出</span></span><br><span class="line">dmesg</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52287792">https://blog.csdn.net/qq_28992301/article/details/52287792</a><br>[2]<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28992301/article/details/52279934">https://blog.csdn.net/qq_28992301/article/details/52279934</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">计算机技术，Linux内核</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/07/16/Linux%E9%A9%B1%E5%8A%A8%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux进程防杀" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -482,7 +566,7 @@
 <ul>
 <li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
 <li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
+<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">  2.6 deb打包时环境变量</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p><strong><em>1、环境搭建</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
@@ -512,6 +596,9 @@
 <p>&emsp;&emsp;目前还有一个遗留问题，就是打包前给的777权限，安装后权限变成了755。</p>
 <p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.6、deb打包时环境变量</em></strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 包名</span></span><br><span class="line">DPKG_MAINTSCRIPT_NAME</span><br><span class="line"><span class="comment"># 架构名</span></span><br><span class="line">DPKG_MAINTSCRIPT_ARCH</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3.1、源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;deb源码打包一个优点是能够识别CMake文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码结构</span></span><br><span class="line"><span class="comment"># 注意源码根文件夹名不能有大写</span></span><br><span class="line"><span class="comment"># 根文件名一般取 项目名称 + &#x27;-&#x27; + 版本号，例如ctest-1.0</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── CTest.cpp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成tar.gz包</span></span><br><span class="line">$ tar -zcvf debbuild/ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── CTest.cpp</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ dh_make -f ../ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   ├── debian</span><br><span class="line">│   └── obj-x86_64-linux-gnu</span><br><span class="line">├── ctest_1.0-1_amd64.deb</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
@@ -547,107 +634,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-IPV4与IPV6" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/11/IPV4%E4%B8%8EIPV6/">IPV4与IPV6</a>
-    </h1>
-  
-
-        
-        <a href="/2021/04/11/IPV4%E4%B8%8EIPV6/" class="archive-article-date">
-  	<time datetime="2021-04-11T10:01:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-11</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;IPV4地址将耗尽，以后的IP地址管理将使用IPV6。二者最大的区别是它们生成的地址数量，IPv4只是采用32位来表示，而IPv6采用128位来表示。</p>
-<h3 id="0x01-区别"><a href="#0x01-区别" class="headerlink" title="0x01 区别"></a><em>0x01 区别</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 协议地址长度</span><br><span class="line">2 协议地址类型</span><br><span class="line">3 常用地址</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、协议地址长度</em></strong><br>&emsp;&emsp;IPv4协议具有32位（4字节）地址长度；IPv6协议具有128位（16字节）地址长度。</p>
-<div align="center">
-<img src="/2021/04/11/IPV4%E4%B8%8EIPV6/地址长度.jpg" width="400" height="250">
-<div align="left">  
-
-<p><strong><em>2、协议地址类型</em></strong><br>&emsp;&emsp;IPv4地址有单播、组播、广播等几种类型，IPV6地址有单播、组播和任播地址。</p>
-<p><strong><em>3、常用地址</em></strong><br>| 名称       | IPV4  | IPV6                   |<br>| ———— | —————————————– | ———————- |<br>| 本网络    | 0.0.0.0/8   | ::/128                 |<br>| 环回地址 | 127.0.0.0/8  | ::1/128                |<br>| 多播地址 | 224.0.0.0/4  | FF00::/8               |<br>| 链路本地地址 | 169.254.0.0/16   | FE80::/10              |<br>| 唯一本地地址 | 10.0.0.0/8 ; 172.16.0.0/12 ; 192.168.0.0/16 | FD00::/8               |<br>| 全球地址 | 除去上述地址的其他地址   | 除去上述地址的其他地址 |</p>
-<h3 id="0x02-IPV6地址类型"><a href="#0x02-IPV6地址类型" class="headerlink" title="0x02 IPV6地址类型"></a><em>0x02 IPV6地址类型</em></h3><p>&emsp;&emsp;IPV6地址可分为三大类: 单播地址，组播地址和任播地址。</p>
-<div align="center">
-<img src="/2021/04/11/IPV4%E4%B8%8EIPV6/IPV6地址类型.png" width="700" height="350">
-<div align="left">  
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 单播地址</span><br><span class="line">2 组播地址</span><br><span class="line">3 任播地址</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、单播地址</em></strong><br>&emsp;&emsp;单播地址还可分为几类：可集聚全球单播地址，链路本地单播地址和站点本地单播地址</p>
-<h3 id="0x03-IPV6地址管理"><a href="#0x03-IPV6地址管理" class="headerlink" title="0x03 IPV6地址管理"></a><em>0x03 IPV6地址管理</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 压缩表示</span><br><span class="line">2 配置方式</span><br><span class="line">3 查询方式</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、压缩表示</em></strong><br>&emsp;&emsp;如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例</span></span><br><span class="line">2001:DB8:0:0:8:800:200C:417A</span><br><span class="line"><span class="comment"># --&gt;</span></span><br><span class="line">2001:DB8::8:800:200C:417A</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、配置方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡</span></span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改/etc/sysconfig/network-script/ifcfg-ethX文件</span></span><br><span class="line"><span class="comment"># 修改如下字段，没有的手动添加</span></span><br><span class="line">IPV6INIT=yes <span class="comment"># 是否开机启用IPV6地址</span></span><br><span class="line">IPV6_AUTOCONF=no <span class="comment"># 是否使用IPV6地址的自动配置</span></span><br><span class="line">IPV6_FAILURE_FATAL=no <span class="comment"># 如果配置失败，不会关闭网口，保证IPV4的配置还能生效</span></span><br><span class="line">IPV6ADDR=2001:250:250:250:250:250:250:222/64 <span class="comment"># IPV6地址</span></span><br><span class="line">IPV6_DEFAULTGW=2001:250:250:250::1 <span class="comment"># IPV6地址网关</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、查询方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ping6方式 - 链路本地单播地址</span></span><br><span class="line">$ ping6 <span class="string">&#x27;fe80:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span>%<span class="string">&#x27;网卡号&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ping6方式 - 全球单播地址</span></span><br><span class="line">$ ping6 <span class="string">&#x27;2001:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># traceroute6方式</span></span><br><span class="line">$ traceroute6 <span class="string">&#x27;2001:XXX:XXX:XXX:XXX:XXX:XXX:XXX&#x27;</span></span><br></pre></td></tr></table></figure></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/04/11/IPV4%E4%B8%8EIPV6/">展开全文 >></a>
         </p>
       
 
@@ -798,11 +784,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -822,7 +808,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -830,7 +824,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -842,19 +836,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -866,15 +852,23 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -887,10 +881,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

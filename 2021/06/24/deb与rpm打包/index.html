@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/debhelper进化.png">
 <meta property="article:published_time" content="2021-06-24T02:17:29.000Z">
-<meta property="article:modified_time" content="2022-04-26T01:34:22.053Z">
+<meta property="article:modified_time" content="2022-11-30T06:53:35.652Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术，打包工具">
 <meta name="twitter:card" content="summary">
@@ -356,7 +356,7 @@
 <ul>
 <li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
 <li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
+<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件粗解</span><br><span class="line">  2.4 debian&#x2F;install + debian&#x2F;postinst的使用</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">  2.6 deb打包时环境变量</span><br><span class="line">3 源码打包方法</span><br><span class="line">  3.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">4 非源码打包方法</span><br><span class="line">  4.1 debuild &#x2F; dpkg-buildpackage</span><br><span class="line">  4.2 dpkg-deb</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p><strong><em>1、环境搭建</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
@@ -386,6 +386,9 @@
 <p>&emsp;&emsp;目前还有一个遗留问题，就是打包前给的777权限，安装后权限变成了755。</p>
 <p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.6、deb打包时环境变量</em></strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 包名</span></span><br><span class="line">DPKG_MAINTSCRIPT_NAME</span><br><span class="line"><span class="comment"># 架构名</span></span><br><span class="line">DPKG_MAINTSCRIPT_ARCH</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3.1、源码打包方法 - debuild / dpkg-buildpackage</em></strong><br>&emsp;&emsp;deb源码打包一个优点是能够识别CMake文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码结构</span></span><br><span class="line"><span class="comment"># 注意源码根文件夹名不能有大写</span></span><br><span class="line"><span class="comment"># 根文件名一般取 项目名称 + &#x27;-&#x27; + 版本号，例如ctest-1.0</span></span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">└── ctest-1.0</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── CTest.cpp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成tar.gz包</span></span><br><span class="line">$ tar -zcvf debbuild/ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── CTest.cpp</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ dh_make -f ../ctest-1.0.tar.gz</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   └── debian</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用debuild / dpkg-buildpackage去生成deb包</span></span><br><span class="line">$ <span class="built_in">cd</span> ctest-1.0</span><br><span class="line">$ debuild -us -uc -b</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line">$ tree debbuild</span><br><span class="line">debbuild/</span><br><span class="line">├── ctest-1.0</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CTest.cpp</span><br><span class="line">│   ├── debian</span><br><span class="line">│   └── obj-x86_64-linux-gnu</span><br><span class="line">├── ctest_1.0-1_amd64.deb</span><br><span class="line">└── ctest-1.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 末了，可以使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
@@ -603,11 +606,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -627,7 +630,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -635,7 +646,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -647,19 +658,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -671,15 +674,23 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -692,10 +703,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

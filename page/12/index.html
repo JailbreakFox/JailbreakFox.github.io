@@ -156,6 +156,111 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-设计模式-创建型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式-创建型模式</a>
+    </h1>
+  
+
+        
+        <a href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2019-07-17T10:28:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-17</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">设计模式-可复用的面向对象软件元素</a><sup>[1]</sup>，以及<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">菜鸟教程</a><sup>[2]</sup>上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。</p>
+<h3 id="0x01-创建型模式"><a href="#0x01-创建型模式" class="headerlink" title="0x01 创建型模式"></a><em>0x01 创建型模式</em></h3><p>&emsp;&emsp;这种设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式，而不是使用new运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 工厂模式（Factory Pattern）</span><br><span class="line">2 抽象工厂模式（Abstract Factory Pattern）</span><br><span class="line">3 单例模式（Singleton Pattern）</span><br><span class="line">  3.1 懒汉式</span><br><span class="line">    3.1.1 加锁的懒汉式</span><br><span class="line">    3.1.2 内部静态变量的懒汉式</span><br><span class="line">  3.2 饿汉式</span><br><span class="line">4 建造者模式（Builder Pattern）</span><br><span class="line">5 原型模式（Prototype Pattern）</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、工厂模式</em></strong><br>&emsp;&emsp;设计一个工厂类，专门用来创建对象，根据用户的需求创建不同种类的对象。<br>&emsp;&emsp;假设有一个工厂能生产出A、B两种产品，当客户需要产品的时候要告诉工厂是A产品还是B产品。具体实现代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product_A</span> :</span> <span class="keyword">public</span> Product</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Product_A&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product_B</span> :</span> <span class="keyword">public</span> Product</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Product_B&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Product* <span class="title">Create</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (i)</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Product_A;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Product_B;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Factory *factory = <span class="keyword">new</span> Factory();</span><br><span class="line">    factory-&gt;Create(<span class="number">1</span>)-&gt;show();</span><br><span class="line">    factory-&gt;Create(<span class="number">2</span>)-&gt;show();</span><br><span class="line">    system(<span class="string">&quot;pause&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;从上述代码可以看出，一个工厂为Product，其生产的两种产品分别为其继承类Product_A与Product_B，工厂类Factory实现了用户选择生产哪种产品的接口。</p>
+<p><strong><em>2、抽象工厂模式</em></strong><br>&emsp;&emsp;抽象工厂模式是抽象工厂模式的升级版，现考虑一种情况，假设目前A产品中有A1和A2两种型号，B产品中有B1和B2两种型号，那么工厂模式就失效了（实际上引入两个参数不是也能解决这个问题么，这边假设就如他说的失效了吧。。），那么我们就需要两个工厂类，分别来生产A、B产品。具体实现代码如下：  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;    </span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义抽象类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product1</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义具体类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_A1</span> :</span><span class="keyword">public</span> product1  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product A1&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_B1</span> :</span><span class="keyword">public</span> product1  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product B1&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义抽象类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product2</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//定义具体类  </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_A2</span> :</span><span class="keyword">public</span> product2  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product A2&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">product_B2</span> :</span><span class="keyword">public</span> product2  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;product B2&quot;</span> &lt;&lt; <span class="built_in">endl</span>; &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> product1 *<span class="title">creat1</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> product2 *<span class="title">creat2</span><span class="params">()</span> </span>= <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FactoryA</span> :</span><span class="keyword">public</span> Factory  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function">product1 *<span class="title">creat1</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_A1(); &#125;  </span><br><span class="line">    <span class="function">product2 *<span class="title">creat2</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_A2(); &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FactoryB</span> :</span><span class="keyword">public</span> Factory  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function">product1 *<span class="title">creat1</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_B1(); &#125;  </span><br><span class="line">    <span class="function">product2 *<span class="title">creat2</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> product_B2(); &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    FactoryA *factoryA = <span class="keyword">new</span> FactoryA();  </span><br><span class="line">    factoryA-&gt;creat1()-&gt;show();  </span><br><span class="line">    factoryA-&gt;creat2()-&gt;show();  </span><br><span class="line">  </span><br><span class="line">    FactoryB *factoryB = <span class="keyword">new</span> FactoryB();  </span><br><span class="line">    factoryB-&gt;creat1()-&gt;show();  </span><br><span class="line">    factoryB-&gt;creat2()-&gt;show();  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;从上述代码可见，实际上就是将工厂类Factory作为并新生成两个继承类FactoryA、FactoryB，分别用它们来控制生产A、B产品，且每个产品拥有自己的子型号产品product_A1、product_A2、product_B1、product_B2。</p>
+<p><strong><em>3、单例模式</em></strong><br>&emsp;&emsp;所谓<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/69eef7651667">单例模式</a><sup>[3]</sup>的设计目的就是保证:1)确保一个类只有一个实例被建立;2)提供一个访问它的全局访问点。<br>&emsp;&emsp;该模式有两种实现方法：懒汉式与饿汉式。<br>&emsp;&emsp;当<em>访问量较小</em>的时候，采用懒汉式（个人推测耗用cpu少），以时间换空间。当有<em>多线程存在</em>时（即实例访问量较大），或者线程较多的情况下，优先采用饿汉式，以空间换时间。  </p>
+<p><strong><em>3.1、懒汉式</em></strong><br>&emsp;&emsp;该方法的技巧在于初始化时定义一个静态变量，且生成对象的时候采用该类的生成接口，每次调用都需要提前判断是否已被实例化，代码如下：  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                p = <span class="keyword">new</span> CSingleton();</span><br><span class="line">                <span class="keyword">return</span> p;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;可见一旦调用GetInstance函数，即能实例化对象。这种方式在单线程的情况下是可靠的，但如果程序是多线程的话<em>有可能会重复构造</em>（比如两个线程同时进入if(p == NULL)）。  </p>
+<p><strong><em>3.1.1 加锁的懒汉式</em></strong><br>&emsp;&emsp;那么如何解决上述遇到的重复构造问题呢，实际上加个锁即可，代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                mutex.lock();</span><br><span class="line">                <span class="keyword">if</span>(p == <span class="literal">NULL</span>)&#123;</span><br><span class="line">                    p = <span class="keyword">new</span> CSingleton();</span><br><span class="line">                    <span class="keyword">return</span> p;</span><br><span class="line">                &#125;</span><br><span class="line">                mutex.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;该方案也存在劣势，即会导致程序运行速度减慢，所以说懒汉式比较适用于访问量较小的情况。  </p>
+<p><strong><em>3.1.2、内部静态变量的懒汉式(推荐)</em></strong><br>&emsp;&emsp;还有一种方法也能解决重复构造的问题，且没有像加锁那样的减速缺点，但是需要在C++11及之后的版本使用，否则可能会导致多次构造函数调用。这种方法即以静态变量的方式实例化对象，这样就不会重复实例化了，代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    static CSingleton* GetInstance()</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        static CSingleton s;</span></span><br><span class="line"><span class="comment">        return &amp;s;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> CSingleton&amp; <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> CSingleton s;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    CSingleton() = <span class="keyword">default</span>; <span class="comment">// 默认构造</span></span><br><span class="line">    ~CSingleton() = <span class="keyword">default</span>; <span class="comment">// 默认构造</span></span><br><span class="line">    CSingleton(<span class="keyword">const</span> CSingleton&amp; other) = <span class="keyword">delete</span>; <span class="comment">// 声明但不使用</span></span><br><span class="line">    CSingleton&amp; <span class="keyword">operator</span> = (<span class="keyword">const</span> CSingleton&amp;) = <span class="keyword">delete</span>; <span class="comment">// 声明但不使用</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3.2、饿汉式</em></strong><br>&emsp;&emsp;饿汉式是指在类加载的时候即new出该类对象，代码如下:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">static</span> CSingleton* <span class="title">GetInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        CSingleton()&#123;&#125;;</span><br><span class="line">        ~CSingleton()&#123;&#125;;</span><br><span class="line">        <span class="keyword">static</span> CSingleton* p;</span><br><span class="line">        CSingleton* CSingleton::p = <span class="keyword">new</span> CSingleton;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong><em>4、建造者模式</em></strong><br>&emsp;&emsp;所谓<a target="_blank" rel="noopener" href="https://blog.csdn.net/wuzhekai1985/article/details/6667467">建造者模式</a><sup>[4]</sup>就是将一个复杂对象的构建与他的表示分离，这里采用《大话设计模式》中举的例子-建造小人来描述这种模式，代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Builder</span>  </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildHead</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildBody</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildLeftArm</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildRightArm</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildLeftLeg</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">BuildRightLeg</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造瘦人</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThinBuilder</span> :</span> <span class="keyword">public</span> Builder</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildHead</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin body&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildBody</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin head&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildLeftArm</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin leftarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildRightArm</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin rightarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildLeftLeg</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin leftleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildRightLeg</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build thin rightleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造胖人</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FatBuilder</span> :</span> <span class="keyword">public</span> Builder</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildHead</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat body&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildBody</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat head&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildLeftArm</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat leftarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildRightArm</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat rightarm&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildLeftLeg</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat leftleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BuildRightLeg</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;build fat rightleg&quot;</span>&lt;&lt;<span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//构造的指挥官</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Director</span>  </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Builder *m_pBuilder;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Director(Builder *builder) &#123; m_pBuilder = builder; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Create</span><span class="params">()</span></span>&#123;</span><br><span class="line">        m_pBuilder-&gt;BuildHead();</span><br><span class="line">        m_pBuilder-&gt;BuildBody();</span><br><span class="line">        m_pBuilder-&gt;BuildLeftArm();</span><br><span class="line">        m_pBuilder-&gt;BuildRightArm();</span><br><span class="line">        m_pBuilder-&gt;BuildLeftLeg();</span><br><span class="line">        m_pBuilder-&gt;BuildRightLeg();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//用户的建造方式：</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FatBuilder thin;</span><br><span class="line">    <span class="function">Director <span class="title">director</span><span class="params">(&amp;thin)</span></span>;</span><br><span class="line">    director.Create();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;从main文件可以看出，当用户想捏小人的时候，不需要自己去寻找胖人或者瘦人的继承类，只需要调用指挥官的类，而想捏的小人只需当参数传入即可。  </p>
+<p><strong><em>5、原型模式</em></strong><br>&emsp;&emsp;同一个类可以被多次实例化，但是这样构造出来的对象都是一模一样的，无论是出于对每个对象的把控或是内存分配都不利。使用<a target="_blank" rel="noopener" href="https://blog.csdn.net/cabinriver/article/details/8895372/">原型模式</a><sup>[5]</sup>，可以在实例化的时候微微修改参数，从而复制出一个与原型类似的对象，代码如下:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CPrototype</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    CPrototype()&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~CPrototype()&#123;&#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> CPrototype* <span class="title">Clone</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//实现</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CConcretePrototype</span> :</span> <span class="keyword">public</span> CPrototype</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    CConcretePrototype():m_counter(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~CConcretePrototype()&#123;&#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//拷贝构造函数</span></span><br><span class="line">    CConcretePrototype(<span class="keyword">const</span> CConcretePrototype&amp; rhs)</span><br><span class="line">    &#123;</span><br><span class="line">        m_counter = rhs.m_counter + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//复制自身</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> CPrototype* <span class="title">Clone</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//调用拷贝构造函数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> CConcretePrototype(*<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> m_counter;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">//用户的复制方式：</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//生成对像</span></span><br><span class="line">    CPrototype* conProA = <span class="keyword">new</span> CConcretePrototype();</span><br><span class="line">    <span class="comment">//复制自身</span></span><br><span class="line">    CPrototype* conProB = conProA-&gt;Clone();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">delete</span> conProA;</span><br><span class="line">    <span class="keyword">delete</span> conProB;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;从上述代码可以看出，实质上就是在该CConcretePrototype内部写了两个构造函数，一个是原型的构造函数，另一个是复制体的构造函数，当用户需要复制原型时，只需调用clone函数。</p>
+<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a><br>[3]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/69eef7651667">https://www.jianshu.com/p/69eef7651667</a><br>[4]<a target="_blank" rel="noopener" href="https://blog.csdn.net/wuzhekai1985/article/details/6667467">https://blog.csdn.net/wuzhekai1985/article/details/6667467</a><br>[5]<a target="_blank" rel="noopener" href="https://blog.csdn.net/cabinriver/article/details/8895372/">https://blog.csdn.net/cabinriver/article/details/8895372/</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -348,96 +453,6 @@
 
 
   
-    <article id="post-信息聚合工具-RSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">信息聚合工具-RSS</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/" class="archive-article-date">
-  	<time datetime="2019-05-10T08:47:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-10</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;RSS又称简易信息聚合协议，是基于XML标准并在互联网上被广泛采用的内容包装和投递协议。使用RSS订阅能更快地获取信息，网站提供RSS输出，有利于让用户获取网站内容的最新更新。<br>&emsp;&emsp;目前获取信息的渠道日益增加，每种App都有各自的信息传达方式与推荐算法，虽然有益于日常刷段子，但是这也会导致获取信息的效率变低。RSS作为一种古老的信息订阅方式，却在信息横流的今天，将被赋予更深远的意义。<br>&emsp;&emsp;我认为其优势在于:1)高效率获取信息，并整合信息的能力。只要添加你需要的源，就能代替繁杂而重复的打开App，查阅订阅信息的过程;2)自定义信息弹窗。做到深处，可以尝试将获得的信息弹窗给手机或电脑，这对于有时效性的新闻来说是很重要的特性;3)自定义信息筛选功能。有时候我们需要自己喜欢的筛选信息方式，但是通常我们都是被别人的推荐算法所固定，然而用RSS的方法我们能获取更多的信息掌控权。<br>&emsp;&emsp;当然凡事都有两面性，RSS也有自身的缺陷:1)可扩展性差。毕竟所有的信息源都是自己设定的，而很多App能够依赖自己的算法推荐新的关注对象;2)不适用于深度阅读。挑选优质的信息源其实是很复杂的过程，如果单靠自己重新设计一个筛选优质信息的算法将花费大量的精力;3)不适用于减压阅读。有创意的或比较欢快的新颖视频、文章来源特性就是多样，这与RSS的固定订阅背道而行。<br>&emsp;&emsp;总结来说，RSS适合于添加固定的优质信息源，并以自定义的方式筛选目标信息。</p>
-<h3 id="0x01-RSS阅读器"><a href="#0x01-RSS阅读器" class="headerlink" title="0x01 RSS阅读器"></a><em>0x01 RSS阅读器</em></h3><p>&emsp;&emsp;作为一种比较成熟的技术，其实市面上是有很多实现获取RSS的工具，通常也被称为RSS阅读器。当然，针对不同的平台，有不同的产品。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Windows FeedDemon</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、Windows FeedDemon</em></strong><br>&emsp;&emsp;一款免费、轻量级的阅读器，网上的评价还是很好的，贴上它的<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">安装与使用</a><sup>[1]</sup>。想要添加RSS源，可以采取多种办法:1)直接去网上找rss源;2)Easy to RSS插件，这是一款Chrome插件，能够直接识别可支持RSS协议的网址;3)一些寻找源的网址，在链接里有;4)RSS源生成项目。这些项目能够替没有RSS的网址生成RSS，比如Feed43、RSSHub等，将在下一章做重要介绍。</p>
-<h3 id="0x02-RSS源生成项目"><a href="#0x02-RSS源生成项目" class="headerlink" title="0x02 RSS源生成项目"></a><em>0x02 RSS源生成项目</em></h3><p>&emsp;&emsp;有时候我们会遇到很感兴趣的网页信息，或者某个知名人士的博客，又或者某位微博大V的日更消息，但是很遗憾它们都没有生成RSS文件供我们订阅。那是不是就没有办法订阅如此多的优质资源了呢？于是RSS源生成项目就出现了，在我的理解来看，这些项目实质上是一种爬虫集合，它们可以根据目标网页的成文风格来设计爬虫规则，并开放端口提供给项目使用者，以帮助其订阅目标网页。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 RSSHub</span><br><span class="line">  1.1 Docker部署</span><br><span class="line">  1.2 添加源</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、RSSHub</em></strong><br>&emsp;&emsp;RSSHub的口号是“万物皆可RSS”，该项目实质上是一些大佬们自己写的爬虫规则，这些爬虫专门针对某些网站以及它们的模块，比如知乎、bilibili、微信等，每种网站对应自己的爬虫规则，这样使用者就可以不用自己写爬取代码。想了解该项目，可以查阅其<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">独立博客</a><sup>[2]</sup>。</p>
-<p><strong><em>1.1、Docker部署</em></strong><br>&emsp;&emsp;关于RSSHub的部署方式多种多样，均可从博客里查阅，但是为了方便链接库和电脑的干净，这里打算使用容器技术Docker，关于Docker的安装与使用，可查阅我早期的一篇博客<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">操作系统安装</a><sup>[3]</sup>。<br>&emsp;&emsp;这里直接叙述RSSHub的Docker部署，贴出<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">部署方式</a><sup>[4]</sup>。具体的步骤按上面的链接来即可，但是有许多点需要注意:<br>&emsp;&emsp;1)文中在浏览器中打开127.0.0.1:1200，实际上应该输入自己Docker虚拟机生成的IP，比如我的就是192.168.99.100:1200。<br>&emsp;&emsp;2)docker run会根据镜像生成一个容器，当不使用容器的时候直接docker stop rsshub，下次运行容器的时候就docker start rsshub，而不需要再生成一个容器。<br>&emsp;&emsp;3)如果想翻墙，则需要添加配置，这里不知道怎么加，所以无法订阅Youtube等外网频道。  </p>
-<p><strong><em>1.2 添加源</em></strong><br>&emsp;&emsp;添加源的过程就比较简单了，所有可路由网站均在独立博客中，这里以添加瓦斯阅读的Freebuf微信公众号为例（这里解释下，瓦斯阅读网站可以实现微信公众号文章内容的收录，但是本身生成的RSS只显示少量内容），使用RSSHub实现路由。<br>&emsp;&emsp;根据<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">微信添加公众号(瓦斯来源)</a><sup>[5]</sup>，可以看到:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#举例: https:&#x2F;&#x2F;rsshub.app&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由: &#x2F;wechat&#x2F;wasi&#x2F;:id</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;但是我们添加源的时候并不是走rsshub.app这个域名的IP，而是应该走我们自己部署的Docker IP：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#注意别使用加密的https格式</span><br><span class="line">http:&#x2F;192.168.99.100:1200&#x2F;wechat&#x2F;wasi&#x2F;5b644221244d4e502cbce92e</span><br><span class="line">#路由ID可从瓦斯阅读对应的公众号下找到</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19580096/answer/20490041">https://www.zhihu.com/question/19580096/answer/20490041</a><br>[2]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/">https://docs.rsshub.app</a><br>[3]<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85/">https://jailbreakfox.github.io/2018/08/01/操作系统安装/</a><br>[4]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/install/#%E4%BD%BF%E7%94%A8-docker-%E9%83%A8%E7%BD%B2">https://docs.rsshub.app/install/#使用-docker-部署</a><br>[5]<a target="_blank" rel="noopener" href="https://docs.rsshub.app/social-media.html#%E5%BE%AE%E4%BF%A1">https://docs.rsshub.app/social-media.html#微信</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">工具， 信息聚合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/10/%E4%BF%A1%E6%81%AF%E8%81%9A%E5%90%88%E5%B7%A5%E5%85%B7-RSS/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/11/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/13/">下一页</a>
@@ -559,11 +574,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -583,7 +598,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -591,7 +614,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Linux 计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -603,19 +626,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术 Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch，神经网络，机器学习</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -627,15 +642,23 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -648,10 +671,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">远程桌面， 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
