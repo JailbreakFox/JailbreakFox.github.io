@@ -575,7 +575,11 @@
 <h3 id="0x09-用户信息"><a href="#0x09-用户信息" class="headerlink" title="0x09 用户信息"></a><em>0x09 用户信息</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 ID</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、ID</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RUID</span></span><br><span class="line">用于在系统中标识一个用户是谁，当用户使用用户名和密码成功登录后一个UNIX系统后就唯一确定了他的RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># EUID</span></span><br><span class="line">用于系统决定用户对系统资源的访问权限，通常情况下等于RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># SUID</span></span><br><span class="line">用于对外权限的开放。跟RUID及EUID是用一个用户绑定不同，它是跟文件而不是跟用户绑定。</span><br></pre></td></tr></table></figure></div></div>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RUID</span></span><br><span class="line">用于在系统中标识一个用户是谁，当用户使用用户名和密码成功登录后一个UNIX系统后就唯一确定了他的RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># EUID</span></span><br><span class="line">用于系统决定用户对系统资源的访问权限，通常情况下等于RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># SUID</span></span><br><span class="line">用于对外权限的开放。跟RUID及EUID是用一个用户绑定不同，它是跟文件而不是跟用户绑定。</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x10-审计"><a href="#0x10-审计" class="headerlink" title="0x10 审计"></a><em>0x10 审计</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Linux PROMPT_COMMAND</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Linux PROMPT_COMMAND</em></strong><br>记录用户、时间、操作，然后将查到的信息记录到一个文件里。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 记录到指定文件中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; date &quot;+%Y-%m-%d %T WHO: $(who am i |awk &quot;&#123;print \$1\&quot; \&quot;\$2\&quot; \&quot;\$5&#125;&quot;) PATH: $(pwd) CMD: $(history 1 | &#123; read x cmd; echo &quot;$cmd&quot;; &#125;)&quot;; &#125; &gt;&gt; /var/log/audit_cmd.txt&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录到/var/log/messages中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; msg=$(history 1|&#123; read x y; echo $y; &#125;);logger &quot;[euid=$(whoami)]&quot;:$(who am i):[`pwd`]&quot;$msg&quot;;&#125;&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></div></div>
       
 
       
@@ -1143,11 +1147,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1183,11 +1187,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1223,15 +1227,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">配置</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color3">配置</a>
               </li>
              
               <li class="article-tag-list-item">
