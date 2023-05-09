@@ -182,7 +182,8 @@
 <img src="/2021/12/10/Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/iptables链表.png">
 <div align="left">  
 
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 五链四表</span><br><span class="line">  1.1 五链</span><br><span class="line">  1.2 四表</span><br><span class="line">2 堵通策略</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;NetFilter SDK 是一个对通过网络传输的数据包进行透明过滤的框架，可以理解为是代理。</p>
+<h3 id="0x01-IPtables"><a href="#0x01-IPtables" class="headerlink" title="0x01 IPtables"></a><em>0x01 IPtables</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 五链四表</span><br><span class="line">  1.1 五链</span><br><span class="line">  1.2 四表</span><br><span class="line">2 堵通策略</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、五链四表</em></strong><br><strong><em>1.1、五链</em></strong>  </p>
 <ul>
 <li>五链 - 数据包从网卡传入，根据其去向必经的五个链条，流程图如下<ul>
@@ -230,7 +231,10 @@
 </ul>
 </li>
 </ul>
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1199">https://www.zsythink.net/archives/1199</a></p>
+<h3 id="0x02-NetFilter-SDK"><a href="#0x02-NetFilter-SDK" class="headerlink" title="0x02 NetFilter SDK"></a><em>0x02 NetFilter SDK</em></h3><p>&emsp;&emsp;windows上驱动负责网络数据捕获，将数据抛到应用层，应用层根据规则过滤、改包，之后应用层通过接口将修改Packet发送至驱动，注入到对应的层从而闭环。<br>&emsp;&emsp;linux则是通过iptables转发数据包到一个代理服务端口，监听处理经过这个端口的数据包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">  NFSDK ---&gt; NetfilterSDKAPI --数据包过滤--&gt; 开源Linux部分</span><br><span class="line">  NFSDK ---&gt; ProtocolFilter --协议解析--&gt; 需要购买</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1199">https://www.zsythink.net/archives/1199</a></p>
 </div></div></div></div></div></div>
       
 
@@ -651,15 +655,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -671,11 +675,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -691,11 +695,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -707,11 +711,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -727,11 +731,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">

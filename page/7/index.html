@@ -262,7 +262,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;本文主要研究Linux下如果防止进程被kill的方法。<br>&emsp;&emsp;系统实现杀死进程一般是通过调用 kill(或tkill、pkill) 来终止进程（内核也可以自行终止进程，如 Ctrl-C 时发送的 SIGINT 或内存不足杀手发送的 SIGKILL。某些信号可能是其他系统调用如 ptrace的结果)。<br>&emsp;&emsp;当 kill 被调用时，这一切都发生在内核中。如果要实现进程防杀，只有使内核代码介于发送信号的进程和接收信号的进程之间。<br>&emsp;&emsp;Linux系统下，要实现系统防杀可以从<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">两个角度</a><sup>[1]</sup>考虑，控制接收kill流程与控制被kill进程的状态。</p>
-<h3 id="0x01-控制接收kill流程"><a href="#0x01-控制接收kill流程" class="headerlink" title="0x01 控制接收kill流程"></a><em>0x01 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 sys_kill劫持</span><br><span class="line">3 其他方法</span><br></pre></td></tr></table></figure>
+<h3 id="0x01-审计kill命令"><a href="#0x01-审计kill命令" class="headerlink" title="0x01 审计kill命令"></a><em>0x01 审计kill命令</em></h3><p>&emsp;&emsp;使用audit能方便地审计系统的命令执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">$ sudo apt install auditd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">$ systemctl <span class="built_in">enable</span> auditd.service</span><br><span class="line">$ systemctl restart auditd</span><br><span class="line"></span><br><span class="line"><span class="comment"># auditctl添加规则</span></span><br><span class="line">$ auditctl -a <span class="built_in">exit</span>,always -F arch=b64 -S <span class="built_in">kill</span> -F key=catch_kill</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-控制接收kill流程"><a href="#0x02-控制接收kill流程" class="headerlink" title="0x02 控制接收kill流程"></a><em>0x02 控制接收kill流程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 LD_PRELOAD注入程序</span><br><span class="line">  1.1 简单使用</span><br><span class="line">  1.2 防止递归调用</span><br><span class="line">  1.3 进程防杀示例</span><br><span class="line">2 sys_kill劫持</span><br><span class="line">3 其他方法</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、LD_PRELOAD注入程序</em></strong><br>&emsp;&emsp;这里主要叙述的是<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD注入程序</a><sup>[2]</sup>这个方法。如果杀手进程是链接动态库的，就可以通过修改LD_PRELOAD(是个环境变量，用于动态库的加载)注入拒绝杀死指定PID的代码，并替换 kill 系统调用(您可能需要对 tkill或pkill执行相同的操作，具体取决于杀手实际发送信号的方式)。  </p>
 <p><strong><em>1.1、简单使用</em></strong><br>&emsp;&emsp;首先写一个任意生成十个数字random.cpp文件(注意进程可以用.cpp或.c做后缀):</p>
@@ -304,7 +307,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 内建kill</span></span><br><span class="line">$ <span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin目录下的kill程序</span></span><br><span class="line">$ /bin/<span class="built_in">kill</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想要shell关闭内建kill，可以用enable来禁止使用内建kill</span></span><br><span class="line"><span class="built_in">enable</span> -n <span class="built_in">kill</span></span><br></pre></td></tr></table></figure>
 
 <p><strong><em>3、其他方法</em></strong><br>&emsp;&emsp;如果是为了防止一个关键进程(例如一个用于支持根文件系统的进程)在关机时被杀死，大多数 init 系统将有一种方法来防止给定的进程受到 killall5 或类似功能的影响。参见某些版本的 Debian 中的 /run/sendsigs.omit.d，或者例如 systemd 的 killmode。<br>&emsp;&emsp;要杀死进程，无论如何都必须确定要杀死哪个进程。如果它基于存储在文件中的受害者的 PID(如 /run/victim.pid)，那么可以更改该文件，如果它基于进程名称(/proc/pid/task/tid/comm)，那么也可以更改(例如通过附加调试器并调用 prctl(PR_SET_NAME))，对于 arg 列表(ps -f 显示的 /proc/pid/cmdline)也是如此。 </p>
-<h3 id="0x02-控制被kill进程状态"><a href="#0x02-控制被kill进程状态" class="headerlink" title="0x02 控制被kill进程状态"></a><em>0x02 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
+<h3 id="0x03-控制被kill进程状态"><a href="#0x03-控制被kill进程状态" class="headerlink" title="0x03 控制被kill进程状态"></a><em>0x03 控制被kill进程状态</em></h3><p>&emsp;&emsp;还可以从被kill进程的状态角度出发来实现防杀。  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 简单的Unix权限</span><br><span class="line">2 基础知识构建</span><br><span class="line">3 源码打包方法</span><br><span class="line">4 非源码打包方法</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、简单的Unix权限</em></strong><br>&emsp;&emsp;引用 Linux 上的 kill(2) 手册页：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一个进程要有发送信号的权限，它要么是有root用户（Linux下：在目标进程的用户命名空间中具有CAP_KILL能力），要么发送进程的真实或有效用户ID必须等于真实或保存的目标进程的 <span class="built_in">set</span>-user-ID。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际实现方法</span></span><br><span class="line">以与杀手进程不同的用户身份运行被杀死的进程（假设杀手不是以 root 身份运行）</span><br></pre></td></tr></table></figure>
@@ -318,7 +321,7 @@
 <p><strong><em>4、内核检测机制(未仔细研究)</em></strong><br>&emsp;&emsp;还有类似于 SystemTap 使用的内核检测机制，它允许您影响内核的行为，在这里可以用来劫持信号传递。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SystemTap 可以在这里使用。 但是请注意，您需要内核符号（Debian 上的 linux-image-&lt;version&gt;-dbgsym）才能使用它，并且 SystemTap 或您的 stap 脚本将挂钩的内部内核函数可能会发生变化。 所以可能不是最稳定的选择。 Guru 模式也应该小心使用（不要尝试做任何太花哨的事情）。</span><br><span class="line">使用 stap，您可以在正在运行的内核中的不同点注入代码。 例如，您可以挂钩处理 <span class="built_in">kill</span>() 或 tkill() 系统调用的内核函数，并告诉它当 pid 是您的受害者时将信号更改为 0（无害）。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;sys_kill&quot;) &#123; if ($pid == 12345) $sig = 0; &#125;&#x27;</span></span><br><span class="line">（这里对于任何信号，如果您只想覆盖 SIGKILL，您也可以检查 <span class="variable">$sig</span> == 9）。 现在，当使用 tkill() 或使用受害者的进程组 ID 调用 <span class="built_in">kill</span>() 时，这不起作用，因此我们需要扩展它。 这不包括信号由内核本身发送的情况。</span><br><span class="line">但是我们也可以查看内核代码，看看我们是否可以在内核检查发送信号权限的地方钩住自己。</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">           if (@entry($t-&gt;pid) == 12345) $return = -1; &#125;&#x27;</span></span><br><span class="line">我们返回 -1 (-EPERM) ，当请求的 pid 是我们目标的 pid 时（这里以 12345 为例），它还有一个好处是让杀手知道它的 <span class="built_in">kill</span>() 失败了。</span><br><span class="line">~$ sleep 1000 &amp;</span><br><span class="line">[1] 8508</span><br><span class="line">~$ sudo stap -ge <span class="string">&#x27;probe kernel.function(&quot;check_kill_permission&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($t-&gt;pid) == &#x27;</span><span class="string">&quot;$!&quot;</span><span class="string">&#x27;) $return = -1; &#125;&#x27;</span> &amp;</span><br><span class="line">[2] 8510</span><br><span class="line">~$ <span class="built_in">kill</span> -s KILL 8508</span><br><span class="line"><span class="built_in">kill</span>: <span class="built_in">kill</span> 8508 failed: operation not permitted</span><br><span class="line">它也适用于内核自行发送信号的某些情况，但不是全部。 为此，我们需要深入到内核代码中进行信号传递的最底层函数：__send_signal()（至少在当前版本的 Linux 内核中）。</span><br><span class="line">一种方法是挂钩 __send_signal() 在开始时调用的 prepare_signal() 函数（如果返回 0 则退出）；</span><br><span class="line">stap -ge <span class="string">&#x27;probe kernel.function(&quot;prepare_signal&quot;).return &#123;</span></span><br><span class="line"><span class="string">  if (@entry($p-&gt;pid) == 12345) $return = 0; &#125;&#x27;</span></span><br><span class="line">然后，只要该 stap 进程存在，pid 12345 将是不可杀死的。</span><br><span class="line">请注意，内核通常假设 SIGKILL 会起作用，因此在某些极端情况下，上述内容可能会产生意想不到的副作用（例如，如果 oom-killer 继续选择无法杀死的受害者，则它会变得无效）。</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process</a><br>[2]<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/</a><br>[3]<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">https://www.52coder.net/post/ld-preload</a></p>
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process">https://unix.stackexchange.com/questions/483913/is-there-a-way-to-prevent-sigkill-to-reach-a-process</a><br>[2]<a target="_blank" rel="noopener" href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/</a><br>[3]<a target="_blank" rel="noopener" href="https://www.52coder.net/post/ld-preload">https://www.52coder.net/post/ld-preload</a></p>
 
       
 
@@ -784,15 +787,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -804,11 +807,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -824,11 +827,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -840,11 +843,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -860,11 +863,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
