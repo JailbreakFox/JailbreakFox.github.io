@@ -156,6 +156,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Windows内核开发-开发工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">Windows内核开发-开发工具</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2018-10-20T08:00:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-20</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Windows内核开发所用到的工具。</p>
+<h3 id="0x01-系统自带工具"><a href="#0x01-系统自带工具" class="headerlink" title="0x01 系统自带工具"></a><em>0x01 系统自带工具</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 任务管理器</span><br><span class="line">2 事件查看器</span><br><span class="line">3 资源监视器</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、任务管理器</em></strong><br>&emsp;&emsp;任务栏右键-任务管理器，能够查询到所有进程的信息。<br>&emsp;&emsp;任务管理器-详细信息，可添加每个进程的句柄查询列。  </p>
+<p><strong><em>2、事件查看器</em></strong><br>&emsp;&emsp;右键开始菜单-事件查看器-Windows日志-应用程序可以查看到崩溃日志。  </p>
+<p><strong><em>3、资源监视器</em></strong><br>&emsp;&emsp;任务管理器-性能-打开资源管理器-CPU，可以查看有哪些句柄与打开它的进程之间的关联信息。  </p>
+<h3 id="0x02-Sysinternals"><a href="#0x02-Sysinternals" class="headerlink" title="0x02 Sysinternals"></a><em>0x02 Sysinternals</em></h3><p>&emsp;&emsp;Winternals公司提供的<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/sysinternals/downloads/sysinternals-suite">免费工具</a>。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 procmon</span><br><span class="line">2 procexp</span><br><span class="line">3 dbgview</span><br><span class="line">4 autoruns</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、procmon</em></strong><br>&emsp;&emsp;能够捕获到所有进程的文件打开、网络连接、注册表等事件。  </p>
+<p><strong><em>2、procexp</em></strong><br>&emsp;&emsp;能够捕获到所有进程的cpu占用、线程cpu占用、文件符占用等信息。  </p>
+<p><strong><em>3、dbgview</em></strong><br>&emsp;&emsp;能够捕获到日志打印，比如使用OutputDebugString函数，或者是Qt的qDebug。  </p>
+<div align="center">
+<img src="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/dbgview.png" width="700" height="320">
+<div align="left">  
+
+<p><strong><em>4、autoruns</em></strong><br>&emsp;&emsp;能够查看自启动项</p>
+<h3 id="0x03-WinDbg"><a href="#0x03-WinDbg" class="headerlink" title="0x03 WinDbg"></a><em>0x03 WinDbg</em></h3><p>&emsp;&emsp;Windbg是在windows平台下，强大的用户态和内核态调试工具。它的另外一个用途是可以用来分析dump数据。<br>&emsp;&emsp;Windbg在分析dump数据的时候，前提是必须要有.PDB文件。当同时有.PDB文件和源码时，可以使用Visual Studio进行查看。</p>
+<h3 id="0x04-DEPENX"><a href="#0x04-DEPENX" class="headerlink" title="0x04 DEPENX"></a><em>0x04 DEPENX</em></h3><p>&emsp;&emsp;用于查看动态库的符号详情</p>
+<h3 id="0x05-WireShark"><a href="#0x05-WireShark" class="headerlink" title="0x05 WireShark"></a><em>0x05 WireShark</em></h3><p>&emsp;&emsp;用于抓包</p>
+<h3 id="0x10-常见问题"><a href="#0x10-常见问题" class="headerlink" title="0x10 常见问题"></a><em>0x10 常见问题</em></h3><p>1.如何根据网络连接的端口号查看对应进程？</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -o <span class="comment"># 查找对应端口号的进程PID</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开资源管理器-网络查看</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="comment"># 打开任务管理器-进程查看</span></span><br></pre></td></tr></table></figure></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux内核开发-开发工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -332,7 +414,7 @@
 <p><strong><em>9、pstack</em></strong><br>&emsp;&emsp;排查CPU占用高的方法:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看高CPU占用的进程PID</span></span><br><span class="line">$ ps -ef</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看该进程中CPU占用最高的线程</span></span><br><span class="line"><span class="comment"># P: 以 CPU 的使用资源排序显示；</span></span><br><span class="line"><span class="comment"># M: 以 Memory 的使用资源排序显示；</span></span><br><span class="line"><span class="comment"># N: 以 PID 来排序喔！</span></span><br><span class="line"><span class="comment"># T: 由该 Process 使用的 CPU 时间累积 (TIME+) 排序</span></span><br><span class="line"><span class="comment"># R: 键可以将当前的排序倒转</span></span><br><span class="line">$ top -Hp <span class="string">&#x27;PID&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看该线程调用栈</span></span><br><span class="line">$ pstack <span class="string">&#x27;线程PID&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x03-Linux系统开发常用工具"><a href="#0x03-Linux系统开发常用工具" class="headerlink" title="0x03 Linux系统开发常用工具"></a><em>0x03 Linux系统开发常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">1 日志读取-journalctl</span><br><span class="line">2 进程服务管理-systemctl/service</span><br><span class="line">3 核心转储-coredump</span><br><span class="line">4 进程查询-ps + grep/pgrep/pidof/pstree</span><br><span class="line">5 杀死进程-<span class="built_in">kill</span>/killall/pkill</span><br><span class="line">6 网络通信-ping/nc/tracert</span><br><span class="line">7 硬件信息-dmidecode/uname + lspci</span><br><span class="line">8 文件操作-cat/less/more/mv/cp/rm/chmod/ls+file+<span class="built_in">stat</span>+du/grep/<span class="built_in">echo</span>/find/locate/<span class="built_in">which</span>/whereis/sed/ln</span><br><span class="line">9 帮助指令-man</span><br><span class="line">10 屏保设置-xset</span><br><span class="line">11 超级用户-sudo/pkexec</span><br><span class="line">12 文件内容操作-tail/wc/sort/uniq/paste</span><br><span class="line">13 压缩文件-zip/rar/tar/xz</span><br><span class="line">14 挂载-mount</span><br><span class="line">15 分区信息-df/fdisk/lsblk/blkid</span><br><span class="line">16 权限更改-chmod/chown/chroot/chattr/getfacl+setfacl</span><br><span class="line">17 用户管理-useradd/userdel/usermod/groups/passwd</span><br><span class="line">18 二进制文件分析-file/ldd/ltrace/strace/hexdump/strings/readelf/nm</span><br><span class="line">19 日志保存-sosreport</span><br><span class="line">20 远程文件操作-scp/rsync</span><br><span class="line">21 读取转换数据-dd</span><br><span class="line">22 历史终端命令-<span class="built_in">history</span></span><br><span class="line">23 终端代理-proxychains</span><br><span class="line">24 打开文件-xdg-open</span><br><span class="line">25 用户信息-who/id/loginctl/hostnamectl</span><br><span class="line">26 密码过期设置-chage</span><br><span class="line">27 环境变量-<span class="built_in">export</span>/locale/env</span><br><span class="line">28 编辑器-gedit/dedit</span><br><span class="line">29 反汇编-objdump/strings/nm</span><br><span class="line">30 电源指令-poweroff/shutdown/reboot/Hibernate/<span class="built_in">suspend</span>/<span class="built_in">logout</span>/rtcwake</span><br><span class="line">31 键鼠输入事件监听-libinput</span><br><span class="line">32 窗口查看进程-xprop</span><br><span class="line">33 多屏查询-xrandr</span><br><span class="line">34 输入输出重定向</span><br><span class="line">35 ssh免密码登录</span><br><span class="line">36 计划任务-cron</span><br><span class="line">37 网络配置-nmcli/ifconfig/netstat/route</span><br><span class="line">38 驱动管理-insmod/rmmod/lsmod</span><br><span class="line">39 命令行运行时间-time</span><br><span class="line">40 md5校验 - md5sum</span><br><span class="line">41 内建操作 - <span class="built_in">type</span>/<span class="built_in">enable</span></span><br><span class="line">42 设置别名 - <span class="built_in">alias</span></span><br><span class="line">43 文件加密 - tar + openssl + dd</span><br><span class="line">44 文本处理 - awk</span><br><span class="line">45 去除符号信息 - strip</span><br><span class="line">46 动态库配置 - ldconfig</span><br><span class="line">47 内核审计管理 - auditctl</span><br><span class="line">48 防火墙管理 - iptables</span><br><span class="line">49 进程间通信信息 - ipcs</span><br><span class="line">50 远程端口查询 - telnet</span><br><span class="line">51 换行符格式转换 - dos2unix/unix2dos</span><br><span class="line">52 修改二进制rpath - chrpath/patchelf</span><br><span class="line">53 数据包截获 - tcpdump</span><br></pre></td></tr></table></figure>
+<h3 id="0x03-Linux系统开发常用工具"><a href="#0x03-Linux系统开发常用工具" class="headerlink" title="0x03 Linux系统开发常用工具"></a><em>0x03 Linux系统开发常用工具</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">1 日志读取-journalctl</span><br><span class="line">2 进程服务管理-systemctl/service</span><br><span class="line">3 核心转储-coredump</span><br><span class="line">4 进程查询-ps + grep/pgrep/pidof/pstree</span><br><span class="line">5 杀死进程-<span class="built_in">kill</span>/killall/pkill</span><br><span class="line">6 网络通信-ping/nc/tracert</span><br><span class="line">7 硬件信息-dmidecode/uname + lspci</span><br><span class="line">8 文件操作-cat/less/more/mv/cp/rm/chmod/ls+file+<span class="built_in">stat</span>+du/grep/<span class="built_in">echo</span>/find/locate/<span class="built_in">which</span>/whereis/sed/ln</span><br><span class="line">9 帮助指令-man</span><br><span class="line">10 屏保设置-xset</span><br><span class="line">11 超级用户-sudo/pkexec</span><br><span class="line">12 文件内容操作-tail/wc/sort/uniq/paste</span><br><span class="line">13 压缩文件-zip/rar/tar/xz</span><br><span class="line">14 挂载-mount</span><br><span class="line">15 分区信息-df/fdisk/lsblk/blkid</span><br><span class="line">16 权限更改-chmod/chown/chroot/chattr/getfacl+setfacl</span><br><span class="line">17 用户管理-useradd/userdel/usermod/groups/passwd</span><br><span class="line">18 二进制文件分析-file/ldd/ltrace/strace/hexdump/strings/readelf/nm</span><br><span class="line">19 日志保存-sosreport</span><br><span class="line">20 远程文件操作-scp/rsync</span><br><span class="line">21 读取转换数据-dd</span><br><span class="line">22 历史终端命令-<span class="built_in">history</span></span><br><span class="line">23 终端代理-proxychains</span><br><span class="line">24 打开文件-xdg-open</span><br><span class="line">25 用户信息-who/id/loginctl/hostnamectl</span><br><span class="line">26 密码过期设置-chage</span><br><span class="line">27 环境变量-<span class="built_in">export</span>/locale/env</span><br><span class="line">28 编辑器-gedit/dedit</span><br><span class="line">29 反汇编-objdump/strings/nm</span><br><span class="line">30 电源指令-poweroff/shutdown/reboot/Hibernate/<span class="built_in">suspend</span>/<span class="built_in">logout</span>/rtcwake</span><br><span class="line">31 键鼠输入事件监听-libinput</span><br><span class="line">32 窗口查看进程-xprop</span><br><span class="line">33 多屏查询-xrandr</span><br><span class="line">34 输入输出重定向</span><br><span class="line">35 ssh免密码登录</span><br><span class="line">36 计划任务-cron</span><br><span class="line">37 网络配置-nmcli/ifconfig/netstat/route</span><br><span class="line">38 驱动管理-insmod/rmmod/lsmod</span><br><span class="line">39 命令行运行时间-time</span><br><span class="line">40 md5校验 - md5sum</span><br><span class="line">41 内建操作 - <span class="built_in">type</span>/<span class="built_in">enable</span></span><br><span class="line">42 设置别名 - <span class="built_in">alias</span></span><br><span class="line">43 文件加密 - tar + openssl + dd</span><br><span class="line">44 文本处理 - awk</span><br><span class="line">45 去除符号信息 - strip</span><br><span class="line">46 动态库配置 - ldconfig</span><br><span class="line">47 内核审计管理 - auditctl</span><br><span class="line">48 防火墙管理 - iptables</span><br><span class="line">49 进程间通信信息 - ipcs</span><br><span class="line">50 远程端口查询 - telnet</span><br><span class="line">51 换行符格式转换 - dos2unix/unix2dos</span><br><span class="line">52 修改二进制rpath - chrpath/patchelf</span><br><span class="line">53 数据包截获 - tcpdump</span><br><span class="line">54 不挂起 - nohup</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、日志读取-journalctl</em></strong><br>&emsp;&emsp;在Systemd出现之前，Linux系统及各应用的日志都是分别管理的，Systemd开始统一管理了所有Unit的启动日志，这样带来的好处就是可以只用一个 journalctl命令，查看所有内核和应用的日志。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----1、查看所有日志-----</span></span><br><span class="line">sudo journalctl &gt; <span class="string">&quot;文件名&quot;</span></span><br><span class="line"><span class="comment"># 查看本次启动的所有日志也可以使用</span></span><br><span class="line">sudo journalctl -b &gt; <span class="string">&quot;文件名&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----2、查看指定时间内的日志-----</span></span><br><span class="line"><span class="comment"># --since代表某段时间之后，--until代表某段时间之前</span></span><br><span class="line">journalctl --since=<span class="string">&quot;2018-09-21 10:21:00&quot;</span> --until=<span class="string">&quot;2018-09-21 10:22:00&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----3、实时查看并写入日志-----</span></span><br><span class="line">journalctl -f |&amp; tee -a <span class="string">&#x27;*.log&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -----4、在程序中加入日志打印功能-----</span></span><br><span class="line"><span class="comment"># include &lt;unistd.h&gt;  //linux中的一些重要函数</span></span><br><span class="line">system(<span class="string">&quot;echo `命令行内容` &gt; &#x27;日志存放目录&#x27;&quot;</span>)   //反引号内为需要执行的命令，然后用 &gt; 输出日志到指定目录</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----5、查看指定单元日志-----</span></span><br><span class="line"><span class="comment"># 查看systemd-logind日志</span></span><br><span class="line">journalctl -u systemd-logind</span><br></pre></td></tr></table></figure>
 
@@ -583,6 +665,9 @@
 
 <p><strong><em>53、数据包截获 - tcpdump</em></strong><br>网络数据采集分析工具</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截获来自某IP的数据包</span></span><br><span class="line">$ tcpdump host <span class="string">&#x27;IP地址&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>54、不挂起 - nohup</em></strong><br>由终端拉起的进程，即使终端退出也不杀死进程</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例</span></span><br><span class="line">$ nohup ./<span class="built_in">exec</span> &amp;</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x04-Linux-Shell命令"><a href="#0x04-Linux-Shell命令" class="headerlink" title="0x04 Linux Shell命令"></a><em>0x04 Linux Shell命令</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1 首行指令</span><br><span class="line">2 变量声明</span><br><span class="line">3 常用表达式</span><br><span class="line">4 文件生成</span><br><span class="line">5 命令执行</span><br><span class="line">6 后台运行</span><br><span class="line">7 脚本调用</span><br><span class="line">8 流程语句</span><br><span class="line">9 交互语句</span><br><span class="line">10 数组运算</span><br><span class="line">11 系统判断</span><br><span class="line">12 守护进程</span><br><span class="line">13 文件操作</span><br><span class="line">14 杀死进程</span><br><span class="line">15 参数传递</span><br><span class="line">16 去除别名</span><br><span class="line">17 随机数生成</span><br><span class="line">18 字符串分割</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、首行指令</em></strong><br>首行指令用于声明使用的终端:</p>
@@ -1005,139 +1090,6 @@
 
 
   
-    <article id="post-币圈入门" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/">币圈入门</a>
-    </h1>
-  
-
-        
-        <a href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/" class="archive-article-date">
-  	<time datetime="2018-07-25T12:37:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-25</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;加密货币作为一种新兴的金融产品，吸引了越来越多的投资者和矿工的关注。在这个复杂的市场中，初学者可能会感到迷茫和无措，不知道从何入手。本指南旨在为新手提供基础知识。</p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 加密货币算法</span><br><span class="line">2 挖矿协议</span><br><span class="line">3 区块链的含义</span><br><span class="line">4 挖矿与燃气费</span><br><span class="line">5 矿池</span><br><span class="line">6 钱包</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、加密货币算法</em></strong><br>| 算法     | 加密货币 | 用途                     |<br>|———-|———-|————————–|<br>| SHA-256  | 比特币   | 验证交易和挖矿           |<br>| Scrypt   | 莱特币   | 验证交易和挖矿           |<br>| Ethash   | 以太坊   | 增加GPU矿工的参与        |<br>| X11      | Dash     | 提高挖矿的难度，保护安全 |<br>| Equihash | Zcash    | 保护用户隐私和匿名性     |</p>
-<p><strong><em>2、挖矿协议</em></strong><br>&emsp;&emsp;挖矿最常使用的协议是”Stratum”协议，它是一种轻量级的挖矿协议，旨在使矿工与矿池之间的通信更加高效和可靠。该协议由比特币核心开发者Matt Corallo于2011年开发，并已成为几乎所有加密货币矿池和矿工之间的标准协议。<br>&emsp;&emsp;Stratum协议使用JSON-RPC进行通信，并将矿池服务器与矿工之间的数据传输最小化，从而降低了网络延迟和带宽消耗，提高了挖矿的效率和稳定性。它还允许矿工动态地调整挖矿难度，以确保他们能够在网络上保持一定的挖矿速度。<br>&emsp;&emsp;除了Stratum协议之外，还有一些其他的挖矿协议，如GetBlockTemplate（GBT）和Ethereum Mining Protocol（ETHASH），它们分别用于比特币和以太坊等不同的加密货币。  </p>
-<p><strong><em>3、区块链的含义</em></strong><br>&emsp;&emsp;当你进行数字货币交易时，你的交易信息将被打包成一个区块并添加到区块链中。一个区块由多个交易组成，并且包含了这些交易的信息、时间戳、随机数和其他元数据。每个区块都包含了一个指向前一个区块的哈希值，这样就把多个区块连接成了一条链状结构，即区块链。<br>&emsp;&emsp;一旦一个块被创建出来并被添加到区块链中，它就不能被更改或删除。这是因为每个块都包含了前一个块的哈希值，这样就形成了一个不可篡改的数据结构。如果任何一个块被篡改或删除，整个区块链的结构都会被破坏，从而导致整个系统失效。<br>&emsp;&emsp;区块链的数据库是分布式存储的，它被保存在网络中的多个节点上。每个节点都拥有一份完整的区块链副本，因此在整个网络中不存在一个单一的、中心化的存储节点。</p>
-<p><strong><em>4、挖矿与燃气费</em></strong><br>&emsp;&emsp;在实际的区块链系统中，矿工挖矿的过程就是不断尝试计算一个符合区块链协议规定的哈希值(消耗的计算机资源即用于计算哈希值)，一旦计算出这个哈希值，矿工便可以将该哈希值和交易信息等元数据打包成一个新的块，最后将这个块广播到整个网络中。<br>&emsp;&emsp;燃气费是由交易发起者支付的，矿工会根据交易所支付的燃气费用来决定是否打包这个交易与打包的优先级，燃气费最终会被打包该笔交易的矿工获得。因此，矿工的实际收益主要来自于两部分，一部分是挖矿协议规定的区块奖励，另一部分是交易燃气费。<br>&emsp;&emsp;挖矿涉及到的计算量非常庞大，计算出相同的哈希值的概率非常小。如果同时有多个节点挖掘出了新的区块，就会出现分叉现象(区块链被分成了两条或更多条链)，此时每个节点会选择自己认为最长的链，也就是包含最多区块的链作为当前的有效链，而其它的分支链会被抛弃(无法获得奖励)。  </p>
-<p><strong><em>5、矿池</em></strong><br>&emsp;&emsp;矿池是由多个矿工组成的集合。在矿池中，所有矿工合作挖掘，将自己的算力贡献到整个矿池中，共同尝试计算符合规定的哈希值，并且矿池将按照矿工的贡献比例分配奖励。矿池可以提高整个挖矿过程的稳定性，还可以提供更多的服务，比如实时统计矿工的算力、调整挖矿难度、提供挖矿软件、安全监测等  </p>
-<p><strong><em>6、钱包</em></strong><br>&emsp;&emsp;在加密货币中，钱包是由一个公钥和一个私钥组成的。公钥是用于接收加密货币的地址，私钥是用于签署交易以及管理该地址中加密货币的安全性的密码。<br>&emsp;&emsp;钱包主要分为在线钱包、本地钱包与硬件钱包。  </p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>在线钱包</th>
-<th>本地钱包</th>
-<th>硬件钱包</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安全性</td>
-<td>低</td>
-<td>高</td>
-<td>极高</td>
-</tr>
-<tr>
-<td>管理方式</td>
-<td>第三方管理</td>
-<td>用户自行管理</td>
-<td>用户自行管理</td>
-</tr>
-<tr>
-<td>联网方式</td>
-<td>始终联网</td>
-<td>无需联网</td>
-<td>仅在交易时联网</td>
-</tr>
-<tr>
-<td>手续费</td>
-<td>高</td>
-<td>低</td>
-<td>极低</td>
-</tr>
-<tr>
-<td>代表性钱包</td>
-<td>Okx</td>
-<td>Bitcoin Core Wallet</td>
-<td>Ledger</td>
-</tr>
-<tr>
-<td>监管部门溯源</td>
-<td>看平台是否合作</td>
-<td>不可溯源</td>
-<td>不可溯源</td>
-</tr>
-</tbody></table>
-<h3 id="0x02-XMRig"><a href="#0x02-XMRig" class="headerlink" title="0x02 XMRig"></a><em>0x02 XMRig</em></h3><p>&emsp;&emsp;XMRig是一款开源的挖矿软件，主要用于挖掘Monero等加密货币。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 常用参数</span><br><span class="line">2 使用示例</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、常用参数</em></strong><br>| 参数                 | 描述                               |<br>| ——————– | ———————————- |<br>| -x, –donate-level=N | 设置贡献级别，N为0时表示禁用贡献。 |<br>| -o, –url=URL        | 设置矿池地址。                     |<br>| -u, –user=USERNAME  | 设置矿工用户名。                   |<br>| -p, –pass=PASSWORD  | 设置矿工密码。                     |<br>| –coin=COIN          | 设置加密货币类型。                 |<br>| –tls                | 使用TLS加密连接。                  |<br>| –gpu                | 启用GPU挖矿。                      |<br>| –opencl             | 启用OpenCL挖矿。                   |<br>| –cuda               | 启用CUDA挖矿。                     |</p>
-<p><strong><em>2、使用示例</em></strong><br>&emsp;&emsp;这里以一次挖矿病毒溯源到的进程执行命令为例:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./xmrig --donate-level 0 -o pool.supportxmr.com:443 -u 8AigoRTXK19E9gM2RZi5Ez3fky9cpJtbuWmfhfL8xVZA62c5wJydMaW2EZFfCKQHiw2Y2zEqrsNNMjayWoLKt1jGMsBkisY -k --tls -p Voltage</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数字货币 区块链</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/17/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/19/">下一页</a>
@@ -1259,15 +1211,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1319,11 +1271,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1335,11 +1287,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">

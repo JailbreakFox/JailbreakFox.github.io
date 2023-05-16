@@ -156,6 +156,82 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Docker与ss搭建科学上网环境" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/07/Docker%E4%B8%8Ess%E6%90%AD%E5%BB%BA%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E7%8E%AF%E5%A2%83/">Docker与ss搭建科学上网环境</a>
+    </h1>
+  
+
+        
+        <a href="/2019/09/07/Docker%E4%B8%8Ess%E6%90%AD%E5%BB%BA%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
+  	<time datetime="2019-09-07T12:26:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-07</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;翻墙一时爽，一直翻墙一直爽。<br>&emsp;&emsp;使用VPS与ss(Shadowsocks)搭建的方式性价比高。</p>
+<h3 id="0x01-VPS"><a href="#0x01-VPS" class="headerlink" title="0x01 VPS"></a><em>0x01 VPS</em></h3><p>&emsp;&emsp;VPS是在墙外的服务器，墙内通常需要购买此类服务，然鹅更新换代速度很快，可能过不了多久就被封了。这里选用<a target="_blank" rel="noopener" href="https://www.iaodun.com/">傲云</a>，不过目前这款速度和稳定性还可以。<br>&emsp;&emsp;购买服务器以后，只需在其上通过SSH来安装ss服务端。</p>
+<h3 id="0x02-Docker与ss部署VPS"><a href="#0x02-Docker与ss部署VPS" class="headerlink" title="0x02 Docker与ss部署VPS"></a><em>0x02 Docker与ss部署VPS</em></h3><p>&emsp;&emsp;由于本人是在Ubuntu16.04 LTS Server上搭建环境，尝试了apt下载、源码编译，但是都没成功。这里用一个比较方便快捷的方法，就是使用已搭建好的Docker环境来部署ss。<br>&emsp;&emsp;关于Docker的使用方式可参考<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/JailbreakFox.github.io/wiki">Wiki</a>，使用Docker部署ss的方式如下:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#搜索Shadowsocks镜像包</span></span><br><span class="line">docker search shadowsocks</span><br><span class="line"><span class="comment">#镜像拉取，直接选择第一个镜像即可</span></span><br><span class="line">docker pull mritd/shadowsocks</span><br><span class="line"><span class="comment">#关于该镜像的使用方法，可直接进入其官网查看https://hub.docker.com/r/mritd/shadowsocks</span></span><br><span class="line"><span class="comment">#直接在服务器上运行ss容器</span></span><br><span class="line">docker run -dt --name 容器名 -p 6443:6443 -p 6500:6500/udp mritd/shadowsocks -m <span class="string">&quot;ss-server&quot;</span> -s <span class="string">&quot;-s 0.0.0.0 -p 6443 -m chacha20-ietf-poly1305 -k 密码&quot;</span> -x -e <span class="string">&quot;kcpserver&quot;</span> -k <span class="string">&quot;-t 127.0.0.1:6443 -l :6500 -mode fast2&quot;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;上述直接在VPS上搭建了ss服务端容器，且顺便做了kcptun加速。</p>
+<h3 id="0x03-ss客户端"><a href="#0x03-ss客户端" class="headerlink" title="0x03 ss客户端"></a><em>0x03 ss客户端</em></h3><p>&emsp;&emsp;在服务端部署好之后，只需要根据用户自己的系统去安装相应ss版本即可，这里介绍Win和Ubuntu16.04系统下的ss客户端部署。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 Windows系统部署ss</span><br><span class="line">2 Ubuntu16.04系统部署ss</span><br><span class="line">3 Android部署ss</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Windows系统部署ss</em></strong><br>&emsp;&emsp;Windows下部署过程还是非常简单的，其安装程序能直接从<a target="_blank" rel="noopener" href="https://github.com/shadowsocks/shadowsocks-windows/releases">Github</a>上找到，相应的配置参数如下图配置即可:</p>
+<div align="center">
+![ss配置](ss配置.png)
+<div align="left">
+
+<p><strong><em>2、Linux系统部署ss</em></strong>  </p>
+</div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/09/07/Docker%E4%B8%8Ess%E6%90%AD%E5%BB%BA%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E7%8E%AF%E5%A2%83/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-CRLF与LF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -348,99 +424,6 @@
 
 
   
-    <article id="post-DeepFakes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/21/DeepFakes/">DeepFakes(未完成)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/21/DeepFakes/" class="archive-article-date">
-  	<time datetime="2019-05-21T01:52:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 这是一款于2017年末出名的人脸交换技术，由于是开源程序，这里直接能clone到<a target="_blank" rel="noopener" href="https://github.com/deepfakes/faceswap">源码</a>。目前有两种安装方法:1)release版本。如果只是用来尝试换脸，则直接下载发行版本即可;2)搭建开发环境。如果是想开发，则直接搭建Anaconda+TensorFlow的开发环境，已经在之前的<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/05/16/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">博文</a>内介绍过。<br>&emsp;&emsp;这里主要说明一下该项目原理以及开发环境内的操作流程。</p>
-<h3 id="0x01-DeepFakes原理"><a href="#0x01-DeepFakes原理" class="headerlink" title="0x01 DeepFakes原理"></a><em>0x01 DeepFakes原理</em></h3><p>&emsp;&emsp; DeepFakes的核心是一个“自动编码器”，这个“自动编码器”实际上是一个深度神经网络，它能够接收数据输入，并将其压缩成一个小的编码，然后从这个编码中重新生成原始的输入数据。</p>
-<h3 id="0x02-DeepFakes使用教程"><a href="#0x02-DeepFakes使用教程" class="headerlink" title="0x02 DeepFakes使用教程"></a><em>0x02 DeepFakes使用教程</em></h3><p>&emsp;&emsp; 由于网上基本搜索不到该项目的具体使用方法，这里根据DeepFakes官网的英文教程，总结了一套自己的使用流程，内容均使用终端模式，若使用GUI需访问官网教程。以下使用DeepFakes实现胡歌与刘亦菲的换脸。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 图片收集</span><br><span class="line">  1.1 谷歌图片批量下载</span><br><span class="line">2 Extract人脸</span><br><span class="line">3 训练模型</span><br><span class="line">4 人脸转换</span><br><span class="line">  4.1 图片转换人脸</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、图片收集</em></strong><br>&emsp;&emsp;训练AI的图片资源的获取以及前期处理非常重要，如果没有良好的符合标准图片进行训练的话，也就无法获得良好的模型。一般途径有直接去网络上寻找图片资源，或者截取视频帧两种方法。  </p>
-<p><strong><em>1.1、谷歌图批量下载片</em></strong><br>&emsp;&emsp;这里推荐一款极为好用的图片收集工具google-images-download，它可以直接从谷歌图片内爬取我们的目标人物图片，可直接从<a target="_blank" rel="noopener" href="https://github.com/hardikvasa/google-images-download">GitHub</a>上获取。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#直接在Anaconda环境下pip安装</span></span><br><span class="line">pip install google-images-download</span><br><span class="line"><span class="comment">#首先给自己的Anaconda Prompt终端设置SS代理，因为要去谷歌爬取，所以需要翻墙。</span></span><br><span class="line">set http_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line">set https_proxy=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1080</span></span><br><span class="line"><span class="comment">#cd到希望存放照片的文件夹，这里以C:\Users\Desktop\为例</span></span><br><span class="line">cd C:\Users\Desktop\Downloads</span><br><span class="line"><span class="comment">#收集目标人物的图片，这里-k参数表示搜索关键词，-l参数代表爬取的张数</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;胡歌&quot;</span> -l <span class="number">100</span></span><br><span class="line">googleimagesdownload -k <span class="string">&quot;刘亦菲&quot;</span> -l <span class="number">100</span></span><br><span class="line"><span class="comment">#为了方便后面的操作，我们分别将胡歌和刘亦菲的照片放到路径C:\Users\Desktop\picin和C:\Users\Desktop\picin2下</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;爬取完之后注意需要清理一些不好的图片，方便后续处理。</p>
-<p><strong><em>2、Extract人脸</em></strong><br>&emsp;&emsp;由于目前得到的图片可能是全身照，而我们只需要脸部照片，官网上给出了从图片和视频抽取人脸的代码：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从图片抽取人脸，并分别放入picout于picout2文件夹</span></span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin -o C:\Users\Desktop\picout</span><br><span class="line">python faceswap.py extract -i C:\Users\Desktop\picin2 -o C:\Users\Desktop\picout2</span><br><span class="line"><span class="comment">#或者从目标视频文件内抽取人脸(未测试)</span></span><br><span class="line"><span class="comment">#python faceswap.py extract -i C:\Users\Desktop\picin.mp4 -o C:\Users\Desktop\picout</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、训练模型</em></strong><br>&emsp;&emsp;在得到了用于训练编码器模型的初始输入图片集以后，我们需要实现训练过程：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-A与-B参数为之前得到的人脸图片，-m参数代表我们的模型存放文件夹，-p参数代表预览训练过程</span></span><br><span class="line">python faceswap.py train -A C:\Users\Desktop\picout -B C:\Users\Desktop\picout2 -m C:\Users\Desktop\picoutsum -p</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、人脸转换</em></strong><br>&emsp;&emsp;在得到编码器的模型以后，我们就可以使用它来转换我们人脸了，这里可以实现图片和视频的转换。  </p>
-<p><strong><em>4.1、图片转换人脸</em></strong><br>&emsp;&emsp;这里直接实现将1.1节爬取得到的胡歌人脸转换为刘亦菲的脸。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-i参数代表想转换的图片，-o表示转换后图片存放文件夹，-m表示使用的模型</span></span><br><span class="line">python faceswap.py convert -i C:\Users\Desktop\picin -o C:\Users\Desktop\converted -m C:\Users\Desktop\picoutsum</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;转换的结果非常模糊，由于硬件的限制，这里使用CPU来处理，所以只爬取了100张训练图片，但是DeepFakes的使用过程都是一样的。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视觉，应用， AI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/21/DeepFakes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/11/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/13/">下一页</a>
@@ -562,15 +545,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,11 +605,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -638,11 +621,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">

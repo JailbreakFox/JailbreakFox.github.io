@@ -156,6 +156,223 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-单元测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">单元测试工具</a>
+    </h1>
+  
+
+        
+        <a href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2020-11-19T01:49:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-19</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;单元测试工具能够快速测试代码模块的可用性，常用工具有CTest、QTest、GTest</p>
+<h3 id="0x01-CTest"><a href="#0x01-CTest" class="headerlink" title="0x01 CTest"></a><em>0x01 CTest</em></h3><p>&emsp;&emsp;ctest是CMake提供的运行单元测试的工具，在使用CMakeLists.txt文件编译工程的时候，CTest会自动configure、build、test和展现测试结果。<br>&emsp;&emsp;ctest有两个模式：</p>
+<ul>
+<li>模式一：使用CMake configure和build工程，在CMakeLists.txt，使用特殊的命令创建tests。使用CTest来执行那些测试。</li>
+<li>模式二：使用CTest来执行一个script，这个script的语法必须和CMakeLists.txt相同。</li>
+</ul>
+<p>&emsp;&emsp;使用方法：<br>&emsp;&emsp;在CMakeLists.txt使用include(CTest)和include(Dart)来导入CTest模块和开启ctest。使用add_test()来添加一个测试程序，测试程序是一个普通的二进制，只不过内部运行的是qtest或者gtest编写的测试用例。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">add_executable(tests tests/test.cpp)</span><br><span class="line"></span><br><span class="line">add(NAME tests COMMAND $&lt;TARGET_FILE:tests&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x01-QTest"><a href="#0x01-QTest" class="headerlink" title="0x01 QTest"></a><em>0x01 QTest</em></h3><p>&emsp;&emsp;Qtest是Qt提供的单元测试框架，Qt Test是用于对基于Qt的应用程序和库进行单元测试的框架。Qt Test提供了单元测试框架中常见的所有功能以及用于测试图形用户界面的扩展。<br>&emsp;&emsp;Qt测试旨在简化基于Qt的应用程序和库的单元测试的编写：</p>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>轻量</td>
+<td>Qt Test大约有6000行代码和60个导出符号组成</td>
+</tr>
+<tr>
+<td>自成体系</td>
+<td>Qt Test仅需要Qt Core模块中的几个符号即可进行非GUI测试</td>
+</tr>
+<tr>
+<td>快速测试</td>
+<td>Qt Test不需要特殊的测试运行程序，没有特殊的测试注册</td>
+</tr>
+<tr>
+<td>数据驱动测试</td>
+<td>可以使用不同的数据进行多次的测试</td>
+</tr>
+<tr>
+<td>基本的GUI测试</td>
+<td>Qt Test提供了用于鼠标和键盘的模拟功能</td>
+</tr>
+<tr>
+<td>标杆管理</td>
+<td>Qt Test支持基准测试，并提供多个测量后端</td>
+</tr>
+<tr>
+<td>IDE友好</td>
+<td>Qt Test输出可以由Qt Creator、Visual Studio等IDE解释的消息</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>错误报告是线程安全和原子的</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>模板的广泛使用可以防止隐式类型转换引起的错误</td>
+</tr>
+<tr>
+<td>易于扩展</td>
+<td>可以将自定义类型轻松添加到测试数据和测试输出中</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;QVERIFY() 用于验证数据是否正确。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QVERIFY(1 == 1);</span><br><span class="line">QVERIFY2(1 != 1, <span class="string">&quot;1不等于1&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QFETCH_GLOBAL() 该宏从全局数据表中的一行中获取类型类型为name的变量。 名称和类型必须与全局数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。<br>&emsp;&emsp;QFETCH() 宏会在堆栈上创建一个类型为name的本地变量。 名称和类型必须与测试数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QFETCH(QString, aString);</span><br><span class="line">QFETCH_GLOBAL(QLocale, locale);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QCOMPARE宏用于判断两个值是否相等，如果实际值和预期值匹配，将会继续运行，否则将失败记录在测试日至中，并且测试将被终止，不会尝试任何后续操作。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">QCOMPARE(QString(<span class="string">&quot;hello&quot;</span>).toUpper(), QString(<span class="string">&quot;HELLO&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过在包含_data()的函数中调用QTest::addColumn和QTest::newRow向测试用例增加数据，并通过QFETCH宏在测试用例中访问数据。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void TestQString::toInt_data()</span><br><span class="line">&#123;</span><br><span class="line">    QTest::addColumn&lt;QString&gt;(<span class="string">&quot;aString&quot;</span>);</span><br><span class="line">    QTest::addColumn&lt;int&gt;(<span class="string">&quot;expected&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    QTest::newRow(<span class="string">&quot;positive value&quot;</span>) &lt;&lt; <span class="string">&quot;42&quot;</span> &lt;&lt; 42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;negative value&quot;</span>) &lt;&lt; <span class="string">&quot;-42&quot;</span> &lt;&lt; -42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;zero&quot;</span>) &lt;&lt; <span class="string">&quot;0&quot;</span> &lt;&lt; 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void TestQString::toInt()</span><br><span class="line">&#123;</span><br><span class="line">     QFETCH(QString, aString);</span><br><span class="line">     QFETCH(int, expected);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     QCOMPARE(aString.toInt(), expected);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;要创建测试，需要派生自QObject，并添加一个或多个专用槽函数。每个专用槽函数都是测试中的一个测试功能且必须为private。函数命名方法以casen_函数名或者以test结尾的方式。<br>&emsp;&emsp;使用QTest::qExec()可用于执行测试对象中的所有测试功能。<br>&emsp;&emsp;此外，还可以定义不用于测试功能的专用槽函数。如果存在，它们将由测试框架执行，并用于初始化和清除整个测试或当前的测试功能。</p>
+<ul>
+<li>initTestCase() 将在第一个测试功能执行之前被调用</li>
+<li>initTestCase_data() 将被调用以创建全局测试数据表</li>
+<li>cleanupTestCase() 在最后一个测试函数执行后被调用</li>
+<li>init() 将在每个测试功能执行之前被调用</li>
+<li>cleanup() 将在每个测试函数之后调用</li>
+</ul>
+<p>&emsp;&emsp;使用initTestCase()准备测试。每次测试都应使系统处于可用状态，因此可以重复运行。清理操作应在cleanupTestCase()中处理，因此即使测试失败也可以运行清理操作。<br>&emsp;&emsp;使用init()创建测试功能。每个测试功能都应使系统保持可用状态，以便可以重复运行。清理操作应在cleanup()中，即使测试功能失败并提前退出，清理动作也可以运行。<br>&emsp;&emsp;另外，可以使用RAII,并在析构函数中调用清除操作，以确保他们在测试函数返回且对象移出作用域时发生。<br>&emsp;&emsp;如果initTestCase()失败，将不执行任何测试功能。如果init()失败，则不执行以下测试功能，测试将继续进行下一个测试功能。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class Test : public QObject &#123;</span><br><span class="line">  Q_OBJECT</span><br><span class="line">private:</span><br><span class="line">  bool <span class="function"><span class="title">verify</span></span>() &#123;</span><br><span class="line">    <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">private slots:</span><br><span class="line">  void <span class="function"><span class="title">initTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;init test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">firstTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(<span class="literal">true</span>);</span><br><span class="line">    QCOMPARE(1, 1);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">secondTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(verify());</span><br><span class="line">    QVERIFY(1 != 2);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">cleanupTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;clean test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;最后，如果测试类具有静态且公共的void initMain()方法，则在实例化QApplication对象之前，由QTEST_MAIN宏调用该方法。例如，这允许设置应用程序的属性，例如Qt::AA_DisableHighDpiScaling。这是在Qt5.14添加的。<br>&emsp;&emsp;CMake还有其他优点。例如，几乎可以毫不费力地使用CDash将测试运行的结果发布到Web服务器上。<br>&emsp;&emsp;CTest可以扩展到非常不同的单元测试框架，并且可以与QTest一起使用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">project(mytest LANGUAGES CXX)</span><br><span class="line"></span><br><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">find_package(Qt5 COMPONENTS Test REQUIRED)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_INCLUDE_CURRENT_DIR ON)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_AUTOMOC ON)</span><br><span class="line"></span><br><span class="line">add_executable(mytest tst_mytest.cpp)</span><br><span class="line">add_test(NAME mytest COMMAND mytest)</span><br><span class="line"></span><br><span class="line">target_link_libraries(mytest PRIVATE Qt5::</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-GTest"><a href="#0x02-GTest" class="headerlink" title="0x02 GTest"></a><em>0x02 GTest</em></h3><p>&emsp;&emsp;google test(gtest)是google公司推出的c++单元测试框架，基于xUnit架构，并且支持Linux、Windows和mac，并且支持任何类型的测试和模拟，而不仅仅是单元测试。<br>&emsp;&emsp;当使用gtest时，通过编写断言来检查条件是否为真。断言的结果可能是成功、非致命失败或者致命失败。如果发生致命故障，将终止当前功能，否则将继续运行。<br>&emsp;&emsp;一个测试套件包含一个或者多个测试。当测试套件中的多个测试需要共享通用对象和子例程时，可以将他们放入一个测试桶中。<br>&emsp;&emsp;一个测试程序可以包含多个测试套件。<br>&emsp;&emsp;gtest断言类似于函数调用的宏，可以通过断言其行为来测试类或者函数。断言失败时，gtest会输出断言的源文件和行号位置以及失败消息。还可以提供自定义失败消息，该消息将会附加到gtest的消息之后。<br>&emsp;&emsp;断言成对出现，测试相同的事物，但是对当前函数有不同的影响。ASSERT_<em>版本失败时会产生致命错误，并终止当前功能。EXPECT_</em>会产生非致命错误，不会导致当前测试失败。通常EXPECT_<em>是首选，因为他们允许在测试中报告多个鼓掌，但是如果在断言失败时继续运行将没有意义时应当使用ASSERT_</em>。<br>&emsp;&emsp;由于ASSERT_*失败会从当前函数立即返回，可能会跳过其后的清理代码，导致内存泄漏。<br>&emsp;&emsp;基本断言可以进行基本的真/假条件测试</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_TRUE(condition);</td>
+<td>EXPECT_TRUE(condition);</td>
+<td>condition是真的</td>
+</tr>
+<tr>
+<td>ASSERT_FALSE(condition);</td>
+<td>EXPECT_FLASE(condition);</td>
+<td>condition是假的</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;请记住，当它们失败时，将导致ASSERT_<em>致命故障并从当前函数返回，而当它们发生EXPECT_</em>非致命故障时，将允许该函数继续运行。无论哪种情况，断言失败都意味着其包含测试失败。<br>&emsp;&emsp;该组中的断言比较两个C字符串。如果要比较两个string对象，请改用EXPECT_EQ，EXPECT_NE等。</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_STREQ(str1,str2);</td>
+<td>EXPECT_STREQ(str1,str2);</td>
+<td>这两个C字符串的内容相同</td>
+</tr>
+<tr>
+<td>ASSERT_STRNE(str1,str2);</td>
+<td>EXPECT_STRNE(str1,str2);</td>
+<td>两个C字符串的内容不同</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASEEQ(str1,str2);</td>
+<td>EXPECT_STRCASEEQ(str1,str2);</td>
+<td>两个C字符串的内容相同，忽略大小写</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASENE(str1,str2);</td>
+<td>EXPECT_STRCASENE(str1,str2);</td>
+<td>两个C字符串的内容不同，忽略大小写</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;注意，断言名称中的“ CASE”表示忽略大小写。一个NULL 指针和一个空字符串被认为是不同的。<br>&emsp;&emsp;<em>STREQ</em>并<em>STRNE</em>接受宽C字符串（wchar_t*）。如果两个宽字符串的比较失败，则它们的值将打印为UTF-8窄字符串。<br>&emsp;&emsp;创建测试：  </p>
+<ul>
+<li>1.使用TEST()宏定义和命名测试功能。这些是没有返回值的普通C++函数。</li>
+<li>2.在此函数，要与包含的所有有效C++语句一起使用各种gtest断言来检查。</li>
+<li>3.测试结果由断言确定，如果测试中的任何声明失败（致命或非致命），或者测试崩溃，整个测试都会失败，否则测试应当成功。</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TEST(TestSuiteName, TestName) &#123;</span><br><span class="line">  ...测试代码...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;TEST()函数第一个参数是测试套件的名称，第二个参数是测试套件内的测试名称。这两个名称都必须是有效的C++标识符，并且不应包含任何下划线。来自不同测试套件的测试可以具有相同的名称。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtest.html">https://doc.qt.io/qt-5/qtest.html</a><br>[1]<a target="_blank" rel="noopener" href="https://github.com/google/googletest/blob/master/googletest/docs/primer.md">https://github.com/google/googletest/blob/master/googletest/docs/primer.md</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux文件系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -845,187 +1062,6 @@
 
 
   
-    <article id="post-关系型数据库-MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">关系型数据库-MySQL</a>
-    </h1>
-  
-
-        
-        <a href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/" class="archive-article-date">
-  	<time datetime="2020-09-02T07:55:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-02</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoahong/p/10385466.html">https://www.cnblogs.com/luoahong/p/10385466.html</a><br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title">https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title</a></p>
-<h1 id="0x01-基础架构"><a href="#0x01-基础架构" class="headerlink" title="0x01 基础架构"></a>0x01 基础架构</h1><div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/MySQL逻辑架构图.png" width="700" height="500">
-<div align="left">  
-
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/工作流程.png" width="400" height="400">
-<div align="left">  
-
-
-<p>MySQL 可以分为 Server 层和存储引擎层两部分。<br>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，是共用的。<br>存储引擎层负责数据的存储和提取，且是插件式的。支持 InnoDB、MyISAM、Memory 等多个存储引擎，现在最常用的存储引擎是 InnoDB。  </p>
-<p><strong><em>连接器</em></strong><br>定义: 接器负责跟客户端建立连接、获取权限、维持和管理连接。  </p>
-<ul>
-<li>数据库里长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接</li>
-<li>短连接则是指每次执行完很少的几次查询就断开连接，下次查询再重新建立一个。</li>
-</ul>
-<p>问题<br>建立连接的过程通常是比较复杂的，所以应该尽量使用长连接。但长连接可能导致MySQL占用内存过快，因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才释放。<br>解决方案<br>1.定期断开长链接  2.MySQL5.7之后通过执行’mysql_reset_connection’来重新初始化连接资源</p>
-<p><strong><em>查询缓存</em></strong><br>之前执行过的语句及其结果可能会以 key-value 对的形式，被直接缓存在内存中。MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。<br>不建议使用查询缓存  </p>
-<ul>
-<li>查询缓存的失效非常频繁，只要有一个表更新，这个表上所有的查询缓存都被清空</li>
-<li>对于更新压力大的数据库来说，查询缓存的命中率会非常低，</li>
-<li>除非你的业务就是有一张静态表，很长时间才会更新一次(比如一个系统配置表)</li>
-</ul>
-<p>MySQL 8.0 版本开始直接将查询缓存的整块功能删掉</p>
-<p><strong><em>分析器</em></strong><br>执行sql语句前需要分析器先对用户的命令做‘词法分析’和‘语法分析’<br>词法分析: 识别出里面的字符串分别是什么<br>语法分析: 判断输入的sql语句是否满足MySQL语法</p>
-<p><strong><em>优化器</em></strong><br>作用</p>
-<ul>
-<li>在表里面有多个索引的时候，决定使用哪个索引</li>
-<li>多表关联(ioin)的时候，决定各个表的链接顺序</li>
-</ul>
-<p><strong><em>执行器</em></strong>  </p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/执行器原理.png" width="300" height="200">
-<div align="left">  
-
-<h1 id="0x02-日志系统"><a href="#0x02-日志系统" class="headerlink" title="0x02 日志系统"></a>0x02 日志系统</h1><p>&emsp;&emsp;日志模块分为redo log与binlog。两种模块配合的方式称为WAL(Write-Ahead Logging)技术。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/粉板.png">
-<div align="left">
-
-<p>两种日志有以下区别</p>
-<ul>
-<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
-<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
-<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
-</ul>
-<p><strong><em>redo log记录原理</em></strong>  </p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/redolog内存空间.png">
-<div align="left">
-
-<p>&emsp;&emsp;redo log的内存空间是固定的。write pos与check point 之间是可写入部分，如果可写入空间不足，则清除一部分日志，并将check point后移。有了redo log，InnoDB就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为crash-safe</p>
-<p><strong><em>update语句执行流程</em></strong><br>&emsp;&emsp;update语句是比较典型的sql语句，能帮助我们理解日志记录的流程。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/update语句执行流程.png">
-<div align="left">
-
-<p>两段式提交<br>&emsp;&emsp;图表中的最后三步，被称为”两段式提交”，其实就是:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.写入redo <span class="built_in">log</span></span><br><span class="line">2.写入binlog</span><br><span class="line">3.commit</span><br></pre></td></tr></table></figure>
-
-<p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>**<em>事务隔离的基础**</em><br>1).事务基本要素（ACID）</p>
-<ul>
-<li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
-<li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
-<li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
-<li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
-</ul>
-<p>2).事务的并发问题</p>
-<ul>
-<li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
-<li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
-<li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
-</ul>
-<p>3).MySQL事务隔离级别</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
-<div align="left">
-
-<p>下面解释下四个事务隔离级别的意义:</p>
-<ul>
-<li>读未提交: 一个事务还未提交，它的变更就能被别的事务看到</li>
-<li>读提交: 一个事务提交后，它的变更才能被别的事务看到</li>
-<li>可重复读: 一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
-<li>串行化: 对于同一行记录，”写”会加”写锁”，”读”会加”读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行</li>
-</ul>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别1.png">
-<div align="left">
-
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
-<div align="left">
-
-<p><strong><em>事务隔离的实现</em></strong><br>&emsp;&emsp;在 MySQL 中，每条记录在更新的时候都会同时记录一条回滚操作。同一条记录在系统中可以存在多个版本，这就是数据库的多版本并发控制（MVCC），也因此实现了事务隔离。当没有事务需要用到这些回滚日志的时候，回滚日志会被删除。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离的实现.png">
-<div align="left">
-
-<p><strong><em>事务的启动方式</em></strong><br>1).尽量避免使用长事务<br>&emsp;&emsp;长事务意味着系统里面会存在很老的read-view。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
-<p>2).事务启动要注意的点</p>
-<ul>
-<li>set autocommit=0，这个命令会将这个线程的自动提交关掉。有些客户端连接框架会默认连接成功后先执行一个 set autocommit=0 的命令。这就导致接下来的查询都在事务中，如果是长连接，就导致了意外的长事务</li>
-<li>显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback</li>
-</ul>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
@@ -1147,15 +1183,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1207,11 +1243,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1223,11 +1259,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">
