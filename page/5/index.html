@@ -156,6 +156,112 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-进程间通信与线程间通信" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">进程间通信与线程间通信</a>
+    </h1>
+  
+
+        
+        <a href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" class="archive-article-date">
+  	<time datetime="2022-06-01T06:27:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-01</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在一个进程运行过程中，通常变量、信号都只能在进程内部传递。当一个进程为多线程的时候，甚至变量、信号也只能在线程内部传递。但是有很多实际场景需要实现进程与进程之间、线程与线程之间实现信息互通，当有这些需求时就涉及到了线程间通信与进程间通信。</p>
+<h3 id="0x01-进程、线程与协程"><a href="#0x01-进程、线程与协程" class="headerlink" title="0x01 进程、线程与协程"></a><em>0x01 进程、线程与协程</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 进程</span><br><span class="line">2 线程</span><br><span class="line">3 协程</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、进程</em></strong><br>&emsp;&emsp;进程是系统进行资源分配和调度的基本单位。每一个进程都有它自己的地址空间，包括文本区域(存储处理器执行的代码)、数据区域(存储变量和进程执行期间使用的动态分配的内存)和堆栈(存储着活动过程调用的指令和本地变量)。  </p>
+<p><strong><em>2、线程</em></strong><br>&emsp;&emsp;线程是进程的一个实体。线程自己基本上不拥有系统资源,只拥有一点在运行中必不可少的资源(如程序计数器,一组寄存器和栈)。在单个程序中同时运行多个线程完成不同的工作，称为多线程。</p>
+<p><strong><em>3、协程</em></strong><br>&emsp;&emsp;协程是一种用户态的轻量级线程，协程的调度完全由用户控制。协程拥有自己的寄存器上下文和栈。</p>
+<h3 id="0x02-进程间通信"><a href="#0x02-进程间通信" class="headerlink" title="0x02 进程间通信"></a><em>0x02 进程间通信</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 管道</span><br><span class="line">2 *消息队列</span><br><span class="line">3 *信号量</span><br><span class="line">4 共享内存</span><br><span class="line">5 信号</span><br><span class="line">6 套接字</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;进程间通信主要有以下<a target="_blank" rel="noopener" href="https://blog.csdn.net/GMLGDJ/article/details/124627224">六种方法</a><sup>[1]</sup></p>
+<div align="center">
+<img src="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/进程间通信.png" width="550" height="650">
+<div align="left">  
+
+<p><strong><em>1、管道</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -ef |grep <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;类似于上述命令，匿名管道符号’|’就是将ps进程的结果输送给grep进程。管道这种通信方式效率低， 不适合进程间频繁地交换数据。  </p>
+<p><strong><em>2、消息队列</em></strong><br>&emsp;&emsp;消息队列是保存在内核中的消息链表，消息体是用户自定义的数据类型，消息的发送方和接收方要约定好消息体的数据类型。如果进程从消息队列中读取了消息体，内核就会把这个消息体删除。<br>&emsp;&emsp;实现消息队列推荐使用Boost.InterProcess</p>
+<div align="center">
+<img src="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/消息队列.png" width="400" height="400">
+<div align="left">  
+
+<p><strong><em>3、信号量</em></strong><br>&emsp;&emsp;为了防止多进程竞争共享资源，而造成的数据错乱，所以需要保护机制，使得共享的资源，在任意时刻只能被一个进程访问。正好，信号量就实现了这一保护机制。<br>&emsp;&emsp;信号量其实是一个整型的计数器，主要用于实现进程间的互斥与同步，而不是用于缓存进程间通信的数据。可以理解为进程间的锁。  </p>
+<p><strong><em>4、共享内存</em></strong><br>&emsp;&emsp;共享内存的机制，就是拿出一块虚拟地址空间来，映射到相同的物理内存中。  </p>
+<p><strong><em>5、信号</em></strong><br>&emsp;&emsp;信号是比较复杂的通信方式，用于通知接受进程有某种事件发生，除了用于进程间通信外，进程还可以发送信号给进程本身。比如Ctrl + C产生SIGINT信号。</p>
+<p><strong><em>6、套接字</em></strong><br>&emsp;&emsp;网络通信Socket可用于本机的进程间通信，也可用于不同机器之间的进程间通信。</p>
+<h3 id="0x03-线程间通信"><a href="#0x03-线程间通信" class="headerlink" title="0x03 线程间通信"></a><em>0x03 线程间通信</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 volatile</span><br><span class="line">2 wait&#x2F;notify机制</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、volatile</em></strong><br>&emsp;&emsp;基于 volatile 关键字来实现线程间相互通信是使用共享内存的思想，大致意思就是多个线程同时监听一个变量，当这个变量发生变化的时候 ，线程能够感知并执行相应的业务。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个共享变量来实现通信，它需要是volatile修饰，否则线程不能及时感知</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">volatile</span> <span class="keyword">int</span> totalNum = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">thread01</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (totalNum &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; totalNum &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        totalNum--;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">thread02</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (totalNum &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; totalNum &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        totalNum--;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">thread <span class="title">task01</span><span class="params">(thread01)</span></span>;</span><br><span class="line">    <span class="function">thread <span class="title">task02</span><span class="params">(thread02)</span></span>;</span><br><span class="line">    task01.<span class="built_in">detach</span>();</span><br><span class="line">    task02.<span class="built_in">detach</span>();</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cin</span>.<span class="built_in">get</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、wait/notify机制</em></strong>  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;//demo</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::mutex mtx_syn;</span><br><span class="line"><span class="built_in">std</span>::condition_variable cv_syn;</span><br><span class="line"><span class="built_in">std</span>::condition_variable cv_syn_1;</span><br><span class="line"><span class="keyword">bool</span> <span class="built_in">ready</span> = <span class="literal">false</span>;<span class="comment">//线程A</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">threadA</span><span class="params">(<span class="keyword">int</span> id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lck</span><span class="params">(mtx_syn)</span></span>;</span><br><span class="line">        <span class="keyword">while</span> (!<span class="built_in">ready</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            cv_syn.wait(lck);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;threadA &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        usleep(<span class="number">500</span>*<span class="number">1000</span>);</span><br><span class="line">        cv_syn.notify_one();   <span class="comment">// 唤醒等待线程中的一个</span></span><br><span class="line">        cv_syn.wait(lck);      <span class="comment">// 等待</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;<span class="comment">// 线程B</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">threadB</span><span class="params">(<span class="keyword">int</span> id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//新创建的 unique_lock 对象管理 Mutex 对象 m，并尝试调用 m.lock() 对 Mutex 对象进行上锁，如果此时另外某个 unique_lock 对象已经管理了该 Mutex 对象 m，则当前线程将会被阻塞</span></span><br><span class="line">        <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lck</span><span class="params">(mtx_syn)</span></span>;</span><br><span class="line">        <span class="keyword">while</span> (!<span class="built_in">ready</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            cv_syn.wait(lck);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;threadB &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        usleep(<span class="number">500</span>*<span class="number">1000</span>);</span><br><span class="line">    cv_syn.notify_one();<span class="comment">// 唤醒等待线程中的一个</span></span><br><span class="line">    cv_syn.wait(lck);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 线程C</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">threadC</span><span class="params">(<span class="keyword">int</span> id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lck</span><span class="params">(mtx_syn)</span></span>;</span><br><span class="line">        <span class="keyword">while</span> (!<span class="built_in">ready</span>) cv_syn.wait(lck);</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;threadC &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        usleep(<span class="number">500</span>*<span class="number">1000</span>);</span><br><span class="line">        cv_syn.notify_one();  <span class="comment">// 唤醒等待线程中的一个线程</span></span><br><span class="line">        cv_syn.wait(lck);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">go</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lck</span><span class="params">(mtx_syn)</span></span>;</span><br><span class="line">    <span class="built_in">ready</span> = <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">//cv_syn.notify_one(); // 唤醒等待线程中的一个线程，notify_one()唤醒的线程顺序执行</span></span><br><span class="line">    cv_syn.notify_all();  <span class="comment">//唤醒的线程抢占式知性</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//线程同步</span></span><br><span class="line">    <span class="built_in">std</span>::thread threads[<span class="number">5</span>];</span><br><span class="line">    threads[<span class="number">0</span>] = <span class="built_in">std</span>::thread(threadA, <span class="number">0</span>);</span><br><span class="line">    threads[<span class="number">1</span>] = <span class="built_in">std</span>::thread(threadB, <span class="number">1</span>);</span><br><span class="line">    threads[<span class="number">2</span>] = <span class="built_in">std</span>::thread(threadC, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;3 threads ready to race...\n&quot;</span>;</span><br><span class="line">    go();                       <span class="comment">// go!</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; th : threads) th.join();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/GMLGDJ/article/details/124627224">https://blog.csdn.net/GMLGDJ/article/details/124627224</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux文件事件监控" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -383,225 +489,9 @@
 
 
   
-    <article id="post-端口扫描" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/">端口扫描</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" class="archive-article-date">
-  	<time datetime="2022-04-12T06:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-12</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;端口扫描是指向目标机器发送一组连接端口的数据包，根据目标机器返回结果判断该机器的指定端口是否开放。端口扫描是黑客入侵前获取目标机器的重要手段。</p>
-<h3 id="0x01-网络连接过程"><a href="#0x01-网络连接过程" class="headerlink" title="0x01 网络连接过程"></a><em>0x01 网络连接过程</em></h3><p>&emsp;&emsp;UDP协议和TCP协议都是传输层的协议，TCP协议提供可靠的通信传输，而UDP则是常常被用于让广播和细节控制的交给应用的通信传输。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 TCP连接过程</span><br><span class="line">2 UDP连接过程</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP连接过程</em></strong><br>&emsp;&emsp;TCP协议在连接过程中要完成经典的三次握手、四次挥手，其具体过程如下图:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP连接过程.png" width="500" height="600">
-<div align="left">  
-
-<p><strong><em>2、TCP连接过程</em></strong><br>&emsp;&emsp;UDP协议为单向传播，接收端接收到来自发送端的数据包之后，不会做反馈:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP连接过程.png" width="250" height="300">
-<div align="left">  
-
-<h3 id="0x02-数据包构成"><a href="#0x02-数据包构成" class="headerlink" title="0x02 数据包构成"></a><em>0x02 数据包构成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 TCP网络数据包构成</span><br><span class="line">2 UDP网络数据包构成</span><br><span class="line">3 DNS网络数据包构成</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的TCP网络数据包通常是由Ethernet封包、IP封包与TCP封包组成。</p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/TCP网络数据包.png" width="700" height="250">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">URG：紧急指针有效位。<br>ACK：当ACK=1时，确认序列号字段有效。ACK=0时，确认序列无效。<br>PSH：标志位为1时要求接受方尽快将数据送达应用层。<br>PST：当PST值为1时通知重新建立TCP连接。<br>SYN：同步序号位，TCP需要建立连接时将这个值设为1。<br>FIN：当FIN值为1时，表示请求断开连接。</font>  </p>
-</blockquote>
-<p><strong><em>2、UDP网络数据包构成</em></strong><br>&emsp;&emsp;一个完整的UDP网络数据包通常是由Ethernet封包、IP封包与UDP封包组成。</p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/UDP网络数据包.png" width="700" height="250">
-<div align="left">  
-
-<p><strong><em>3、DNS网络数据包构成</em></strong><br>&emsp;&emsp;DNS网络数据包是在UDP网络数据包基础上实现的，其不同的位置在于data部分，data部分的字段如下:  </p>
-<div align="center">
-<img src="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/DNS网络数据包.jpg" width="400" height="250">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">注意1: 在解析IP网络数据包的时候要注意’报头长度4位’字段，该字段表示’选项(可选)32位’字段的实际长度(最多能表示15个32bit的的字，即4*15=60个字节的首部长度)。<br>注意2: 当’选项(可选)32位’字段长度为0时，UDP(DNS)网络数据包除去data部分的数据封包总长度为42字节。</font> </p>
-</blockquote>
-<h3 id="0x03-端口扫描原理"><a href="#0x03-端口扫描原理" class="headerlink" title="0x03 端口扫描原理"></a><em>0x03 端口扫描原理</em></h3><p>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
-<table>
-<thead>
-<tr>
-<th>协议</th>
-<th>端口扫描类型</th>
-<th>标志位</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>TCP - 非隐蔽</td>
-<td>SYN扫描</td>
-<td>SYN</td>
-<td>不用实现完成三次握手，扫描速度快</td>
-<td>扫描行为容易被发现、可能丢包</td>
-</tr>
-<tr>
-<td></td>
-<td>TCP全连接扫描</td>
-<td>-</td>
-<td>稳定可靠，端口状态的判定结果准确</td>
-<td>扫描行为明显，失败请求和错误信息暴露在日志中，攻击成功后容易被溯源</td>
-</tr>
-<tr>
-<td></td>
-<td>ACK扫描</td>
-<td>ACK</td>
-<td>可以辅助SYN的方式来判断目标主机防火墙的状况</td>
-<td>只能用于判断防火墙是否屏蔽，扫描行为容易被发现</td>
-</tr>
-<tr>
-<td>TCP - 隐蔽</td>
-<td>FIN扫描</td>
-<td>FIN</td>
-<td>扫描隐蔽</td>
-<td>需等待超时，扫描时间长，可能丢包。windows不支持</td>
-</tr>
-<tr>
-<td></td>
-<td>NULL扫描</td>
-<td>全部置为0</td>
-<td>同上</td>
-<td>同上</td>
-</tr>
-<tr>
-<td></td>
-<td>XMAS扫描</td>
-<td>FIN URG PSH</td>
-<td>同上</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>UDP</td>
-<td>UDP扫描</td>
-<td>-</td>
-<td>跨平台</td>
-<td>速度相对于TCP的FIN,SYN扫描要慢一些、可能丢包</td>
-</tr>
-</tbody></table>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 TCP端口扫描</span><br><span class="line">  1.1 非隐蔽性扫描</span><br><span class="line">  1.2 隐蔽性扫描</span><br><span class="line">2 UDP端口扫描</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、TCP端口扫描</em></strong><br><strong><em>1.1、非隐蔽性扫描</em></strong>  </p>
-<ul>
-<li><p>SYN扫描: 该方式发送只有SYN标志的包到目标端口</p>
-<ul>
-<li>如果收到SYN/ACK回复，那么判断该端口是开放的</li>
-<li>如果收到RST包，那么判断该端口是关闭</li>
-<li>如果没收到回复，那么判断该端口是被屏蔽</li>
-</ul>
-</li>
-<li><p>TCP全连接扫描: 实现TCP三次握手，实现的方法通常使使用操作系统提供的connect函数</p>
-<ul>
-<li>如果无法连接，说明该端口关闭</li>
-</ul>
-</li>
-<li><p>ACK扫描: 向目标主机的端口发送只有ACK标志的包</p>
-<ul>
-<li>如果收到RST包，说明该端口没有被防火墙屏蔽</li>
-<li>没有收到RST包，说明被屏蔽</li>
-</ul>
-</li>
-</ul>
-<p><strong><em>1.2 隐蔽性扫描</em></strong>  </p>
-<ul>
-<li>FIN扫描: 向目标主机的端口发送只有FIN标志的包</li>
-<li>NULL扫描: 向目标主机的端口发送没有标志位的包</li>
-<li>XMAS扫描: 向目标主机的端口发送具有FIN、URG与PSH标志的包<ul>
-<li>如果收到对方RST回复包，那么说明该端口是关闭的</li>
-<li>没有收到RST包说明端口可能是开放的或被屏蔽的</li>
-</ul>
-</li>
-</ul>
-<p><strong><em>2、UDP端口扫描</em></strong>  </p>
-<ul>
-<li>UDP扫描: 向目标主机的UDP端口发送探测包<ul>
-<li>如果收到回复“ICMP port unreachable”就说明该端口是关闭的</li>
-<li>如果没有收到回复，那说明UDP端口可能是开放的或屏蔽的</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x04-端口扫描工具-NMap"><a href="#0x04-端口扫描工具-NMap" class="headerlink" title="0x04 端口扫描工具 - NMap"></a><em>0x04 端口扫描工具 - NMap</em></h3><h3 id="0x05-端口扫描防护"><a href="#0x05-端口扫描防护" class="headerlink" title="0x05 端口扫描防护"></a><em>0x05 端口扫描防护</em></h3><h3 id="0x06-引用文献"><a href="#0x06-引用文献" class="headerlink" title="0x06 引用文献"></a><em>0x06 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/90abebfe0014">https://www.jianshu.com/p/90abebfe0014</a><br>[3]port scan detect</p>
-</div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/12/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
     </nav>
   
 
@@ -720,7 +610,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -728,7 +618,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -740,11 +630,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -756,11 +646,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -776,6 +666,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术 黑客技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -784,19 +682,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">

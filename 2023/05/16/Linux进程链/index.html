@@ -16,7 +16,7 @@
 <meta property="og:description" content="0x00 引言&amp;emsp;&amp;emsp;当你在ssh登录远程机器，并执行程序后，如果再退出ssh会话，可能会遇到进程被杀死的情况。本文将解释该现象产生的原因，并提供一些解决方案。   0x01 基础知识121 SIGTERM和SIGKILL区别2 sshd服务KillMode配置  1、SIGTERM 和 SIGKILL区别&amp;emsp;&amp;emsp;SIGTERM（信号编号15）： SIGTERM是一">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-05-16T03:06:06.000Z">
-<meta property="article:modified_time" content="2023-05-16T06:57:34.648Z">
+<meta property="article:modified_time" content="2023-05-17T02:56:49.992Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="计算机技术，Linux">
 <meta name="twitter:card" content="summary">
@@ -185,13 +185,19 @@
 <h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 SIGTERM和SIGKILL区别</span><br><span class="line">2 sshd服务KillMode配置</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、SIGTERM 和 SIGKILL区别</em></strong><br>&emsp;&emsp;SIGTERM（信号编号15）： SIGTERM是一个可捕获的信号，用于请求进程正常终止。当进程接收到SIGTERM信号时，它可以选择捕获该信号并执行清理操作，然后自行退出。这样的行为通常被称为优雅退出。进程可以使用信号处理机制来捕获SIGTERM信号，编写相应的处理代码。<br>&emsp;&emsp;SIGKILL（信号编号9）： SIGKILL是一个不可捕获的信号，用于强制终止进程。当进程接收到SIGKILL信号时，它无法捕获或忽略该信号，而是立即终止。SIGKILL信号可以通过系统工具（如kill命令）或在命令行中使用kill -9发送。  </p>
-<p><strong><em>2、sshd服务KillMode配置</em></strong><br>&emsp;&emsp;当你通过ssh登录远程机器时，其会为你创建一个会话并分配一个伪终端。当你退出ssh会话时，伪终端也随之关闭，从而导致与之关联的进程被终止。<br>&emsp;&emsp;并且通过配置sshd的KillMode项，可以改变会话退出时对控制组里进程的对应操作:  </p>
+<p><strong><em>2、sshd服务KillMode配置</em></strong><br>&emsp;&emsp;sshd服务分为两种启动方式:</p>
+<ul>
+<li>sshd服务(主进程为远程连接生成的bash)：systemd服务管理文件为/lib/systemd/system/sshd.service，启动命令为systemctl start sshd</li>
+<li>systemd-socket-proxyd服务(主进程为systemd)：systemd服务管理文件为/lib/systemd/system/sshd@.service，systemd单元服务文件为/lib/systemd/system/sshd.socket，启动命令为systemctl start sshd.socket</li>
+</ul>
+<p>&emsp;&emsp;当你通过ssh登录远程机器时，其会为你创建一个会话并分配一个伪终端。当你退出ssh会话时，伪终端也随之关闭，从而导致与之关联的进程被终止。<br>&emsp;&emsp;并且通过配置sshd的KillMode项，可以改变会话退出时对控制组里进程的对应操作:  </p>
 <ul>
 <li>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉</li>
 <li>process：只杀主进程</li>
 <li>mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号</li>
 <li>none：没有进程会被杀掉，只是执行服务的 stop 命令</li>
 </ul>
+<p>&emsp;&emsp;上述两种服务方式在执行kill的时候不同点在于，sshd服务只会kill掉对应bash进程拉起的所有子进程，systemd-socket-proxyd服务会kill掉systemd下由远程连接拉起的所有子进程。</p>
 <h3 id="0x02-解决方案"><a href="#0x02-解决方案" class="headerlink" title="0x02 解决方案"></a><em>0x02 解决方案</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 方案一 修改sshd配置</span><br><span class="line">2 方案二 nohup</span><br><span class="line">3 方案三 setsid</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>1、方案一 修改sshd配置</em></strong><br>&emsp;&emsp;在 /lib/systemd/system/sshd@.service 配置文件的[Service]下追加KillMode=process</p>
@@ -230,6 +236,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2023/05/17/%E4%B8%AD%E9%97%B4%E4%BA%BA%E5%8A%AB%E6%8C%81%E6%94%BB%E5%87%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          中间人劫持攻击
+        
+      </div>
+    </a>
   
   
     <a href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/" id="article-nav-older" class="article-nav-link-wrap">
@@ -396,7 +411,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -404,7 +419,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -416,11 +431,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -432,11 +447,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -452,6 +467,14 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术 黑客技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">工具， 信息聚合</a>
               </li>
              
@@ -460,19 +483,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">强化学习，算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
