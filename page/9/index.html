@@ -780,8 +780,8 @@
 <td>２</td>
 </tr>
 </tbody></table>
-<h3 id="0x06-文件权限"><a href="#0x06-文件权限" class="headerlink" title="0x06 文件权限"></a><em>0x06 文件权限</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 权限描述</span><br><span class="line">2 特殊权限</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、权限描述</em></strong><br>&emsp;&emsp;Linux系统中使用UID(用户ID)与GID(组ID)对用户进行管理，每个文件都拥有自己的权限描述，可以用以下方式查看与设置:  </p>
+<h3 id="0x06-权限"><a href="#0x06-权限" class="headerlink" title="0x06 权限"></a><em>0x06 权限</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 文件权限描述</span><br><span class="line">2 文件特殊权限</span><br><span class="line">3 进程权限</span><br><span class="line">4 隐藏属性</span><br><span class="line">5 capability机制</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、文件权限描述</em></strong><br>&emsp;&emsp;Linux系统中使用UID(用户ID)与GID(组ID)对用户进行管理，每个文件都拥有自己的权限描述，可以用以下方式查看与设置:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 查看方式 =====</span></span><br><span class="line"><span class="comment"># ll &#x27;文件路径&#x27;</span></span><br><span class="line"><span class="comment"># 例如</span></span><br><span class="line">&amp; ll /usr/bin/passwd</span><br><span class="line">-rwsr-xr-x 1 root root 27832 Jun 10  2014 /usr/bin/passwd</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 设置方式 =====</span></span><br><span class="line"><span class="comment"># ---- 数字 -----</span></span><br><span class="line">&amp; chmod 777 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ---- 字母 -----</span></span><br><span class="line"><span class="comment"># 权限分配：用户 用户组 其他用户 所有用户</span></span><br><span class="line"><span class="comment"># 字母描述: u    g     o        a</span></span><br><span class="line"><span class="comment"># 符号描述：+    –     =</span></span><br><span class="line">&amp; chmod +x <span class="string">&#x27;文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;下面开始解析上述输出的含义:  </p>
 <table>
@@ -842,7 +842,7 @@
 </tbody></table>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件类型中</span></span><br><span class="line">d: 表示目录文件</span><br><span class="line">l: 表示符号连接文件</span><br><span class="line">c: 表示字符设备文件</span><br><span class="line">s: 表示socket文件</span><br><span class="line">p: 表示命名管道文件</span><br><span class="line">-: 表示普通文件</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>2、特殊权限</em></strong><br>&emsp;&emsp;除了上述rwx三种权限之外，还存在三种特殊权限 SUID/SGID/Sticky 。  </p>
+<p><strong><em>2、文件特殊权限</em></strong><br>&emsp;&emsp;除了上述rwx三种权限之外，还存在三种特殊权限 SUID/SGID/Sticky 。  </p>
 <ul>
 <li>SUID - 特殊权限，一般设置可执行文件。可执行的文件搭配这个权限，便能得到特权，任意存取该文件的所有者能使用的全部系统资源;</li>
 <li>SGID - 特殊权限组，一般设置可执行文件。其效果与SUID相同，只不过将文件所有者换成用户组，该文件就可以任意存取整个用户组所能使用的系统资源;</li>
@@ -851,6 +851,180 @@
 <p>&emsp;&emsp;其表现在执行位置上:  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 设置方法 =====</span></span><br><span class="line"><span class="comment"># 在rwx权限前一位，即为特殊权限位</span></span><br><span class="line"><span class="comment"># SUID: 4</span></span><br><span class="line"><span class="comment"># SGID: 2</span></span><br><span class="line"><span class="comment"># Sticky: 1</span></span><br><span class="line">&amp; chmod 7764 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsrwSr-T</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 举例 =====</span></span><br><span class="line"><span class="comment"># 特殊权限 - SUID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 4755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsr-xr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 4655 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwSr-xr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特殊权限组 - SGID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 2755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-sr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 2745 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-Sr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 粘滞位 - Sticky</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 1755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-t</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 1754 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-T</span><br></pre></td></tr></table></figure>
 
+<p><strong><em>3、进程权限</em></strong><br>&emsp;&emsp;内核为每个进程维护了三个UID值，这三个UID分别是实际用户ID、有效用户ID、保存的设置用户ID。</p>
+<ul>
+<li>实际用户ID: 当前登录的用户。运行程序的实际用户ID就是这个用户的ID</li>
+<li>有效用户ID: 运行当前进程的用户ID。一般情况下是实际用户ID，如果可执行文件具有了SUID权限，那么它的有效用户ID就是可执行文件的拥有者</li>
+<li>保存的设置用户ID: 有效用户ID的一个副本，与SUID权限有关<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 读取进程权限</span></span><br><span class="line"><span class="keyword">uid_t</span> ruid,euid,suid;</span><br><span class="line">getresuid(&amp;ruid,&amp;euid,&amp;suid);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;real:%d\teffective:%d\tset-user-id:%d\n&quot;</span>,ruid,euid,suid);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置进程权限(root)</span></span><br><span class="line">setuid(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong><em>4、隐藏属性</em></strong><br>&emsp;&emsp;文件有隐藏属性，隐藏属性对系统安全性有很大的帮助</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可修改文件/文件夹的&quot;隐藏权限&quot;</span></span><br><span class="line"><span class="comment">## i:如果对文件设置 i 属性，那么不允许对文件进行删除、改名，也不能添加和修改数据;如果对目录设置 i 属性，那么只能修改目录下文件中的数据，但不允许建立和删除文件</span></span><br><span class="line"><span class="comment">## a:如果对文件设置 a 属性，那么只能在文件中増加数据，但是不能删除和修改数据；如果对目录设置 a 属性，那么只允许在目录中建立和修改文件，但是不允许删除文件</span></span><br><span class="line"><span class="comment">## u:设置此属性的文件或目录，在删除时，其内容会被保存，以保证后期能够恢复，常用来防止意外删除文件或目录</span></span><br><span class="line"><span class="comment">## s:和 u 相反，删除文件或目录时，会被彻底删除（直接从硬盘上删除，然后用 0 填充所占用的区域），不可恢复</span></span><br><span class="line">chattr +i <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 设置文件不可删除，不可修改</span></span><br><span class="line">chattr -i <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 取消不可删除、不可修改的隐藏属性</span></span><br><span class="line">lsattr <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 查看隐藏属性</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>5、capability机制</em></strong><br>&emsp;&emsp;由于rwx权限机制不够灵活，比如有很多权限是不需要操作文件的。从Linux 2.2开始引入了capability权限机制。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置capability权限(shell命令)</span></span><br><span class="line">$ <span class="built_in">setcap</span> cap_chown,cap_kill=e <span class="string">&#x27;进程文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取capability权限(shell命令)</span></span><br><span class="line">$ getpcaps <span class="string">&#x27;进程文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>capability 名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CAP_AUDIT_CONTROL</td>
+<td>启用和禁用内核审计；改变审计过滤规则；检索审计状态和过滤规则</td>
+</tr>
+<tr>
+<td>CAP_AUDIT_READ</td>
+<td>允许通过 multicast netlink 套接字读取审计日志</td>
+</tr>
+<tr>
+<td>CAP_AUDIT_WRITE</td>
+<td>将记录写入内核审计日志</td>
+</tr>
+<tr>
+<td>CAP_BLOCK_SUSPEND</td>
+<td>使用可以阻止系统挂起的特性</td>
+</tr>
+<tr>
+<td>CAP_CHOWN</td>
+<td>修改文件所有者的权限</td>
+</tr>
+<tr>
+<td>CAP_DAC_OVERRIDE</td>
+<td>忽略文件的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>CAP_DAC_READ_SEARCH</td>
+<td>忽略文件读及目录搜索的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>CAP_FOWNER</td>
+<td>忽略文件属主 ID 必须和进程用户 ID 相匹配的限制</td>
+</tr>
+<tr>
+<td>CAP_FSETID</td>
+<td>允许设置文件的 setuid 位</td>
+</tr>
+<tr>
+<td>CAP_IPC_LOCK</td>
+<td>允许锁定共享内存片段</td>
+</tr>
+<tr>
+<td>CAP_IPC_OWNER</td>
+<td>忽略 IPC 所有权检查</td>
+</tr>
+<tr>
+<td>CAP_KILL</td>
+<td>允许对不属于自己的进程发送信号</td>
+</tr>
+<tr>
+<td>CAP_LEASE</td>
+<td>允许修改文件锁的 FL_LEASE 标志</td>
+</tr>
+<tr>
+<td>CAP_LINUX_IMMUTABLE</td>
+<td>允许修改文件的 IMMUTABLE 和 APPEND 属性标志</td>
+</tr>
+<tr>
+<td>CAP_MAC_ADMIN</td>
+<td>允许 MAC 配置或状态更改</td>
+</tr>
+<tr>
+<td>CAP_MAC_OVERRIDE</td>
+<td>覆盖 MAC(Mandatory Access Control)</td>
+</tr>
+<tr>
+<td>CAP_MKNOD</td>
+<td>允许使用 mknod() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_NET_ADMIN</td>
+<td>允许执行网络管理任务</td>
+</tr>
+<tr>
+<td>CAP_NET_BIND_SERVICE</td>
+<td>允许绑定到小于 1024 的端口</td>
+</tr>
+<tr>
+<td>CAP_NET_BROADCAST</td>
+<td>允许网络广播和多播访问</td>
+</tr>
+<tr>
+<td>CAP_NET_RAW</td>
+<td>允许使用原始套接字</td>
+</tr>
+<tr>
+<td>CAP_SETGID</td>
+<td>允许改变进程的 GID</td>
+</tr>
+<tr>
+<td>CAP_SETFCAP</td>
+<td>允许为文件设置任意的 capabilities</td>
+</tr>
+<tr>
+<td>CAP_SETPCAP</td>
+<td>参考 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities man page</a></td>
+</tr>
+<tr>
+<td>CAP_SETUID</td>
+<td>允许改变进程的 UID</td>
+</tr>
+<tr>
+<td>CAP_SYS_ADMIN</td>
+<td>允许执行系统管理任务，如加载或卸载文件系统、设置磁盘配额等</td>
+</tr>
+<tr>
+<td>CAP_SYS_BOOT</td>
+<td>允许重新启动系统</td>
+</tr>
+<tr>
+<td>CAP_SYS_CHROOT</td>
+<td>允许使用 chroot() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_SYS_MODULE</td>
+<td>允许插入和删除内核模块</td>
+</tr>
+<tr>
+<td>CAP_SYS_NICE</td>
+<td>允许提升优先级及设置其他进程的优先级</td>
+</tr>
+<tr>
+<td>CAP_SYS_PACCT</td>
+<td>允许执行进程的 BSD 式审计</td>
+</tr>
+<tr>
+<td>CAP_SYS_PTRACE</td>
+<td>允许跟踪任何进程</td>
+</tr>
+<tr>
+<td>CAP_SYS_RAWIO</td>
+<td>允许直接访问 /devport、/dev/mem、/dev/kmem 及原始块设备</td>
+</tr>
+<tr>
+<td>CAP_SYS_RESOURCE</td>
+<td>忽略资源限制</td>
+</tr>
+<tr>
+<td>CAP_SYS_TIME</td>
+<td>允许改变系统时钟</td>
+</tr>
+<tr>
+<td>CAP_SYS_TTY_CONFIG</td>
+<td>允许配置 TTY 设备</td>
+</tr>
+<tr>
+<td>CAP_SYSLOG</td>
+<td>允许使用 syslog() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_WAKE_ALARM</td>
+<td>允许触发一些能唤醒系统的东西(比如 CLOCK_BOOTTIME_ALARM 计时器)</td>
+</tr>
+</tbody></table>
 <h3 id="0x07-开机自启动"><a href="#0x07-开机自启动" class="headerlink" title="0x07 开机自启动"></a><em>0x07 开机自启动</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 服务进程</span><br><span class="line">  1.1 rc文件自启动</span><br><span class="line">  1.2 systemd自启动</span><br><span class="line">2 普通进程</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、服务进程</em></strong><br>&emsp;&emsp;在Linux中，服务进程的启动脚本放在/etc/init.d目录下。然而要实现开机自启动，可以采用rc文件与systemd来实现。  </p>
 <p><strong><em>1.1、rc文件自启动</em></strong><br>&emsp;&emsp;在目录/etc目录下，包含rc0.d/ ~ rc6.d/目录。只需要把/etc/init.d目录下的文件通过软链接或者直接复制到此处，即可实现开机自启动。</p>
@@ -1069,7 +1243,7 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1077,7 +1251,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1089,11 +1263,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1105,11 +1279,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">计算机技术，Linux内核</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1145,11 +1319,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1157,11 +1331,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
