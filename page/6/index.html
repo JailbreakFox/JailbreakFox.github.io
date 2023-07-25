@@ -216,9 +216,10 @@
 <blockquote>
 <p><font size="2">注意1: 在解析IP网络数据包的时候要注意’报头长度4位’字段，该字段表示’选项(可选)32位’字段的实际长度(最多能表示15个32bit的的字，即4*15=60个字节的首部长度)。<br>注意2: 当’选项(可选)32位’字段长度为0时，UDP(DNS)网络数据包除去data部分的数据封包总长度为42字节。</font> </p>
 </blockquote>
-<h3 id="0x03-主机探测"><a href="#0x03-主机探测" class="headerlink" title="0x03 主机探测"></a><em>0x03 主机探测</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 ICMP</span><br><span class="line">2 ARP(IPV4)</span><br><span class="line">3 ND(IPV6)</span><br></pre></td></tr></table></figure>
+<h3 id="0x03-主机探测"><a href="#0x03-主机探测" class="headerlink" title="0x03 主机探测"></a><em>0x03 主机探测</em></h3><p>&emsp;&emsp;主机探测是指向目标主机或目标主机的指定端口发送探测数据包，并记录目标主机的响应。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 ICMP</span><br><span class="line">2 ARP(IPV4)</span><br><span class="line">3 ND(IPV6)</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、ICMP</em></strong><br>&emsp;&emsp;ping是在ICMP协议基础上实现的。</p>
-<h3 id="0x04-端口扫描"><a href="#0x04-端口扫描" class="headerlink" title="0x04 端口扫描"></a><em>0x04 端口扫描</em></h3><p>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
+<h3 id="0x04-端口扫描"><a href="#0x04-端口扫描" class="headerlink" title="0x04 端口扫描"></a><em>0x04 端口扫描</em></h3><p>&emsp;&emsp;通过端口扫描，可以得到很多有用的信息，从而发现系统的安全漏洞。它是系统用户了解系统目前向外界提供了哪些服务，从而为系统用户管理网络提供了一种手段。<br>&emsp;&emsp;端口扫描根据使用的协议可以分为TCP扫描与UDP扫描，前者更为常用且方法多样。TCP扫描又包括SYN扫描、全连接扫描、ACK扫描，以及行为更为隐蔽的FIN扫描、NULL扫描与XMAS扫描，其主要不同点为发送数据包的标志置位不同(可以查看TCP网络数据包构成章节关于标志位的具体描述)。  </p>
 <table>
 <thead>
 <tr>
@@ -320,13 +321,15 @@
 </ul>
 </li>
 </ul>
-<h3 id="0x05-端口扫描工具-Nmap"><a href="#0x05-端口扫描工具-Nmap" class="headerlink" title="0x05 端口扫描工具 - Nmap"></a><em>0x05 端口扫描工具 - Nmap</em></h3><div align="center">
-<img src="/2022/04/12/%E4%B8%BB%E6%9C%BA%E5%AD%98%E6%B4%BB%E6%A3%80%E6%B5%8B/Nmap扫描参数.png" width="450" height="500">
-<div align="left">  
+<h3 id="0x05-端口扫描工具-Nmap"><a href="#0x05-端口扫描工具-Nmap" class="headerlink" title="0x05 端口扫描工具 - Nmap"></a><em>0x05 端口扫描工具 - Nmap</em></h3><p>&emsp;&emsp;以nmap7.91版本为例，进行深入的使用分析。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主机发现 - 同网段</span></span><br><span class="line"><span class="comment"># 同网段默认使用 ARP(IPV4)/ND(IPV6) 的方式扫描</span></span><br><span class="line">--<span class="built_in">disable</span>-arp: 强制关闭同网段ARP(IPV4)/ND(IPV6)扫描</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主机发现 - 非同网段</span></span><br><span class="line"><span class="comment"># 注意，windows在使用-PE扫描时，原始报文的捕获用到了npcap，如果不用npcap的话，只能通过winapi发送icmp echo 消息，速率要慢很多</span></span><br><span class="line">-PE:    ICMP扫描</span><br><span class="line">-PS/PA: TCP SYN/ACK扫描</span><br><span class="line">-PU:    UDP扫描</span><br><span class="line"></span><br><span class="line"><span class="comment"># 端口扫描</span></span><br><span class="line">-sS/sA: TCP SYN/ACK/扫描</span><br><span class="line">-sT:    TCP全连接扫描</span><br><span class="line">-sU:    UDP扫描</span><br><span class="line"></span><br><span class="line"><span class="comment"># 脚本利用</span></span><br><span class="line">--script=telnet-ntlm-info: 通过枚举来自启用了 NTLM 身份验证的远程 Microsoft Telnet 服务的信息</span><br><span class="line">--script=nbns-interfaces:  通过 NetBIOS NS 检索目标网络接口的 IP 地址</span><br><span class="line">--script=nbstat:           尝试检索目标的 NetBIOS 名称和 MAC 地址</span><br><span class="line">--script=smb-os-discovery: 尝试通过 SMB 协议（端口 445 或 139）确定操作系统、计算机名称、域、工作组和当前时间</span><br><span class="line">--script=rdp-ntlm-info:    通过枚举来自启用了 CredSSP (NLA) 身份验证的远程 RDP 服务的信息</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其他</span></span><br><span class="line">-0: 开启系统扫描</span><br><span class="line">-p &lt;port ranges&gt;: 扫描指定端口 <span class="comment"># Ex: -p22; -p1-65535; -p U:53,111,137,T:21-25,80,139,8080,S:9</span></span><br><span class="line">-oN/oX: 输出正常/xml格式扫描结果</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;通常情况下，靶机会开防火墙，新建一些规则，导致基于单一的模式可能会漏报主机。例如windows 防火墙默认禁止ping，然而针对其 RPC/SMB/RDP 的连接却可以通过防火墙，此时就可以通过。部分iptable规则会过滤部分端口的SYN 探测包，但是不会过滤UDP或者是ACK的包。<br>&emsp;&emsp;因此在真实环境下使用Nmap时，需要混合多种探测方式，下面就例举一些常用的混合探测命令。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./nmap 192.168.182.0-192.168.182.255 -O -p U:137,161,T:22,23,25,139,389,445,2181,3268,3389  -sS -sU --script=telnet-ntlm-info,nbns-interfaces,nbstat,smb-os-discovery,rdp-ntlm-info -oX <span class="string">&#x27;输出文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line">$ ./nmap 192.168.182.0/24 -PE -PS22,80,139,443,445,3389 -PA21 -PU161,40125 -oX <span class="string">&#x27;输出文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
 
 <h3 id="0x06-端口扫描防护"><a href="#0x06-端口扫描防护" class="headerlink" title="0x06 端口扫描防护"></a><em>0x06 端口扫描防护</em></h3><h3 id="0x07-引用文献"><a href="#0x07-引用文献" class="headerlink" title="0x07 引用文献"></a><em>0x07 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5b5d42eaf8a3">https://www.jianshu.com/p/5b5d42eaf8a3</a><br>[2]<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/90abebfe0014">https://www.jianshu.com/p/90abebfe0014</a><br>[3]port scan detect</p>
-</div></div></div></div></div></div></div></div></div></div></div></div>
+</div></div></div></div></div></div></div></div></div></div>
       
 
       
@@ -907,11 +910,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -923,11 +926,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
