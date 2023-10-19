@@ -156,6 +156,284 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-软件重构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/">软件重构</a>
+    </h1>
+  
+
+        
+        <a href="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/" class="archive-article-date">
+  	<time datetime="2023-10-17T11:45:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-17</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;软件重构包括代码重构、模块重构与架构重构，难度依次提升，且越靠后的一般越少改动。推荐阅读《重构 改善既有代码的设计》。</p>
+<h3 id="0x01-代码重构"><a href="#0x01-代码重构" class="headerlink" title="0x01 代码重构"></a><em>0x01 代码重构</em></h3><p>&emsp;&emsp;一个代码片段的重构通常包括<strong>函数重构</strong>与<strong>函数内部重构</strong>。在重构过程中，几乎有10%的工作为修改变量、函数、类与文件名，20%的工作为函数化，最主要的70%的工作是在修改函数内部代码逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 函数重构</span><br><span class="line">2 函数内部重构</span><br><span class="line">3 重构技巧</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、函数重构</em></strong><br>&emsp;&emsp;函数重构包括<strong>提炼函数</strong>与<strong>合并函数</strong>。<br>&emsp;&emsp;提炼函数是一种将现有函数内的一部分代码提取出来，形成一个新的函数的重构技术。通常需要被提炼的函数具有多判断语句、单一或多返回值的特点。<br>&emsp;&emsp;合并函数是一种将调用某个函数的地方直接替换为该函数的函数体内容的重构技术。这通常用于简化代码，去除不必要的函数调用，特别是当函数的功能较为简单或不再需要时。</p>
+<p><strong><em>2、函数内部重构</em></strong><br>&emsp;&emsp;函数内部重构就是指如何优化函数内部逻辑，其流程通常是：1.异常情况尽早return；2.尽量删除冗余的临时变量；3.按功能将代码分成多个语句块，并添加注释；4.语句块间逻辑清晰，尽量使一段函数一屏展示。</p>
+<p><strong><em>3、重构技巧</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>诊断技巧</th>
+<th>重构技巧</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>函数重构</td>
+<td>研究两个相似函数，发现大量代码相同、少量代码不同</td>
+<td>合并代码重复的函数</td>
+</tr>
+<tr>
+<td></td>
+<td>研究两个相似函数，发现代码功能相同、局部语句或变量不同</td>
+<td>合并功能类似的函数，加参数判断</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>提炼针对局部变量进行加工的函数</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>发现多个函数整体算法相同、数据不同，合并、改为宏或模板</td>
+</tr>
+<tr>
+<td>函数内部</td>
+<td>研究变量引用，发现变量读语句分散各处</td>
+<td>发现孤立的两个if实则互斥，改为else if结构</td>
+</tr>
+<tr>
+<td></td>
+<td>研究变量引用，发现变量写语句分散各处</td>
+<td>发现孤立的多个if实则互斥，改为switch结构</td>
+</tr>
+<tr>
+<td></td>
+<td>研究变量引用，发现 变量名含义不准确</td>
+<td>发现if-else中特殊处理极短，特殊处理提前return</td>
+</tr>
+<tr>
+<td></td>
+<td>研究变量引用，发现 变量赋值后含义变了</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>研究最终执行语句，发现判断嵌套太深</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>研究最终执行执行，发现判断条件复杂难懂</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="0x02-模块重构"><a href="#0x02-模块重构" class="headerlink" title="0x02 模块重构"></a><em>0x02 模块重构</em></h3><p>&emsp;&emsp;新手架构师通常认为模块划分越细、单个模块越简单越好，实际上应该把核心模块做精细、做聪明，能减轻大量普通模块的开发工作。<br>&emsp;&emsp;模块重构的探讨范围仍在用户态，此章将把用户态程序根据常用功能划分为六大模块结构模式，这些模式可作为模块开发的模板。要重构模块，首先需要理解程序运行流程，如下图</p>
+<div align="center">
+<img src="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/程序运行流程图.png" width="800" height="500">
+<div align="left">  
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 代码抽象</span><br><span class="line">2 模块抽象</span><br><span class="line">3 代码控制流</span><br><span class="line">4 六大模块</span><br><span class="line">  4.1 数据管理模块</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、代码抽象</em></strong><br>&emsp;&emsp;代码抽象 = 数据结构抽象 + 函数抽象 + 模块抽象。本章节重点要讲的就是<strong>模块抽象</strong>。</p>
+<ul>
+<li>数据结构抽象：将多个较简单的值组合在一起，形成一个单一的单元，例如结构体。</li>
+<li>函数抽象：将一组操作封装到函数或方法中，以实现代码的模块化和可重用性。</li>
+<li>模块抽象：模块抽象涉及到将相关功能和数据封装到模块中，从而实现代码组织和管理的抽象。</li>
+</ul>
+<p><strong><em>2、模块抽象</em></strong><br>&emsp;&emsp;现在根据常用的编程技巧，可将程序抽象成为以下<strong>六大模块结构模式</strong>：纯功能模块、数据管理模块、调度中心模块、事件驱动模块、时钟驱动模块、周期执行模块。这些模式可在开发过程中作为模块开发的模板。值得一提的是，事件驱动相关的三个模块自下往上一定程度上可看作是越来越复杂的订阅发布模式(外界均需要注册回调到这些模块内部，在某个时机调用)。</p>
+<div align="center">
+<img src="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/程序运行流程图-模块.png" width="800" height="600">
+<div align="left">  
+
+<p><strong><em>3、代码控制流</em></strong><br>&emsp;&emsp;实际上上述六种模块结构模式，其分类依据很大程度上借鉴了程序设计的<strong>代码控制流</strong>。也正是因为无系统主机不能调度进程、无中断功能(只能使用轮询)，所以我们研究架构重构的范围也被限定在了带系统主机的用户态。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程调度</td>
+<td>控制不同进程之间的执行顺序的操作系统机制</td>
+</tr>
+<tr>
+<td>中断</td>
+<td>用于处理特定事件的硬件或软件生成的信号</td>
+</tr>
+<tr>
+<td>系统调用</td>
+<td>进程请求操作系统执行特定任务的接口</td>
+</tr>
+<tr>
+<td>信号</td>
+<td>异步事件通知方式，可暂停进程并执行信号处理程序</td>
+</tr>
+<tr>
+<td>多线程</td>
+<td>多个线程并发运行，每个线程有自己的控制流</td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td>控制对共享资源的访问，用于同步多个进程/线程</td>
+</tr>
+<tr>
+<td>条件变量</td>
+<td>用于线程同步的机制，允许线程等待条件的发生并继续执行</td>
+</tr>
+<tr>
+<td>跳转指令</td>
+<td>允许程序员显式地改变控制流的指令，通常不鼓励使用</td>
+</tr>
+</tbody></table>
+<p><strong><em>4、六大模块</em></strong><br>&emsp;&emsp;下面详细介绍六大模块: 纯功能模块、数据管理模块、调度中心模块、事件驱动模块、时钟驱动模块、周期执行模块<br>**<em>4.1、数据管理模块**</em><br>&emsp;&emsp;数据管理模块接口通常包含以下接口函数:  </p>
+<table>
+<thead>
+<tr>
+<th>接口函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>管理接口</td>
+<td>创建、销毁数据管理类的接口</td>
+</tr>
+<tr>
+<td>IPO 接口</td>
+<td>输入接口 (I)：接收外部数据，为数据管理类提供输入</td>
+</tr>
+<tr>
+<td></td>
+<td>处理接口 (P)：处理、分析输入数据，执行核心功能</td>
+</tr>
+<tr>
+<td></td>
+<td>输出接口 (O)：提供经过处理的数据结果，供外部使用</td>
+</tr>
+<tr>
+<td>便捷接口</td>
+<td>一般是用于封装成重复调用IPO接口的函数</td>
+</tr>
+</tbody></table>
+<h3 id="0x03-架构重构"><a href="#0x03-架构重构" class="headerlink" title="0x03 架构重构"></a><em>0x03 架构重构</em></h3><p>&emsp;&emsp;软件架构通常指的是一种高级结构，用于定义和组织一个系统中各个部分（模块）的相互关系，以实现系统的目标和需求。<br>&emsp;&emsp;阅读成熟开源代码的架构有助于我们设计出优秀的代码架构，此章节以CrazyFile为例(FreeRTOS系统下著名的开源四旋翼项目)。但是需要理解的一点是，源代码并不是架构，很多业务代码在分析架构时是可以不关注的。<br>&emsp;&emsp;在实际的架构设计中，不同的操作系统与设计目标，架构之间的区别是非常大的，下图大致将架构分为四类:</p>
+<div align="center">
+<img src="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/架构分类.png" width="800" height="500">
+<div align="left">  </div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-deb与rpm打包/源码包/debbuild/ftest-1.0/1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>test install</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/09/15/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/%E6%BA%90%E7%A0%81%E5%8C%85/debbuild/ftest-1.0/1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-中间人劫持攻击" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -255,301 +533,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/05/17/%E4%B8%AD%E9%97%B4%E4%BA%BA%E5%8A%AB%E6%8C%81%E6%94%BB%E5%87%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux进程链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">Linux进程链</a>
-    </h1>
-  
-
-        
-        <a href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/" class="archive-article-date">
-  	<time datetime="2023-05-16T03:06:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-16</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;当你在ssh登录远程机器，并执行程序后，如果再退出ssh会话，可能会遇到进程被杀死的情况。本文将解释该现象产生的原因，并提供一些解决方案。  </p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 SIGTERM和SIGKILL区别</span><br><span class="line">2 sshd服务KillMode配置</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、SIGTERM 和 SIGKILL区别</em></strong><br>&emsp;&emsp;SIGTERM（信号编号15）： SIGTERM是一个可捕获的信号，用于请求进程正常终止。当进程接收到SIGTERM信号时，它可以选择捕获该信号并执行清理操作，然后自行退出。这样的行为通常被称为优雅退出。进程可以使用信号处理机制来捕获SIGTERM信号，编写相应的处理代码。<br>&emsp;&emsp;SIGKILL（信号编号9）： SIGKILL是一个不可捕获的信号，用于强制终止进程。当进程接收到SIGKILL信号时，它无法捕获或忽略该信号，而是立即终止。SIGKILL信号可以通过系统工具（如kill命令）或在命令行中使用kill -9发送。  </p>
-<p><strong><em>2、sshd服务KillMode配置</em></strong><br>&emsp;&emsp;sshd服务分为两种启动方式:</p>
-<ul>
-<li>sshd服务(主进程为远程连接生成的bash)：systemd服务管理文件为/lib/systemd/system/sshd.service，启动命令为systemctl start sshd</li>
-<li>systemd-socket-proxyd服务(主进程为systemd)：systemd服务管理文件为/lib/systemd/system/sshd@.service，systemd单元服务文件为/lib/systemd/system/sshd.socket，启动命令为systemctl start sshd.socket</li>
-</ul>
-<p>&emsp;&emsp;当你通过ssh登录远程机器时，其会为你创建一个会话并分配一个伪终端。当你退出ssh会话时，伪终端也随之关闭，从而导致与之关联的进程被终止。<br>&emsp;&emsp;并且通过配置sshd的KillMode项，可以改变会话退出时对控制组里进程的对应操作:  </p>
-<ul>
-<li>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉</li>
-<li>process：只杀主进程</li>
-<li>mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号</li>
-<li>none：没有进程会被杀掉，只是执行服务的 stop 命令</li>
-</ul>
-<p>&emsp;&emsp;上述两种服务方式在执行kill的时候不同点在于，sshd服务只会kill掉对应bash进程拉起的所有子进程，systemd-socket-proxyd服务会kill掉systemd下由远程连接拉起的所有子进程。</p>
-<h3 id="0x02-解决方案"><a href="#0x02-解决方案" class="headerlink" title="0x02 解决方案"></a><em>0x02 解决方案</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 方案一 修改sshd配置</span><br><span class="line">2 方案二 nohup</span><br><span class="line">3 方案三 setsid</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、方案一 修改sshd配置</em></strong><br>&emsp;&emsp;在 /lib/systemd/system/sshd@.service 配置文件的[Service]下追加KillMode=process</p>
-<p><strong><em>2、方案二 nohup</em></strong><br>&emsp;&emsp;使用nohup命令在ssh会话中启动进程，会将进程与终端断开关联，并将输出重定向到一个文件，从而使进程在终端关闭后继续在后台运行。这样即使退出ssh会话，进程也会继续运行。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用nohup拉起进程</span></span><br><span class="line">$ nohup ./xxx 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、方案三 setsid</em></strong><br>&emsp;&emsp;setsid函数调用成功后，返回新的会话的ID，调用setsid函数的进程成为新的会话的领头进程，并与其父进程的会话组和进程组脱离。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) <span class="comment">// 返回子进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// setsid();</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="comment">// 返回父进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parent begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux用户态Hook" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/">Linux用户态Hook</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/" class="archive-article-date">
-  	<time datetime="2022-08-27T02:40:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-27</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Hook即是函数调用劫持(用自己写的函数替换目标库中的函数)，在Hook成功后就可以在自己的函数去实现监控程序执行、参数检查、过滤、拦截、修改、放行等操作。<br>&emsp;&emsp;目前Linux上实现用户态Hook的主流方法主要有两种: <strong>库打桩</strong>、<strong>注入与热更新</strong>。  </p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 RING0&#x2F;RING3</span><br><span class="line">2 LD_PRELOAD环境变量</span><br><span class="line">3 ELF文件结构</span><br><span class="line">4 PLT与GOT</span><br><span class="line">  4.1 动态库函数寻址流程</span><br><span class="line">  4.2 相关节</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、RING0/RING3</em></strong><br>&emsp;&emsp;Intel的CPU将特权级别分为<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">四个级别</a><sup>[1]</sup>: RING0,RING1,RING2,RING3。Linux系统包含上述所有级别，Windows系统只使用RING0和RING3。<br>&emsp;&emsp;内核的代码运行在最高运行级别RING0(内核态)上，可以使用特权指令，控制中断、修改页表、访问设备等等。应用程序的代码运行在最低运行级别上RING3(用户态)上，不能做受控操作，如果要访问磁盘，写文件，那必须通过执行系统调用。</p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/RING级别.png" width="500" height="300">
-<div align="left">  
-
-<p><strong><em>2、LD_PRELOAD环境变量</em></strong><br>&emsp;&emsp;LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接，它允许你定义在程序运行前优先加载的动态链接库。其优先级甚至高于LD_LIBRARY_PATH环境变量(指定动态库搜索路径)。  </p>
-<p><strong><em>3、ELF文件结构</em></strong><br>&emsp;&emsp;ELF(Executableand Linking Format)即为可执行和链接格式，在Unix系统中，ELF文件包括.o .so以及可执行程序。ELF格式文件的基本结构如下:  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF文件格式.png" width="700" height="600">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">ELF Header - ELF头: 存储着一些机器和该ELF文件的基本信息。指出了段头表与节头表在文件中的位置;<br>ELF Program Header Table - 段头表(程序头): 保存了所有段描述信息;<br>ELF Section Header Table - 节头表: 保存了所有节描述信息;</font>  </p>
-</blockquote>
-<p>&emsp;&emsp;可执行程序的内容是由段(Segment)组成的(程序执行必须要包含段)，.o文件的内容是由节(Section)组成的。段由一个或多个具有相同属性的节组成，节头表中保存了在链接阶段(从.o文件生成可执行程序)具体需要将节连接到哪个段的信息。可执行文件载入内存时，会分为由段组织的内存块，这些内存块信息都会保存在段头表中。<br>&emsp;&emsp;在Linux中，如果向看ELF文件的详细信息，可以使用readelf工具:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -e <span class="string">&#x27;ELF文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、PLT与GOT</em></strong><br>&emsp;&emsp;PLT(Procedure Linkage Table)即过程链接表在链接阶段被链接到数据段，GOT(Global Offset Table)即全局偏移量表在链接阶段被链接到代码段。前者在ELF中主要包括.plt节、.rela.plt节，后者在ELF中主要包括.got节、.got.plt节，二者共同作用于将动态库函数链接到程序中。</p>
-<p><strong><em>4.1 动态库函数寻址流程</em></strong><br>&emsp;&emsp;现在思考一个问题: ELF是怎么找到函数地址的呢?<br>&emsp;&emsp;要理解这个问题，首先我们得明确这个需要执行的函数究竟在哪里实现，基本可以分为以下三种情况:  </p>
-<ul>
-<li>函数定义在其它.o中。链接阶段可直接重定位</li>
-<li>函数定义在动态库内，动态库<strong>动态链接</strong>。链接阶段无法直接重定位，这种情况我们在热更新中会解释</li>
-<li>函数定义在动态库内，动态库<strong>动态加载</strong>。链接阶段无法直接重定位</li>
-</ul>
-<p>&emsp;&emsp;为了解决上述第三种情况，我们需要使用到PLT与GOT，下图是动态库函数寻址的过程:  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/PLT与GOT.png" width="700" height="400">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">1.直接重定位: 链接阶段，链接器直接在其他.o文件找到函数地址并替换原任意地址;<br>2.链接时重定位: 链接阶段，链接器生成一小段额外的stub代码片段(这段代码能够在运行阶段获取函数真是地址)，并将stub函数地址替换原任意地址，并将此地址记录到PLT相关节中;<br>3.运行时重定位: 运行阶段，将库加载到内存中，并获取到目标函数在库中的位置，并将stub函数实现内的目标函数地址替换为内存中的真实地址，并最终执行目标函数。</font>  </p>
-</blockquote>
-<p><strong><em>4.2 相关节</em></strong>  </p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>节名</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>字符信息</td>
-<td>.dynsym</td>
-<td>外部调用符号的基本信息</td>
-</tr>
-<tr>
-<td></td>
-<td>.dynstr</td>
-<td>外部调用符号的字符名，与.dynsym序号对应，与.rela.plt节中的序号成映射关系</td>
-</tr>
-<tr>
-<td>PLT</td>
-<td>.rela.plt</td>
-<td>PLT新生成桩(stub)函数的偏移地址，其指向位置存在于.got.plt节中</td>
-</tr>
-<tr>
-<td></td>
-<td>.rela.dyn</td>
-<td>已保存的重定位信息</td>
-</tr>
-<tr>
-<td>GOT</td>
-<td>.rela.got</td>
-<td>GOT最终函数地址的偏移地址</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><font size="2">注意: 外部调用分为动态链接、动态加载<br>1.动态链接: 在编译时声明动态库的存在，在运行期间链接动态库，意味着动态库在编译时对编译器可见。动态链接的库函数字符名与源代码中不一致(比如print_str函数会变为_Z9print_stri)，查询字符可使用 readelf -a ‘ELF路径’ |grep ‘函数名’;<br>2.动态加载: 在运行期间动态加载库，是由用户自己链接而不是由链接器(动态库都用extern “C”修饰，并在进程中用dlopen动态加载)，在编译期间可以不需要知道动态库的存在。动态加载的库函数字符名即为源代码中的函数名</font> </p>
-</blockquote>
-<h3 id="0x02-库打桩"><a href="#0x02-库打桩" class="headerlink" title="0x02 库打桩"></a><em>0x02 库打桩</em></h3><p>&emsp;&emsp;Linux系统下的库打桩(Library Interpositioning)功能允许你拦截对系统标准库中某个目标函数的调用，取而代之执行自己的包装函数。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单进程库打桩</span><br><span class="line">2 全局库打桩</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、单进程库打桩</em></strong><br>&emsp;&emsp;单进程库打桩只替换某进程中调用的系统函数，但是前提是必须获得其源码或.o文件。<br>&emsp;&emsp;execve函数在父进程中fork一个子进程，在子进程中调用exec函数启动新的程序。exec函数族一共有六个，其中execve为内核级系统调用，所有其他函数最终都会调用到它。在这里我们直接拦截execve函数:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* hook.c */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execve</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">char</span>* <span class="keyword">const</span> argv[], <span class="keyword">char</span>* <span class="keyword">const</span> envp[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 在被调用时，打印命令名称与进程PID</span></span><br><span class="line">    <span class="keyword">int</span> pid = getpid();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;execve(%s); pid: %d\n&quot;</span>, filename, pid);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ssize_t</span> (*execvep)(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">char</span>* <span class="keyword">const</span> argv[], <span class="keyword">char</span>* <span class="keyword">const</span> envp[]);</span><br><span class="line">    </span><br><span class="line">    execvep = dlsym(RTLD_NEXT, <span class="string">&quot;execve&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> execvep(filename, argv, envp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;假设有如下调用execve函数执行’ls -ah’的源码文件:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* main.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>* argv[] = &#123;<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-ah&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span>* envp[] = &#123;<span class="number">0</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    execve(<span class="string">&quot;/bin/ls&quot;</span>, argv, envp);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;在编译时，只需要包含hook.c即可:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line"><span class="comment"># 情况一: 源码编译</span></span><br><span class="line">$ gcc main.cpp hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况二: .o文件编译</span></span><br><span class="line">$ gcc main.o hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况三: 直接修改elf库</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ patchelf --add-needed <span class="variable">$PWD</span>/hook.so <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、全局库打桩</em></strong><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">全局库打桩</a><sup>[2]</sup>实际上实现方式与单进程库打桩一致，只是其利用了在Linux系统下LD_PRELOAD环境变量能够允许所有进程优先加载指定函数的特性，实现了<strong>libc(系统)函数调用劫持</strong>。其执行流程如下:  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/全局库打桩流程.png" width="600" height="350">
-<div align="left">  
-
-<p>&emsp;&emsp;代码无需改动，只是在编译时，修改LD_PRELOAD环境变量即可:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ gcc main.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将hook.so写入LD_PRELOAD</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/hook.so</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-注入与热更新"><a href="#0x03-注入与热更新" class="headerlink" title="0x03 注入与热更新"></a><em>0x03 注入与热更新</em></h3><p>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">注入与热更新</a><sup>[3]</sup>实现Hook的方法，是为了将目标进程外部调用的动态库中的某个函数替换为其他动态库中的某个函数。其Hook思路，可以简单地理解为首先将hook.so注入到目标进程内存空间中，然后使用hook.so中的函数地址热更新替代target.so中的函数地址。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 注入</span><br><span class="line">2 热更新</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、注入</em></strong><br>&emsp;&emsp;目标进程Test在最开始时并不能直接运行hook.so中的函数，因为hook.so并不在进程的内存空间，因此我们需要实现的第一步就是将hook.so注入到Test内存空间中。比较简单的实现方法是，假设Test依赖libc库，那么我们可以劫持进程执行系统调用dlopen，并加载我们的hook库。<br>&emsp;&emsp;至于如何使进程执行系统调用dlopen，只需要修改CPU寄存器即可:  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/系统调用流程.png" width="750" height="300">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">rdi / rsi / rdx / r10 / r8 / r9：参数1~6<br>rax：系统调用号<br>rip：执行代码地址</font>  </p>
-</blockquote>
-<p><strong><em>2、热更新</em></strong><br>&emsp;&emsp;在将hook.so注入目标进程Test后，我们需要使用hook.so中的函数替换掉动态库target.so中的某个函数。<br>&emsp;&emsp;为了实现这个目的，我们必须先理解ELF调用外部函数的关系图(注意foo1与foo2调用区别):  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF外部函数调用关系图.png" width="800" height="430">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">注意: 外部调用寻找函数地址也不一定用到PLT与GOT<br>1.foo1: 不需要PLT与GOT寻址。比如直接在target.so中实现的函数<br>2.foo2: 需要PLT与GOT寻址。比如在target.so中调用的libc库函数</font>  </p>
-</blockquote>
-<p>&emsp;&emsp;根据上图，在调用foo1和foo2的真正实现中，其调用过程是:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># foo1</span></span><br><span class="line">1) .dynstr中记录了所有外部函数字符，找到foo1字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">2) .dynsym中记录foo1函数偏移地址，其指向位置存在于.text节中;</span><br><span class="line"></span><br><span class="line"><span class="comment"># foo2</span></span><br><span class="line">1) .dynstr中记录了所有外部函数字符，找到foo2字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">2) .dynsym中记录foo2函数偏移地址，其指向位置不存在于.text节中;</span><br><span class="line">3) 根据foo2序号，找到在.rela.plt节中映射的新序号，确定foo2在.rela.plt节中位置;</span><br><span class="line">4) 属PLT: .rela.plt节真正保存foo2_stub函数偏移地址，其指向位置存在于.rela.got节中;</span><br><span class="line">5) 属GOT: .rela.got节真正保存foo2偏移地址。</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;在理解了ELF调用外部函数的过程之后，我们针对foo1与foo2两种情况，可采用如下方法对目标函数进行热更新:  </p>
-<div align="center">
-<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/热更新原理图.png" width="800" height="430">
-<div align="left">  
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">https://blog.csdn.net/weixin_43742894/article/details/90180219</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">https://www.cnblogs.com/lion-cheng/p/16018700.html#库打桩机制</a><br>[3]<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">https://cloud.tencent.com/developer/article/1759520</a>  </p>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Linux 计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/">展开全文 >></a>
         </p>
       
 
@@ -700,15 +683,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -720,11 +703,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -772,11 +755,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -788,11 +771,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

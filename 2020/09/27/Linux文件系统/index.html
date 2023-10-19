@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
 <meta property="article:published_time" content="2020-09-27T07:36:32.000Z">
-<meta property="article:modified_time" content="2023-07-21T09:11:53.088Z">
+<meta property="article:modified_time" content="2023-08-04T03:18:31.295Z">
 <meta property="article:author" content="JailbreakFox">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -283,7 +283,7 @@
 <p>&emsp;&emsp;当然如果只是希望使可执行文件能直接使用，推荐软链接的方式</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为原文件创造一个新的指针，类似于Windows的快捷方式</span></span><br><span class="line"><span class="comment"># 注意！这边的路径最好都写绝对路径，不然链接不上</span></span><br><span class="line"><span class="comment"># ln -s /home/dev/cmake /usr/bin/</span></span><br><span class="line"><span class="comment"># 使用ls -lah /usr/bin/ |grep cmake可以查看到链接情况</span></span><br><span class="line">ln -s <span class="string">&#x27;原文件路径&#x27;</span> <span class="string">&#x27;快捷方式路径&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br><span class="line">5. 动态库与静态库</span><br><span class="line">6. libc.so.6&#x2F;libstdc++.so.6</span><br><span class="line">7. 其他相关知识</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br><span class="line">5. Linux动态库与静态库</span><br><span class="line">6. Windows动态库与静态库</span><br><span class="line">7. libc.so.6&#x2F;libstdc++.so.6</span><br><span class="line">8. 其他相关知识</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、三方库使用条件</em></strong><br>&emsp;&emsp;在编译时，第三方库必须要有静态库或动态库以及头文件。在运行时，第三方库只需要有静态库或动态库即可。  </p>
 <p><strong><em>2、编译时依赖</em></strong><br>&emsp;&emsp;关于编译时依赖查看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/04/29/CMake/">CMAKE相关文章</a>。</p>
 <p><strong><em>3、运行时依赖</em></strong><br>&emsp;&emsp;Windows进程运行时依赖于当前文件夹与环境变量。<br>&emsp;&emsp;Linux进程运行时依赖于RPATH，关于进程的依赖可通过下面两个命令获取:</p>
@@ -292,9 +292,10 @@
 <p><strong><em>4、依赖库与头文件查找顺序</em></strong>  </p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 设置文件 /etc/ld.so.conf /etc/ld.so.conf.d/</span><br><span class="line">    4.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
 
-<p><strong><em>5、动态库与静态库</em></strong><br>&emsp;&emsp;1).进程依赖动态库，则编译时需要.so文件与头文件，运行时需要.so文件;<br>&emsp;&emsp;2).进程依赖静态库，则编译时需要.a文件与头文件，运行时无需其他文件（本质是把符号表都合入到进程中）;<br>&emsp;&emsp;3).进程依赖静态库，但是静态库本身又依赖其他动态库，则编译时需要所有.a文件、.so文件以及头文件，运行时需要静态库依赖的.so文件。</p>
-<p><strong><em>6、libc.so.6/libstdc++.so.6</em></strong><br>&emsp;&emsp;这两个分别是c与c++的运行时库。</p>
-<p><strong><em>7、其他相关知识</em></strong><br>&emsp;&emsp;库文件的文件头中是会含有库名相关的信息的(比如“libc.so.6”，可用strings命令察看)，仅通过修改文件名以冒充某已被识别的库是行不通的，需要使用Makefile修改库名重新编译。</p>
+<p><strong><em>5、Linux动态库与静态库</em></strong><br>&emsp;&emsp;1).进程依赖动态库，则编译时需要.so文件与头文件，运行时需要.so文件;<br>&emsp;&emsp;2).进程依赖静态库，则编译时需要.a文件与头文件，运行时无需其他文件（本质是把符号表都合入到进程中）;<br>&emsp;&emsp;3).进程依赖静态库，但是静态库本身又依赖其他动态库，则编译时需要所有.a文件、.so文件以及头文件，运行时需要静态库依赖的.so文件。</p>
+<p><strong><em>6、Windows动态库与静态库</em></strong><br>&emsp;&emsp;1).后缀.dll文件为动态库;<br>&emsp;&emsp;2).后缀.lib文件分为静态库.lib与导入库.lib，前者与Linux系统下的一样本身就包含了实际执行代码、符号表等等，后者的导入库只包含了地址符号表等确保程序找到对应函数的一些基本地址信息。</p>
+<p><strong><em>7、libc.so.6/libstdc++.so.6</em></strong><br>&emsp;&emsp;这两个分别是c与c++的运行时库。</p>
+<p><strong><em>8、其他相关知识</em></strong><br>&emsp;&emsp;库文件的文件头中是会含有库名相关的信息的(比如“libc.so.6”，可用strings命令察看)，仅通过修改文件名以冒充某已被识别的库是行不通的，需要使用Makefile修改库名重新编译。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ strings /lib/libc.so.6 |grep GLIBC_2. |awk -F . <span class="string">&#x27;&#123;print$2&#125;&#x27;</span> |grep <span class="string">&#x27;[1][2-9]&#x27;</span> |wc -l</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x05-桌面图标生成"><a href="#0x05-桌面图标生成" class="headerlink" title="0x05 桌面图标生成"></a><em>0x05 桌面图标生成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 生成任务栏图标</span><br><span class="line">2. 生成桌面图标</span><br><span class="line">3. 指令对照表</span><br></pre></td></tr></table></figure>
@@ -735,7 +736,7 @@
 <p><strong><em>2、普通进程</em></strong><br>&emsp;&emsp;首先要在/usr/share/applications目录中添加桌面图标.desktop文件，并将其软链接或直接复制到以下目录:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># root用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /root/.config/autostart</span><br><span class="line"><span class="comment"># 其他用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /home/<span class="string">&#x27;用户名&#x27;</span>/.config/autostart</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x08-编译相关"><a href="#0x08-编译相关" class="headerlink" title="0x08 编译相关"></a><em>0x08 编译相关</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 g++与c++11</span><br><span class="line">2 编译参数 -fPIC</span><br><span class="line">3 MSVC编译参数 &#x2F;MT &#x2F;MD</span><br><span class="line">4 编译参数 -Wl,-rpath&#x3D;.&#x2F; -Wl,Bsymolic</span><br></pre></td></tr></table></figure>
+<h3 id="0x08-编译相关"><a href="#0x08-编译相关" class="headerlink" title="0x08 编译相关"></a><em>0x08 编译相关</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 g++与c++11</span><br><span class="line">2 编译参数 -fPIC</span><br><span class="line">3 编译参数 -Wl,-rpath&#x3D;.&#x2F; -Wl,Bsymolic</span><br><span class="line">4 MSVC编译参数 &#x2F;MT &#x2F;MD</span><br><span class="line">5 MSVC编译参数 &#x2F;Zi</span><br><span class="line">6 MSVC编译参数 &#x2F;Debug</span><br><span class="line">7 MSVC编译参数 &#x2F;OPT:REF &#x2F;OPT:NOREF</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、g++与c++11</em></strong><br>&emsp;&emsp;g++4.8、g++4.9包含c++11但是默认不开启，g++5.1开始默认开启c++11(提供了一个宏来控制其是否使用 _GLIBCXX_USE_CXX11_ABI)  </p>
 <ul>
 <li>进程依赖动态库，动态库使用g++4编译且不开启c++11。进程可使用g++4编译(c++11开启与关闭均可);进程可使用g++5编译(必须通过宏关闭c++11)  </li>
@@ -761,12 +762,13 @@
 <p><strong><em>1、Linux PROMPT_COMMAND</em></strong><br>记录用户、时间、操作，然后将查到的信息记录到一个文件里。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 记录到指定文件中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; date &quot;+%Y-%m-%d %T WHO: $(who am i |awk &quot;&#123;print \$1\&quot; \&quot;\$2\&quot; \&quot;\$5&#125;&quot;) PATH: $(pwd) CMD: $(history 1 | &#123; read x cmd; echo &quot;$cmd&quot;; &#125;)&quot;; &#125; &gt;&gt; /var/log/audit_cmd.txt&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录到/var/log/messages中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; msg=$(history 1|&#123; read x y; echo $y; &#125;);logger &quot;[euid=$(whoami)]&quot;:$(who am i):[`pwd`]&quot;$msg&quot;;&#125;&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
 
-<h3 id="0x11-inode"><a href="#0x11-inode" class="headerlink" title="0x11 inode"></a><em>0x11 inode</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 inode基础</span><br><span class="line">2 软&#x2F;硬链接与inode关系</span><br></pre></td></tr></table></figure>
+<h3 id="0x11-inode"><a href="#0x11-inode" class="headerlink" title="0x11 inode"></a><em>0x11 inode</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 inode基础</span><br><span class="line">2 软&#x2F;硬链接与inode关系</span><br><span class="line">3 文件拷贝与库加载</span><br></pre></td></tr></table></figure>
 <p><strong><em>1、inode基础</em></strong><br>&emsp;&emsp;理解inode，要从文件储存说起。<br>&emsp;&emsp;硬盘的最小存储单位叫做扇区，每个扇区储存512字节。<br>&emsp;&emsp;操作系统存取文件的最小单位是块，最常见的是4KB，即连续的8个扇区。<br>&emsp;&emsp;文件数据都储存在块中，而每一个文件的元信息(比如文件的创建者、文件的创建日期、文件的大小等)存储在inode中。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># inode元信息</span></span><br><span class="line"><span class="comment">#     文件的字节数</span></span><br><span class="line"><span class="comment">#     文件拥有者的User ID</span></span><br><span class="line"><span class="comment">#     文件的Group ID</span></span><br><span class="line"><span class="comment">#     文件的读、写、执行权限</span></span><br><span class="line"><span class="comment">#     文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。</span></span><br><span class="line"><span class="comment">#     链接数，即有多少文件名指向这个inode</span></span><br><span class="line"><span class="comment">#     文件数据block的位置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件的inode信息</span></span><br><span class="line">$ <span class="built_in">stat</span> <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看每个硬盘分区的inode总数和已经使用的数量</span></span><br><span class="line">$ df -i</span><br></pre></td></tr></table></figure>
 
 <p><strong><em>2、软/硬链接与inode关系</em></strong><br>&emsp;&emsp;硬链接是多个文件同时指向同个inode，可通过stat的Links数量观察到。<br>&emsp;&emsp;软链接是指向源文件的文件路径。</p>
-</div></div>
+<p><strong><em>3、文件拷贝、移动与库动态加载</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拷贝改变文件inode</span></span><br><span class="line"><span class="comment"># 拷贝覆盖原文件，被覆盖文件的inode不变</span></span><br><span class="line">$ cp <span class="string">&#x27;from&#x27;</span> <span class="string">&#x27;to&#x27;</span> <span class="comment"># to文件inode变化</span></span><br><span class="line">$ cp <span class="string">&#x27;to&#x27;</span> <span class="string">&#x27;from&#x27;</span> <span class="comment"># from文件inode与之前一致，文件md5变为to文件md5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移动(本质为rename)不改变文件inode</span></span><br><span class="line">$ mv <span class="string">&#x27;from&#x27;</span> <span class="string">&#x27;to&#x27;</span> <span class="comment"># from的inode即为to的inode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当一个进程test动态加载了库libtest.so</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且删除了libtest.so，则当真实调用函数的时候会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且mv libtest.so到新的位置，由于inode未变因此不会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且用新编译的libtest.so拷贝覆盖原库，inode虽然未变动，但是函数相对于库的地址变化了，因此还是会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且用旧的libtest.so拷贝覆盖原库，只要test进程没有正在调用函数，就不会崩溃</span></span><br></pre></td></tr></table></figure></div></div>
       
 
       
@@ -972,15 +974,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -992,11 +994,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1044,11 +1046,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1060,11 +1062,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

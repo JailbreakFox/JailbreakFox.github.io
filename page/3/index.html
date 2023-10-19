@@ -156,6 +156,229 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux图形界面显示原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/">Linux图形界面显示原理</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/" class="archive-article-date">
+  	<time datetime="2022-08-17T02:23:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-17</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux图形界面包括前后端，后端的选择方案有著名的”X Window System”和”Wayland”，前端包括以下几个重要组成部分:显示管理器、窗口管理器、文件管理器以及GTK+/QT图形库等。<br>&emsp;&emsp;1984年MIT大学创造了”X Window System”(XWindow)，这是在UNIX系统构建图形化视窗系统的设计方案，又称X规范(协议)。并在1987年形成了第11版(X11)，目前使用最广的软件实现是Xorg。<br>&emsp;&emsp;2008年，RedHat的员工创造了Wayland。Wayland是在XWindow基础上实现的一种协议，前者去除了后者中不必要的设计(比如将X Server和窗口管理器整合到一起作为服务端)。但目前而言，前者仍有许多缺陷，比如在远程桌面能力不足，重度依赖Linux内核技术不易移植到其他系统平台。<br>&emsp;&emsp;前后端分离的好处是，用户在Linux中可以随意切换前端，享受不同界面风格。比较常用的前端界面环境有Gnome、KDE、Unity、XFCE、LXDE、DDE等。</p>
+<h3 id="0x01-X-Window-System"><a href="#0x01-X-Window-System" class="headerlink" title="0x01 X Window System"></a><em>0x01 X Window System</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 设计原理</span><br><span class="line">2 通信流程</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、设计原理</em></strong>  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/XWindow原理.png" width="600" height="350">
+<div align="left">  
+
+<ul>
+<li>X11采用了C/S的架构，在其设计下，整个图形视窗系统主要分为3个部分:  <ul>
+<li>X Server(X服务器)。一方面负责和设备驱动交互，监听显示器和键盘鼠标;另一方面响应X Client需求传递键盘、鼠标事件、绘制图形文字等</li>
+<li>X Client(X客户端)。由GTK+/QT等图形库开发实现，负责在收到设备事件后计算出绘图数据，由于本身没有绘制能力，只能向X Server发送绘制请求和绘图数据。X Client可以和X Server在同一个主机上，也可以通过TCP/IP网络连接。</li>
+<li>Window Manager(窗口管理器)，或者叫合成器(Compositor)。掌管各X Client的窗口视觉外观，如形状、排列、移动、重叠渲染甚至是<strong>半透明效果</strong>等。注意窗管并非X Server的一部分，而是一个特殊的X Client程序。</li>
+</ul>
+</li>
+</ul>
+<p><strong><em>2、通信流程</em></strong>  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/XWindow流程.png" width="600" height="250">
+<div align="left">  
+
+<h3 id="0x02-Wayland"><a href="#0x02-Wayland" class="headerlink" title="0x02 Wayland"></a><em>0x02 Wayland</em></h3><p>&emsp;&emsp;Wayland将X Server和窗口管理器整合到一起作为服务端，也可以称为合成器（Compositor），注意在XWindow中窗管被称为合成器。  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/Wayland流程.png" width="600" height="250">
+<div align="left">  
+
+<h3 id="0x03-显示管理器"><a href="#0x03-显示管理器" class="headerlink" title="0x03 显示管理器"></a><em>0x03 显示管理器</em></h3><p>&emsp;&emsp;显示管理器用于开机后显示登陆界面，并启动窗口管理器等XWindow组件。如果没有显示管理器，Linux开机会显示命令行登陆界面，需要使用命令行登陆后手动启动X server和窗口管理器才能显示GUI。</p>
+<h3 id="0x04-窗口管理器"><a href="#0x04-窗口管理器" class="headerlink" title="0x04 窗口管理器"></a><em>0x04 窗口管理器</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 窗口层级</span><br><span class="line">2 子框架重定向</span><br><span class="line">3 二次排版</span><br><span class="line">4 窗口合成管理器</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;窗口管理器是前端的核心组件，其主要负责管理每个独立窗口如何显示/移动，怎样反馈输入，怎样组织各个窗口。目前常用的窗管有XFCE的xfwm，Gnome的mutter，KDE的Kwin等。XWindow并未指定一个专用的窗口管理器，也没有定义窗口管理器的行为，因此用户可以任意替换。关于如何写一个窗口管理器可以参考<a target="_blank" rel="noopener" href="https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i">文献</a><sup>[1]</sup>。<br>&emsp;&emsp;窗口管理器的本质上就是一个常规的X Client，它并没有超级用户权限，也并不能直接调用内核函数。但是，窗管能通过X Server提供的特殊API来控制屏幕显示(X Server至多只会有一个窗口管理器的存在)。窗管与X Server的交互是通过<strong>属性</strong>和<strong>事件</strong>机制实现的。下面将详细介绍窗管实现的细节:  </p>
+<p><strong><em>1、窗口层级</em></strong><br>&emsp;&emsp;在显示器显示的时候，所有窗口的管理实际上是一个树形结构，这个树的根就是顶层窗口(一个虚拟的，不可见的窗口，但是它的大小跟屏幕一样，同时会永远的存在)。有Qt开发经验的都清楚，每个界面应用(X Client)都有一个QWindows(QWidget)作为主窗口，而所有的主窗口最后都会挂载到顶层窗口中。</p>
+<p><strong><em>2、子框架重定向</em></strong><br>&emsp;&emsp;在X Window System的设计理念中，X Server并不直接管理窗口显示，这个功能均转交给窗管实现。实际上如果没有窗管，那么显示就由X Server直接处理，然而在有窗管存在的情况下，显示过程中窗管会先拦截X Client对界面显示操作的请求，这种拦截技术被称为子框架重定向(Substructure Redirection)。  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/窗口管理器原理.png" width="600" height="250">
+<div align="left">  
+
+<p>&emsp;&emsp;X Server在任何情况下，只允许一个窗口管理器注册子框架重定向。当有第二个窗管在对一个已被注册子框架重定向的X Server进行注册时，原先的窗管不会从X Sever解注册，断连或者崩溃。</p>
+<p><strong><em>3、二次排版</em></strong>  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/二次排版.png" width="400" height="200">
+<div align="left">  
+
+<p>&emsp;&emsp;为了实现窗口风格的统一，窗口管理器在接收到X Client的窗口绘制时会主动为其添加包含标题栏的框架窗口(Frame Window)，这也是为什么Qt窗口应用默认会有标题栏的原因。</p>
+<p><strong><em>4、窗口合成管理器</em></strong><br>&emsp;&emsp;现代的界面显示已经不能满足于窗口了，例如Shift Switcher:  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/Shift Switcher.png" width="600" height="400">
+<div align="left">  
+
+<p>&emsp;&emsp;为了实现更加复杂的显示，出现了离屏内存缓冲区的概念(Wayland中使用的DRM技术)。实现步骤如下:  </p>
+<div align="center">
+<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/窗口合成管理器原理.png" width="500" height="400">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">1. 渲染每一个顶层窗口以及它的内部UI节点到一个离屏内存缓冲区，而不是直接输出到硬件上;<br>2.根据我们的设计，使用旋转，扭曲这样的方式来变化每个缓冲区的样式;<br>3.将这些经过变化的缓冲区融合到一个最终的缓冲区中，同时还需要将背景和其他需要展示的UI也合并进来;<br>4.将这个最终缓冲区的内容渲染到屏幕上。</font> </p>
+</blockquote>
+<h3 id="0x05-文件管理器"><a href="#0x05-文件管理器" class="headerlink" title="0x05 文件管理器"></a><em>0x05 文件管理器</em></h3><p>&emsp;&emsp;管理硬盘的分区显示。</p>
+<h3 id="0x06-常见问题"><a href="#0x06-常见问题" class="headerlink" title="0x06 常见问题"></a><em>0x06 常见问题</em></h3><p>&emsp;&emsp;1.通过Windows的远程桌面功能远程连接到Linux的桌面系统，无法显示水印进程。而直接在Linux上安装向日葵，并远程连接，可以正常显示水印进程。</p>
+<h3 id="0x07-引用文献"><a href="#0x07-引用文献" class="headerlink" title="0x07 引用文献"></a><em>0x07 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i">https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-设计模式-生产者消费者模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">设计模式-生产者消费者模式</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2022-08-08T10:55:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;生产者-消费者模式是一个十分经典的<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">多线程并发协作</a><sup>[1]</sup>的模式，严格地讲并不属于设计模式的范畴。<br>&emsp;&emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。  </p>
+<div align="center">
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg" width="400" height="80">
+<div align="left">
+
+<h3 id="0x01-生产者消费者模式"><a href="#0x01-生产者消费者模式" class="headerlink" title="0x01 生产者消费者模式"></a><em>0x01 生产者消费者模式</em></h3><p>&emsp;&emsp;更复杂的生产者消费者模式应该能实现一部分线程被用于去生产数据，另一部分线程去处理数据。这里，我们将只有一个生产者线程和一个消费者线程的情况称为单缓冲，将多生产者线程、多消费者线程的情况称为多缓冲。  </p>
+<div align="center">
+<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/生产者消费者模式.png" width="700" height="200">
+<div align="left">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单缓冲</span><br><span class="line">2 多缓冲</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、单缓冲</em></strong>  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sem_t</span> empty_sem; <span class="comment">// 同步信号量， 当满了时阻止生产者放产品</span></span><br><span class="line"><span class="keyword">sem_t</span> full_sem; <span class="comment">// 同步信号量， 当没产品时阻止消费者消费</span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex; <span class="comment">// 互斥信号量， 一次只有一个线程访问缓冲</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">buffer</span> = <span class="number">0</span>; <span class="comment">//单缓冲</span></span><br><span class="line"><span class="keyword">int</span> product_id = <span class="number">0</span>; <span class="comment">//生产者id</span></span><br><span class="line"><span class="keyword">int</span> consumer_id = <span class="number">0</span>; <span class="comment">//消费者id</span></span><br><span class="line"><span class="keyword">int</span> product_sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> consumer_sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">start</span>;</span> <span class="comment">//记录时间</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">end</span>;</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> timer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">product</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++product_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;empty_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        product_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld product_%d is producing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               product_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;full_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++consumer_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;full_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        consumer_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld consumer_%d is consumeing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               consumer_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;empty_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span> </span>&#123;</span><br><span class="line">    gettimeofday(&amp;start, <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    sem_init(&amp;empty_sem, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;full_sem, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">pthread_t</span> id1[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">pthread_t</span> id2[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> T1 = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> T2 = <span class="number">1</span>;</span><br><span class="line">    pthread_create(&amp;id1[<span class="number">1</span>], <span class="literal">NULL</span>, product, &amp;T1);</span><br><span class="line">    pthread_create(&amp;id2[<span class="number">1</span>], <span class="literal">NULL</span>, consumer, &amp;T2);</span><br><span class="line">    pthread_join(id1[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(id2[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">https://jenkov.com/tutorials/java-concurrency/producer-consumer.html</a></p>
+</div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-DDos攻击" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -228,335 +451,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/08/01/DDos%E6%94%BB%E5%87%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-设计模式-行为型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式-行为型模式</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2022-07-28T09:38:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-28</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">设计模式-可复用的面向对象软件元素</a><sup>[1]</sup>，以及<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">菜鸟教程</a><sup>[2]</sup>上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。</p>
-<h3 id="0x01-观察者模式"><a href="#0x01-观察者模式" class="headerlink" title="0x01 观察者模式"></a><em>0x01 观察者模式</em></h3><p>&emsp;&emsp;观察者模式定义了对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知，并自动更新。<br>&emsp;&emsp;订阅-发布模式是由观察者模式衍生出来的，前者新增了第三个组件，称为调度中心或事件通道，它维持着发布者和订阅者之间的联系，过滤所有发布者传入的消息并相应地分发它们给订阅者。  </p>
-<div align="center">
-<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/观察者模式.png">
-<div align="left">  
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 观察者模式</span><br><span class="line">2 订阅-发布模式</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、观察者模式</em></strong><br>&emsp;&emsp;观察者模式有两个重要的角色，即目标和观察者，在目标和观察者之间是没有事件通道的。一方面，观察者要想订阅目标事件，由于没有事件通道，因此必须将自己添加到目标(Subject) 中进行管理；另一方面，目标在触发事件的时候，也无法将通知操作(notify) 委托给事件通道，因此只能亲自去通知所有的观察者。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Observer* observer)</span> </span>&#123;</span><br><span class="line">        m_observers.push_back(observer);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_observers.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            m_observers[i]-&gt;update(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Observer*&gt; m_observers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建观察者ob1</span></span><br><span class="line">    Observer* ob1 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建观察者ob2</span></span><br><span class="line">    Observer* ob2 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建目标sub</span></span><br><span class="line">    Subject* sub = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob1 （目标和观察者建立了依赖关系）</span></span><br><span class="line">    sub-&gt;add(ob1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob2</span></span><br><span class="line">    sub-&gt;add(ob2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub触发SMS事件（目标主动通知观察者）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I fired SMS event&quot;</span>;</span><br><span class="line">    sub-&gt;notify(&amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、订阅-发布模式</em></strong><br>&emsp;&emsp;发布-订阅模式是面向调度中心编程的，只需要写一个类专门用于控制信息的发布。其优点在于去中心化，即不在乎谁是发布者，而且能管理多个事件。  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(* CALLBACK)</span><span class="params">(<span class="keyword">void</span> *param)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PubSub</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, CALLBACK callback)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">            m_subscribers[topic].push_back(callback);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">publish</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, <span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; cb = m_subscribers[topic];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cb.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            CALLBACK cbFunc = cb[i];</span><br><span class="line">            cbFunc(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; &gt; m_subscribers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">void</span>* param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建事件调度中心，为订阅者和发布者提供调度服务</span></span><br><span class="line">    PubSub* pubSub = <span class="keyword">new</span> PubSub();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A订阅了SMS事件（A只关注SMS本身，而不关心谁发布这个事件）</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// B订阅了SMS事件</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// C发布了SMS事件（C只关注SMS本身，不关心谁订阅了这个事件）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I published SMS event&quot;</span>;</span><br><span class="line">    pubSub-&gt;publish(<span class="string">&quot;SMS&quot;</span>, &amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-状态模式"><a href="#0x02-状态模式" class="headerlink" title="0x02 状态模式"></a><em>0x02 状态模式</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 理论基础</span><br><span class="line">2 具体实现</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、理论基础</em></strong><br>&emsp;&emsp;状态模式的概念和有限状态机相似。最容易想到的状态机实现应该就是if else语句，实现起来类似这样:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="string">&quot;status1&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status2&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;status2&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status3&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;status3&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status1&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;但是当状态变得很多，并且状态之间的耦合度变得很高时，这种代码就会很难维护。状态模式就是为了解决这个问题而产生的，一个最简单的状态模式，其UML图如下:  </p>
-<div align="center">
-<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/状态模式UML.png">
-<div align="left">  
-
-<blockquote>
-<p><font size="2">1.Context - 上下文。定义一个与使用者交互的接口。可以用该对象来记录当前状态。<br>2.State - 所有状态的父类。其虚函数定义状态之间发生转换时的行为。<br>3.ConcreteState - 继承自State的状态子类。有选择地实现State中定义的行为。<br></font>  </p>
-</blockquote>
-<p><strong><em>2、具体实现</em></strong><br>&emsp;&emsp;现在我们假设需要做一个状态机，其状态关系如下图:  </p>
-<div align="center">
-<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/状态模式.png">
-<div align="left">  
-
-<p>&emsp;&emsp;上下文 context.hpp:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> CONTEXT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONTEXT_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;state.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> Action &#123;</span><br><span class="line">    ACTION_CRIME,</span><br><span class="line">    ACTION_CORRECT,</span><br><span class="line">    ACTION_KILLED</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Context</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Context(State *state) : m_state(<span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (state)</span><br><span class="line">            setStatus(state);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ~Context() &#123; <span class="keyword">delete</span> m_state; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 设置状态 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setStatus</span><span class="params">(State* state)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;===== current status ===== &quot;</span> &lt;&lt; state-&gt;name() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (m_state)</span><br><span class="line">            <span class="keyword">delete</span> m_state;</span><br><span class="line">        m_state = state;</span><br><span class="line">        m_state-&gt;set_context(<span class="keyword">this</span>); <span class="comment">// 传递上下文到状态中</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 获取当前状态 */</span></span><br><span class="line">    <span class="function">State* <span class="title">getStatus</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (m_state)</span><br><span class="line">            <span class="keyword">return</span> m_state;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 执行行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">request_handle</span><span class="params">(Action action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> ACTION_CRIME:</span><br><span class="line">                m_state-&gt;handle_crime();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> ACTION_CORRECT:</span><br><span class="line">                m_state-&gt;handle_correct();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> ACTION_KILLED:</span><br><span class="line">                m_state-&gt;handle_killed();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    State* m_state; <span class="comment">// 用于记录当前状态</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;状态类头文件 state.h:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> STATE_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STATE_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Context</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 状态父类 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">State</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set_context</span><span class="params">(Context* context)</span> </span>&#123; m_context = context; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    Context* m_context;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 平民状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateCommon</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;common&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 犯罪行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 假释犯状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateParolee</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;parolee&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 犯罪行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 劳改行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 罪犯状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateKiller</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;killer&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 劳改行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 死人状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateDeath</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;death&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;状态类实现 state.cpp:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;context.hpp&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;state.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 平民状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateCommon::handle_crime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateCommon start crime.Become ConcreteStateKiller&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateKiller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateCommon::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateCommon killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 假释犯状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_crime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee start crime.Become ConcreteStateKiller&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateKiller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_correct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee start correct.Become ConcreteStateCommon&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateCommon);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 罪犯状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateKiller::handle_correct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateKiller start correct.Become ConcreteStateParolee&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateParolee);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateKiller::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateKiller killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;具体调用 main.cpp:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*状态模式的实现.*/</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 编译：g++ main.cpp state.h state.cpp context.hpp -o StatePattern</span></span><br><span class="line"><span class="comment"> * 运行：./StatePattern</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;context.hpp&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 新建一个平民</span></span><br><span class="line">    Context *context = <span class="keyword">new</span> Context(<span class="keyword">new</span> ConcreteStateCommon);</span><br><span class="line">    <span class="comment">// 平民犯罪，变成罪犯</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CRIME);</span><br><span class="line">    <span class="comment">// 罪犯劳改，变成假释犯</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CORRECT);</span><br><span class="line">    <span class="comment">// 假释犯枪毙，变死人</span></span><br><span class="line">    context-&gt;request_handle(ACTION_KILLED);</span><br><span class="line">    <span class="comment">// 死人犯罪，不存在的</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CRIME);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 打印当前状态</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Current Status: &quot;</span> &lt;&lt; context-&gt;getStatus()-&gt;name() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">delete</span> context;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a></p>
-</div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Rsync备份还原" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">Rsync备份还原</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/" class="archive-article-date">
-  	<time datetime="2022-07-10T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-10</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在Linux中，cp命令可实现本机文件的全量复制，scp命令可实现远程文件的全量复制。而<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">Rsync</a><sup>[1]</sup>(Remote Synchronizetion)可实现本地、远程文件的增量复制(只复制不同的文件)。<br>&emsp;&emsp;本文在Rsync技术的基础上，详细介绍一套备份还原功能的设计。  </p>
-<h3 id="0x01-Rsync使用方法"><a href="#0x01-Rsync使用方法" class="headerlink" title="0x01 Rsync使用方法"></a><em>0x01 Rsync使用方法</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 常用参数</span><br><span class="line">2 使用方式</span><br><span class="line">  2.1 本地方式</span><br><span class="line">  2.2 远程方式</span><br><span class="line">  2.3 守护进程方式</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、常用参数</em></strong>  </p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>-a</td>
-<td>归档模式传输, 等于-tropgDl -t -r -o -p -g -D -l</td>
-</tr>
-<tr>
-<td>-v</td>
-<td>详细模式输出, 打印速率, 文件数量等</td>
-</tr>
-<tr>
-<td>-i</td>
-<td>输出一个摘要信息</td>
-</tr>
-<tr>
-<td>-q</td>
-<td>精简输出</td>
-</tr>
-<tr>
-<td>-z</td>
-<td>传输时进行压缩以提高效率</td>
-</tr>
-<tr>
-<td>-r</td>
-<td>递归传输目录及子目录，即目录下得所有目录都同样传输</td>
-</tr>
-<tr>
-<td>-t</td>
-<td>保持文件时间信息</td>
-</tr>
-<tr>
-<td>-o</td>
-<td>保持文件属主信息</td>
-</tr>
-<tr>
-<td>-g</td>
-<td>保持文件属组信息</td>
-</tr>
-<tr>
-<td>-p</td>
-<td>保持文件权限</td>
-</tr>
-<tr>
-<td>-l</td>
-<td>保留软连接</td>
-</tr>
-<tr>
-<td>-H</td>
-<td>保留硬连接</td>
-</tr>
-<tr>
-<td>-X</td>
-<td>保留拓展属性</td>
-</tr>
-<tr>
-<td>-P</td>
-<td>显示同步的过程及传输时的进度等信息</td>
-</tr>
-<tr>
-<td>-D</td>
-<td>保持设备文件信息</td>
-</tr>
-<tr>
-<td>-L</td>
-<td>保留软连接指向的目标文件</td>
-</tr>
-<tr>
-<td>-e</td>
-<td>使用的信道协议,指定替代rsh的shell程序</td>
-</tr>
-<tr>
-<td>–append</td>
-<td>指定文件接着上次传输中断处继续传输</td>
-</tr>
-<tr>
-<td>–append-verify</td>
-<td>使用参数续传（在断点续传之后，验证一下文件，如果不同，修复文件）</td>
-</tr>
-<tr>
-<td>–exclude=文件名</td>
-<td>指定排除不需要传输的文件</td>
-</tr>
-<tr>
-<td>–exclude-from=文件名</td>
-<td>排除文件内写的文件名(文件内可以写多个文件名)</td>
-</tr>
-<tr>
-<td>–bwlimit=传输速度</td>
-<td>限速传输（单位：MB）</td>
-</tr>
-<tr>
-<td>–delete</td>
-<td>让目标目录和源目录数据保持一致</td>
-</tr>
-<tr>
-<td>–password-file=文件名</td>
-<td>使用密码文件(文件内要写密码)</td>
-</tr>
-<tr>
-<td>–port</td>
-<td>指定端口传输</td>
-</tr>
-<tr>
-<td>–modify-window=NUM</td>
-<td>决定文件是否时间相同时使用的时间戳窗口，默认为0</td>
-</tr>
-</tbody></table>
-<hr>
-<blockquote>
-<p><font size="2">1.与scp类似，Rsync可实现”推”、”拉”两种方式;<br>2.rsync不管是推还是拉，推送目录的时候带/和不带/是有区别的。例如/etc/，代表推拉etc目录下所有文件(不包括etc文件夹本身)。/etc，代表推拉包括etc目录整体<br>3.Windows的FAT文件系统(此文件系统有2秒范围内的精确度差异)传输数据时，设置”–modify-window=1”将非常有用(允许文件时间戳有1秒的差异)</font> </p>
-</blockquote>
-<p><strong><em>2、使用方式</em></strong><br><strong><em>2.1、本地方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;目标文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.2、远程方式</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span> <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.3、守护进程方式</em></strong><br>&emsp;&emsp;首先任意创建一个配置文件rsyncd.conf:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">uid = 0</span><br><span class="line">gid = 0</span><br><span class="line">use chroot = no                 <span class="comment"># 禁锢目录，不允许操作指定目录之外的目录</span></span><br><span class="line"><span class="built_in">log</span> file = /rsync.log           <span class="comment"># 日志目录</span></span><br><span class="line">port = 7888                     <span class="comment"># rsync使用的端口</span></span><br><span class="line">auth users = My_Rsync           <span class="comment"># rsync远程传输时的登陆用户</span></span><br><span class="line">secrets file = /rsync.password  <span class="comment"># rsync远程传输时的密码文件</span></span><br><span class="line">reverse lookup = <span class="literal">false</span>         <span class="comment"># DNS反查</span></span><br><span class="line">strict modes = <span class="literal">false</span>            <span class="comment"># 检查secrets file的文件权限是否为600</span></span><br><span class="line"><span class="built_in">read</span> only = <span class="literal">false</span>               <span class="comment"># 关闭只读，对备份数据可读写</span></span><br><span class="line"><span class="comment">###########################</span></span><br><span class="line">[<span class="string">&#x27;模块名&#x27;</span>]</span><br><span class="line">path = /backup/</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;在服务端开启rsync服务:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆用户名&#x27;:&#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync:My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启服务</span></span><br><span class="line">$ rsync --daemon --config=/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭服务直接kill进程即可</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;在客户端执行rsync远程传输文件:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块推送文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块拉取文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-备份还原功能设计"><a href="#0x02-备份还原功能设计" class="headerlink" title="0x02 备份还原功能设计"></a><em>0x02 备份还原功能设计</em></h3><div align="center">
-<img src="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/Rsync备份还原功能设计.png" width="500" height="200">
-<div align="left">  
-
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">https://www.cnblogs.com/zonghan/p/15746569.html</a></p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">展开全文 >></a>
         </p>
       
 
@@ -707,15 +601,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -727,11 +621,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -779,11 +673,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -795,11 +689,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -156,6 +156,184 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-加壳与脱壳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/">加壳与脱壳</a>
+    </h1>
+  
+
+        
+        <a href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/" class="archive-article-date">
+  	<time datetime="2022-06-15T07:43:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-15</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;加壳(Packer)，是指对可执行程序加密或资源压缩的过程，加壳后的程序可以直接运行。而脱壳是加壳的逆向过程，即将已经加过壳的可执行程序恢复到无壳的状态。  </p>
+<h3 id="0x01-加壳"><a href="#0x01-加壳" class="headerlink" title="0x01 加壳"></a><em>0x01 加壳</em></h3><p><strong>目标</strong>: 加壳过程中，对可执行程序加密，可<a target="_blank" rel="noopener" href="https://www.cnblogs.com/maotouyingx/p/16382418.html">防止IDA等静态工具反汇编</a>分析。<br><strong>前提</strong>:<br>&emsp;&emsp;1.准备好一个需要加壳的可执行程序target.exe;<br>&emsp;&emsp;2.准备好一个壳shell.exe(能添加节的可执行程序)。<br><strong>步骤</strong>:<br>&emsp;&emsp;准备好一个加壳工具，其实现的功能如下:<br>&emsp;&emsp;1.将可执行程序target.exe、壳shell.exe加载如内存;<br>&emsp;&emsp;2.向shell.exe添加一个区段(文件大小、区段数量);<br>&emsp;&emsp;3.将shell.exe源OEP修改为新的区段地址;<br>&emsp;&emsp;4.将target.exe代码段加密(如xor加密);<br>&emsp;&emsp;5.在shell.exe新的区段OEP处，添加解密代码(如xor);  </p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-ShellCode" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/06/09/ShellCode/">ShellCode</a>
+    </h1>
+  
+
+        
+        <a href="/2022/06/09/ShellCode/" class="archive-article-date">
+  	<time datetime="2022-06-09T09:06:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-09</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。<br>&emsp;&emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地Shell，也可以是反弹到攻击机器的远程Shell。<br>&emsp;&emsp;ShellCode通常有以下三种存在形式: C生成的ELF文件、汇编生成的.asm文件以及<strong>纯十六进制的.bin文件</strong>。<br>&emsp;&emsp;而黑客偏爱十六进制ShellCode的原因，就是希望核心恶意代码既小又可执行(这允许它在尽可能广泛的情况下使用)。比如我们可以为他加壳、使他作为数据动态地加载到进程中，这样就更不容易被杀软发现。  </p>
+<h3 id="0x01-ShellCode生成"><a href="#0x01-ShellCode生成" class="headerlink" title="0x01 ShellCode生成"></a><em>0x01 ShellCode生成</em></h3><p>&emsp;&emsp;由于目前能力有限，这边只介绍两种简单的<strong>纯十六进制ShellCode生成</strong>方法。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 C&#x2F;C++与objdump</span><br><span class="line">2 ShellCode生成器</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、C/C++与objdump</em></strong><br>&emsp;&emsp;objdump是一款linux下的反编译工具，下面以一个最简单的本地Shell获取代码为例介绍如何用该工具生成纯十六进制的ShellCode:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    execve(<span class="string">&quot;/bin/sh&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;首先生成ELF文件，然后使用objdump生成ShellCode:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line">$ gcc test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用objdump生成ShellCode</span></span><br><span class="line"><span class="comment"># 打印的字符串即为ShellCode</span></span><br><span class="line">$ objdump -d ./<span class="built_in">test</span> |grep <span class="string">&#x27;[0-9a-f]:&#x27;</span>|grep -v <span class="string">&#x27;file&#x27;</span>|cut -f2 -d:|cut -f1-6 -d<span class="string">&#x27; &#x27;</span>|tr -s <span class="string">&#x27; &#x27;</span>|tr <span class="string">&#x27;\t&#x27;</span> <span class="string">&#x27; &#x27;</span>|sed <span class="string">&#x27;s/ $//g&#x27;</span>|sed <span class="string">&#x27;s/ /\\x/g&#x27;</span>|paste -d <span class="string">&#x27;&#x27;</span> -s |sed <span class="string">&#x27;s/^/&quot;/&#x27;</span>|sed <span class="string">&#x27;s/$/&quot;/g&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、ShellCode生成器</em></strong><br>&emsp;&emsp;Github上可以找到<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">ShellCode生成器</a>，可以实现从C/C++代码生成汇编代码(.asm)或十六进制文件(.bin):  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写入源txt文件</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;execve(\&quot;/bin/sh\&quot;, 0, 0);&quot;</span> &gt; sh.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成.asm与.bin文件</span></span><br><span class="line">&amp; ./ShellCodeGenerator -p linux_x64 -r sh.txt -a Assembly.asm -o Shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用hex编辑器查看生成的Shellcode.bin文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-ShellCode运行"><a href="#0x02-ShellCode运行" class="headerlink" title="0x02 ShellCode运行"></a><em>0x02 ShellCode运行</em></h3><p>&emsp;&emsp;为了测试上一步获取到的纯十六进制ShellCode的效果，除了直接使用上述生成器的’-t’参数，我们还可以直接写一个用于测试的.cpp文件:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;code)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;上述的code变量即为生成的十六进制ShellCode，接下来测试其效果:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line"><span class="comment"># code变量内容在数据段，由于NX保护机制存在，无法直接在数据段运行指令</span></span><br><span class="line"><span class="comment"># &#x27;-z execstack&#x27;参数可关闭NX保护机制</span></span><br><span class="line">$ gcc -z execstack test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">$ ./<span class="built_in">test</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-ShellCode加密"><a href="#0x03-ShellCode加密" class="headerlink" title="0x03 ShellCode加密"></a><em>0x03 ShellCode加密</em></h3><p>&emsp;&emsp;对ShellCode加密的方式很多，比如代码混淆、加密算法、虚拟化等。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 xor加密</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、xor加密</em></strong><br>&emsp;&emsp;异或运算符’^’，可以用来判断两个值是否不同。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 ^ 0 = 0</span><br><span class="line">0 ^ 1 = 1</span><br><span class="line">1 ^ 0 = 1</span><br><span class="line">1 ^ 1 = 0</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;异或运算的特点是，如果对一个值连续做两次xor，则会返回这个值本身。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1010异或后结果</span></span><br><span class="line">1010 ^ 1111 = 0101</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0101异或后结果</span></span><br><span class="line">0101 ^ 1111 = 1010</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;上述这种特性使得它可以用于信息的加密。同样也意味着，可以加密我们的十六进制ShellCode:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KEY 0x86</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span>* <span class="title">algorithm_xor</span><span class="params">(<span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> str[], <span class="keyword">int</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> encode_str[<span class="built_in">size</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">size</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        encode_str[i] =  str[i] ^ KEY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* ret = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="built_in">size</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(ret, encode_str, <span class="built_in">size</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* encode_str;</span><br><span class="line">    encode_str = algorithm_xor(code, <span class="keyword">sizeof</span>(code));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">https://github.com/NytroRST/ShellcodeCompiler</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/06/09/ShellCode/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-进程间通信与线程间通信" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -233,233 +411,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/06/01/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux文件事件监控" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">Linux文件事件监控</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/" class="archive-article-date">
-  	<time datetime="2022-04-22T07:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-22</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在内核态很容易监控文件的创建、删除、修改等事件，但是Linux也提供了一些工具，方便使用者在用户态仍能够监控文件事件。从发展历程来看，主要经历了dnotify、inotify以及fanotify阶段。<br>&emsp;&emsp;Linux的文件事件监听的原理并不复杂，简单说就是当一个应用层的进程操作一个目录或文件时，会触发系统调用，此时内核就可以把该进程对文件的操作上报给应用层的监听进程。  </p>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/用户态文件事件监控.jpg" width="500" height="250">
-<div align="left">  
-
-<h3 id="0x01-dnotify"><a href="#0x01-dnotify" class="headerlink" title="0x01 dnotify"></a><em>0x01 dnotify</em></h3><ul>
-<li>dnotify<ul>
-<li>支持内核: 内核2.4.0以上版本</li>
-<li>缺陷:<ul>
-<li>只能监控文件夹，并且对每个目标文件夹都需要添加监控点</li>
-<li>文件夹umount时有影响</li>
-<li>使用信号的方式通知文件系统事件</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x02-inotify"><a href="#0x02-inotify" class="headerlink" title="0x02 inotify"></a><em>0x02 inotify</em></h3><ul>
-<li>inotify<ul>
-<li>支持内核: 内核2.6.13以上版本</li>
-<li>优点:<ul>
-<li>既可以监视文件，也可以监视目录</li>
-<li>不打开目标对象描述符，所以目标umount时不影响，且生成umount事件通知</li>
-<li>使用系统调用的方式通知文件系统事件，效率高于dnotify</li>
-</ul>
-</li>
-<li>缺点:<ul>
-<li>监控文件夹时不能同时监控子文件夹或子文件，需要添加监控点</li>
-<li>监控点有上限，如果监控目录过深，会影响监控能力</li>
-<li>只能记录或通知文件事件，不能阻止该操作</li>
-<li>不能记录更详细的信息，比如对文件执行操作的进程PID</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="0x03-fanotify"><a href="#0x03-fanotify" class="headerlink" title="0x03 fanotify"></a><em>0x03 fanotify</em></h3><ul>
-<li>fanotify<ul>
-<li>支持内核: 内核2.6.37以上版本</li>
-<li>优点:<ul>
-<li>能同时监控子文件夹或子文件</li>
-<li>无限监控点</li>
-<li>允许介入并改变文件事件的行为</li>
-<li>获取更详细的信息</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div align="center">
-<img src="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/fanotify监控流程.jpg" width="450" height="250">
-<div align="left">  
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man7/fanotify.7.html">https://www.man7.org/linux/man-pages/man7/fanotify.7.html</a><br>[2]<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/186027813">https://zhuanlan.zhihu.com/p/186027813</a></p>
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/22/Linux%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9B%91%E6%8E%A7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Ping" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/04/13/Ping/">Ping</a>
-    </h1>
-  
-
-        
-        <a href="/2022/04/13/Ping/" class="archive-article-date">
-  	<time datetime="2022-04-13T01:28:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-13</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Ping命令常在运维过程中被使用，其主要用于查看网络状况，主要检查两个指标:1.是否超时; 2.延迟多少。<br>&emsp;&emsp;Ping命令不是依托于 TCP或者 UDP这种传输层协议的，而是依托于ICMP协议(该协议是为了更高效的转发IP数据包)实现的。  </p>
-<h3 id="0x01-数据包构成"><a href="#0x01-数据包构成" class="headerlink" title="0x01 数据包构成"></a><em>0x01 数据包构成</em></h3><p>&emsp;&emsp;Ping命令在执行时主要涉及到ICMP包与ARP包。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 ICMP包结构</span><br><span class="line">2 ARP包结构</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、ICMP包结构</em></strong><br>&emsp;&emsp;ICMP协议(Internet控制报文协议)，ICMP包的内容是放在IP数据包的数据部分里的。  </p>
-<div align="center">
-<img src="/2022/04/13/Ping/ICMP包结构.png" width="400" height="200">
-<div align="left">  
-
-<p><strong><em>2、ARP包结构</em></strong><br>&emsp;&emsp;ARP(地址解析协议)，实现通过IP地址得知其网卡的MAC地址即物理地址。  </p>
-<div align="center">
-<img src="/2022/04/13/Ping/ARP包结构.jpg" width="500" height="300">
-<div align="left">  
-
-<h3 id="0x02-Ping原理"><a href="#0x02-Ping原理" class="headerlink" title="0x02 Ping原理"></a><em>0x02 Ping原理</em></h3><p>&emsp;&emsp;Ping使用过程中的大致流程如下:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.A电脑广播发起ARP请求，查询B电脑(192.168.2.179)的MAC地址</span><br><span class="line">2.B电脑应答ARP请求，向A电脑发起单向应答，告诉A电脑自己的MAC地址为 90:A4:DE:C2:DF:FE</span><br><span class="line">3.A电脑发起ping请求，B电脑响应ping请求</span><br><span class="line">4.B电脑广播发起ARP请求，查询A电脑的MAC地址</span><br></pre></td></tr></table></figure>
-
-<div align="center">
-<img src="/2022/04/13/Ping/Ping流程.png" width="600" height="250">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">注意: 在Ping请求结束后B电脑又发起一次ARP请求，有以下原因:<br>1.为了防止ARP过期，结束后重新更新下 ARP缓存，保证下次请求能去往正确的路径<br>2.提前缓存最新的ARP结果就是节省了下次ping的ARP时间</font> </p>
-</blockquote>
-</div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/04/13/Ping/">展开全文 >></a>
         </p>
       
 
@@ -610,15 +561,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,11 +581,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -682,11 +633,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -698,11 +649,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

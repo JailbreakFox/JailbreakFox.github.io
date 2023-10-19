@@ -156,6 +156,882 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-单元测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">单元测试工具</a>
+    </h1>
+  
+
+        
+        <a href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2020-11-19T01:49:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-19</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;单元测试工具能够快速测试代码模块的可用性，常用工具有CTest、QTest、GTest</p>
+<h3 id="0x01-CTest"><a href="#0x01-CTest" class="headerlink" title="0x01 CTest"></a><em>0x01 CTest</em></h3><p>&emsp;&emsp;ctest是CMake提供的运行单元测试的工具，在使用CMakeLists.txt文件编译工程的时候，CTest会自动configure、build、test和展现测试结果。<br>&emsp;&emsp;ctest有两个模式：</p>
+<ul>
+<li>模式一：使用CMake configure和build工程，在CMakeLists.txt，使用特殊的命令创建tests。使用CTest来执行那些测试。</li>
+<li>模式二：使用CTest来执行一个script，这个script的语法必须和CMakeLists.txt相同。</li>
+</ul>
+<p>&emsp;&emsp;使用方法：<br>&emsp;&emsp;在CMakeLists.txt使用include(CTest)和include(Dart)来导入CTest模块和开启ctest。使用add_test()来添加一个测试程序，测试程序是一个普通的二进制，只不过内部运行的是qtest或者gtest编写的测试用例。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">add_executable(tests tests/test.cpp)</span><br><span class="line"></span><br><span class="line">add(NAME tests COMMAND $&lt;TARGET_FILE:tests&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x01-QTest"><a href="#0x01-QTest" class="headerlink" title="0x01 QTest"></a><em>0x01 QTest</em></h3><p>&emsp;&emsp;Qtest是Qt提供的单元测试框架，Qt Test是用于对基于Qt的应用程序和库进行单元测试的框架。Qt Test提供了单元测试框架中常见的所有功能以及用于测试图形用户界面的扩展。<br>&emsp;&emsp;Qt测试旨在简化基于Qt的应用程序和库的单元测试的编写：</p>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>轻量</td>
+<td>Qt Test大约有6000行代码和60个导出符号组成</td>
+</tr>
+<tr>
+<td>自成体系</td>
+<td>Qt Test仅需要Qt Core模块中的几个符号即可进行非GUI测试</td>
+</tr>
+<tr>
+<td>快速测试</td>
+<td>Qt Test不需要特殊的测试运行程序，没有特殊的测试注册</td>
+</tr>
+<tr>
+<td>数据驱动测试</td>
+<td>可以使用不同的数据进行多次的测试</td>
+</tr>
+<tr>
+<td>基本的GUI测试</td>
+<td>Qt Test提供了用于鼠标和键盘的模拟功能</td>
+</tr>
+<tr>
+<td>标杆管理</td>
+<td>Qt Test支持基准测试，并提供多个测量后端</td>
+</tr>
+<tr>
+<td>IDE友好</td>
+<td>Qt Test输出可以由Qt Creator、Visual Studio等IDE解释的消息</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>错误报告是线程安全和原子的</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>模板的广泛使用可以防止隐式类型转换引起的错误</td>
+</tr>
+<tr>
+<td>易于扩展</td>
+<td>可以将自定义类型轻松添加到测试数据和测试输出中</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;QVERIFY() 用于验证数据是否正确。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QVERIFY(1 == 1);</span><br><span class="line">QVERIFY2(1 != 1, <span class="string">&quot;1不等于1&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QFETCH_GLOBAL() 该宏从全局数据表中的一行中获取类型类型为name的变量。 名称和类型必须与全局数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。<br>&emsp;&emsp;QFETCH() 宏会在堆栈上创建一个类型为name的本地变量。 名称和类型必须与测试数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QFETCH(QString, aString);</span><br><span class="line">QFETCH_GLOBAL(QLocale, locale);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QCOMPARE宏用于判断两个值是否相等，如果实际值和预期值匹配，将会继续运行，否则将失败记录在测试日至中，并且测试将被终止，不会尝试任何后续操作。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">QCOMPARE(QString(<span class="string">&quot;hello&quot;</span>).toUpper(), QString(<span class="string">&quot;HELLO&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过在包含_data()的函数中调用QTest::addColumn和QTest::newRow向测试用例增加数据，并通过QFETCH宏在测试用例中访问数据。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void TestQString::toInt_data()</span><br><span class="line">&#123;</span><br><span class="line">    QTest::addColumn&lt;QString&gt;(<span class="string">&quot;aString&quot;</span>);</span><br><span class="line">    QTest::addColumn&lt;int&gt;(<span class="string">&quot;expected&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    QTest::newRow(<span class="string">&quot;positive value&quot;</span>) &lt;&lt; <span class="string">&quot;42&quot;</span> &lt;&lt; 42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;negative value&quot;</span>) &lt;&lt; <span class="string">&quot;-42&quot;</span> &lt;&lt; -42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;zero&quot;</span>) &lt;&lt; <span class="string">&quot;0&quot;</span> &lt;&lt; 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void TestQString::toInt()</span><br><span class="line">&#123;</span><br><span class="line">     QFETCH(QString, aString);</span><br><span class="line">     QFETCH(int, expected);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     QCOMPARE(aString.toInt(), expected);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;要创建测试，需要派生自QObject，并添加一个或多个专用槽函数。每个专用槽函数都是测试中的一个测试功能且必须为private。函数命名方法以casen_函数名或者以test结尾的方式。<br>&emsp;&emsp;使用QTest::qExec()可用于执行测试对象中的所有测试功能。<br>&emsp;&emsp;此外，还可以定义不用于测试功能的专用槽函数。如果存在，它们将由测试框架执行，并用于初始化和清除整个测试或当前的测试功能。</p>
+<ul>
+<li>initTestCase() 将在第一个测试功能执行之前被调用</li>
+<li>initTestCase_data() 将被调用以创建全局测试数据表</li>
+<li>cleanupTestCase() 在最后一个测试函数执行后被调用</li>
+<li>init() 将在每个测试功能执行之前被调用</li>
+<li>cleanup() 将在每个测试函数之后调用</li>
+</ul>
+<p>&emsp;&emsp;使用initTestCase()准备测试。每次测试都应使系统处于可用状态，因此可以重复运行。清理操作应在cleanupTestCase()中处理，因此即使测试失败也可以运行清理操作。<br>&emsp;&emsp;使用init()创建测试功能。每个测试功能都应使系统保持可用状态，以便可以重复运行。清理操作应在cleanup()中，即使测试功能失败并提前退出，清理动作也可以运行。<br>&emsp;&emsp;另外，可以使用RAII,并在析构函数中调用清除操作，以确保他们在测试函数返回且对象移出作用域时发生。<br>&emsp;&emsp;如果initTestCase()失败，将不执行任何测试功能。如果init()失败，则不执行以下测试功能，测试将继续进行下一个测试功能。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class Test : public QObject &#123;</span><br><span class="line">  Q_OBJECT</span><br><span class="line">private:</span><br><span class="line">  bool <span class="function"><span class="title">verify</span></span>() &#123;</span><br><span class="line">    <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">private slots:</span><br><span class="line">  void <span class="function"><span class="title">initTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;init test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">firstTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(<span class="literal">true</span>);</span><br><span class="line">    QCOMPARE(1, 1);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">secondTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(verify());</span><br><span class="line">    QVERIFY(1 != 2);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">cleanupTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;clean test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;最后，如果测试类具有静态且公共的void initMain()方法，则在实例化QApplication对象之前，由QTEST_MAIN宏调用该方法。例如，这允许设置应用程序的属性，例如Qt::AA_DisableHighDpiScaling。这是在Qt5.14添加的。<br>&emsp;&emsp;CMake还有其他优点。例如，几乎可以毫不费力地使用CDash将测试运行的结果发布到Web服务器上。<br>&emsp;&emsp;CTest可以扩展到非常不同的单元测试框架，并且可以与QTest一起使用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">project(mytest LANGUAGES CXX)</span><br><span class="line"></span><br><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">find_package(Qt5 COMPONENTS Test REQUIRED)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_INCLUDE_CURRENT_DIR ON)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_AUTOMOC ON)</span><br><span class="line"></span><br><span class="line">add_executable(mytest tst_mytest.cpp)</span><br><span class="line">add_test(NAME mytest COMMAND mytest)</span><br><span class="line"></span><br><span class="line">target_link_libraries(mytest PRIVATE Qt5::</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-GTest"><a href="#0x02-GTest" class="headerlink" title="0x02 GTest"></a><em>0x02 GTest</em></h3><p>&emsp;&emsp;google test(gtest)是google公司推出的c++单元测试框架，基于xUnit架构，并且支持Linux、Windows和mac，并且支持任何类型的测试和模拟，而不仅仅是单元测试。<br>&emsp;&emsp;当使用gtest时，通过编写断言来检查条件是否为真。断言的结果可能是成功、非致命失败或者致命失败。如果发生致命故障，将终止当前功能，否则将继续运行。<br>&emsp;&emsp;一个测试套件包含一个或者多个测试。当测试套件中的多个测试需要共享通用对象和子例程时，可以将他们放入一个测试桶中。<br>&emsp;&emsp;一个测试程序可以包含多个测试套件。<br>&emsp;&emsp;gtest断言类似于函数调用的宏，可以通过断言其行为来测试类或者函数。断言失败时，gtest会输出断言的源文件和行号位置以及失败消息。还可以提供自定义失败消息，该消息将会附加到gtest的消息之后。<br>&emsp;&emsp;断言成对出现，测试相同的事物，但是对当前函数有不同的影响。ASSERT_<em>版本失败时会产生致命错误，并终止当前功能。EXPECT_</em>会产生非致命错误，不会导致当前测试失败。通常EXPECT_<em>是首选，因为他们允许在测试中报告多个鼓掌，但是如果在断言失败时继续运行将没有意义时应当使用ASSERT_</em>。<br>&emsp;&emsp;由于ASSERT_*失败会从当前函数立即返回，可能会跳过其后的清理代码，导致内存泄漏。<br>&emsp;&emsp;基本断言可以进行基本的真/假条件测试</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_TRUE(condition);</td>
+<td>EXPECT_TRUE(condition);</td>
+<td>condition是真的</td>
+</tr>
+<tr>
+<td>ASSERT_FALSE(condition);</td>
+<td>EXPECT_FLASE(condition);</td>
+<td>condition是假的</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;请记住，当它们失败时，将导致ASSERT_<em>致命故障并从当前函数返回，而当它们发生EXPECT_</em>非致命故障时，将允许该函数继续运行。无论哪种情况，断言失败都意味着其包含测试失败。<br>&emsp;&emsp;该组中的断言比较两个C字符串。如果要比较两个string对象，请改用EXPECT_EQ，EXPECT_NE等。</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_STREQ(str1,str2);</td>
+<td>EXPECT_STREQ(str1,str2);</td>
+<td>这两个C字符串的内容相同</td>
+</tr>
+<tr>
+<td>ASSERT_STRNE(str1,str2);</td>
+<td>EXPECT_STRNE(str1,str2);</td>
+<td>两个C字符串的内容不同</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASEEQ(str1,str2);</td>
+<td>EXPECT_STRCASEEQ(str1,str2);</td>
+<td>两个C字符串的内容相同，忽略大小写</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASENE(str1,str2);</td>
+<td>EXPECT_STRCASENE(str1,str2);</td>
+<td>两个C字符串的内容不同，忽略大小写</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;注意，断言名称中的“ CASE”表示忽略大小写。一个NULL 指针和一个空字符串被认为是不同的。<br>&emsp;&emsp;<em>STREQ</em>并<em>STRNE</em>接受宽C字符串（wchar_t*）。如果两个宽字符串的比较失败，则它们的值将打印为UTF-8窄字符串。<br>&emsp;&emsp;创建测试：  </p>
+<ul>
+<li>1.使用TEST()宏定义和命名测试功能。这些是没有返回值的普通C++函数。</li>
+<li>2.在此函数，要与包含的所有有效C++语句一起使用各种gtest断言来检查。</li>
+<li>3.测试结果由断言确定，如果测试中的任何声明失败（致命或非致命），或者测试崩溃，整个测试都会失败，否则测试应当成功。</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TEST(TestSuiteName, TestName) &#123;</span><br><span class="line">  ...测试代码...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;TEST()函数第一个参数是测试套件的名称，第二个参数是测试套件内的测试名称。这两个名称都必须是有效的C++标识符，并且不应包含任何下划线。来自不同测试套件的测试可以具有相同的名称。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtest.html">https://doc.qt.io/qt-5/qtest.html</a><br>[1]<a target="_blank" rel="noopener" href="https://github.com/google/googletest/blob/master/googletest/docs/primer.md">https://github.com/google/googletest/blob/master/googletest/docs/primer.md</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Linux文件系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">Linux文件系统</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+  	<time datetime="2020-09-27T07:36:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-27</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;从终端窗口浏览Linux文件系统可以使用 tree 工具来显示Linux目录树的地图。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tree使用方法</span></span><br><span class="line">tree <span class="string">&#x27;文件夹路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只显示一级目录</span></span><br><span class="line"><span class="comment"># -L选项代表树显示的级数</span></span><br><span class="line">tree -L 1 /</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux文件系统.png">
+<div align="left">  
+
+<h3 id="0x01-目录结构"><a href="#0x01-目录结构" class="headerlink" title="0x01 目录结构"></a><em>0x01 目录结构</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1 /bin</span><br><span class="line">2 /boot</span><br><span class="line">3 /dev</span><br><span class="line">4 /etc</span><br><span class="line">5 /home</span><br><span class="line">6 /lib</span><br><span class="line">7 /media</span><br><span class="line">8 /mnt</span><br><span class="line">9 /opt</span><br><span class="line">10 /proc</span><br><span class="line">11 /root</span><br><span class="line">12 /run</span><br><span class="line">13 /sbin</span><br><span class="line">14 /usr</span><br><span class="line">15 /srv</span><br><span class="line">16 /sys</span><br><span class="line">17 /tmp</span><br><span class="line">18 /var</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1. /bin</em></strong><br>&emsp;&emsp;/bin 是包含二进制文件的目录，即可以运行的某些应用程序和程序。您将在此目录中找到上面提到的ls程序，以及用于创建和删除文件和目录，在文件中移动它们的其他基本工具，等等。文件系统树的其他部分中还有更多的 bin 目录，但稍后我们将讨论它们。  </p>
+<p><strong><em>2. /boot</em></strong><br>&emsp;&emsp;/boot 目录包含启动系统所需的文件。如果您弄乱了其中的一个文件，则可能无法运行Linux，并且很难修复。另一方面，必须具有超级用户权限才能执行此操作。</p>
+<p><strong><em>3. /dev</em></strong><br>&emsp;&emsp;/dev 包含设备文件,其中许多是在启动时甚至在运行时生成的。例如，如果您将新的网络摄像头或USB随身碟插入计算机，则会在此处自动弹出一个新的设备条目。<br>&emsp;&emsp;/dev/char/ 字符设备的软链接存放目录，实际查看可使用’ls -l /dev/char’命令<br>&emsp;&emsp;/dev/block/ 块设备的软链接存放目录，实际查看可使用’ls -l /dev/block’命令</p>
+<blockquote>
+<p><font size="2">字符设备：提供连续的数据流，应用程序可以顺序读取，通常不支持随机存取。相反，此类设备支持按字节自/字符来读写数据。举例来说，百键盘、串口、调制解调器都是典型的字符设备。<br>块设备：应用程序可以随机访问设备数据，程序可自行确定读取数据的位置。硬盘、软盘、CD-ROM驱动器和闪存都是典型度的块设备，应用程序可以寻址磁盘上的任何位置，并由此读取数据。此外，数据的读写知只能以块(通常是512B)的倍数进行。与字符设备不同，块设备并不支持基于字符的寻址。<br>这两种类型的设备的根本区别在于它们是否可以被随机访问。字符设备只能顺序读取道，块设备可以随机读取。</font>  </p>
+</blockquote>
+<p><strong><em>4. /etc</em></strong><br>&emsp;&emsp;/etc 包含大多数系统范围的配置文件。例如，包含系统名称，用户及其密码，网络上的计算机名称以及何时以及在何处安装硬盘上的分区的文件均位于此处。</p>
+<p><strong><em>5. /home</em></strong><br>&emsp;&emsp;/home 是存放用户个人目录的位置。</p>
+<p><strong><em>6. /lib</em></strong><br>&emsp;&emsp;/lib 是库所在的位置,库是包含应用程序可以使用的代码的文件。它们包含应用程序用来在桌面上绘制窗口，控制外围设备或将文件发送到硬盘的代码片段。</p>
+<p><strong><em>7. /media</em></strong><br>&emsp;&emsp;/media 目录用于自动挂载外部存储。</p>
+<p><strong><em>8. /mnt</em></strong><br>&emsp;&emsp;/mnt 目录,可以在此处手动安装存储设备或分区，它并不经常被使用。</p>
+<p><strong><em>9. /opt</em></strong><br>&emsp;&emsp;/opt 目录中编译软件,应用程序将最终在 /opt/bin 目录中，并将库文件存放在 /opt/lib 目录中。<br>注意：应用程序和库存放的另一个位置是 /usr/local ，在这里安装软件时，还将有 /usr/local/bin 和 /usr/local/lib 目录。开发人员如何配置用于控制编译和安装过程的文件，这决定了将哪种软件运往何处。</p>
+<p><strong><em>10. /proc</em></strong><br>&emsp;&emsp;/proc 就像 /dev 是一个虚拟目录，它包含有关您的计算机的信息。例如有关您的CPU和Linux系统正在运行的内核的信息。<br>&emsp;&emsp;/proc/stat 提供的是系统的CPU和任务统计信息。<br>&emsp;&emsp;/proc/net/tcp 文件提供了tcp的连接信息。<br>&emsp;&emsp;/proc/‘pid’/stat 提供的是进程的CPU和任务统计信息。<br>&emsp;&emsp;/proc/‘pid’/limits 提供该进程的资源限制。<br>&emsp;&emsp;/proc/‘pid’/sessionid 提供的是拉起该进程的终端会话ID<br>&emsp;&emsp;/proc/cpuinfo cpu信息<br>&emsp;&emsp;/proc/pci 板卡信息，可用lspci命令查看<br>&emsp;&emsp;/proc/meminfo 内存信息<br>&emsp;&emsp;/proc/bus/usb/devices USB设备信息<br>&emsp;&emsp;/proc/bus/input/devices 键盘和鼠标信息<br>&emsp;&emsp;/proc/interrupts 各设备中断请求<br>&emsp;&emsp;/proc/devices 所有硬件设备信息<br>&emsp;&emsp;/proc/swaps 交换空间大小  </p>
+<p><strong><em>11. /root</em></strong><br>&emsp;&emsp;/root 是系统超级用户的主目录，它与其他用户主目录分开。</p>
+<p><strong><em>12. /run</em></strong><br>&emsp;&emsp;/run 目录，系统进程使用它来存储临时数据，不要随意修改该文件。</p>
+<p><strong><em>13. /sbin</em></strong><br>&emsp;&emsp;/sbin 与 /bin 相似，但是 /sbin 包含仅超级用户所需的应用程序。/sbin 通常包含可以安装内容，删除内容和格式化内容的工具，需小心使用。</p>
+<p><strong><em>14. /usr</em></strong><br>&emsp;&emsp;/usr 目录是UNIX早期最初保留用户主目录的位置。现在，该目录包含应用程序、库文件、文档、壁纸、图表以及其他应用和服务共享的文件。<br>&emsp;&emsp;/usr/bin、/usr/sbin、/usr/lib 目录内包含了用户安装的程序、库文件。</p>
+<p><strong><em>15. /srv</em></strong><br>&emsp;&emsp;/srv 目录包含了服务器数据。如果你在运行网页服务器，你的HTML文件会进入 /srv/http(或/srv/www)目录。如果你在运行FTP服务，你的文件会进入 /srv/ftp 目录。</p>
+<p><strong><em>16. /sys</em></strong><br>&emsp;&emsp;/sys 是一个虚拟目录(类似 /proc 和 /dev)，并且包含了远程连接设备的信息。<br>&emsp;&emsp;比如可以通过修改文件 /sys/devices/pci0000:00/0000:00:02.0/drm/card1/card1-eDP-1/intel_backlight/brightness 改变屏幕亮度。不要轻易改动 /sys 目录。</p>
+<p><strong><em>17. /tmp</em></strong><br>&emsp;&emsp;/tmp 包含正在运行的应用程序生成的临时文件。文件和目录经常包含应用程序当前不需要但以后可能需要的数据。</p>
+<p><strong><em>18. /var</em></strong><br>&emsp;&emsp;/var 目录存放的是经常改变内容的文件，比如日志存放于 /var/log 。</p>
+<h3 id="0x02-常用目录"><a href="#0x02-常用目录" class="headerlink" title="0x02 常用目录"></a><em>0x02 常用目录</em></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已有的shell查看</span></span><br><span class="line">cat /etc/shells</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户的配置文件</span></span><br><span class="line">/etc/passwd             <span class="comment"># 用户的配置文件， 保存用户账户的基本信息</span></span><br><span class="line">/etc/shadow             <span class="comment"># 用户影子口令文件</span></span><br><span class="line">/etc/group              <span class="comment"># 用户组配置文件</span></span><br><span class="line">/etc/gshadow            <span class="comment"># 用户组的影子文件</span></span><br><span class="line">/etc/default/useradd    <span class="comment"># 使用useradd添加用户时需要调用的一个默认的配置文件</span></span><br><span class="line">/etc/login.defs         <span class="comment"># 定义创建用户时需要的一些用户的配置文件</span></span><br><span class="line">/etc/skel/              <span class="comment"># 存放新用户配置文件的目录</span></span><br><span class="line">/etc/systemd/           <span class="comment"># Linux下一种init软件 systemd的配置文件夹</span></span><br><span class="line">/etc/lightdm/           <span class="comment"># 轻量级 Linux 桌面显示管理器 lightdm的配置文件夹</span></span><br><span class="line">/etc/audit/auditd.conf  <span class="comment"># 日志审计配置文件</span></span><br><span class="line">/etc/apt/sources.list   <span class="comment"># debian系统源</span></span><br><span class="line">/etc/sudoers            <span class="comment"># 超级权限账户信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake存放.cmake文件的位置</span></span><br><span class="line">/usr/share/<span class="string">&#x27;cmake-version&#x27;</span>/Modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核头文件存放位置</span></span><br><span class="line">/usr/src/linux-headers-...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定时计划路径</span></span><br><span class="line">/var/spool/cron</span><br><span class="line"><span class="comment"># 任务计划表存储路径</span></span><br><span class="line"><span class="comment"># 适用于所有用户 - /var/spool/cron/crontab</span></span><br><span class="line"><span class="comment"># 适用于单个用户 - /var/spool/cron/crontabs/&#x27;用户名&#x27;</span></span><br><span class="line"><span class="comment"># 适用于所有用户(系统目录) - /etc/cron.d/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.daily/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.deny/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.hourly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.weekly/&#x27;任务名&#x27;</span></span><br><span class="line"><span class="comment">#                          /etc/cron.monthly/&#x27;任务名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务栏快捷方式目录</span></span><br><span class="line">/usr/share/applications</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存放自系统启动以来描述系统信息的文件</span></span><br><span class="line"><span class="comment"># 比如可以存放应用放双开的.pid文件</span></span><br><span class="line">/var/run </span><br></pre></td></tr></table></figure>
+
+<p><strong><em>常见日志文件路径</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/var/log/messages</td>
+<td>系统启动后的信息和错误日志</td>
+</tr>
+<tr>
+<td>/var/log/secure</td>
+<td>与安全相关的日志信息</td>
+</tr>
+<tr>
+<td>/var/log/maillog</td>
+<td>与邮件相关的日志信息</td>
+</tr>
+<tr>
+<td>/var/log/cron</td>
+<td>与定时任务相关的日志信息</td>
+</tr>
+<tr>
+<td>/var/log/spooler</td>
+<td>与UUCP和news设备相关的日志信息</td>
+</tr>
+<tr>
+<td>/var/log/boot.log</td>
+<td>守护进程启动和停止相关的日志消息</td>
+</tr>
+<tr>
+<td>/var/log/wtmp</td>
+<td>永久记录每个用户登录、注销及系统的启动、停机的事件</td>
+</tr>
+<tr>
+<td>/var/run/utmp</td>
+<td>记录当前正在登录系统的用户信息(可用who命令查看)，通常为/run/utmp的软链接</td>
+</tr>
+<tr>
+<td>/var/log/btmp</td>
+<td>记录失败的登录尝试信息</td>
+</tr>
+<tr>
+<td>/var/log/dmesg</td>
+<td>记录开机日志以及系统故障信息</td>
+</tr>
+<tr>
+<td>/var/log/crash</td>
+<td>系统崩溃日志</td>
+</tr>
+<tr>
+<td>/var/log/audit/audit.log</td>
+<td>系统审计日志</td>
+</tr>
+<tr>
+<td>~/.xession-error</td>
+<td>记录登录桌面失败的信息</td>
+</tr>
+</tbody></table>
+<h3 id="0x03-环境变量"><a href="#0x03-环境变量" class="headerlink" title="0x03 环境变量"></a><em>0x03 环境变量</em></h3><p>&emsp;&emsp;环境变量分为系统级变量和用户级环境变量。关于系统级变量的配置文件如下:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/profile</span></span><br><span class="line"><span class="comment"># 在系统启动后第一个用户登录时运行</span></span><br><span class="line"><span class="comment"># 并从/etc/profile.d目录的配置文件中搜集shell的设置</span></span><br><span class="line"><span class="comment"># 使用该文件配置的环境变量将应用于登录到系统的每一个用户。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/bashrc（Ubuntu和Debian中是/etc/bash.bashrc）</span></span><br><span class="line"><span class="comment"># 在 bash shell 打开时运行(注意，只针对bash shell)，修改该文件配置的环境变量将会影响所有用户使用的bash shell。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/environment</span></span><br><span class="line"><span class="comment"># 在系统启动时运行，用于配置与系统运行相关但与用户无关的环境变量</span></span><br><span class="line"><span class="comment"># 修改该文件配置的环境变量将影响全局。</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;关于用户级变量的配置文件如下:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.profile（推荐首选）</span></span><br><span class="line"><span class="comment"># 当用户登录时执行，每个用户都可以使用该文件来配置专属于自己使用的shell信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bashrc（不推荐）</span></span><br><span class="line">当用户登录时以及每次打开新的shell时该文件都将被读取</span><br><span class="line">不推荐在这里配置用户专用的环境变量，因为每开一个shell，该文件都会被读取一次，效率肯定受影响</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bash_profile 或 ~./bash_login - </span></span><br><span class="line">如果有其中的一个文件存在的话, 当启动的是一个 登录shell时，Bash 会执行该文件而不会执行~/.profile</span><br><span class="line">如果两个文件都存在的话，Bash 将会优先执行~/.bash_profile 而不是~/.bash_login</span><br><span class="line">然而, 默认情况下，这些文件不会影响图形会话</span><br><span class="line"></span><br><span class="line"><span class="comment"># ~/.bash_logout</span></span><br><span class="line">当每次退出系统(退出bash shell)时执行该文件</span><br><span class="line"></span><br><span class="line"><span class="comment"># 总结</span></span><br><span class="line">一般情况下，Linux加载环境变量配置文件的执行顺序为</span><br><span class="line">==&gt; /etc/profile</span><br><span class="line">==&gt; ~/.bash_profile | ~/.bash_login | ~/.profile</span><br><span class="line">==&gt; ~/.bashrc</span><br><span class="line">==&gt; /etc/bashrc</span><br><span class="line">==&gt; ~/.bash_logout</span><br><span class="line">方法一: 在终端添加如下命令，但是终端关闭后将失效</span><br><span class="line">方法二: 可以在上述文件中添加如下命令</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&#x27;环境变量路径&#x27;</span>:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当然如果只是希望使可执行文件能直接使用，推荐软链接的方式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为原文件创造一个新的指针，类似于Windows的快捷方式</span></span><br><span class="line"><span class="comment"># 注意！这边的路径最好都写绝对路径，不然链接不上</span></span><br><span class="line"><span class="comment"># ln -s /home/dev/cmake /usr/bin/</span></span><br><span class="line"><span class="comment"># 使用ls -lah /usr/bin/ |grep cmake可以查看到链接情况</span></span><br><span class="line">ln -s <span class="string">&#x27;原文件路径&#x27;</span> <span class="string">&#x27;快捷方式路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-依赖"><a href="#0x04-依赖" class="headerlink" title="0x04 依赖"></a><em>0x04 依赖</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 三方库使用条件</span><br><span class="line">2. 编译时依赖</span><br><span class="line">3. 运行时依赖</span><br><span class="line">4. 依赖库与头文件查找顺序</span><br><span class="line">5. Linux动态库与静态库</span><br><span class="line">6. Windows动态库与静态库</span><br><span class="line">7. libc.so.6&#x2F;libstdc++.so.6</span><br><span class="line">8. 其他相关知识</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、三方库使用条件</em></strong><br>&emsp;&emsp;在编译时，第三方库必须要有静态库或动态库以及头文件。在运行时，第三方库只需要有静态库或动态库即可。  </p>
+<p><strong><em>2、编译时依赖</em></strong><br>&emsp;&emsp;关于编译时依赖查看<a target="_blank" rel="noopener" href="https://jailbreakfox.github.io/2019/04/29/CMake/">CMAKE相关文章</a>。</p>
+<p><strong><em>3、运行时依赖</em></strong><br>&emsp;&emsp;Windows进程运行时依赖于当前文件夹与环境变量。<br>&emsp;&emsp;Linux进程运行时依赖于RPATH，关于进程的依赖可通过下面两个命令获取:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可执行程序的依赖</span></span><br><span class="line">ldd <span class="string">&#x27;可执行程序路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看可执行程序的RPATH</span></span><br><span class="line">readelf -d <span class="string">&#x27;可执行程序路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、依赖库与头文件查找顺序</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc 编译程序时查找SO顺序</span></span><br><span class="line">    1.gcc 编译时参数-L指定的路径</span><br><span class="line">    2.环境变量 LIBRARY_PATH LD_LIBRARY_PATH</span><br><span class="line">    3.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># Linux 程序运行时查找SO顺序</span></span><br><span class="line">    1.环境变量 LD_LIBRARY_PATH</span><br><span class="line">    2.gcc 编译时指定的运行时库路径 -Wl,-rpath</span><br><span class="line">    3.ldconfig 设置文件 /etc/ld.so.conf /etc/ld.so.conf.d/</span><br><span class="line">    4.系统默认库位置 /lib /usr/lib</span><br><span class="line"><span class="comment"># 包含目录顺序</span></span><br><span class="line">    1.-I 指定的路径</span><br><span class="line">    2./usr/include</span><br><span class="line">    3./usr/<span class="built_in">local</span>/include</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>5、Linux动态库与静态库</em></strong><br>&emsp;&emsp;1).进程依赖动态库，则编译时需要.so文件与头文件，运行时需要.so文件;<br>&emsp;&emsp;2).进程依赖静态库，则编译时需要.a文件与头文件，运行时无需其他文件（本质是把符号表都合入到进程中）;<br>&emsp;&emsp;3).进程依赖静态库，但是静态库本身又依赖其他动态库，则编译时需要所有.a文件、.so文件以及头文件，运行时需要静态库依赖的.so文件。</p>
+<p><strong><em>6、Windows动态库与静态库</em></strong><br>&emsp;&emsp;1).后缀.dll文件为动态库;<br>&emsp;&emsp;2).后缀.lib文件分为静态库.lib与导入库.lib，前者与Linux系统下的一样本身就包含了实际执行代码、符号表等等，后者的导入库只包含了地址符号表等确保程序找到对应函数的一些基本地址信息。</p>
+<p><strong><em>7、libc.so.6/libstdc++.so.6</em></strong><br>&emsp;&emsp;这两个分别是c与c++的运行时库。</p>
+<p><strong><em>8、其他相关知识</em></strong><br>&emsp;&emsp;库文件的文件头中是会含有库名相关的信息的(比如“libc.so.6”，可用strings命令察看)，仅通过修改文件名以冒充某已被识别的库是行不通的，需要使用Makefile修改库名重新编译。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ strings /lib/libc.so.6 |grep GLIBC_2. |awk -F . <span class="string">&#x27;&#123;print$2&#125;&#x27;</span> |grep <span class="string">&#x27;[1][2-9]&#x27;</span> |wc -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-桌面图标生成"><a href="#0x05-桌面图标生成" class="headerlink" title="0x05 桌面图标生成"></a><em>0x05 桌面图标生成</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 生成任务栏图标</span><br><span class="line">2. 生成桌面图标</span><br><span class="line">3. 指令对照表</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、生成任务栏图标</em></strong><br>&emsp;&emsp;在linux系统中，要在任务栏中生成一个可以打开某个程序的图标，需要在/usr/share/applications目录中添加一个<a target="_blank" rel="noopener" href="https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html">.desktop文件</a>:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Type=Application</span><br><span class="line">Version=0.9.4</span><br><span class="line">Name=Netanim</span><br><span class="line">Comment=Run Netanim</span><br><span class="line">Icon=/usr2/ns-allinone-3.25/netanim-3.107/netanim-logo.png</span><br><span class="line">Exec=/usr2/ns-allinone-3.25/netanim-3.107/NetAnim</span><br><span class="line">Terminal=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、生成桌面图标</em></strong><br>&emsp;&emsp;生成桌面图标有三种方法:1.硬链接/usr/share/applications/XXX.desktop到指定用户桌面;2.软链接/usr/share/applications/XXX.desktop到指定用户桌面;3.拷贝/usr/share/applications/XXX.desktop到指定用户桌面。<br>&emsp;&emsp;由于后两者无法同时改动桌面与源文件，因此这边只推荐使用硬链接:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln /usr/share/applications/XXX.desktop <span class="string">&#x27;Desktop文件夹目录/XXX.desktop&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、指令对照表</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>描述</th>
+<th>Value 类型</th>
+<th>是否必须？</th>
+<th>生效的类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Type</td>
+<td>Application (type1), Link (type2), Direcory (type3)</td>
+<td>string</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>Version</td>
+<td>版本，例如1.1</td>
+<td>string</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>应用程序的特定名称，例如“Mozilla”。</td>
+<td>localestring</td>
+<td>Yes</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>GenericName</td>
+<td>应用程序的通用名称，例如“Web浏览器”。</td>
+<td>localestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>NoDisplay</td>
+<td>不在菜单中显示, 但可以与MIME类型相关联</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>应用描述</td>
+<td>ocalestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Icon</td>
+<td>要么绝对路径，要么符合图标主题规范</td>
+<td>localestring</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>Hidden</td>
+<td>是否隐藏，等同于不存在的文件</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>OnlyShowIn， NotShowIn</td>
+<td>一般不用此字段</td>
+<td>boolean</td>
+<td>No</td>
+<td>1-3</td>
+</tr>
+<tr>
+<td>DBusActivatable</td>
+<td>DBus激活，默认false。参阅D-Bus激活。应包含Exec行，实现兼容</td>
+<td>boolean</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>TryExec</td>
+<td>如果文件不存在, 则忽略该文件，并不在菜单中出现</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Exec</td>
+<td>执行路径 。参阅Exec Key</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Path</td>
+<td>当Type=Application时，程序运行的目录</td>
+<td>string No</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>Terminal</td>
+<td>程序是否在终端窗口中运行。</td>
+<td>boolean</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Actions</td>
+<td>为其他组提供接口，比如Action=Gallery;，那么其他组就为[Desktop Action Gallery]</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>MimeType</td>
+<td>此应用支持打开的类型，具体类型可以百度</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Categories</td>
+<td>参阅桌面菜单规范</td>
+<td>string(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Implements</td>
+<td>默认情况下，桌面文件不实现任何接口。参阅接口</td>
+<td>string(s)</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>Keywords</td>
+<td>用于搜索，不应该是Name或者为多余的值 GenericName。</td>
+<td>localestring(s)</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>StartupNotify</td>
+<td>如果不存在，则合理的处理取决于实现（假设为false，使用StartupWMClass等）。参阅启动通知协议规范</td>
+<td>boolean</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>StartupWMClass</td>
+<td>一般跟Name相同即可</td>
+<td>string</td>
+<td>No</td>
+<td>1</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>只适用于Type=Link</td>
+<td>string</td>
+<td>Yes</td>
+<td>２</td>
+</tr>
+</tbody></table>
+<h3 id="0x06-权限"><a href="#0x06-权限" class="headerlink" title="0x06 权限"></a><em>0x06 权限</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 文件权限描述</span><br><span class="line">2 文件特殊权限</span><br><span class="line">3 进程权限</span><br><span class="line">4 隐藏属性</span><br><span class="line">5 capability机制</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、文件权限描述</em></strong><br>&emsp;&emsp;Linux系统中使用UID(用户ID)与GID(组ID)对用户进行管理，每个文件都拥有自己的权限描述，可以用以下方式查看与设置:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 查看方式 =====</span></span><br><span class="line"><span class="comment"># ll &#x27;文件路径&#x27;</span></span><br><span class="line"><span class="comment"># 例如</span></span><br><span class="line">&amp; ll /usr/bin/passwd</span><br><span class="line">-rwsr-xr-x 1 root root 27832 Jun 10  2014 /usr/bin/passwd</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 设置方式 =====</span></span><br><span class="line"><span class="comment"># ---- 数字 -----</span></span><br><span class="line">&amp; chmod 777 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ---- 字母 -----</span></span><br><span class="line"><span class="comment"># 权限分配：用户 用户组 其他用户 所有用户</span></span><br><span class="line"><span class="comment"># 字母描述: u    g     o        a</span></span><br><span class="line"><span class="comment"># 符号描述：+    –     =</span></span><br><span class="line">&amp; chmod +x <span class="string">&#x27;文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下面开始解析上述输出的含义:  </p>
+<table>
+<thead>
+<tr>
+<th>权限项</th>
+<th>文件类型</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+<th>读</th>
+<th>写</th>
+<th>执行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符表示</td>
+<td>(d/l/c/s/p/-)</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+<td>r</td>
+<td>w</td>
+<td>x</td>
+</tr>
+<tr>
+<td>数字表示</td>
+<td></td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>权限分配</td>
+<td></td>
+<td>文件所有者</td>
+<td></td>
+<td></td>
+<td>文件所属组用户</td>
+<td></td>
+<td></td>
+<td>其他用户</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件类型中</span></span><br><span class="line">d: 表示目录文件</span><br><span class="line">l: 表示符号连接文件</span><br><span class="line">c: 表示字符设备文件</span><br><span class="line">s: 表示socket文件</span><br><span class="line">p: 表示命名管道文件</span><br><span class="line">-: 表示普通文件</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、文件特殊权限</em></strong><br>&emsp;&emsp;除了上述rwx三种权限之外，还存在三种特殊权限 SUID/SGID/Sticky 。  </p>
+<ul>
+<li>SUID - 特殊权限，一般设置可执行文件。可执行的文件搭配这个权限，便能得到特权，任意存取该文件的所有者能使用的全部系统资源;</li>
+<li>SGID - 特殊权限组，一般设置可执行文件。其效果与SUID相同，只不过将文件所有者换成用户组，该文件就可以任意存取整个用户组所能使用的系统资源;</li>
+<li>Sticky - 粘滞位，一般设置文件夹。如果想在文件夹中新建文件，则必须获取该文件夹的写权限，那么如何让用户在文件夹中只能新建文件而不能删除文件呢?设置粘滞位的文件夹，任意用户可以在文件夹中新建文件，但是不能删除其他用户新建的文件。  </li>
+</ul>
+<p>&emsp;&emsp;其表现在执行位置上:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 设置方法 =====</span></span><br><span class="line"><span class="comment"># 在rwx权限前一位，即为特殊权限位</span></span><br><span class="line"><span class="comment"># SUID: 4</span></span><br><span class="line"><span class="comment"># SGID: 2</span></span><br><span class="line"><span class="comment"># Sticky: 1</span></span><br><span class="line">&amp; chmod 7764 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsrwSr-T</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 举例 =====</span></span><br><span class="line"><span class="comment"># 特殊权限 - SUID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 4755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwsr-xr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 4655 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwSr-xr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特殊权限组 - SGID</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 2755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-sr-x</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 2745 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-Sr-x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 粘滞位 - Sticky</span></span><br><span class="line"><span class="comment"># 小写代表有执行权限x</span></span><br><span class="line">&amp; chmod 1755 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-t</span><br><span class="line"><span class="comment"># 大写代表无执行权限x</span></span><br><span class="line">&amp; chmod 1754 <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line">-rwxr-xr-T</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、进程权限</em></strong><br>&emsp;&emsp;内核为每个进程维护了三个UID值，这三个UID分别是实际用户ID、有效用户ID、保存的设置用户ID。</p>
+<ul>
+<li>实际用户ID: 当前登录的用户。运行程序的实际用户ID就是这个用户的ID</li>
+<li>有效用户ID: 运行当前进程的用户ID。一般情况下是实际用户ID，如果可执行文件具有了SUID权限，那么它的有效用户ID就是可执行文件的拥有者</li>
+<li>保存的设置用户ID: 有效用户ID的一个副本，与SUID权限有关<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 读取进程权限</span></span><br><span class="line"><span class="keyword">uid_t</span> ruid,euid,suid;</span><br><span class="line">getresuid(&amp;ruid,&amp;euid,&amp;suid);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;real:%d\teffective:%d\tset-user-id:%d\n&quot;</span>,ruid,euid,suid);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置进程权限(root)</span></span><br><span class="line">setuid(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong><em>4、隐藏属性</em></strong><br>&emsp;&emsp;文件有隐藏属性，隐藏属性对系统安全性有很大的帮助</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可修改文件/文件夹的&quot;隐藏权限&quot;</span></span><br><span class="line"><span class="comment">## i:如果对文件设置 i 属性，那么不允许对文件进行删除、改名，也不能添加和修改数据;如果对目录设置 i 属性，那么只能修改目录下文件中的数据，但不允许建立和删除文件</span></span><br><span class="line"><span class="comment">## a:如果对文件设置 a 属性，那么只能在文件中増加数据，但是不能删除和修改数据；如果对目录设置 a 属性，那么只允许在目录中建立和修改文件，但是不允许删除文件</span></span><br><span class="line"><span class="comment">## u:设置此属性的文件或目录，在删除时，其内容会被保存，以保证后期能够恢复，常用来防止意外删除文件或目录</span></span><br><span class="line"><span class="comment">## s:和 u 相反，删除文件或目录时，会被彻底删除（直接从硬盘上删除，然后用 0 填充所占用的区域），不可恢复</span></span><br><span class="line">chattr +i <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 设置文件不可删除，不可修改</span></span><br><span class="line">chattr -i <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 取消不可删除、不可修改的隐藏属性</span></span><br><span class="line">lsattr <span class="string">&#x27;文件路径&#x27;</span> <span class="comment"># 查看隐藏属性</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>5、capability机制</em></strong><br>&emsp;&emsp;由于rwx权限机制不够灵活，比如有很多权限是不需要操作文件的。从Linux 2.2开始引入了capability权限机制。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置capability权限(shell命令)</span></span><br><span class="line">$ <span class="built_in">setcap</span> cap_chown,cap_kill=e <span class="string">&#x27;进程文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取capability权限(shell命令)</span></span><br><span class="line">$ getpcaps <span class="string">&#x27;进程文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>capability 名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CAP_AUDIT_CONTROL</td>
+<td>启用和禁用内核审计；改变审计过滤规则；检索审计状态和过滤规则</td>
+</tr>
+<tr>
+<td>CAP_AUDIT_READ</td>
+<td>允许通过 multicast netlink 套接字读取审计日志</td>
+</tr>
+<tr>
+<td>CAP_AUDIT_WRITE</td>
+<td>将记录写入内核审计日志</td>
+</tr>
+<tr>
+<td>CAP_BLOCK_SUSPEND</td>
+<td>使用可以阻止系统挂起的特性</td>
+</tr>
+<tr>
+<td>CAP_CHOWN</td>
+<td>修改文件所有者的权限</td>
+</tr>
+<tr>
+<td>CAP_DAC_OVERRIDE</td>
+<td>忽略文件的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>CAP_DAC_READ_SEARCH</td>
+<td>忽略文件读及目录搜索的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>CAP_FOWNER</td>
+<td>忽略文件属主 ID 必须和进程用户 ID 相匹配的限制</td>
+</tr>
+<tr>
+<td>CAP_FSETID</td>
+<td>允许设置文件的 setuid 位</td>
+</tr>
+<tr>
+<td>CAP_IPC_LOCK</td>
+<td>允许锁定共享内存片段</td>
+</tr>
+<tr>
+<td>CAP_IPC_OWNER</td>
+<td>忽略 IPC 所有权检查</td>
+</tr>
+<tr>
+<td>CAP_KILL</td>
+<td>允许对不属于自己的进程发送信号</td>
+</tr>
+<tr>
+<td>CAP_LEASE</td>
+<td>允许修改文件锁的 FL_LEASE 标志</td>
+</tr>
+<tr>
+<td>CAP_LINUX_IMMUTABLE</td>
+<td>允许修改文件的 IMMUTABLE 和 APPEND 属性标志</td>
+</tr>
+<tr>
+<td>CAP_MAC_ADMIN</td>
+<td>允许 MAC 配置或状态更改</td>
+</tr>
+<tr>
+<td>CAP_MAC_OVERRIDE</td>
+<td>覆盖 MAC(Mandatory Access Control)</td>
+</tr>
+<tr>
+<td>CAP_MKNOD</td>
+<td>允许使用 mknod() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_NET_ADMIN</td>
+<td>允许执行网络管理任务</td>
+</tr>
+<tr>
+<td>CAP_NET_BIND_SERVICE</td>
+<td>允许绑定到小于 1024 的端口</td>
+</tr>
+<tr>
+<td>CAP_NET_BROADCAST</td>
+<td>允许网络广播和多播访问</td>
+</tr>
+<tr>
+<td>CAP_NET_RAW</td>
+<td>允许使用原始套接字</td>
+</tr>
+<tr>
+<td>CAP_SETGID</td>
+<td>允许改变进程的 GID</td>
+</tr>
+<tr>
+<td>CAP_SETFCAP</td>
+<td>允许为文件设置任意的 capabilities</td>
+</tr>
+<tr>
+<td>CAP_SETPCAP</td>
+<td>参考 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities man page</a></td>
+</tr>
+<tr>
+<td>CAP_SETUID</td>
+<td>允许改变进程的 UID</td>
+</tr>
+<tr>
+<td>CAP_SYS_ADMIN</td>
+<td>允许执行系统管理任务，如加载或卸载文件系统、设置磁盘配额等</td>
+</tr>
+<tr>
+<td>CAP_SYS_BOOT</td>
+<td>允许重新启动系统</td>
+</tr>
+<tr>
+<td>CAP_SYS_CHROOT</td>
+<td>允许使用 chroot() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_SYS_MODULE</td>
+<td>允许插入和删除内核模块</td>
+</tr>
+<tr>
+<td>CAP_SYS_NICE</td>
+<td>允许提升优先级及设置其他进程的优先级</td>
+</tr>
+<tr>
+<td>CAP_SYS_PACCT</td>
+<td>允许执行进程的 BSD 式审计</td>
+</tr>
+<tr>
+<td>CAP_SYS_PTRACE</td>
+<td>允许跟踪任何进程</td>
+</tr>
+<tr>
+<td>CAP_SYS_RAWIO</td>
+<td>允许直接访问 /devport、/dev/mem、/dev/kmem 及原始块设备</td>
+</tr>
+<tr>
+<td>CAP_SYS_RESOURCE</td>
+<td>忽略资源限制</td>
+</tr>
+<tr>
+<td>CAP_SYS_TIME</td>
+<td>允许改变系统时钟</td>
+</tr>
+<tr>
+<td>CAP_SYS_TTY_CONFIG</td>
+<td>允许配置 TTY 设备</td>
+</tr>
+<tr>
+<td>CAP_SYSLOG</td>
+<td>允许使用 syslog() 系统调用</td>
+</tr>
+<tr>
+<td>CAP_WAKE_ALARM</td>
+<td>允许触发一些能唤醒系统的东西(比如 CLOCK_BOOTTIME_ALARM 计时器)</td>
+</tr>
+</tbody></table>
+<h3 id="0x07-开机自启动"><a href="#0x07-开机自启动" class="headerlink" title="0x07 开机自启动"></a><em>0x07 开机自启动</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 服务进程</span><br><span class="line">  1.1 rc文件自启动</span><br><span class="line">  1.2 systemd自启动</span><br><span class="line">2 普通进程</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、服务进程</em></strong><br>&emsp;&emsp;在Linux中，服务进程的启动脚本放在/etc/init.d目录下。然而要实现开机自启动，可以采用rc文件与systemd来实现。  </p>
+<p><strong><em>1.1、rc文件自启动</em></strong><br>&emsp;&emsp;在目录/etc目录下，包含rc0.d/ ~ rc6.d/目录。只需要把/etc/init.d目录下的文件通过软链接或者直接复制到此处，即可实现开机自启动。</p>
+<ul>
+<li>rcN.d目录下都是一些符号链接文件，这些链接文件都指向init.d目录下的文件，命名规则为K+nn+服务名或S+nn+服务名(K开头代表以stop为参数运行服务文件，S开头代表以start为参数)，其中nn为两位数字(代表启动顺序，从小到大)</li>
+<li>对于以K开头的文件，系统将终止对应的服务;对于以S开头的文件，系统将启动对应的服务</li>
+<li>rcN中的N代表该目录下的服务需要在哪个进程运行，查看运行级别用：runlevel</li>
+<li>进入其它运行级别用：init N<br>&emsp;&emsp;下面详细描述七个级别N的具体含义:<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">运行级别0：系统停机状态</span><br><span class="line">运行级别1：单用户工作状态，root权限，用于系统维护，禁止远程登陆</span><br><span class="line">运行级别2：多用户状态(没有NFS)</span><br><span class="line">运行级别3：完全的多用户状态(有NFS)，登陆后进入控制台命令行模式</span><br><span class="line">运行级别4：系统未使用，保留</span><br><span class="line">运行级别5：X11控制台</span><br><span class="line">运行级别6：系统正常关闭并重启</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>&emsp;&emsp;服务文件需要满足一定的格式，这里提供一个示例。首先新建一个示例文件 test-server，将其放置于/etc/init.d，再生成软链接于(假设runlevel为3)/etc/rc3.d/S80test-server<br>&emsp;&emsp;示例文件 test-server :  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">function</span> start</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;start test&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> stop</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;stop test&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> == <span class="string">&quot;start&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    start</span><br><span class="line">    <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> == <span class="string">&quot;stop&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    stop</span><br><span class="line">    <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> == <span class="string">&quot;restart&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    stop</span><br><span class="line">    sleep 1</span><br><span class="line">    start</span><br><span class="line">    <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1.2、systemd自启动</em></strong><br>&emsp;&emsp;将一个.service文件放置在/etc/systemd/system目录下，然后使用如下命令设置服务:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启服务：</span></span><br><span class="line">sudo systemctl start <span class="string">&#x27;XXX.service&#x27;</span></span><br><span class="line"><span class="comment"># 关闭服务：</span></span><br><span class="line">sudo systemctl stop <span class="string">&#x27;XXX.service&#x27;</span></span><br><span class="line"><span class="comment"># 设置服务自启动：</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> <span class="string">&#x27;XXX.service&#x27;</span></span><br><span class="line"><span class="comment"># 设置禁止服务自启动：</span></span><br><span class="line">sudo systemctl <span class="built_in">disable</span> <span class="string">&#x27;XXX.service&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;有关于.service文件的具体写法，<a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html">查看文献</a></p>
+<p><strong><em>2、普通进程</em></strong><br>&emsp;&emsp;首先要在/usr/share/applications目录中添加桌面图标.desktop文件，并将其软链接或直接复制到以下目录:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># root用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /root/.config/autostart</span><br><span class="line"><span class="comment"># 其他用户的普通进程自启动</span></span><br><span class="line">cp <span class="string">&#x27;/usr/share/applications/XXX.desktop&#x27;</span> /home/<span class="string">&#x27;用户名&#x27;</span>/.config/autostart</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x08-编译相关"><a href="#0x08-编译相关" class="headerlink" title="0x08 编译相关"></a><em>0x08 编译相关</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 g++与c++11</span><br><span class="line">2 编译参数 -fPIC</span><br><span class="line">3 编译参数 -Wl,-rpath&#x3D;.&#x2F; -Wl,Bsymolic</span><br><span class="line">4 MSVC编译参数 &#x2F;MT &#x2F;MD</span><br><span class="line">5 MSVC编译参数 &#x2F;Zi</span><br><span class="line">6 MSVC编译参数 &#x2F;Debug</span><br><span class="line">7 MSVC编译参数 &#x2F;OPT:REF &#x2F;OPT:NOREF</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、g++与c++11</em></strong><br>&emsp;&emsp;g++4.8、g++4.9包含c++11但是默认不开启，g++5.1开始默认开启c++11(提供了一个宏来控制其是否使用 _GLIBCXX_USE_CXX11_ABI)  </p>
+<ul>
+<li>进程依赖动态库，动态库使用g++4编译且不开启c++11。进程可使用g++4编译(c++11开启与关闭均可);进程可使用g++5编译(必须通过宏关闭c++11)  </li>
+<li>进程依赖动态库，动态库使用g++5编译且开启(默认开启)。进程可使用g++5编译(通过宏关闭c++11后无法编译通过)<br>&emsp;&emsp;下面记录直接使用g++以及使用cmake分别在g++4/g++5下如何控制c++11的开启与关闭:  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===== 使用g++4编译 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11(默认关闭)</span></span><br><span class="line">g++ <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 2.开启c++11</span></span><br><span class="line">g++ -std=c++11 <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">g++ -std=c++0x <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== 使用g++5编译 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11</span></span><br><span class="line">g++ -D_GLIBCXX_USE_CXX11_ABI=0 <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"><span class="comment"># 2.开启c++11(默认开启)</span></span><br><span class="line">g++ <span class="string">&#x27;XXX.cpp&#x27;</span> -o <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== cmake/g++4 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11(默认关闭)</span></span><br><span class="line"><span class="comment"># 2.开启c++11</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_STANDARD 11) <span class="comment"># cmake3.1以后支持该设置方法</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;<span class="variable">$&#123;CMAKE_CXX_FLAGS&#125;</span> -std=gnu++11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ===== cmake/g++5 =====</span></span><br><span class="line"><span class="comment"># 1.关闭c++11</span></span><br><span class="line">add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)</span><br><span class="line"><span class="comment"># 2.开启c++11(默认开启)</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong><em>2、编译参数 -fPIC</em></strong><br>&emsp;&emsp;-fPIC编译参数在产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。<br>&emsp;&emsp;如果Linux机器要编译带有-fPIC参数的.so动态库，则必须加这个编译选项。并且该动态库所依赖的所有动态、静态库都需要在编译时加入-fPIC参数，否则会报下面的错误:  </p>
+<blockquote>
+<p><font size="2">error1: relocation R_X86_64_32 against `a local symbol’ can not be used when making a shared object; recompile with -fPIC<br>error2: unresolvable R_AARCH64_ADR_PREL_PG_HI21 relocation against symbol stdin@@GLIBC_2.17</font>  </p>
+</blockquote>
+<p><strong><em>3、编译参数 -Wl,-rpath=./ -Wl,-Bsymbolic</em></strong><br>&emsp;&emsp;是在gcc编译的时候为二进制添加rpath的参数</p>
+<p><strong><em>4、MSVC编译参数 /MT /MD</em></strong><br>&emsp;&emsp;这两个参数是Windows下的MSVC编译器参数，在编译静态库时被用到。<br>&emsp;&emsp;/MD(Release版本)  /MDD(Debug版本): 表示运行时库由操作系统提供一个DLL，程序里不集成。编译出来的文件比较小。使用的库文件是MSVCRT.lib<br>&emsp;&emsp;/MT(Release版本)  /MTD(Debug版本): 表示运行时库由程序集成。编译出来的文件比较大。在运行的机器上不需要安装依赖的VS的动态库，使用的库文件是LIBCMT.lib</p>
+<p><strong><em>5、MSVC编译参数 /Zi</em></strong><br>&emsp;&emsp;/Zi选项生成一个单独的 PDB 文件，其中包含用于调试器的所有符号调试信息</p>
+<p><strong><em>6、MSVC编译参数 /Debug</em></strong><br>&emsp;&emsp;/DEBUG选项为可执行文件创建调试信息文件</p>
+<p><strong><em>7、MSVC编译参数 /OPT:REF /OPT:NOREF</em></strong><br>&emsp;&emsp;/OPT:REF(Release版本) /OPT:ICF(Debug版本) : 消除从未被引用的函数和数据<br>&emsp;&emsp;/OPT:NOREF(Release版本) /OPT:NOICF(Debug版本) : 默认使用。保留从未引用的函数和数据。</p>
+<h3 id="0x09-用户信息"><a href="#0x09-用户信息" class="headerlink" title="0x09 用户信息"></a><em>0x09 用户信息</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 ID</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、ID</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RUID</span></span><br><span class="line">用于在系统中标识一个用户是谁，当用户使用用户名和密码成功登录后一个UNIX系统后就唯一确定了他的RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># EUID</span></span><br><span class="line">用于系统决定用户对系统资源的访问权限，通常情况下等于RUID；</span><br><span class="line"></span><br><span class="line"><span class="comment"># SUID</span></span><br><span class="line">用于对外权限的开放。跟RUID及EUID是用一个用户绑定不同，它是跟文件而不是跟用户绑定。</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x10-审计"><a href="#0x10-审计" class="headerlink" title="0x10 审计"></a><em>0x10 审计</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 Linux PROMPT_COMMAND</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、Linux PROMPT_COMMAND</em></strong><br>记录用户、时间、操作，然后将查到的信息记录到一个文件里。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 记录到指定文件中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; date &quot;+%Y-%m-%d %T WHO: $(who am i |awk &quot;&#123;print \$1\&quot; \&quot;\$2\&quot; \&quot;\$5&#125;&quot;) PATH: $(pwd) CMD: $(history 1 | &#123; read x cmd; echo &quot;$cmd&quot;; &#125;)&quot;; &#125; &gt;&gt; /var/log/audit_cmd.txt&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录到/var/log/messages中</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line">`</span><br><span class="line"><span class="comment"># 追加</span></span><br><span class="line"><span class="built_in">export</span> PROMPT_COMMAND=<span class="string">&#x27;&#123; msg=$(history 1|&#123; read x y; echo $y; &#125;);logger &quot;[euid=$(whoami)]&quot;:$(who am i):[`pwd`]&quot;$msg&quot;;&#125;&#x27;</span></span><br><span class="line">`</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x11-inode"><a href="#0x11-inode" class="headerlink" title="0x11 inode"></a><em>0x11 inode</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 inode基础</span><br><span class="line">2 软&#x2F;硬链接与inode关系</span><br><span class="line">3 文件拷贝与库加载</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、inode基础</em></strong><br>&emsp;&emsp;理解inode，要从文件储存说起。<br>&emsp;&emsp;硬盘的最小存储单位叫做扇区，每个扇区储存512字节。<br>&emsp;&emsp;操作系统存取文件的最小单位是块，最常见的是4KB，即连续的8个扇区。<br>&emsp;&emsp;文件数据都储存在块中，而每一个文件的元信息(比如文件的创建者、文件的创建日期、文件的大小等)存储在inode中。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># inode元信息</span></span><br><span class="line"><span class="comment">#     文件的字节数</span></span><br><span class="line"><span class="comment">#     文件拥有者的User ID</span></span><br><span class="line"><span class="comment">#     文件的Group ID</span></span><br><span class="line"><span class="comment">#     文件的读、写、执行权限</span></span><br><span class="line"><span class="comment">#     文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。</span></span><br><span class="line"><span class="comment">#     链接数，即有多少文件名指向这个inode</span></span><br><span class="line"><span class="comment">#     文件数据block的位置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件的inode信息</span></span><br><span class="line">$ <span class="built_in">stat</span> <span class="string">&#x27;文件路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看每个硬盘分区的inode总数和已经使用的数量</span></span><br><span class="line">$ df -i</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、软/硬链接与inode关系</em></strong><br>&emsp;&emsp;硬链接是多个文件同时指向同个inode，可通过stat的Links数量观察到。<br>&emsp;&emsp;软链接是指向源文件的文件路径。</p>
+<p><strong><em>3、文件拷贝、移动与库动态加载</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拷贝改变文件inode</span></span><br><span class="line"><span class="comment"># 拷贝覆盖原文件，被覆盖文件的inode不变</span></span><br><span class="line">$ cp <span class="string">&#x27;from&#x27;</span> <span class="string">&#x27;to&#x27;</span> <span class="comment"># to文件inode变化</span></span><br><span class="line">$ cp <span class="string">&#x27;to&#x27;</span> <span class="string">&#x27;from&#x27;</span> <span class="comment"># from文件inode与之前一致，文件md5变为to文件md5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移动(本质为rename)不改变文件inode</span></span><br><span class="line">$ mv <span class="string">&#x27;from&#x27;</span> <span class="string">&#x27;to&#x27;</span> <span class="comment"># from的inode即为to的inode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当一个进程test动态加载了库libtest.so</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且删除了libtest.so，则当真实调用函数的时候会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且mv libtest.so到新的位置，由于inode未变因此不会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且用新编译的libtest.so拷贝覆盖原库，inode虽然未变动，但是函数相对于库的地址变化了，因此还是会崩溃</span></span><br><span class="line"><span class="comment"># 如果进程不退出并且用旧的libtest.so拷贝覆盖原库，只要test进程没有正在调用函数，就不会崩溃</span></span><br></pre></td></tr></table></figure></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/27/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-PAM模块" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -369,290 +1245,6 @@
 
 
   
-    <article id="post-关系型数据库-MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">关系型数据库-MySQL</a>
-    </h1>
-  
-
-        
-        <a href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/" class="archive-article-date">
-  	<time datetime="2020-09-02T07:55:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-02</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoahong/p/10385466.html">https://www.cnblogs.com/luoahong/p/10385466.html</a><br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title">https://time.geekbang.org/column/article/68963?utm_campaign=guanwang&amp;utm_source=baidu-ad&amp;utm_medium=ppzq-pc&amp;utm_content=title&amp;utm_term=baidu-ad-ppzq-title</a></p>
-<h1 id="0x01-基础架构"><a href="#0x01-基础架构" class="headerlink" title="0x01 基础架构"></a>0x01 基础架构</h1><div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/MySQL逻辑架构图.png" width="700" height="500">
-<div align="left">  
-
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/工作流程.png" width="400" height="400">
-<div align="left">  
-
-
-<p>MySQL 可以分为 Server 层和存储引擎层两部分。<br>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，是共用的。<br>存储引擎层负责数据的存储和提取，且是插件式的。支持 InnoDB、MyISAM、Memory 等多个存储引擎，现在最常用的存储引擎是 InnoDB。  </p>
-<p><strong><em>连接器</em></strong><br>定义: 接器负责跟客户端建立连接、获取权限、维持和管理连接。  </p>
-<ul>
-<li>数据库里长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接</li>
-<li>短连接则是指每次执行完很少的几次查询就断开连接，下次查询再重新建立一个。</li>
-</ul>
-<p>问题<br>建立连接的过程通常是比较复杂的，所以应该尽量使用长连接。但长连接可能导致MySQL占用内存过快，因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才释放。<br>解决方案<br>1.定期断开长链接  2.MySQL5.7之后通过执行’mysql_reset_connection’来重新初始化连接资源</p>
-<p><strong><em>查询缓存</em></strong><br>之前执行过的语句及其结果可能会以 key-value 对的形式，被直接缓存在内存中。MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。<br>不建议使用查询缓存  </p>
-<ul>
-<li>查询缓存的失效非常频繁，只要有一个表更新，这个表上所有的查询缓存都被清空</li>
-<li>对于更新压力大的数据库来说，查询缓存的命中率会非常低，</li>
-<li>除非你的业务就是有一张静态表，很长时间才会更新一次(比如一个系统配置表)</li>
-</ul>
-<p>MySQL 8.0 版本开始直接将查询缓存的整块功能删掉</p>
-<p><strong><em>分析器</em></strong><br>执行sql语句前需要分析器先对用户的命令做‘词法分析’和‘语法分析’<br>词法分析: 识别出里面的字符串分别是什么<br>语法分析: 判断输入的sql语句是否满足MySQL语法</p>
-<p><strong><em>优化器</em></strong><br>作用</p>
-<ul>
-<li>在表里面有多个索引的时候，决定使用哪个索引</li>
-<li>多表关联(ioin)的时候，决定各个表的链接顺序</li>
-</ul>
-<p><strong><em>执行器</em></strong>  </p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/执行器原理.png" width="300" height="200">
-<div align="left">  
-
-<h1 id="0x02-日志系统"><a href="#0x02-日志系统" class="headerlink" title="0x02 日志系统"></a>0x02 日志系统</h1><p>&emsp;&emsp;日志模块分为redo log与binlog。两种模块配合的方式称为WAL(Write-Ahead Logging)技术。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/粉板.png">
-<div align="left">
-
-<p>两种日志有以下区别</p>
-<ul>
-<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
-<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
-<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
-</ul>
-<p><strong><em>redo log记录原理</em></strong>  </p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/redolog内存空间.png">
-<div align="left">
-
-<p>&emsp;&emsp;redo log的内存空间是固定的。write pos与check point 之间是可写入部分，如果可写入空间不足，则清除一部分日志，并将check point后移。有了redo log，InnoDB就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为crash-safe</p>
-<p><strong><em>update语句执行流程</em></strong><br>&emsp;&emsp;update语句是比较典型的sql语句，能帮助我们理解日志记录的流程。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/update语句执行流程.png">
-<div align="left">
-
-<p>两段式提交<br>&emsp;&emsp;图表中的最后三步，被称为”两段式提交”，其实就是:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.写入redo <span class="built_in">log</span></span><br><span class="line">2.写入binlog</span><br><span class="line">3.commit</span><br></pre></td></tr></table></figure>
-
-<p>如何让数据库恢复到半个月内任意一秒的状态<br>&emsp;&emsp;假如DBA承诺数据半个月内可以恢复，则意味着会保存半个月binlog(数据更改的逻辑记录)，同时系统会定期做整库备份(可以是一天一备，也可以一周一备)。当需要恢复到某一秒状态时:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.找到最近的一次全量备份，从这个备份恢复到临时库</span><br><span class="line">2.从备份的时间点开始，讲binlog依次取出，并回到目标时刻</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x03-事务隔离"><a href="#0x03-事务隔离" class="headerlink" title="0x03 事务隔离"></a>0x03 事务隔离</h1><p>&emsp;&emsp;所谓事务隔离，就是指两个sql指令之间，要对数据进性保护。<br>**<em>事务隔离的基础**</em><br>1).事务基本要素（ACID）</p>
-<ul>
-<li>原子性（Atomicity）：事务开始后所有操作，要么全部做完，要么全部不做，不可能停滞在中间环节。事务执行过程中出错，会回滚到事务开始前的状态，所有的操作就像没有发生一样。也就是说事务是一个不可分割的整体，就像化学中学过的原子，是物质构成的基本单位。</li>
-<li>一致性（Consistency）：事务开始前和结束后，数据库的完整性约束没有被破坏 。比如A向B转账，不可能A扣了钱，B却没收到。</li>
-<li>隔离性（Isolation）：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。</li>
-<li>持久性（Durability）：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚。</li>
-</ul>
-<p>2).事务的并发问题</p>
-<ul>
-<li>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</li>
-<li>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</li>
-<li>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</li>
-</ul>
-<p>3).MySQL事务隔离级别</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离并发问题.png">
-<div align="left">
-
-<p>下面解释下四个事务隔离级别的意义:</p>
-<ul>
-<li>读未提交: 一个事务还未提交，它的变更就能被别的事务看到</li>
-<li>读提交: 一个事务提交后，它的变更才能被别的事务看到</li>
-<li>可重复读: 一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
-<li>串行化: 对于同一行记录，”写”会加”写锁”，”读”会加”读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行</li>
-</ul>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别1.png">
-<div align="left">
-
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离级别2.png">
-<div align="left">
-
-<p><strong><em>事务隔离的实现</em></strong><br>&emsp;&emsp;在 MySQL 中，每条记录在更新的时候都会同时记录一条回滚操作。同一条记录在系统中可以存在多个版本，这就是数据库的多版本并发控制（MVCC），也因此实现了事务隔离。当没有事务需要用到这些回滚日志的时候，回滚日志会被删除。</p>
-<div align="center">
-<img src="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/事务隔离的实现.png">
-<div align="left">
-
-<p><strong><em>事务的启动方式</em></strong><br>1).尽量避免使用长事务<br>&emsp;&emsp;长事务意味着系统里面会存在很老的read-view。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
-<p>2).事务启动要注意的点</p>
-<ul>
-<li>set autocommit=0，这个命令会将这个线程的自动提交关掉。有些客户端连接框架会默认连接成功后先执行一个 set autocommit=0 的命令。这就导致接下来的查询都在事务中，如果是长连接，就导致了意外的长事务</li>
-<li>显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback</li>
-</ul>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/02/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-仓库源管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">仓库源管理</a>
-    </h1>
-  
-
-        
-        <a href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/" class="archive-article-date">
-  	<time datetime="2020-05-14T06:22:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-14</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;软件仓库是一个预备好的目录，或是一系列存放软件的服务器，或是一个网站，包含了软件包和索引文件。多数Linux发行版都有自己的软件安装、配置方案，同时还有各自的软件包管理系统。为了省去用户四处寻找合适软件安装包的麻烦，这些发行版将常用的软件集中到一个服务器上，并为用户提供了自动下载、安装软件的接口，这就是我们所说的“软件仓库”。为了方便大众访问，人们为这些软件仓库建立了大量的“镜像”，使世界各地的用户都能方便地使用。不同发行版的软件仓库一般不同，如用户接口各异、软件丰富程度不同、镜像分布不同等等。</p>
-<h3 id="0x01-仓库源地址"><a href="#0x01-仓库源地址" class="headerlink" title="0x01 仓库源地址"></a><em>0x01 仓库源地址</em></h3><p>&emsp;&emsp;源地址通常是很长的一串地址，由四个部分组成，例如下述源地址：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://10.0.10.25/uos eagle main contrib non-free</span><br><span class="line">deb-src http://10.0.10.25/uos eagle main contrib non-free</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>deb/deb-src : 表示deb包地址/源码包地址。当你要 ‘apt-get source’ 源码时，必须使用 ‘deb-src’ 。当你要 ‘apt-get install’ 软件时，则必须使用deb。</li>
-<li><a target="_blank" rel="noopener" href="http://10.0.10.25/uos">http://10.0.10.25/uos</a> : 这个字段是仓库的http访问地址。</li>
-<li>eagle : 这个段是表示仓库的codename。可用 ‘lsb_release -a’ 指令查询。</li>
-<li>main contrib non-free : 这个字段是仓库的分组目录，linux根据软件不同属性进行分组。</li>
-</ul>
-<h3 id="0x02-源管理文件"><a href="#0x02-源管理文件" class="headerlink" title="0x02 源管理文件"></a><em>0x02 源管理文件</em></h3><p>&emsp;&emsp;Linux中的源管理文件主要是sources.list，它是一个普通可编辑的文本文件，保存了ubuntu软件更新的源服务器的地址:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑sources.list</span></span><br><span class="line">sudo vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;除了使用sources.list文件来管理源地址，同时 sources.list.d/ 路径为单独在文件中写入源的地址提供了一种方式，通常用来安装第三方的软件。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 到 /etc/apt/sources.list.d/ 路径下新建 *.list</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt</span><br><span class="line">sudo vim *.list</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-软件包首选配置"><a href="#0x03-软件包首选配置" class="headerlink" title="0x03 软件包首选配置"></a><em>0x03 软件包首选配置</em></h3><p>&emsp;&emsp;关于软件包的版本管理，可通过修改<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">AptConfigure</a><sup>[1]</sup>来配置。<br><strong>查看软件包版本信息</strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看某个软件包的版本号、可选的版本包以及对应的仓库</span></span><br><span class="line">apt policy <span class="string">&#x27;软件包名&#x27;</span></span><br><span class="line"></span><br><span class="line">    apt policy claws-mail</span><br><span class="line"></span><br><span class="line">    claws-mail:</span><br><span class="line">    Installed : (none)</span><br><span class="line">    Candidate : 3.14.1-3+b1</span><br><span class="line">    Version table :</span><br><span class="line">        3.17.1-1~bpo9+1 100</span><br><span class="line">            100 https://deb.debian.org/debian stretch-backports/main amd64 Packages</span><br><span class="line">        3.14.1-3+b1 500</span><br><span class="line">            500 https://deb.debian.org/debian stretch/main amd64 Package</span><br></pre></td></tr></table></figure>
-
-<p><strong>查看所有仓库源信息</strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有仓库源信息</span></span><br><span class="line">apt policy</span><br><span class="line"></span><br><span class="line">    Package files: </span><br><span class="line">    500 https://deb.debian.org/debian stable/main amd64 Packages</span><br><span class="line">        o=Debian,n=stable,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br><span class="line"></span><br><span class="line">    500 https://deb.debian.org/debian stable-updates/main amd64 Packages</span><br><span class="line">        release o=Debian,a=oldstable-updates,n=stable-updates,l=Debian,c=main,b=amd64</span><br><span class="line">        origin deb.debian.org</span><br></pre></td></tr></table></figure>
-
-<p><strong>新建首选配置文件</strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 /etc/apt/preferences.d/ 路径下新建配置文件(无后缀)</span></span><br><span class="line"><span class="built_in">cd</span> /etc/apt/preferences.d/</span><br><span class="line">sudo vim <span class="string">&#x27;配置文件名&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;比如新建一个名为99debian-backports的配置文件，并输入如下内容，可以让claws-mail以后所有的更新包都按照a=stretch-backports的源来更新，900即为该源的置信值，值越高越是首选：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: claws-mail</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;同样，也可以为所有的软件包都设置该源为首选项：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Package: *</span><br><span class="line">Pin: release a=stretch-backports</span><br><span class="line">Pin-Priority: 900</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://wiki.debian.org/AptConfiguration">https://wiki.debian.org/AptConfiguration</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/14/%E4%BB%93%E5%BA%93%E6%BA%90%E7%AE%A1%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/9/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/11/">下一页</a>
@@ -774,15 +1366,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -794,11 +1386,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -846,11 +1438,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -862,11 +1454,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

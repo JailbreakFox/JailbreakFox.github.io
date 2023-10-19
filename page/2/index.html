@@ -156,6 +156,301 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux进程链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">Linux进程链</a>
+    </h1>
+  
+
+        
+        <a href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/" class="archive-article-date">
+  	<time datetime="2023-05-16T03:06:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-16</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;当你在ssh登录远程机器，并执行程序后，如果再退出ssh会话，可能会遇到进程被杀死的情况。本文将解释该现象产生的原因，并提供一些解决方案。  </p>
+<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 SIGTERM和SIGKILL区别</span><br><span class="line">2 sshd服务KillMode配置</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、SIGTERM 和 SIGKILL区别</em></strong><br>&emsp;&emsp;SIGTERM（信号编号15）： SIGTERM是一个可捕获的信号，用于请求进程正常终止。当进程接收到SIGTERM信号时，它可以选择捕获该信号并执行清理操作，然后自行退出。这样的行为通常被称为优雅退出。进程可以使用信号处理机制来捕获SIGTERM信号，编写相应的处理代码。<br>&emsp;&emsp;SIGKILL（信号编号9）： SIGKILL是一个不可捕获的信号，用于强制终止进程。当进程接收到SIGKILL信号时，它无法捕获或忽略该信号，而是立即终止。SIGKILL信号可以通过系统工具（如kill命令）或在命令行中使用kill -9发送。  </p>
+<p><strong><em>2、sshd服务KillMode配置</em></strong><br>&emsp;&emsp;sshd服务分为两种启动方式:</p>
+<ul>
+<li>sshd服务(主进程为远程连接生成的bash)：systemd服务管理文件为/lib/systemd/system/sshd.service，启动命令为systemctl start sshd</li>
+<li>systemd-socket-proxyd服务(主进程为systemd)：systemd服务管理文件为/lib/systemd/system/sshd@.service，systemd单元服务文件为/lib/systemd/system/sshd.socket，启动命令为systemctl start sshd.socket</li>
+</ul>
+<p>&emsp;&emsp;当你通过ssh登录远程机器时，其会为你创建一个会话并分配一个伪终端。当你退出ssh会话时，伪终端也随之关闭，从而导致与之关联的进程被终止。<br>&emsp;&emsp;并且通过配置sshd的KillMode项，可以改变会话退出时对控制组里进程的对应操作:  </p>
+<ul>
+<li>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉</li>
+<li>process：只杀主进程</li>
+<li>mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号</li>
+<li>none：没有进程会被杀掉，只是执行服务的 stop 命令</li>
+</ul>
+<p>&emsp;&emsp;上述两种服务方式在执行kill的时候不同点在于，sshd服务只会kill掉对应bash进程拉起的所有子进程，systemd-socket-proxyd服务会kill掉systemd下由远程连接拉起的所有子进程。</p>
+<h3 id="0x02-解决方案"><a href="#0x02-解决方案" class="headerlink" title="0x02 解决方案"></a><em>0x02 解决方案</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 方案一 修改sshd配置</span><br><span class="line">2 方案二 nohup</span><br><span class="line">3 方案三 setsid</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、方案一 修改sshd配置</em></strong><br>&emsp;&emsp;在 /lib/systemd/system/sshd@.service 配置文件的[Service]下追加KillMode=process</p>
+<p><strong><em>2、方案二 nohup</em></strong><br>&emsp;&emsp;使用nohup命令在ssh会话中启动进程，会将进程与终端断开关联，并将输出重定向到一个文件，从而使进程在终端关闭后继续在后台运行。这样即使退出ssh会话，进程也会继续运行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用nohup拉起进程</span></span><br><span class="line">$ nohup ./xxx 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、方案三 setsid</em></strong><br>&emsp;&emsp;setsid函数调用成功后，返回新的会话的ID，调用setsid函数的进程成为新的会话的领头进程，并与其父进程的会话组和进程组脱离。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) <span class="comment">// 返回子进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// setsid();</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="comment">// 返回父进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parent begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Linux用户态Hook" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/">Linux用户态Hook</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/" class="archive-article-date">
+  	<time datetime="2022-08-27T02:40:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-27</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Hook即是函数调用劫持(用自己写的函数替换目标库中的函数)，在Hook成功后就可以在自己的函数去实现监控程序执行、参数检查、过滤、拦截、修改、放行等操作。<br>&emsp;&emsp;目前Linux上实现用户态Hook的主流方法主要有两种: <strong>库打桩</strong>、<strong>注入与热更新</strong>。  </p>
+<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 RING0&#x2F;RING3</span><br><span class="line">2 LD_PRELOAD环境变量</span><br><span class="line">3 ELF文件结构</span><br><span class="line">4 PLT与GOT</span><br><span class="line">  4.1 动态库函数寻址流程</span><br><span class="line">  4.2 相关节</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、RING0/RING3</em></strong><br>&emsp;&emsp;Intel的CPU将特权级别分为<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">四个级别</a><sup>[1]</sup>: RING0,RING1,RING2,RING3。Linux系统包含上述所有级别，Windows系统只使用RING0和RING3。<br>&emsp;&emsp;内核的代码运行在最高运行级别RING0(内核态)上，可以使用特权指令，控制中断、修改页表、访问设备等等。应用程序的代码运行在最低运行级别上RING3(用户态)上，不能做受控操作，如果要访问磁盘，写文件，那必须通过执行系统调用。</p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/RING级别.png" width="500" height="300">
+<div align="left">  
+
+<p><strong><em>2、LD_PRELOAD环境变量</em></strong><br>&emsp;&emsp;LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接，它允许你定义在程序运行前优先加载的动态链接库。其优先级甚至高于LD_LIBRARY_PATH环境变量(指定动态库搜索路径)。  </p>
+<p><strong><em>3、ELF文件结构</em></strong><br>&emsp;&emsp;ELF(Executableand Linking Format)即为可执行和链接格式，在Unix系统中，ELF文件包括.o .so以及可执行程序。ELF格式文件的基本结构如下:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF文件格式.png" width="700" height="600">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">ELF Header - ELF头: 存储着一些机器和该ELF文件的基本信息。指出了段头表与节头表在文件中的位置;<br>ELF Program Header Table - 段头表(程序头): 保存了所有段描述信息;<br>ELF Section Header Table - 节头表: 保存了所有节描述信息;</font>  </p>
+</blockquote>
+<p>&emsp;&emsp;可执行程序的内容是由段(Segment)组成的(程序执行必须要包含段)，.o文件的内容是由节(Section)组成的。段由一个或多个具有相同属性的节组成，节头表中保存了在链接阶段(从.o文件生成可执行程序)具体需要将节连接到哪个段的信息。可执行文件载入内存时，会分为由段组织的内存块，这些内存块信息都会保存在段头表中。<br>&emsp;&emsp;在Linux中，如果向看ELF文件的详细信息，可以使用readelf工具:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -e <span class="string">&#x27;ELF文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>4、PLT与GOT</em></strong><br>&emsp;&emsp;PLT(Procedure Linkage Table)即过程链接表在链接阶段被链接到数据段，GOT(Global Offset Table)即全局偏移量表在链接阶段被链接到代码段。前者在ELF中主要包括.plt节、.rela.plt节，后者在ELF中主要包括.got节、.got.plt节，二者共同作用于将动态库函数链接到程序中。</p>
+<p><strong><em>4.1 动态库函数寻址流程</em></strong><br>&emsp;&emsp;现在思考一个问题: ELF是怎么找到函数地址的呢?<br>&emsp;&emsp;要理解这个问题，首先我们得明确这个需要执行的函数究竟在哪里实现，基本可以分为以下三种情况:  </p>
+<ul>
+<li>函数定义在其它.o中。链接阶段可直接重定位</li>
+<li>函数定义在动态库内，动态库<strong>动态链接</strong>。链接阶段无法直接重定位，这种情况我们在热更新中会解释</li>
+<li>函数定义在动态库内，动态库<strong>动态加载</strong>。链接阶段无法直接重定位</li>
+</ul>
+<p>&emsp;&emsp;为了解决上述第三种情况，我们需要使用到PLT与GOT，下图是动态库函数寻址的过程:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/PLT与GOT.png" width="700" height="400">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">1.直接重定位: 链接阶段，链接器直接在其他.o文件找到函数地址并替换原任意地址;<br>2.链接时重定位: 链接阶段，链接器生成一小段额外的stub代码片段(这段代码能够在运行阶段获取函数真是地址)，并将stub函数地址替换原任意地址，并将此地址记录到PLT相关节中;<br>3.运行时重定位: 运行阶段，将库加载到内存中，并获取到目标函数在库中的位置，并将stub函数实现内的目标函数地址替换为内存中的真实地址，并最终执行目标函数。</font>  </p>
+</blockquote>
+<p><strong><em>4.2 相关节</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>节名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符信息</td>
+<td>.dynsym</td>
+<td>外部调用符号的基本信息</td>
+</tr>
+<tr>
+<td></td>
+<td>.dynstr</td>
+<td>外部调用符号的字符名，与.dynsym序号对应，与.rela.plt节中的序号成映射关系</td>
+</tr>
+<tr>
+<td>PLT</td>
+<td>.rela.plt</td>
+<td>PLT新生成桩(stub)函数的偏移地址，其指向位置存在于.got.plt节中</td>
+</tr>
+<tr>
+<td></td>
+<td>.rela.dyn</td>
+<td>已保存的重定位信息</td>
+</tr>
+<tr>
+<td>GOT</td>
+<td>.rela.got</td>
+<td>GOT最终函数地址的偏移地址</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font size="2">注意: 外部调用分为动态链接、动态加载<br>1.动态链接: 在编译时声明动态库的存在，在运行期间链接动态库，意味着动态库在编译时对编译器可见。动态链接的库函数字符名与源代码中不一致(比如print_str函数会变为_Z9print_stri)，查询字符可使用 readelf -a ‘ELF路径’ |grep ‘函数名’;<br>2.动态加载: 在运行期间动态加载库，是由用户自己链接而不是由链接器(动态库都用extern “C”修饰，并在进程中用dlopen动态加载)，在编译期间可以不需要知道动态库的存在。动态加载的库函数字符名即为源代码中的函数名</font> </p>
+</blockquote>
+<h3 id="0x02-库打桩"><a href="#0x02-库打桩" class="headerlink" title="0x02 库打桩"></a><em>0x02 库打桩</em></h3><p>&emsp;&emsp;Linux系统下的库打桩(Library Interpositioning)功能允许你拦截对系统标准库中某个目标函数的调用，取而代之执行自己的包装函数。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单进程库打桩</span><br><span class="line">2 全局库打桩</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、单进程库打桩</em></strong><br>&emsp;&emsp;单进程库打桩只替换某进程中调用的系统函数，但是前提是必须获得其源码或.o文件。<br>&emsp;&emsp;execve函数在父进程中fork一个子进程，在子进程中调用exec函数启动新的程序。exec函数族一共有六个，其中execve为内核级系统调用，所有其他函数最终都会调用到它。在这里我们直接拦截execve函数:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* hook.c */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execve</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">char</span>* <span class="keyword">const</span> argv[], <span class="keyword">char</span>* <span class="keyword">const</span> envp[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 在被调用时，打印命令名称与进程PID</span></span><br><span class="line">    <span class="keyword">int</span> pid = getpid();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;execve(%s); pid: %d\n&quot;</span>, filename, pid);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ssize_t</span> (*execvep)(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">char</span>* <span class="keyword">const</span> argv[], <span class="keyword">char</span>* <span class="keyword">const</span> envp[]);</span><br><span class="line">    </span><br><span class="line">    execvep = dlsym(RTLD_NEXT, <span class="string">&quot;execve&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> execvep(filename, argv, envp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;假设有如下调用execve函数执行’ls -ah’的源码文件:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* main.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>* argv[] = &#123;<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-ah&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span>* envp[] = &#123;<span class="number">0</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    execve(<span class="string">&quot;/bin/ls&quot;</span>, argv, envp);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在编译时，只需要包含hook.c即可:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line"><span class="comment"># 情况一: 源码编译</span></span><br><span class="line">$ gcc main.cpp hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况二: .o文件编译</span></span><br><span class="line">$ gcc main.o hook.c -o <span class="built_in">test</span> -ldl</span><br><span class="line"><span class="comment"># 情况三: 直接修改elf库</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ patchelf --add-needed <span class="variable">$PWD</span>/hook.so <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、全局库打桩</em></strong><br>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">全局库打桩</a><sup>[2]</sup>实际上实现方式与单进程库打桩一致，只是其利用了在Linux系统下LD_PRELOAD环境变量能够允许所有进程优先加载指定函数的特性，实现了<strong>libc(系统)函数调用劫持</strong>。其执行流程如下:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/全局库打桩流程.png" width="600" height="350">
+<div align="left">  
+
+<p>&emsp;&emsp;代码无需改动，只是在编译时，修改LD_PRELOAD环境变量即可:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line"><span class="comment"># &#x27;-dl&#x27; 参数实现 hook.c 中的dlsym dlopen函数</span></span><br><span class="line">$ gcc -shared -fPIC hook.c -o hook.so -ldl</span><br><span class="line">$ gcc main.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将hook.so写入LD_PRELOAD</span></span><br><span class="line">$ <span class="built_in">export</span> LD_PRELOAD=<span class="variable">$PWD</span>/hook.so</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-注入与热更新"><a href="#0x03-注入与热更新" class="headerlink" title="0x03 注入与热更新"></a><em>0x03 注入与热更新</em></h3><p>&emsp;&emsp;<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">注入与热更新</a><sup>[3]</sup>实现Hook的方法，是为了将目标进程外部调用的动态库中的某个函数替换为其他动态库中的某个函数。其Hook思路，可以简单地理解为首先将hook.so注入到目标进程内存空间中，然后使用hook.so中的函数地址热更新替代target.so中的函数地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 注入</span><br><span class="line">2 热更新</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、注入</em></strong><br>&emsp;&emsp;目标进程Test在最开始时并不能直接运行hook.so中的函数，因为hook.so并不在进程的内存空间，因此我们需要实现的第一步就是将hook.so注入到Test内存空间中。比较简单的实现方法是，假设Test依赖libc库，那么我们可以劫持进程执行系统调用dlopen，并加载我们的hook库。<br>&emsp;&emsp;至于如何使进程执行系统调用dlopen，只需要修改CPU寄存器即可:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/系统调用流程.png" width="750" height="300">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">rdi / rsi / rdx / r10 / r8 / r9：参数1~6<br>rax：系统调用号<br>rip：执行代码地址</font>  </p>
+</blockquote>
+<p><strong><em>2、热更新</em></strong><br>&emsp;&emsp;在将hook.so注入目标进程Test后，我们需要使用hook.so中的函数替换掉动态库target.so中的某个函数。<br>&emsp;&emsp;为了实现这个目的，我们必须先理解ELF调用外部函数的关系图(注意foo1与foo2调用区别):  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/ELF外部函数调用关系图.png" width="800" height="430">
+<div align="left">  
+
+<hr>
+<blockquote>
+<p><font size="2">注意: 外部调用寻找函数地址也不一定用到PLT与GOT<br>1.foo1: 不需要PLT与GOT寻址。比如直接在target.so中实现的函数<br>2.foo2: 需要PLT与GOT寻址。比如在target.so中调用的libc库函数</font>  </p>
+</blockquote>
+<p>&emsp;&emsp;根据上图，在调用foo1和foo2的真正实现中，其调用过程是:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># foo1</span></span><br><span class="line">1) .dynstr中记录了所有外部函数字符，找到foo1字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">2) .dynsym中记录foo1函数偏移地址，其指向位置存在于.text节中;</span><br><span class="line"></span><br><span class="line"><span class="comment"># foo2</span></span><br><span class="line">1) .dynstr中记录了所有外部函数字符，找到foo2字符序号(.dynstr与.dynsym共用一套序号)</span><br><span class="line">2) .dynsym中记录foo2函数偏移地址，其指向位置不存在于.text节中;</span><br><span class="line">3) 根据foo2序号，找到在.rela.plt节中映射的新序号，确定foo2在.rela.plt节中位置;</span><br><span class="line">4) 属PLT: .rela.plt节真正保存foo2_stub函数偏移地址，其指向位置存在于.rela.got节中;</span><br><span class="line">5) 属GOT: .rela.got节真正保存foo2偏移地址。</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;在理解了ELF调用外部函数的过程之后，我们针对foo1与foo2两种情况，可采用如下方法对目标函数进行热更新:  </p>
+<div align="center">
+<img src="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/热更新原理图.png" width="800" height="430">
+<div align="left">  
+
+<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742894/article/details/90180219">https://blog.csdn.net/weixin_43742894/article/details/90180219</a><br>[2]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lion-cheng/p/16018700.html#%E5%BA%93%E6%89%93%E6%A1%A9%E6%9C%BA%E5%88%B6">https://www.cnblogs.com/lion-cheng/p/16018700.html#库打桩机制</a><br>[3]<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759520">https://cloud.tencent.com/developer/article/1759520</a>  </p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Linux 计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/27/Linux%E7%94%A8%E6%88%B7%E6%80%81Hook/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-LinuxIO模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -263,229 +558,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/08/18/LinuxIO%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux图形界面显示原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/">Linux图形界面显示原理</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/" class="archive-article-date">
-  	<time datetime="2022-08-17T02:23:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-17</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Linux图形界面包括前后端，后端的选择方案有著名的”X Window System”和”Wayland”，前端包括以下几个重要组成部分:显示管理器、窗口管理器、文件管理器以及GTK+/QT图形库等。<br>&emsp;&emsp;1984年MIT大学创造了”X Window System”(XWindow)，这是在UNIX系统构建图形化视窗系统的设计方案，又称X规范(协议)。并在1987年形成了第11版(X11)，目前使用最广的软件实现是Xorg。<br>&emsp;&emsp;2008年，RedHat的员工创造了Wayland。Wayland是在XWindow基础上实现的一种协议，前者去除了后者中不必要的设计(比如将X Server和窗口管理器整合到一起作为服务端)。但目前而言，前者仍有许多缺陷，比如在远程桌面能力不足，重度依赖Linux内核技术不易移植到其他系统平台。<br>&emsp;&emsp;前后端分离的好处是，用户在Linux中可以随意切换前端，享受不同界面风格。比较常用的前端界面环境有Gnome、KDE、Unity、XFCE、LXDE、DDE等。</p>
-<h3 id="0x01-X-Window-System"><a href="#0x01-X-Window-System" class="headerlink" title="0x01 X Window System"></a><em>0x01 X Window System</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 设计原理</span><br><span class="line">2 通信流程</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、设计原理</em></strong>  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/XWindow原理.png" width="600" height="350">
-<div align="left">  
-
-<ul>
-<li>X11采用了C/S的架构，在其设计下，整个图形视窗系统主要分为3个部分:  <ul>
-<li>X Server(X服务器)。一方面负责和设备驱动交互，监听显示器和键盘鼠标;另一方面响应X Client需求传递键盘、鼠标事件、绘制图形文字等</li>
-<li>X Client(X客户端)。由GTK+/QT等图形库开发实现，负责在收到设备事件后计算出绘图数据，由于本身没有绘制能力，只能向X Server发送绘制请求和绘图数据。X Client可以和X Server在同一个主机上，也可以通过TCP/IP网络连接。</li>
-<li>Window Manager(窗口管理器)，或者叫合成器(Compositor)。掌管各X Client的窗口视觉外观，如形状、排列、移动、重叠渲染甚至是<strong>半透明效果</strong>等。注意窗管并非X Server的一部分，而是一个特殊的X Client程序。</li>
-</ul>
-</li>
-</ul>
-<p><strong><em>2、通信流程</em></strong>  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/XWindow流程.png" width="600" height="250">
-<div align="left">  
-
-<h3 id="0x02-Wayland"><a href="#0x02-Wayland" class="headerlink" title="0x02 Wayland"></a><em>0x02 Wayland</em></h3><p>&emsp;&emsp;Wayland将X Server和窗口管理器整合到一起作为服务端，也可以称为合成器（Compositor），注意在XWindow中窗管被称为合成器。  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/Wayland流程.png" width="600" height="250">
-<div align="left">  
-
-<h3 id="0x03-显示管理器"><a href="#0x03-显示管理器" class="headerlink" title="0x03 显示管理器"></a><em>0x03 显示管理器</em></h3><p>&emsp;&emsp;显示管理器用于开机后显示登陆界面，并启动窗口管理器等XWindow组件。如果没有显示管理器，Linux开机会显示命令行登陆界面，需要使用命令行登陆后手动启动X server和窗口管理器才能显示GUI。</p>
-<h3 id="0x04-窗口管理器"><a href="#0x04-窗口管理器" class="headerlink" title="0x04 窗口管理器"></a><em>0x04 窗口管理器</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 窗口层级</span><br><span class="line">2 子框架重定向</span><br><span class="line">3 二次排版</span><br><span class="line">4 窗口合成管理器</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;窗口管理器是前端的核心组件，其主要负责管理每个独立窗口如何显示/移动，怎样反馈输入，怎样组织各个窗口。目前常用的窗管有XFCE的xfwm，Gnome的mutter，KDE的Kwin等。XWindow并未指定一个专用的窗口管理器，也没有定义窗口管理器的行为，因此用户可以任意替换。关于如何写一个窗口管理器可以参考<a target="_blank" rel="noopener" href="https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i">文献</a><sup>[1]</sup>。<br>&emsp;&emsp;窗口管理器的本质上就是一个常规的X Client，它并没有超级用户权限，也并不能直接调用内核函数。但是，窗管能通过X Server提供的特殊API来控制屏幕显示(X Server至多只会有一个窗口管理器的存在)。窗管与X Server的交互是通过<strong>属性</strong>和<strong>事件</strong>机制实现的。下面将详细介绍窗管实现的细节:  </p>
-<p><strong><em>1、窗口层级</em></strong><br>&emsp;&emsp;在显示器显示的时候，所有窗口的管理实际上是一个树形结构，这个树的根就是顶层窗口(一个虚拟的，不可见的窗口，但是它的大小跟屏幕一样，同时会永远的存在)。有Qt开发经验的都清楚，每个界面应用(X Client)都有一个QWindows(QWidget)作为主窗口，而所有的主窗口最后都会挂载到顶层窗口中。</p>
-<p><strong><em>2、子框架重定向</em></strong><br>&emsp;&emsp;在X Window System的设计理念中，X Server并不直接管理窗口显示，这个功能均转交给窗管实现。实际上如果没有窗管，那么显示就由X Server直接处理，然而在有窗管存在的情况下，显示过程中窗管会先拦截X Client对界面显示操作的请求，这种拦截技术被称为子框架重定向(Substructure Redirection)。  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/窗口管理器原理.png" width="600" height="250">
-<div align="left">  
-
-<p>&emsp;&emsp;X Server在任何情况下，只允许一个窗口管理器注册子框架重定向。当有第二个窗管在对一个已被注册子框架重定向的X Server进行注册时，原先的窗管不会从X Sever解注册，断连或者崩溃。</p>
-<p><strong><em>3、二次排版</em></strong>  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/二次排版.png" width="400" height="200">
-<div align="left">  
-
-<p>&emsp;&emsp;为了实现窗口风格的统一，窗口管理器在接收到X Client的窗口绘制时会主动为其添加包含标题栏的框架窗口(Frame Window)，这也是为什么Qt窗口应用默认会有标题栏的原因。</p>
-<p><strong><em>4、窗口合成管理器</em></strong><br>&emsp;&emsp;现代的界面显示已经不能满足于窗口了，例如Shift Switcher:  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/Shift Switcher.png" width="600" height="400">
-<div align="left">  
-
-<p>&emsp;&emsp;为了实现更加复杂的显示，出现了离屏内存缓冲区的概念(Wayland中使用的DRM技术)。实现步骤如下:  </p>
-<div align="center">
-<img src="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/窗口合成管理器原理.png" width="500" height="400">
-<div align="left">  
-
-<hr>
-<blockquote>
-<p><font size="2">1. 渲染每一个顶层窗口以及它的内部UI节点到一个离屏内存缓冲区，而不是直接输出到硬件上;<br>2.根据我们的设计，使用旋转，扭曲这样的方式来变化每个缓冲区的样式;<br>3.将这些经过变化的缓冲区融合到一个最终的缓冲区中，同时还需要将背景和其他需要展示的UI也合并进来;<br>4.将这个最终缓冲区的内容渲染到屏幕上。</font> </p>
-</blockquote>
-<h3 id="0x05-文件管理器"><a href="#0x05-文件管理器" class="headerlink" title="0x05 文件管理器"></a><em>0x05 文件管理器</em></h3><p>&emsp;&emsp;管理硬盘的分区显示。</p>
-<h3 id="0x06-常见问题"><a href="#0x06-常见问题" class="headerlink" title="0x06 常见问题"></a><em>0x06 常见问题</em></h3><p>&emsp;&emsp;1.通过Windows的远程桌面功能远程连接到Linux的桌面系统，无法显示水印进程。而直接在Linux上安装向日葵，并远程连接，可以正常显示水印进程。</p>
-<h3 id="0x07-引用文献"><a href="#0x07-引用文献" class="headerlink" title="0x07 引用文献"></a><em>0x07 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i">https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i</a></p>
-</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/17/Linux%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-设计模式-生产者消费者模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">设计模式-生产者消费者模式</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2022-08-08T10:55:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;生产者-消费者模式是一个十分经典的<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">多线程并发协作</a><sup>[1]</sup>的模式，严格地讲并不属于设计模式的范畴。<br>&emsp;&emsp;在这个模式中，负责产生数据的模块被称为生产者，而处理数据的模块就称为消费者。并且在生产者与消费者之间设立一个缓冲区(数据仓库)，当生产者生产数据时锁住仓库，不让消费者访问，当消费者消费时锁住仓库，不让生产者访问仓库。  </p>
-<div align="center">
-<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/简介.jpg" width="400" height="80">
-<div align="left">
-
-<h3 id="0x01-生产者消费者模式"><a href="#0x01-生产者消费者模式" class="headerlink" title="0x01 生产者消费者模式"></a><em>0x01 生产者消费者模式</em></h3><p>&emsp;&emsp;更复杂的生产者消费者模式应该能实现一部分线程被用于去生产数据，另一部分线程去处理数据。这里，我们将只有一个生产者线程和一个消费者线程的情况称为单缓冲，将多生产者线程、多消费者线程的情况称为多缓冲。  </p>
-<div align="center">
-<img src="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/生产者消费者模式.png" width="700" height="200">
-<div align="left">
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 单缓冲</span><br><span class="line">2 多缓冲</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、单缓冲</em></strong>  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sem_t</span> empty_sem; <span class="comment">// 同步信号量， 当满了时阻止生产者放产品</span></span><br><span class="line"><span class="keyword">sem_t</span> full_sem; <span class="comment">// 同步信号量， 当没产品时阻止消费者消费</span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex; <span class="comment">// 互斥信号量， 一次只有一个线程访问缓冲</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">buffer</span> = <span class="number">0</span>; <span class="comment">//单缓冲</span></span><br><span class="line"><span class="keyword">int</span> product_id = <span class="number">0</span>; <span class="comment">//生产者id</span></span><br><span class="line"><span class="keyword">int</span> consumer_id = <span class="number">0</span>; <span class="comment">//消费者id</span></span><br><span class="line"><span class="keyword">int</span> product_sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> consumer_sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">start</span>;</span> <span class="comment">//记录时间</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">end</span>;</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> timer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">product</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++product_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;empty_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        product_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld product_%d is producing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               product_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;full_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = ++consumer_id;</span><br><span class="line">    <span class="keyword">int</span> t = *(<span class="keyword">int</span> *)arg;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        sleep(t);</span><br><span class="line">        sem_wait(&amp;full_sem);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        gettimeofday(&amp;<span class="built_in">end</span>, <span class="literal">NULL</span>);</span><br><span class="line">        consumer_sum++;</span><br><span class="line">        timer =</span><br><span class="line">            <span class="number">1000000</span> * (<span class="built_in">end</span>.tv_sec - start.tv_sec) + <span class="built_in">end</span>.tv_usec - start.tv_usec;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time:%ld consumer_%d is consumeing.SUM=%d\n&quot;</span>, timer, id,</span><br><span class="line">               consumer_sum);</span><br><span class="line">        <span class="built_in">buffer</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        sem_post(&amp;empty_sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span> </span>&#123;</span><br><span class="line">    gettimeofday(&amp;start, <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    sem_init(&amp;empty_sem, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;full_sem, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">pthread_t</span> id1[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">pthread_t</span> id2[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> T1 = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> T2 = <span class="number">1</span>;</span><br><span class="line">    pthread_create(&amp;id1[<span class="number">1</span>], <span class="literal">NULL</span>, product, &amp;T1);</span><br><span class="line">    pthread_create(&amp;id2[<span class="number">1</span>], <span class="literal">NULL</span>, consumer, &amp;T2);</span><br><span class="line">    pthread_join(id1[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(id2[<span class="number">1</span>], <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-引用文献"><a href="#0x02-引用文献" class="headerlink" title="0x02 引用文献"></a><em>0x02 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://jenkov.com/tutorials/java-concurrency/producer-consumer.html">https://jenkov.com/tutorials/java-concurrency/producer-consumer.html</a></p>
-</div></div></div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
         </p>
       
 
@@ -636,15 +708,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -656,11 +728,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -708,11 +780,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -724,11 +796,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">

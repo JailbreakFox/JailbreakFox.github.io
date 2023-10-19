@@ -156,6 +156,335 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-设计模式-行为型模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式-行为型模式</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2022-07-28T09:38:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-28</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;设计模式是软件开发人员在软件开发过程中面临的一般问题的解决方案，之所以记录这些模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。重要的参考文献为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">设计模式-可复用的面向对象软件元素</a><sup>[1]</sup>，以及<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">菜鸟教程</a><sup>[2]</sup>上收录的一些成熟的设计模式。本文将根据菜鸟教程上的设计模式分类方式书写，且只针对创建型模式，全部代码基于c++。</p>
+<h3 id="0x01-观察者模式"><a href="#0x01-观察者模式" class="headerlink" title="0x01 观察者模式"></a><em>0x01 观察者模式</em></h3><p>&emsp;&emsp;观察者模式定义了对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知，并自动更新。<br>&emsp;&emsp;订阅-发布模式是由观察者模式衍生出来的，前者新增了第三个组件，称为调度中心或事件通道，它维持着发布者和订阅者之间的联系，过滤所有发布者传入的消息并相应地分发它们给订阅者。  </p>
+<div align="center">
+<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/观察者模式.png">
+<div align="left">  
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 观察者模式</span><br><span class="line">2 订阅-发布模式</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、观察者模式</em></strong><br>&emsp;&emsp;观察者模式有两个重要的角色，即目标和观察者，在目标和观察者之间是没有事件通道的。一方面，观察者要想订阅目标事件，由于没有事件通道，因此必须将自己添加到目标(Subject) 中进行管理；另一方面，目标在触发事件的时候，也无法将通知操作(notify) 委托给事件通道，因此只能亲自去通知所有的观察者。  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Observer* observer)</span> </span>&#123;</span><br><span class="line">        m_observers.push_back(observer);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_observers.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            m_observers[i]-&gt;update(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Observer*&gt; m_observers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建观察者ob1</span></span><br><span class="line">    Observer* ob1 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建观察者ob2</span></span><br><span class="line">    Observer* ob2 = <span class="keyword">new</span> Observer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建目标sub</span></span><br><span class="line">    Subject* sub = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob1 （目标和观察者建立了依赖关系）</span></span><br><span class="line">    sub-&gt;add(ob1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub添加观察者ob2</span></span><br><span class="line">    sub-&gt;add(ob2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标sub触发SMS事件（目标主动通知观察者）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I fired SMS event&quot;</span>;</span><br><span class="line">    sub-&gt;notify(&amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、订阅-发布模式</em></strong><br>&emsp;&emsp;发布-订阅模式是面向调度中心编程的，只需要写一个类专门用于控制信息的发布。其优点在于去中心化，即不在乎谁是发布者，而且能管理多个事件。  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(* CALLBACK)</span><span class="params">(<span class="keyword">void</span> *param)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PubSub</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, CALLBACK callback)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">            m_subscribers[topic].push_back(callback);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">publish</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; topic, <span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; cb = m_subscribers[topic];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cb.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            CALLBACK cbFunc = cb[i];</span><br><span class="line">            cbFunc(param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CALLBACK&gt; &gt; m_subscribers;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">void</span>* param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="built_in">print</span> = *<span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(param);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">print</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">// 创建事件调度中心，为订阅者和发布者提供调度服务</span></span><br><span class="line">    PubSub* pubSub = <span class="keyword">new</span> PubSub();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A订阅了SMS事件（A只关注SMS本身，而不关心谁发布这个事件）</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// B订阅了SMS事件</span></span><br><span class="line">    pubSub-&gt;subscribe(<span class="string">&quot;SMS&quot;</span>, &amp;callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// C发布了SMS事件（C只关注SMS本身，不关心谁订阅了这个事件）</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> param = <span class="string">&quot;I published SMS event&quot;</span>;</span><br><span class="line">    pubSub-&gt;publish(<span class="string">&quot;SMS&quot;</span>, &amp;param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-状态模式"><a href="#0x02-状态模式" class="headerlink" title="0x02 状态模式"></a><em>0x02 状态模式</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 理论基础</span><br><span class="line">2 具体实现</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、理论基础</em></strong><br>&emsp;&emsp;状态模式的概念和有限状态机相似。最容易想到的状态机实现应该就是if else语句，实现起来类似这样:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="string">&quot;status1&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status2&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;status2&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status3&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;status3&quot;</span> == state) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    state = <span class="string">&quot;status1&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;但是当状态变得很多，并且状态之间的耦合度变得很高时，这种代码就会很难维护。状态模式就是为了解决这个问题而产生的，一个最简单的状态模式，其UML图如下:  </p>
+<div align="center">
+<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/状态模式UML.png">
+<div align="left">  
+
+<blockquote>
+<p><font size="2">1.Context - 上下文。定义一个与使用者交互的接口。可以用该对象来记录当前状态。<br>2.State - 所有状态的父类。其虚函数定义状态之间发生转换时的行为。<br>3.ConcreteState - 继承自State的状态子类。有选择地实现State中定义的行为。<br></font>  </p>
+</blockquote>
+<p><strong><em>2、具体实现</em></strong><br>&emsp;&emsp;现在我们假设需要做一个状态机，其状态关系如下图:  </p>
+<div align="center">
+<img src="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/状态模式.png">
+<div align="left">  
+
+<p>&emsp;&emsp;上下文 context.hpp:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> CONTEXT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONTEXT_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;state.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> Action &#123;</span><br><span class="line">    ACTION_CRIME,</span><br><span class="line">    ACTION_CORRECT,</span><br><span class="line">    ACTION_KILLED</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Context</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Context(State *state) : m_state(<span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (state)</span><br><span class="line">            setStatus(state);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ~Context() &#123; <span class="keyword">delete</span> m_state; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 设置状态 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setStatus</span><span class="params">(State* state)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;===== current status ===== &quot;</span> &lt;&lt; state-&gt;name() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (m_state)</span><br><span class="line">            <span class="keyword">delete</span> m_state;</span><br><span class="line">        m_state = state;</span><br><span class="line">        m_state-&gt;set_context(<span class="keyword">this</span>); <span class="comment">// 传递上下文到状态中</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 获取当前状态 */</span></span><br><span class="line">    <span class="function">State* <span class="title">getStatus</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (m_state)</span><br><span class="line">            <span class="keyword">return</span> m_state;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 执行行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">request_handle</span><span class="params">(Action action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> ACTION_CRIME:</span><br><span class="line">                m_state-&gt;handle_crime();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> ACTION_CORRECT:</span><br><span class="line">                m_state-&gt;handle_correct();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> ACTION_KILLED:</span><br><span class="line">                m_state-&gt;handle_killed();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    State* m_state; <span class="comment">// 用于记录当前状态</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;状态类头文件 state.h:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> STATE_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STATE_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Context</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 状态父类 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">State</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set_context</span><span class="params">(Context* context)</span> </span>&#123; m_context = context; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    Context* m_context;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 平民状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateCommon</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;common&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 犯罪行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 假释犯状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateParolee</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;parolee&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 犯罪行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 劳改行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 罪犯状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateKiller</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;killer&quot;</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 劳改行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/* 枪毙行为 */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 死人状态 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateDeath</span> :</span> <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;death&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_crime</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_correct</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle_killed</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Already death!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;状态类实现 state.cpp:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;context.hpp&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;state.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 平民状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateCommon::handle_crime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateCommon start crime.Become ConcreteStateKiller&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateKiller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateCommon::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateCommon killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 假释犯状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_crime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee start crime.Become ConcreteStateKiller&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateKiller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_correct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee start correct.Become ConcreteStateCommon&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateCommon);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateParolee::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateParolee killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 罪犯状态 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateKiller::handle_correct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateKiller start correct.Become ConcreteStateParolee&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateParolee);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConcreteStateKiller::handle_killed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ConcreteStateKiller killed.Become ConcreteStateDeath&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    m_context-&gt;setStatus(<span class="keyword">new</span> ConcreteStateDeath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;具体调用 main.cpp:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*状态模式的实现.*/</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 编译：g++ main.cpp state.h state.cpp context.hpp -o StatePattern</span></span><br><span class="line"><span class="comment"> * 运行：./StatePattern</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;context.hpp&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 新建一个平民</span></span><br><span class="line">    Context *context = <span class="keyword">new</span> Context(<span class="keyword">new</span> ConcreteStateCommon);</span><br><span class="line">    <span class="comment">// 平民犯罪，变成罪犯</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CRIME);</span><br><span class="line">    <span class="comment">// 罪犯劳改，变成假释犯</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CORRECT);</span><br><span class="line">    <span class="comment">// 假释犯枪毙，变死人</span></span><br><span class="line">    context-&gt;request_handle(ACTION_KILLED);</span><br><span class="line">    <span class="comment">// 死人犯罪，不存在的</span></span><br><span class="line">    context-&gt;request_handle(ACTION_CRIME);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 打印当前状态</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Current Status: &quot;</span> &lt;&lt; context-&gt;getStatus()-&gt;name() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">delete</span> context;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80/7600072">https://baike.baidu.com/item/设计模式：可复用面向对象软件的基础/7600072</a><br>[2]<a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/design-pattern-intro.html">https://www.runoob.com/design-pattern/design-pattern-intro.html</a></p>
+</div></div></div></div></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Rsync备份还原" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">Rsync备份还原</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/" class="archive-article-date">
+  	<time datetime="2022-07-10T08:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-10</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;在Linux中，cp命令可实现本机文件的全量复制，scp命令可实现远程文件的全量复制。而<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">Rsync</a><sup>[1]</sup>(Remote Synchronizetion)可实现本地、远程文件的增量复制(只复制不同的文件)。<br>&emsp;&emsp;本文在Rsync技术的基础上，详细介绍一套备份还原功能的设计。  </p>
+<h3 id="0x01-Rsync使用方法"><a href="#0x01-Rsync使用方法" class="headerlink" title="0x01 Rsync使用方法"></a><em>0x01 Rsync使用方法</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 常用参数</span><br><span class="line">2 使用方式</span><br><span class="line">  2.1 本地方式</span><br><span class="line">  2.2 远程方式</span><br><span class="line">  2.3 守护进程方式</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、常用参数</em></strong>  </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>归档模式传输, 等于-tropgDl -t -r -o -p -g -D -l</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>详细模式输出, 打印速率, 文件数量等</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>输出一个摘要信息</td>
+</tr>
+<tr>
+<td>-q</td>
+<td>精简输出</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>传输时进行压缩以提高效率</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>递归传输目录及子目录，即目录下得所有目录都同样传输</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>保持文件时间信息</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>保持文件属主信息</td>
+</tr>
+<tr>
+<td>-g</td>
+<td>保持文件属组信息</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>保持文件权限</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>保留软连接</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>保留硬连接</td>
+</tr>
+<tr>
+<td>-X</td>
+<td>保留拓展属性</td>
+</tr>
+<tr>
+<td>-P</td>
+<td>显示同步的过程及传输时的进度等信息</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>保持设备文件信息</td>
+</tr>
+<tr>
+<td>-L</td>
+<td>保留软连接指向的目标文件</td>
+</tr>
+<tr>
+<td>-e</td>
+<td>使用的信道协议,指定替代rsh的shell程序</td>
+</tr>
+<tr>
+<td>–append</td>
+<td>指定文件接着上次传输中断处继续传输</td>
+</tr>
+<tr>
+<td>–append-verify</td>
+<td>使用参数续传（在断点续传之后，验证一下文件，如果不同，修复文件）</td>
+</tr>
+<tr>
+<td>–exclude=文件名</td>
+<td>指定排除不需要传输的文件</td>
+</tr>
+<tr>
+<td>–exclude-from=文件名</td>
+<td>排除文件内写的文件名(文件内可以写多个文件名)</td>
+</tr>
+<tr>
+<td>–bwlimit=传输速度</td>
+<td>限速传输（单位：MB）</td>
+</tr>
+<tr>
+<td>–delete</td>
+<td>让目标目录和源目录数据保持一致</td>
+</tr>
+<tr>
+<td>–password-file=文件名</td>
+<td>使用密码文件(文件内要写密码)</td>
+</tr>
+<tr>
+<td>–port</td>
+<td>指定端口传输</td>
+</tr>
+<tr>
+<td>–modify-window=NUM</td>
+<td>决定文件是否时间相同时使用的时间戳窗口，默认为0</td>
+</tr>
+</tbody></table>
+<hr>
+<blockquote>
+<p><font size="2">1.与scp类似，Rsync可实现”推”、”拉”两种方式;<br>2.rsync不管是推还是拉，推送目录的时候带/和不带/是有区别的。例如/etc/，代表推拉etc目录下所有文件(不包括etc文件夹本身)。/etc，代表推拉包括etc目录整体<br>3.Windows的FAT文件系统(此文件系统有2秒范围内的精确度差异)传输数据时，设置”–modify-window=1”将非常有用(允许文件时间戳有1秒的差异)</font> </p>
+</blockquote>
+<p><strong><em>2、使用方式</em></strong><br><strong><em>2.1、本地方式</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;目标文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.2、远程方式</em></strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉</span></span><br><span class="line">rsync -avL --append-verify --delete <span class="string">&#x27;用户&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;目标文件目录&#x27;</span> <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2.3、守护进程方式</em></strong><br>&emsp;&emsp;首先任意创建一个配置文件rsyncd.conf:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">uid = 0</span><br><span class="line">gid = 0</span><br><span class="line">use chroot = no                 <span class="comment"># 禁锢目录，不允许操作指定目录之外的目录</span></span><br><span class="line"><span class="built_in">log</span> file = /rsync.log           <span class="comment"># 日志目录</span></span><br><span class="line">port = 7888                     <span class="comment"># rsync使用的端口</span></span><br><span class="line">auth users = My_Rsync           <span class="comment"># rsync远程传输时的登陆用户</span></span><br><span class="line">secrets file = /rsync.password  <span class="comment"># rsync远程传输时的密码文件</span></span><br><span class="line">reverse lookup = <span class="literal">false</span>         <span class="comment"># DNS反查</span></span><br><span class="line">strict modes = <span class="literal">false</span>            <span class="comment"># 检查secrets file的文件权限是否为600</span></span><br><span class="line"><span class="built_in">read</span> only = <span class="literal">false</span>               <span class="comment"># 关闭只读，对备份数据可读写</span></span><br><span class="line"><span class="comment">###########################</span></span><br><span class="line">[<span class="string">&#x27;模块名&#x27;</span>]</span><br><span class="line">path = /backup/</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在服务端开启rsync服务:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆用户名&#x27;:&#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync:My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启服务</span></span><br><span class="line">$ rsync --daemon --config=/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭服务直接kill进程即可</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在客户端执行rsync远程传输文件:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建密码文件</span></span><br><span class="line"><span class="comment"># 密码格式为 &#x27;登陆密码&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;My_Rsync@2022&quot;</span> &gt; /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给密码文件赋权</span></span><br><span class="line">$ chmod 600 /rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块推送文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete <span class="string">&#x27;源文件目录&#x27;</span> rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定远程的模块拉取文件</span></span><br><span class="line">$ rsync -avL --append-verify --delete rsync://<span class="string">&#x27;配置用户名&#x27;</span>@<span class="string">&#x27;远程IP&#x27;</span>:<span class="string">&#x27;配置端口号&#x27;</span>/<span class="string">&#x27;配置模块名&#x27;</span> --password-file=/rsync.password <span class="string">&#x27;源文件目录&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-备份还原功能设计"><a href="#0x02-备份还原功能设计" class="headerlink" title="0x02 备份还原功能设计"></a><em>0x02 备份还原功能设计</em></h3><div align="center">
+<img src="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/Rsync备份还原功能设计.png" width="500" height="200">
+<div align="left">  
+
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zonghan/p/15746569.html">https://www.cnblogs.com/zonghan/p/15746569.html</a></p>
+</div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Linux 工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/10/Rsync%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ROS2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -230,184 +559,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/06/21/ROS2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-加壳与脱壳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/">加壳与脱壳</a>
-    </h1>
-  
-
-        
-        <a href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/" class="archive-article-date">
-  	<time datetime="2022-06-15T07:43:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-15</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;加壳(Packer)，是指对可执行程序加密或资源压缩的过程，加壳后的程序可以直接运行。而脱壳是加壳的逆向过程，即将已经加过壳的可执行程序恢复到无壳的状态。  </p>
-<h3 id="0x01-加壳"><a href="#0x01-加壳" class="headerlink" title="0x01 加壳"></a><em>0x01 加壳</em></h3><p><strong>目标</strong>: 加壳过程中，对可执行程序加密，可<a target="_blank" rel="noopener" href="https://www.cnblogs.com/maotouyingx/p/16382418.html">防止IDA等静态工具反汇编</a>分析。<br><strong>前提</strong>:<br>&emsp;&emsp;1.准备好一个需要加壳的可执行程序target.exe;<br>&emsp;&emsp;2.准备好一个壳shell.exe(能添加节的可执行程序)。<br><strong>步骤</strong>:<br>&emsp;&emsp;准备好一个加壳工具，其实现的功能如下:<br>&emsp;&emsp;1.将可执行程序target.exe、壳shell.exe加载如内存;<br>&emsp;&emsp;2.向shell.exe添加一个区段(文件大小、区段数量);<br>&emsp;&emsp;3.将shell.exe源OEP修改为新的区段地址;<br>&emsp;&emsp;4.将target.exe代码段加密(如xor加密);<br>&emsp;&emsp;5.在shell.exe新的区段OEP处，添加解密代码(如xor);  </p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/06/15/%E5%8A%A0%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ShellCode" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/06/09/ShellCode/">ShellCode</a>
-    </h1>
-  
-
-        
-        <a href="/2022/06/09/ShellCode/" class="archive-article-date">
-  	<time datetime="2022-06-09T09:06:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-09</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;ShellCode实际上可以理解为是一个函数，他可以是在溢出攻击中需要被异常执行的函数，他可以是注入攻击中需要被热更新的hook函数，他甚至可以是恶意进程中需要被执行的核心函数。<br>&emsp;&emsp;ShellCode之所以包含Shell这个关键字，因为在正规的入侵链中，黑客通常需要目标机器执行ShellCode以得到其终端。此Shell既可以是目标机器本地Shell，也可以是反弹到攻击机器的远程Shell。<br>&emsp;&emsp;ShellCode通常有以下三种存在形式: C生成的ELF文件、汇编生成的.asm文件以及<strong>纯十六进制的.bin文件</strong>。<br>&emsp;&emsp;而黑客偏爱十六进制ShellCode的原因，就是希望核心恶意代码既小又可执行(这允许它在尽可能广泛的情况下使用)。比如我们可以为他加壳、使他作为数据动态地加载到进程中，这样就更不容易被杀软发现。  </p>
-<h3 id="0x01-ShellCode生成"><a href="#0x01-ShellCode生成" class="headerlink" title="0x01 ShellCode生成"></a><em>0x01 ShellCode生成</em></h3><p>&emsp;&emsp;由于目前能力有限，这边只介绍两种简单的<strong>纯十六进制ShellCode生成</strong>方法。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 C&#x2F;C++与objdump</span><br><span class="line">2 ShellCode生成器</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、C/C++与objdump</em></strong><br>&emsp;&emsp;objdump是一款linux下的反编译工具，下面以一个最简单的本地Shell获取代码为例介绍如何用该工具生成纯十六进制的ShellCode:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    execve(<span class="string">&quot;/bin/sh&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;首先生成ELF文件，然后使用objdump生成ShellCode:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line">$ gcc test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用objdump生成ShellCode</span></span><br><span class="line"><span class="comment"># 打印的字符串即为ShellCode</span></span><br><span class="line">$ objdump -d ./<span class="built_in">test</span> |grep <span class="string">&#x27;[0-9a-f]:&#x27;</span>|grep -v <span class="string">&#x27;file&#x27;</span>|cut -f2 -d:|cut -f1-6 -d<span class="string">&#x27; &#x27;</span>|tr -s <span class="string">&#x27; &#x27;</span>|tr <span class="string">&#x27;\t&#x27;</span> <span class="string">&#x27; &#x27;</span>|sed <span class="string">&#x27;s/ $//g&#x27;</span>|sed <span class="string">&#x27;s/ /\\x/g&#x27;</span>|paste -d <span class="string">&#x27;&#x27;</span> -s |sed <span class="string">&#x27;s/^/&quot;/&#x27;</span>|sed <span class="string">&#x27;s/$/&quot;/g&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、ShellCode生成器</em></strong><br>&emsp;&emsp;Github上可以找到<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">ShellCode生成器</a>，可以实现从C/C++代码生成汇编代码(.asm)或十六进制文件(.bin):  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写入源txt文件</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;execve(\&quot;/bin/sh\&quot;, 0, 0);&quot;</span> &gt; sh.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成.asm与.bin文件</span></span><br><span class="line">&amp; ./ShellCodeGenerator -p linux_x64 -r sh.txt -a Assembly.asm -o Shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后使用hex编辑器查看生成的Shellcode.bin文件</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-ShellCode运行"><a href="#0x02-ShellCode运行" class="headerlink" title="0x02 ShellCode运行"></a><em>0x02 ShellCode运行</em></h3><p>&emsp;&emsp;为了测试上一步获取到的纯十六进制ShellCode的效果，除了直接使用上述生成器的’-t’参数，我们还可以直接写一个用于测试的.cpp文件:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test.cpp */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;code)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;上述的code变量即为生成的十六进制ShellCode，接下来测试其效果:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成ELF文件</span></span><br><span class="line"><span class="comment"># code变量内容在数据段，由于NX保护机制存在，无法直接在数据段运行指令</span></span><br><span class="line"><span class="comment"># &#x27;-z execstack&#x27;参数可关闭NX保护机制</span></span><br><span class="line">$ gcc -z execstack test.cpp -o <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">$ ./<span class="built_in">test</span> </span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-ShellCode加密"><a href="#0x03-ShellCode加密" class="headerlink" title="0x03 ShellCode加密"></a><em>0x03 ShellCode加密</em></h3><p>&emsp;&emsp;对ShellCode加密的方式很多，比如代码混淆、加密算法、虚拟化等。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 xor加密</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、xor加密</em></strong><br>&emsp;&emsp;异或运算符’^’，可以用来判断两个值是否不同。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 ^ 0 = 0</span><br><span class="line">0 ^ 1 = 1</span><br><span class="line">1 ^ 0 = 1</span><br><span class="line">1 ^ 1 = 0</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;异或运算的特点是，如果对一个值连续做两次xor，则会返回这个值本身。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1010异或后结果</span></span><br><span class="line">1010 ^ 1111 = 0101</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0101异或后结果</span></span><br><span class="line">0101 ^ 1111 = 1010</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;上述这种特性使得它可以用于信息的加密。同样也意味着，可以加密我们的十六进制ShellCode:  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KEY 0x86</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> code[]=<span class="string">&quot;\x48\x31\xc0\x48\xB8\x2F\x62\x69\x6e\x2f\x73\x68\x00\x50\x54\x48\x31\xd2\x48\x31\xf6\x48\x8b\x3c\x24\x48\xc7\xc0\x3b\x00\x00\x00\x0f\x05\x48\x83\xc4\x16&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span>* <span class="title">algorithm_xor</span><span class="params">(<span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> str[], <span class="keyword">int</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> encode_str[<span class="built_in">size</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">size</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        encode_str[i] =  str[i] ^ KEY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* ret = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="built_in">size</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(ret, encode_str, <span class="built_in">size</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* encode_str;</span><br><span class="line">    encode_str = algorithm_xor(code, <span class="keyword">sizeof</span>(code));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/NytroRST/ShellcodeCompiler">https://github.com/NytroRST/ShellcodeCompiler</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/06/09/ShellCode/">展开全文 >></a>
         </p>
       
 
@@ -558,15 +709,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -578,11 +729,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,11 +781,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机技术，编译工具</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -646,11 +797,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">游戏设计，游戏AI，入门</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
