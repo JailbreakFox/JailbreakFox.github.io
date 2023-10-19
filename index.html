@@ -301,7 +301,8 @@
 <td>允许程序员显式地改变控制流的指令，通常不鼓励使用</td>
 </tr>
 </tbody></table>
-<p><strong><em>4、六大模块</em></strong><br>&emsp;&emsp;下面详细介绍六大模块: 纯功能模块、数据管理模块、调度中心模块、事件驱动模块、时钟驱动模块、周期执行模块<br>**<em>4.1、数据管理模块**</em><br>&emsp;&emsp;数据管理模块接口通常包含以下接口函数:  </p>
+<p><strong><em>4、六大模块</em></strong><br>&emsp;&emsp;下面详细介绍六大模块: 纯功能模块、数据管理模块、调度中心模块、事件驱动模块、时钟驱动模块、周期执行模块。</p>
+<p><strong><em>4.1、数据管理模块</em></strong><br>&emsp;&emsp;数据管理模块接口通常包含以下接口函数:  </p>
 <table>
 <thead>
 <tr>
@@ -357,54 +358,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/10/17/%E8%BD%AF%E4%BB%B6%E9%87%8D%E6%9E%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-deb与rpm打包/源码包/debbuild/ftest-1.0/1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>test install</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/09/15/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/%E6%BA%90%E7%A0%81%E5%8C%85/debbuild/ftest-1.0/1/">展开全文 >></a>
         </p>
       
 
@@ -562,6 +515,104 @@
 
 
   
+    <article id="post-Linux进程链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">Linux进程链</a>
+    </h1>
+  
+
+        
+        <a href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/" class="archive-article-date">
+  	<time datetime="2023-05-16T03:06:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-16</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;当你在ssh登录远程机器，并执行程序后，如果再退出ssh会话，可能会遇到进程被杀死的情况。本文将解释该现象产生的原因，并提供一些解决方案。  </p>
+<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 SIGTERM和SIGKILL区别</span><br><span class="line">2 sshd服务KillMode配置</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、SIGTERM 和 SIGKILL区别</em></strong><br>&emsp;&emsp;SIGTERM（信号编号15）： SIGTERM是一个可捕获的信号，用于请求进程正常终止。当进程接收到SIGTERM信号时，它可以选择捕获该信号并执行清理操作，然后自行退出。这样的行为通常被称为优雅退出。进程可以使用信号处理机制来捕获SIGTERM信号，编写相应的处理代码。<br>&emsp;&emsp;SIGKILL（信号编号9）： SIGKILL是一个不可捕获的信号，用于强制终止进程。当进程接收到SIGKILL信号时，它无法捕获或忽略该信号，而是立即终止。SIGKILL信号可以通过系统工具（如kill命令）或在命令行中使用kill -9发送。  </p>
+<p><strong><em>2、sshd服务KillMode配置</em></strong><br>&emsp;&emsp;sshd服务分为两种启动方式:</p>
+<ul>
+<li>sshd服务(主进程为远程连接生成的bash)：systemd服务管理文件为/lib/systemd/system/sshd.service，启动命令为systemctl start sshd</li>
+<li>systemd-socket-proxyd服务(主进程为systemd)：systemd服务管理文件为/lib/systemd/system/sshd@.service，systemd单元服务文件为/lib/systemd/system/sshd.socket，启动命令为systemctl start sshd.socket</li>
+</ul>
+<p>&emsp;&emsp;当你通过ssh登录远程机器时，其会为你创建一个会话并分配一个伪终端。当你退出ssh会话时，伪终端也随之关闭，从而导致与之关联的进程被终止。<br>&emsp;&emsp;并且通过配置sshd的KillMode项，可以改变会话退出时对控制组里进程的对应操作:  </p>
+<ul>
+<li>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉</li>
+<li>process：只杀主进程</li>
+<li>mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号</li>
+<li>none：没有进程会被杀掉，只是执行服务的 stop 命令</li>
+</ul>
+<p>&emsp;&emsp;上述两种服务方式在执行kill的时候不同点在于，sshd服务只会kill掉对应bash进程拉起的所有子进程，systemd-socket-proxyd服务会kill掉systemd下由远程连接拉起的所有子进程。</p>
+<h3 id="0x02-解决方案"><a href="#0x02-解决方案" class="headerlink" title="0x02 解决方案"></a><em>0x02 解决方案</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 方案一 修改sshd配置</span><br><span class="line">2 方案二 nohup</span><br><span class="line">3 方案三 setsid</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>1、方案一 修改sshd配置</em></strong><br>&emsp;&emsp;在 /lib/systemd/system/sshd@.service 配置文件的[Service]下追加KillMode=process</p>
+<p><strong><em>2、方案二 nohup</em></strong><br>&emsp;&emsp;使用nohup命令在ssh会话中启动进程，会将进程与终端断开关联，并将输出重定向到一个文件，从而使进程在终端关闭后继续在后台运行。这样即使退出ssh会话，进程也会继续运行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用nohup拉起进程</span></span><br><span class="line">$ nohup ./xxx 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>3、方案三 setsid</em></strong><br>&emsp;&emsp;setsid函数调用成功后，返回新的会话的ID，调用setsid函数的进程成为新的会话的领头进程，并与其父进程的会话组和进程组脱离。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) <span class="comment">// 返回子进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// setsid();</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="comment">// 返回父进程</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parent begin\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">计算机技术，Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/05/16/Linux%E8%BF%9B%E7%A8%8B%E9%93%BE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
@@ -683,15 +734,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -703,11 +754,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -723,11 +774,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -759,15 +810,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -775,7 +822,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -784,6 +831,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">

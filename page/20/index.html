@@ -156,139 +156,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-币圈入门" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/">币圈入门</a>
-    </h1>
-  
-
-        
-        <a href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/" class="archive-article-date">
-  	<time datetime="2018-07-25T12:37:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-25</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;加密货币作为一种新兴的金融产品，吸引了越来越多的投资者和矿工的关注。在这个复杂的市场中，初学者可能会感到迷茫和无措，不知道从何入手。本指南旨在为新手提供基础知识。</p>
-<h3 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a><em>0x01 基础知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 加密货币算法</span><br><span class="line">2 挖矿协议</span><br><span class="line">3 区块链的含义</span><br><span class="line">4 挖矿与燃气费</span><br><span class="line">5 矿池</span><br><span class="line">6 钱包</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、加密货币算法</em></strong><br>| 算法     | 加密货币 | 用途                     |<br>|———-|———-|————————–|<br>| SHA-256  | 比特币   | 验证交易和挖矿           |<br>| Scrypt   | 莱特币   | 验证交易和挖矿           |<br>| Ethash   | 以太坊   | 增加GPU矿工的参与        |<br>| X11      | Dash     | 提高挖矿的难度，保护安全 |<br>| Equihash | Zcash    | 保护用户隐私和匿名性     |</p>
-<p><strong><em>2、挖矿协议</em></strong><br>&emsp;&emsp;挖矿最常使用的协议是”Stratum”协议，它是一种轻量级的挖矿协议，旨在使矿工与矿池之间的通信更加高效和可靠。该协议由比特币核心开发者Matt Corallo于2011年开发，并已成为几乎所有加密货币矿池和矿工之间的标准协议。<br>&emsp;&emsp;Stratum协议使用JSON-RPC进行通信，并将矿池服务器与矿工之间的数据传输最小化，从而降低了网络延迟和带宽消耗，提高了挖矿的效率和稳定性。它还允许矿工动态地调整挖矿难度，以确保他们能够在网络上保持一定的挖矿速度。<br>&emsp;&emsp;除了Stratum协议之外，还有一些其他的挖矿协议，如GetBlockTemplate（GBT）和Ethereum Mining Protocol（ETHASH），它们分别用于比特币和以太坊等不同的加密货币。  </p>
-<p><strong><em>3、区块链的含义</em></strong><br>&emsp;&emsp;当你进行数字货币交易时，你的交易信息将被打包成一个区块并添加到区块链中。一个区块由多个交易组成，并且包含了这些交易的信息、时间戳、随机数和其他元数据。每个区块都包含了一个指向前一个区块的哈希值，这样就把多个区块连接成了一条链状结构，即区块链。<br>&emsp;&emsp;一旦一个块被创建出来并被添加到区块链中，它就不能被更改或删除。这是因为每个块都包含了前一个块的哈希值，这样就形成了一个不可篡改的数据结构。如果任何一个块被篡改或删除，整个区块链的结构都会被破坏，从而导致整个系统失效。<br>&emsp;&emsp;区块链的数据库是分布式存储的，它被保存在网络中的多个节点上。每个节点都拥有一份完整的区块链副本，因此在整个网络中不存在一个单一的、中心化的存储节点。</p>
-<p><strong><em>4、挖矿与燃气费</em></strong><br>&emsp;&emsp;在实际的区块链系统中，矿工挖矿的过程就是不断尝试计算一个符合区块链协议规定的哈希值(消耗的计算机资源即用于计算哈希值)，一旦计算出这个哈希值，矿工便可以将该哈希值和交易信息等元数据打包成一个新的块，最后将这个块广播到整个网络中。<br>&emsp;&emsp;燃气费是由交易发起者支付的，矿工会根据交易所支付的燃气费用来决定是否打包这个交易与打包的优先级，燃气费最终会被打包该笔交易的矿工获得。因此，矿工的实际收益主要来自于两部分，一部分是挖矿协议规定的区块奖励，另一部分是交易燃气费。<br>&emsp;&emsp;挖矿涉及到的计算量非常庞大，计算出相同的哈希值的概率非常小。如果同时有多个节点挖掘出了新的区块，就会出现分叉现象(区块链被分成了两条或更多条链)，此时每个节点会选择自己认为最长的链，也就是包含最多区块的链作为当前的有效链，而其它的分支链会被抛弃(无法获得奖励)。  </p>
-<p><strong><em>5、矿池</em></strong><br>&emsp;&emsp;矿池是由多个矿工组成的集合。在矿池中，所有矿工合作挖掘，将自己的算力贡献到整个矿池中，共同尝试计算符合规定的哈希值，并且矿池将按照矿工的贡献比例分配奖励。矿池可以提高整个挖矿过程的稳定性，还可以提供更多的服务，比如实时统计矿工的算力、调整挖矿难度、提供挖矿软件、安全监测等  </p>
-<p><strong><em>6、钱包</em></strong><br>&emsp;&emsp;在加密货币中，钱包是由一个公钥和一个私钥组成的。公钥是用于接收加密货币的地址，私钥是用于签署交易以及管理该地址中加密货币的安全性的密码。<br>&emsp;&emsp;钱包主要分为在线钱包、本地钱包与硬件钱包。  </p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>在线钱包</th>
-<th>本地钱包</th>
-<th>硬件钱包</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安全性</td>
-<td>低</td>
-<td>高</td>
-<td>极高</td>
-</tr>
-<tr>
-<td>管理方式</td>
-<td>第三方管理</td>
-<td>用户自行管理</td>
-<td>用户自行管理</td>
-</tr>
-<tr>
-<td>联网方式</td>
-<td>始终联网</td>
-<td>无需联网</td>
-<td>仅在交易时联网</td>
-</tr>
-<tr>
-<td>手续费</td>
-<td>高</td>
-<td>低</td>
-<td>极低</td>
-</tr>
-<tr>
-<td>代表性钱包</td>
-<td>Okx</td>
-<td>Bitcoin Core Wallet</td>
-<td>Ledger</td>
-</tr>
-<tr>
-<td>监管部门溯源</td>
-<td>看平台是否合作</td>
-<td>不可溯源</td>
-<td>不可溯源</td>
-</tr>
-</tbody></table>
-<h3 id="0x02-XMRig"><a href="#0x02-XMRig" class="headerlink" title="0x02 XMRig"></a><em>0x02 XMRig</em></h3><p>&emsp;&emsp;XMRig是一款开源的挖矿软件，主要用于挖掘Monero等加密货币。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 常用参数</span><br><span class="line">2 使用示例</span><br></pre></td></tr></table></figure>
-<p><strong><em>1、常用参数</em></strong><br>| 参数                 | 描述                               |<br>| ——————– | ———————————- |<br>| -x, –donate-level=N | 设置贡献级别，N为0时表示禁用贡献。 |<br>| -o, –url=URL        | 设置矿池地址。                     |<br>| -u, –user=USERNAME  | 设置矿工用户名。                   |<br>| -p, –pass=PASSWORD  | 设置矿工密码。                     |<br>| –coin=COIN          | 设置加密货币类型。                 |<br>| –tls                | 使用TLS加密连接。                  |<br>| –gpu                | 启用GPU挖矿。                      |<br>| –opencl             | 启用OpenCL挖矿。                   |<br>| –cuda               | 启用CUDA挖矿。                     |</p>
-<p><strong><em>2、使用示例</em></strong><br>&emsp;&emsp;这里以一次挖矿病毒溯源到的进程执行命令为例:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./xmrig --donate-level 0 -o pool.supportxmr.com:443 -u 8AigoRTXK19E9gM2RZi5Ez3fky9cpJtbuWmfhfL8xVZA62c5wJydMaW2EZFfCKQHiw2Y2zEqrsNNMjayWoLKt1jGMsBkisY -k --tls -p Voltage</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数字货币 区块链</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/25/%E5%B8%81%E5%9C%88%E5%85%A5%E9%97%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-Git与Hexo" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -677,15 +544,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -697,11 +564,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -717,11 +584,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -753,15 +620,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -769,7 +632,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -778,6 +641,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">

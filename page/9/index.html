@@ -156,303 +156,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-deb与rpm打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">deb与rpm打包</a>
-    </h1>
-  
-
-        
-        <a href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2021-06-24T02:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; Debian下的安装包后缀名.deb，Unix服务器的安装包后缀名一般为.rpm 。本文主要研究如何打这两种包。</p>
-<h3 id="0x01-rpm打包"><a href="#0x01-rpm打包" class="headerlink" title="0x01 rpm打包"></a><em>0x01 rpm打包</em></h3><p>&emsp;&emsp;rpm打包默认是以源码打包的形式，当然也可以利用这种机制实现非源码打包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识构建</span><br><span class="line">  2.1 rpm打包文件结构</span><br><span class="line">  2.2 rpm目录路径宏</span><br><span class="line">  2.3 rpm常用路径宏</span><br><span class="line">  2.4 SPEC文件执行流程</span><br><span class="line">3 源码打包示例</span><br><span class="line">4 非源码打包示例</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、环境搭建</em></strong><br>&emsp;&emsp; 这里以centos7为rpm打包平台，具体的环境配置已经在仓库里面，可以自行<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">查阅资料</a><sup>[1]</sup>。  </p>
-<p><strong><em>2、基础知识构建</em></strong><br><strong><em>2.1、rpm打包文件结构</em></strong><br>&emsp;&emsp; rpmdev-setuptree命令由工具rpmdevtools提供，可以直接在/root/rpmbuild/目录下生成rpm打包所需的目录结构。下面具体描述各个文件夹的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tree /root/rpmbuild</span><br><span class="line">rpmbuild</span><br><span class="line">├── SOURCES    <span class="comment"># 源码路径</span></span><br><span class="line">├── BUILD      <span class="comment"># 源码编译路径</span></span><br><span class="line">├── SPECS      <span class="comment"># rpm生成规则存放路径</span></span><br><span class="line">├── RPMS       <span class="comment"># rpm包生成路径</span></span><br><span class="line">└── SRPMS      <span class="comment"># rpm源码包生成路径</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>SOURCES - 如果是用源码打包，则只需要将源码的tar.gz文件存放于此即可;</li>
-<li>BUILD - rpmbuild工具会自行将SOURCES目录中的源码在此处解压，该文件无需手动修改，具体编译方法需要在SPECS下的.spec文件中描述;</li>
-<li>SPECS - 需要人工操作的只有该文件夹，里面可以存放各种rpm打包规则的.spec文件，后面详细介绍;</li>
-<li>RPMS - 当打包完成，会在此处生成release与debug版的.rpm包;</li>
-<li>SRPMS - 当打包完成，会在此处生成源码.rpm包;</li>
-<li>*BUILDROOT - 该目录是在SPECS打包过程中自动生成的，其重要性是最后打完的包需要安装的文件及其路径都以该目录为模板。  </li>
-</ul>
-<p><strong><em>2.2、rpm目录路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>目录</th>
-<th>宏代码</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/root/rpmbuild/SOURCES</td>
-<td>%_sourcedir</td>
-<td>保存源码包（如 .tar 包）和所有 patch 补丁</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILD</td>
-<td>%_builddir</td>
-<td>源码包被解压至此，并在该目录的子目录完成编译</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/BUILDROOT</td>
-<td>%_buildrootdir</td>
-<td>保存 %install 阶段安装的文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SPECS</td>
-<td>%_specdir</td>
-<td>保存 RPM 包配置（.spec）文件</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/RPMS</td>
-<td>%_rpmdir</td>
-<td>生成/保存二进制 RPM 包</td>
-</tr>
-<tr>
-<td>/root/rpmbuild/SRPMS</td>
-<td>%_srcrpmdir</td>
-<td>生成/保存源码 RPM 包(SRPM)</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.3、rpm常用路径宏</em></strong><br>&emsp;&emsp; 各路径宏参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">文献</a><sup>[2]</sup>  </p>
-<table>
-<thead>
-<tr>
-<th>路径</th>
-<th>宏</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>/etc</td>
-<td>%{_sysconfdir}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_prefix}</td>
-</tr>
-<tr>
-<td>%{_prefix}</td>
-<td>%{_exec_prefix}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/bin</td>
-<td>%{_bindir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/%{_lib}</td>
-<td>%{_libdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/libexec</td>
-<td>%{_libexecdir}</td>
-</tr>
-<tr>
-<td>%{_exec_prefix}/sbin</td>
-<td>%{_sbindir}</td>
-</tr>
-<tr>
-<td>/var/lib</td>
-<td>%{_sharedstatedir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/share</td>
-<td>%{_datarootdir}</td>
-</tr>
-<tr>
-<td>%{_datarootdir}</td>
-<td>%{_datadir}</td>
-</tr>
-<tr>
-<td>%{_prefix}/include</td>
-<td>%{_includedir}</td>
-</tr>
-<tr>
-<td>/usr/share/info</td>
-<td>%{_infodir}</td>
-</tr>
-<tr>
-<td>/usr/share/man</td>
-<td>%{_mandir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_localstatedir}</td>
-</tr>
-<tr>
-<td>%{_sysconfdir}/rc.d/init.d</td>
-<td>%{_initddir}</td>
-</tr>
-<tr>
-<td>/var</td>
-<td>%{_var}</td>
-</tr>
-<tr>
-<td>%{_var}/tmp</td>
-<td>%{_tmppath}</td>
-</tr>
-<tr>
-<td>/usr</td>
-<td>%{_usr}</td>
-</tr>
-<tr>
-<td>%{_usr}/src</td>
-<td>%{_usrsrc}</td>
-</tr>
-<tr>
-<td>lib (lib64 on 64bit multilib systems)</td>
-<td>%{_lib}</td>
-</tr>
-<tr>
-<td>%{_datadir}/doc</td>
-<td>%{_docdir}</td>
-</tr>
-<tr>
-<td>%{_buildrootdir}/%{name}-%{version}-%{release}.%{_arch}</td>
-<td>%{buildroot}</td>
-</tr>
-<tr>
-<td>%{buildroot}</td>
-<td>$RPM_BUILD_ROOT</td>
-</tr>
-</tbody></table>
-<p><strong><em>2.4、SPEC文件执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 升级时完整执行流程：</span></span><br><span class="line">1、执行新包spec文件中 %pre 段.</span><br><span class="line">2、安装新包的相关依赖包.</span><br><span class="line">3、执行新包spec文件中的 %post 段.</span><br><span class="line">4、执行旧包spec文件中的 %preun 段.</span><br><span class="line">5、删除新包中不需要的旧文件。</span><br><span class="line">6、执行旧包spec文件中的 %postun 段.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完整参数传递：</span></span><br><span class="line">%pre和%post段</span><br><span class="line">当传递的第一个参数为1时，表示新安装一个rpm包。</span><br><span class="line">当传递的第一个参数为2时，表示升级一个已经存在的包。</span><br><span class="line">%preun和%postun段</span><br><span class="line">当传递的第一个参数为0时，表示删除一个包。</span><br><span class="line">当传递的第一个参数为1时，表示更新一个包。</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、源码打包示例</em></strong><br>&emsp;&emsp; SPECS撰写方法参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">文献</a><sup>[3]</sup>，这里以最后实现的一个rpm项目打包为例。首先要在/root/rpmbuild/SPECS/目录下新建一个.spec文件，并且内部需要实现一些字段，下面解释各个部分的作用:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目名</span></span><br><span class="line">name: CTest</span><br><span class="line"><span class="comment"># 项目版本</span></span><br><span class="line">Version: 1.0</span><br><span class="line"><span class="comment"># 发布序列号</span></span><br><span class="line">Release: 1%&#123;?dist&#125;</span><br><span class="line"><span class="comment"># 概要</span></span><br><span class="line">Summary: The <span class="string">&quot;CTest&quot;</span> program from GNU</span><br><span class="line">Summary(zh_CN):  GNU <span class="string">&quot;Hello World&quot;</span> 程序</span><br><span class="line"><span class="comment"># 开源协议</span></span><br><span class="line">License: GPLv3+</span><br><span class="line"><span class="comment"># 源代码路径，即放在SOURCES目录下的tar包名</span></span><br><span class="line">Source0: %&#123;name&#125;.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介</span></span><br><span class="line">%description</span><br><span class="line">The <span class="string">&quot;CTest&quot;</span> program</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简介中文</span></span><br><span class="line">%description -l zh_CN</span><br><span class="line"><span class="string">&quot;CTest&quot;</span> 程序</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装前执行的脚本</span></span><br><span class="line">%prep</span><br><span class="line"><span class="comment"># 作用: 将解压后的源码重命名为/root/rpmbuild/BUILD/CTest/</span></span><br><span class="line">%setup -n CTest</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm安装后执行的脚本</span></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载前执行的脚本</span></span><br><span class="line">%preun</span><br><span class="line"></span><br><span class="line"><span class="comment"># rpm卸载后执行的脚本</span></span><br><span class="line">%postun</span><br><span class="line"></span><br><span class="line"><span class="comment"># build默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line">%build</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make %&#123;?_smp_mflags&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># install默认 cd /root/rpmbuild/BUILD/CTest/ 目录下</span></span><br><span class="line"><span class="comment"># 开始把软件安装到虚拟的根目录中，正规写法应该是在MakeFile里面些install</span></span><br><span class="line"><span class="comment"># 虚拟根目录即 /root/rpmbuild/BUILDROOT/’包名‘</span></span><br><span class="line"><span class="comment"># 可以用宏 $RPM_BUILD_ROOT 或 %&#123;buildroot&#125; 代替</span></span><br><span class="line">%install</span><br><span class="line">mkdir -p %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cp CTest %&#123;buildroot&#125;%&#123;_bindir&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line"><span class="comment"># !!files默认 cd /root/rpmbuild/BUILDROOT/&#x27;包名&#x27;/ 目录下</span></span><br><span class="line"><span class="comment"># %defattr(文件权限,用户名,组名,目录权限),其中&#x27;-&#x27;表示默认权限</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%&#123;_bindir&#125;/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变更日志</span></span><br><span class="line">%changelog</span><br><span class="line">* Sun MAY 4 2021 Your Name &lt;youremail@xxx.xxx&gt; - 1.0</span><br><span class="line">- Update to 1.0</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、非源码打包示例</em></strong><br>&emsp;&emsp; 如果无源码，只有一些已经编译完成的链接库与可执行文件，则可以借用打包机制，跳过编译步骤，直接将需要打入rpm包的文件拷贝到/root/rpmbuild/BUILDROOT/目录下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rpm进行实际打包准备工作的阶段</span></span><br><span class="line">%prep</span><br><span class="line">mkdir -p %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line">cp -r <span class="string">&#x27;要存放的文件夹&#x27;</span> %&#123;buildroot&#125;/<span class="string">&#x27;文件安装的路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># files能指定最终打包到安装包的文件</span></span><br><span class="line">%files</span><br><span class="line">%defattr(-,root,root,-)</span><br><span class="line">%<span class="string">&#x27;需要打包的路径&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后只需要执行生成rpm包的指令:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpmbuild -ba <span class="string">&#x27;.spec文件路径&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="0x02-deb打包"><a href="#0x02-deb打包" class="headerlink" title="0x02 deb打包"></a><em>0x02 deb打包</em></h3><p>&emsp;&emsp;虽然deb打包的网上资料较少，但是实际上也是能实现源码与非源码打包的，并且天然支持CMake。可以参考下<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">debian维护手册</a><sup>[4]</sup>。<br>&emsp;&emsp;打包方法总共有三种:  </p>
-<ul>
-<li>debuild - 这种方法较复杂但是做的事情最多。该方法会创建上传Debian软件包所需的所有文件。它首先运行 dpkg-buildpackage，然后在创建的 .changes 文件上运行 lintian（假设安装了 lintian，这是一个 Debian 上面的包质量的检测工具），最后根据需要对 .changes 和/或 .dsc 文件进行签名。  </li>
-<li>dpkg-buildpackage - debuild方法的第一步，如果不做签名等复杂操作，这个方法足矣</li>
-<li>dpkg-deb - 这种方法是为了快速打包，并且只能非源码打包，但并不是常用的方法，相比之下，还是使用dpkg-buildpackage更好<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1 环境搭建</span><br><span class="line">2 基础知识</span><br><span class="line">  2.1 deb打包文件结构</span><br><span class="line">  2.2 debian&#x2F;control文件详解</span><br><span class="line">  2.3 debian&#x2F;rules文件详解</span><br><span class="line">  2.4 debian&#x2F;install文件详解</span><br><span class="line">  2.5 deb打包钩子脚本执行流程</span><br><span class="line">  2.6 deb打包时环境变量</span><br><span class="line">3 源码打包示例</span><br><span class="line">4 非源码打包示例</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><strong><em>1、环境搭建</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debuild环境</span></span><br><span class="line">sudo apt install dh-make devscripts cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-buildpackage环境</span></span><br><span class="line">sudo apt install dh-make cmake gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># dpkg-deb环境</span></span><br><span class="line">sudo apt install fakeroot cmake gcc</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、基础知识</em></strong><br><strong><em>2.1、deb打包文件结构</em></strong><br>&emsp;&emsp; debian / DEBIAN 目录可以使用dh_make工具自动生成。下面具体描述debian文件夹各文件的作用:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先新建一个 &lt;包名&gt;-&lt;版本号&gt; 的目录</span></span><br><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ dh_make --native</span><br><span class="line"></span><br><span class="line"><span class="comment"># debian目录初始生成结构如下</span></span><br><span class="line"><span class="comment"># debian: dpkg-buildpackage指令使用小写目录名</span></span><br><span class="line"><span class="comment"># DEBIAN: dpkg-deb指令使用大写目录名</span></span><br><span class="line">`</span><br><span class="line">debian/</span><br><span class="line">├── changelog          <span class="comment"># 包的更新历史，后面可以使用dch -i指令修改</span></span><br><span class="line">├── compat             <span class="comment"># 包的兼容性，与debian policy版本有关</span></span><br><span class="line">├── control            <span class="comment"># 包的描述信息</span></span><br><span class="line">├── copyright          <span class="comment"># 包的版权信息</span></span><br><span class="line">├── ctest.cron.d.ex</span><br><span class="line">├── ctest.default.ex</span><br><span class="line">├── ctest.doc-base.EX</span><br><span class="line">├── ctest-docs.docs</span><br><span class="line">├── init.d.ex</span><br><span class="line">├── manpage.1.ex</span><br><span class="line">├── manpage.sgml.ex</span><br><span class="line">├── manpage.xml.ex</span><br><span class="line">├── menu.ex</span><br><span class="line">├── postinst.ex        <span class="comment"># 安装后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── postrm.ex          <span class="comment"># 卸载后执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── preinst.ex         <span class="comment"># 安装前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── prerm.ex           <span class="comment"># 卸载前执行脚本，使用前去掉.ex后缀</span></span><br><span class="line">├── README.Debian</span><br><span class="line">├── README.source</span><br><span class="line">├── rules              <span class="comment"># 包的编译方法</span></span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">│   └── format         <span class="comment"># 包的版本</span></span><br><span class="line">└── watch.ex           <span class="comment"># 包的升级链接，使用前去掉.ex后缀</span></span><br><span class="line">`</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;将debian目录尽量简化，打包示例中的debian目录结构如下:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">debian</span><br><span class="line">├── changelog</span><br><span class="line">├── compat</span><br><span class="line">├── control</span><br><span class="line">└── rules</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.2、debian/control文件详解</em></strong><br>&emsp;&emsp;control文件是最重要的，这边给出打包示例中control文件的详细内容:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Source: ctest  <span class="comment"># 这就是根据tar.gz包名自动生成的项目名</span></span><br><span class="line">Section: unknown  <span class="comment"># 该源码包要进入发行版中的分类</span></span><br><span class="line">Priority: optional  <span class="comment"># 描述用户安装该包的重要程度</span></span><br><span class="line">Maintainer: xyh &lt;yhxu94@126.com&gt;  <span class="comment"># 源码维护者的名字和邮箱</span></span><br><span class="line">Build-Depends: debhelper (&gt;=9)  <span class="comment"># 编译依赖</span></span><br><span class="line"> cmake,</span><br><span class="line"> qtbase5-dev</span><br><span class="line">Standards-Version: 3.9.6  <span class="comment"># 此软件包所依据的“Debian Policy Manual”标准版本号</span></span><br><span class="line">Homepage: https://jailbreakfox.github.io/</span><br><span class="line"></span><br><span class="line">Package: ctest  <span class="comment"># 二进制软件包的名称。通常情况下与源代码包相同，但不是必须的</span></span><br><span class="line">Architecture: any  <span class="comment"># 目标机架构，可以是其他架构，比如amd64</span></span><br><span class="line"><span class="comment"># Debian软件包系统最强大的特性之一。每个软件包都可以和其他软件包有各种不同的关系</span></span><br><span class="line">Depends: <span class="variable">$&#123;shlibs:Depends&#125;</span>, <span class="variable">$&#123;misc:Depends&#125;</span>  <span class="comment"># 运行时依赖</span></span><br><span class="line">Recommends: XXXX(&gt;=5.1.0.0)   <span class="comment"># 建议依赖，不影响使用</span></span><br><span class="line">Description:  <span class="comment"># 软件的简短描述</span></span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.3、debian/rules文件详解</em></strong><br>&emsp;&emsp;还有一个很重要的文件就是rules，在不知道如何使用的情况下，使用初始化的rules文件即可。<br>&emsp;&emsp;rules文件本质上是一个Makefile文件，这个Makefile文件定义了创建deb格式软件包的规则。打包工具按照rules文件指定的规则，完成编译，将软件安装到临时安装目录，清理编译目录等操作，并依据安装到临时目录的文件来生成deb格式的软件包。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/make -f</span></span><br><span class="line"><span class="comment"># -*- makefile -*-</span></span><br><span class="line"><span class="comment"># Uncomment this to turn on verbose mode.</span></span><br><span class="line"><span class="comment">#export DH_VERBOSE=1  打开后编译输出更详细</span></span><br><span class="line"><span class="comment">#export DH_BUILD_OPTIONS=nocheck  可以跳过编译后的测试，对于某些编译不过的包有效</span></span><br><span class="line"></span><br><span class="line">%:</span><br><span class="line">  dh <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;实际上rules文件的dh语言是由debhelper工具来解析的，不要看上面只有短短一行语句，但实际上它的进化简化过程很漫长:   </p>
-<div align="center">
-<img src="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/debhelper进化.png" width="700" height="300">
-<div align="left">
-
-<p><strong><em>2.4、debian/install文件详解</em></strong><br>&emsp;&emsp;还有一个文件对于非源码打包作用很大，即debian/install。如果你的软件包需要那些标准的make install没有安装的文件，你可以把文件名和目标路径写入 debian/install文件，它们将被 dh_install安装:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设有个空文件的tar.gz包，文件结构如下</span></span><br><span class="line">$ tree <span class="built_in">test</span>-1.0</span><br><span class="line"><span class="built_in">test</span>-1.0/</span><br><span class="line">├── debian</span><br><span class="line">│   └── install</span><br><span class="line">└── 1.md</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;install的初始位置就是在打包根目录下，install文件可以这样写(注意install文件的属性、所属者必须与其他文件一致):</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">cp 1.md /home</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.5、deb打包钩子脚本执行流程</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首次安装某deb包时，执行dpkg -i test_v1.deb安装，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">preinst-&gt;postinst</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载deb，但保留配置档，执行dpkg -r test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若卸载不保留配置档，执行dpkg -P test，DEBIAN下面控制脚本按如下顺序执行：</span></span><br><span class="line">prerm-&gt;postrm(remove)-&gt;postrm(purge)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若升级安装,例如执行dpkg -i test_v2.deb，DEBIAN下面的控制脚本执行顺序如下：</span></span><br><span class="line">prerm-&gt;preinst-&gt;postrm-&gt;postinst</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2.6、deb打包时环境变量</em></strong></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 包名</span></span><br><span class="line">DPKG_MAINTSCRIPT_NAME</span><br><span class="line"><span class="comment"># 架构名</span></span><br><span class="line">DPKG_MAINTSCRIPT_ARCH</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>3、源码打包示例</em></strong><br>&emsp;&emsp;deb源码打包只能使用debuild / dpkg-buildpackage的方法，其特点就是能够直接识别CMakeLists.txt文件，并自动编译。现以一个实例程序展示源码打包的流程:  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用dh_make自动生成debian包，选择&#x27;single&#x27; &#x27;Y&#x27;</span></span><br><span class="line">$ tree .</span><br><span class="line">ctest-1.0</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── CTest.cpp</span><br><span class="line">└── debian</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 debuild / dpkg-buildpackage / dpkg-deb 去生成deb包</span></span><br><span class="line"><span class="comment"># $ debuild -us -uc -b</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line"><span class="comment"># $ fakeroot dpkg-deb -b ctest-1.0 ctest-1.0.deb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>4、非源码打包示例</em></strong><br>&emsp;&emsp;非源码打包可以使用debian/install文件安装或者打包目录下的文件结构，前者可在钩子脚本指定安装位置，后者可在用户安装deb包的时候自动放入对应的文件系统中。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在打包根目录下新建1.md 2.md</span></span><br><span class="line"><span class="comment"># 注意，dpkg-deb需要将debian改成DEBIAN</span></span><br><span class="line">$ tree .</span><br><span class="line">ftest-1.0</span><br><span class="line">├── 1.md</span><br><span class="line">└── debian</span><br><span class="line">    ├── install <span class="comment"># 文件安装控制</span></span><br><span class="line">    └── postinst <span class="comment"># 安装后钩子脚本</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加debian/install文件，内容如下</span></span><br><span class="line">`</span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">cp 1.md /home</span><br><span class="line">`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加debian/postinst文件，内容如下</span></span><br><span class="line">`</span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;postinst modify test&quot;</span> &gt;&gt; /home/1.md</span><br><span class="line">`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 debuild / dpkg-buildpackage / dpkg-deb 去生成deb包</span></span><br><span class="line"><span class="comment"># $ debuild -us -uc -b</span></span><br><span class="line">$ dpkg-buildpackage -us -uc -b</span><br><span class="line"><span class="comment"># $ fakeroot dpkg-deb -b ctest-1.0 ctest-1.0.deb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用dh clean清理生成的多余文件</span></span><br><span class="line">$ dh clean</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x03-dpkg基础-知识"><a href="#0x03-dpkg基础-知识" class="headerlink" title="0x03 dpkg基础 知识"></a><em>0x03 dpkg基础 知识</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 常用命令</span><br><span class="line">2 路径释义</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>1、常用命令</em></strong>  </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">dpkg -i <span class="string">&#x27;包路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载(不卸载配置文件)</span></span><br><span class="line">dpkg -r <span class="string">&#x27;包路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载(卸载配置文件)</span></span><br><span class="line">dpkg -P <span class="string">&#x27;包路径&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看安装状态</span></span><br><span class="line"><span class="comment"># 第一列 ii 代表成功安装</span></span><br><span class="line">dpkg -l</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>2、路径释义</em></strong>  </p>
-<ul>
-<li>/var/lib/dpkg/status: 查看包当前状态</li>
-<li>/var/lib/dpkg/info/: 包含安装包的配置文件(钩子脚本都能在此修改)</li>
-</ul>
-<h3 id="0x04-引用文献"><a href="#0x04-引用文献" class="headerlink" title="0x04 引用文献"></a><em>0x04 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md">https://github.com/JailbreakFox/Linux-sh-package/blob/master/Centos/Centos%20Mini.md</a><br>[2]<a target="_blank" rel="noopener" href="https://blog.csdn.net/get_set/article/details/53453320">https://blog.csdn.net/get_set/article/details/53453320</a><br>[3]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SQL888/p/5776442.html">https://www.cnblogs.com/SQL888/p/5776442.html</a><br>[4]<a target="_blank" rel="noopener" href="https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html">https://www.debian.org/doc/manuals/maint-guide/index.zh-cn.html</a></p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，打包工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/06/24/deb%E4%B8%8Erpm%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-IPV4与IPV6" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -653,6 +356,223 @@
 
 
   
+    <article id="post-单元测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">单元测试工具</a>
+    </h1>
+  
+
+        
+        <a href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2020-11-19T01:49:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-19</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;单元测试工具能够快速测试代码模块的可用性，常用工具有CTest、QTest、GTest</p>
+<h3 id="0x01-CTest"><a href="#0x01-CTest" class="headerlink" title="0x01 CTest"></a><em>0x01 CTest</em></h3><p>&emsp;&emsp;ctest是CMake提供的运行单元测试的工具，在使用CMakeLists.txt文件编译工程的时候，CTest会自动configure、build、test和展现测试结果。<br>&emsp;&emsp;ctest有两个模式：</p>
+<ul>
+<li>模式一：使用CMake configure和build工程，在CMakeLists.txt，使用特殊的命令创建tests。使用CTest来执行那些测试。</li>
+<li>模式二：使用CTest来执行一个script，这个script的语法必须和CMakeLists.txt相同。</li>
+</ul>
+<p>&emsp;&emsp;使用方法：<br>&emsp;&emsp;在CMakeLists.txt使用include(CTest)和include(Dart)来导入CTest模块和开启ctest。使用add_test()来添加一个测试程序，测试程序是一个普通的二进制，只不过内部运行的是qtest或者gtest编写的测试用例。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">add_executable(tests tests/test.cpp)</span><br><span class="line"></span><br><span class="line">add(NAME tests COMMAND $&lt;TARGET_FILE:tests&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x01-QTest"><a href="#0x01-QTest" class="headerlink" title="0x01 QTest"></a><em>0x01 QTest</em></h3><p>&emsp;&emsp;Qtest是Qt提供的单元测试框架，Qt Test是用于对基于Qt的应用程序和库进行单元测试的框架。Qt Test提供了单元测试框架中常见的所有功能以及用于测试图形用户界面的扩展。<br>&emsp;&emsp;Qt测试旨在简化基于Qt的应用程序和库的单元测试的编写：</p>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>轻量</td>
+<td>Qt Test大约有6000行代码和60个导出符号组成</td>
+</tr>
+<tr>
+<td>自成体系</td>
+<td>Qt Test仅需要Qt Core模块中的几个符号即可进行非GUI测试</td>
+</tr>
+<tr>
+<td>快速测试</td>
+<td>Qt Test不需要特殊的测试运行程序，没有特殊的测试注册</td>
+</tr>
+<tr>
+<td>数据驱动测试</td>
+<td>可以使用不同的数据进行多次的测试</td>
+</tr>
+<tr>
+<td>基本的GUI测试</td>
+<td>Qt Test提供了用于鼠标和键盘的模拟功能</td>
+</tr>
+<tr>
+<td>标杆管理</td>
+<td>Qt Test支持基准测试，并提供多个测量后端</td>
+</tr>
+<tr>
+<td>IDE友好</td>
+<td>Qt Test输出可以由Qt Creator、Visual Studio等IDE解释的消息</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>错误报告是线程安全和原子的</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>模板的广泛使用可以防止隐式类型转换引起的错误</td>
+</tr>
+<tr>
+<td>易于扩展</td>
+<td>可以将自定义类型轻松添加到测试数据和测试输出中</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;QVERIFY() 用于验证数据是否正确。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QVERIFY(1 == 1);</span><br><span class="line">QVERIFY2(1 != 1, <span class="string">&quot;1不等于1&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QFETCH_GLOBAL() 该宏从全局数据表中的一行中获取类型类型为name的变量。 名称和类型必须与全局数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。<br>&emsp;&emsp;QFETCH() 宏会在堆栈上创建一个类型为name的本地变量。 名称和类型必须与测试数据表中的列匹配。 这是断言，如果断言失败，则测试将中止。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QFETCH(QString, aString);</span><br><span class="line">QFETCH_GLOBAL(QLocale, locale);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;QCOMPARE宏用于判断两个值是否相等，如果实际值和预期值匹配，将会继续运行，否则将失败记录在测试日至中，并且测试将被终止，不会尝试任何后续操作。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">QCOMPARE(QString(<span class="string">&quot;hello&quot;</span>).toUpper(), QString(<span class="string">&quot;HELLO&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过在包含_data()的函数中调用QTest::addColumn和QTest::newRow向测试用例增加数据，并通过QFETCH宏在测试用例中访问数据。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void TestQString::toInt_data()</span><br><span class="line">&#123;</span><br><span class="line">    QTest::addColumn&lt;QString&gt;(<span class="string">&quot;aString&quot;</span>);</span><br><span class="line">    QTest::addColumn&lt;int&gt;(<span class="string">&quot;expected&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    QTest::newRow(<span class="string">&quot;positive value&quot;</span>) &lt;&lt; <span class="string">&quot;42&quot;</span> &lt;&lt; 42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;negative value&quot;</span>) &lt;&lt; <span class="string">&quot;-42&quot;</span> &lt;&lt; -42;</span><br><span class="line">    QTest::newRow(<span class="string">&quot;zero&quot;</span>) &lt;&lt; <span class="string">&quot;0&quot;</span> &lt;&lt; 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void TestQString::toInt()</span><br><span class="line">&#123;</span><br><span class="line">     QFETCH(QString, aString);</span><br><span class="line">     QFETCH(int, expected);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     QCOMPARE(aString.toInt(), expected);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;要创建测试，需要派生自QObject，并添加一个或多个专用槽函数。每个专用槽函数都是测试中的一个测试功能且必须为private。函数命名方法以casen_函数名或者以test结尾的方式。<br>&emsp;&emsp;使用QTest::qExec()可用于执行测试对象中的所有测试功能。<br>&emsp;&emsp;此外，还可以定义不用于测试功能的专用槽函数。如果存在，它们将由测试框架执行，并用于初始化和清除整个测试或当前的测试功能。</p>
+<ul>
+<li>initTestCase() 将在第一个测试功能执行之前被调用</li>
+<li>initTestCase_data() 将被调用以创建全局测试数据表</li>
+<li>cleanupTestCase() 在最后一个测试函数执行后被调用</li>
+<li>init() 将在每个测试功能执行之前被调用</li>
+<li>cleanup() 将在每个测试函数之后调用</li>
+</ul>
+<p>&emsp;&emsp;使用initTestCase()准备测试。每次测试都应使系统处于可用状态，因此可以重复运行。清理操作应在cleanupTestCase()中处理，因此即使测试失败也可以运行清理操作。<br>&emsp;&emsp;使用init()创建测试功能。每个测试功能都应使系统保持可用状态，以便可以重复运行。清理操作应在cleanup()中，即使测试功能失败并提前退出，清理动作也可以运行。<br>&emsp;&emsp;另外，可以使用RAII,并在析构函数中调用清除操作，以确保他们在测试函数返回且对象移出作用域时发生。<br>&emsp;&emsp;如果initTestCase()失败，将不执行任何测试功能。如果init()失败，则不执行以下测试功能，测试将继续进行下一个测试功能。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class Test : public QObject &#123;</span><br><span class="line">  Q_OBJECT</span><br><span class="line">private:</span><br><span class="line">  bool <span class="function"><span class="title">verify</span></span>() &#123;</span><br><span class="line">    <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">private slots:</span><br><span class="line">  void <span class="function"><span class="title">initTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;init test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">firstTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(<span class="literal">true</span>);</span><br><span class="line">    QCOMPARE(1, 1);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">secondTest</span></span>() &#123;</span><br><span class="line">    QVERIFY(verify());</span><br><span class="line">    QVERIFY(1 != 2);</span><br><span class="line">  &#125;</span><br><span class="line">  void <span class="function"><span class="title">cleanupTestCase</span></span>() &#123;</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;clean test case&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;最后，如果测试类具有静态且公共的void initMain()方法，则在实例化QApplication对象之前，由QTEST_MAIN宏调用该方法。例如，这允许设置应用程序的属性，例如Qt::AA_DisableHighDpiScaling。这是在Qt5.14添加的。<br>&emsp;&emsp;CMake还有其他优点。例如，几乎可以毫不费力地使用CDash将测试运行的结果发布到Web服务器上。<br>&emsp;&emsp;CTest可以扩展到非常不同的单元测试框架，并且可以与QTest一起使用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">project(mytest LANGUAGES CXX)</span><br><span class="line"></span><br><span class="line">include(CTest)</span><br><span class="line">include(Dart)</span><br><span class="line"></span><br><span class="line">find_package(Qt5 COMPONENTS Test REQUIRED)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_INCLUDE_CURRENT_DIR ON)</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(CMAKE_AUTOMOC ON)</span><br><span class="line"></span><br><span class="line">add_executable(mytest tst_mytest.cpp)</span><br><span class="line">add_test(NAME mytest COMMAND mytest)</span><br><span class="line"></span><br><span class="line">target_link_libraries(mytest PRIVATE Qt5::</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-GTest"><a href="#0x02-GTest" class="headerlink" title="0x02 GTest"></a><em>0x02 GTest</em></h3><p>&emsp;&emsp;google test(gtest)是google公司推出的c++单元测试框架，基于xUnit架构，并且支持Linux、Windows和mac，并且支持任何类型的测试和模拟，而不仅仅是单元测试。<br>&emsp;&emsp;当使用gtest时，通过编写断言来检查条件是否为真。断言的结果可能是成功、非致命失败或者致命失败。如果发生致命故障，将终止当前功能，否则将继续运行。<br>&emsp;&emsp;一个测试套件包含一个或者多个测试。当测试套件中的多个测试需要共享通用对象和子例程时，可以将他们放入一个测试桶中。<br>&emsp;&emsp;一个测试程序可以包含多个测试套件。<br>&emsp;&emsp;gtest断言类似于函数调用的宏，可以通过断言其行为来测试类或者函数。断言失败时，gtest会输出断言的源文件和行号位置以及失败消息。还可以提供自定义失败消息，该消息将会附加到gtest的消息之后。<br>&emsp;&emsp;断言成对出现，测试相同的事物，但是对当前函数有不同的影响。ASSERT_<em>版本失败时会产生致命错误，并终止当前功能。EXPECT_</em>会产生非致命错误，不会导致当前测试失败。通常EXPECT_<em>是首选，因为他们允许在测试中报告多个鼓掌，但是如果在断言失败时继续运行将没有意义时应当使用ASSERT_</em>。<br>&emsp;&emsp;由于ASSERT_*失败会从当前函数立即返回，可能会跳过其后的清理代码，导致内存泄漏。<br>&emsp;&emsp;基本断言可以进行基本的真/假条件测试</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_TRUE(condition);</td>
+<td>EXPECT_TRUE(condition);</td>
+<td>condition是真的</td>
+</tr>
+<tr>
+<td>ASSERT_FALSE(condition);</td>
+<td>EXPECT_FLASE(condition);</td>
+<td>condition是假的</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;请记住，当它们失败时，将导致ASSERT_<em>致命故障并从当前函数返回，而当它们发生EXPECT_</em>非致命故障时，将允许该函数继续运行。无论哪种情况，断言失败都意味着其包含测试失败。<br>&emsp;&emsp;该组中的断言比较两个C字符串。如果要比较两个string对象，请改用EXPECT_EQ，EXPECT_NE等。</p>
+<table>
+<thead>
+<tr>
+<th>致命断言</th>
+<th>非致命断言</th>
+<th>验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASSERT_STREQ(str1,str2);</td>
+<td>EXPECT_STREQ(str1,str2);</td>
+<td>这两个C字符串的内容相同</td>
+</tr>
+<tr>
+<td>ASSERT_STRNE(str1,str2);</td>
+<td>EXPECT_STRNE(str1,str2);</td>
+<td>两个C字符串的内容不同</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASEEQ(str1,str2);</td>
+<td>EXPECT_STRCASEEQ(str1,str2);</td>
+<td>两个C字符串的内容相同，忽略大小写</td>
+</tr>
+<tr>
+<td>ASSERT_STRCASENE(str1,str2);</td>
+<td>EXPECT_STRCASENE(str1,str2);</td>
+<td>两个C字符串的内容不同，忽略大小写</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;注意，断言名称中的“ CASE”表示忽略大小写。一个NULL 指针和一个空字符串被认为是不同的。<br>&emsp;&emsp;<em>STREQ</em>并<em>STRNE</em>接受宽C字符串（wchar_t*）。如果两个宽字符串的比较失败，则它们的值将打印为UTF-8窄字符串。<br>&emsp;&emsp;创建测试：  </p>
+<ul>
+<li>1.使用TEST()宏定义和命名测试功能。这些是没有返回值的普通C++函数。</li>
+<li>2.在此函数，要与包含的所有有效C++语句一起使用各种gtest断言来检查。</li>
+<li>3.测试结果由断言确定，如果测试中的任何声明失败（致命或非致命），或者测试崩溃，整个测试都会失败，否则测试应当成功。</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TEST(TestSuiteName, TestName) &#123;</span><br><span class="line">  ...测试代码...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;TEST()函数第一个参数是测试套件的名称，第二个参数是测试套件内的测试名称。这两个名称都必须是有效的C++标识符，并且不应包含任何下划线。来自不同测试套件的测试可以具有相同的名称。</p>
+<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtest.html">https://doc.qt.io/qt-5/qtest.html</a><br>[1]<a target="_blank" rel="noopener" href="https://github.com/google/googletest/blob/master/googletest/docs/primer.md">https://github.com/google/googletest/blob/master/googletest/docs/primer.md</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机技术，编译工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/19/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/8/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/10/">下一页</a>
@@ -774,15 +694,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -794,11 +714,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -814,11 +734,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -850,15 +770,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -866,7 +782,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -875,6 +791,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">

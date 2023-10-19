@@ -1,2 +1,0 @@
-#!/bin/bash
-echo "postinst modify test" >> /home/1.md

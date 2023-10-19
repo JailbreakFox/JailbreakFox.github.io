@@ -156,97 +156,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-q-learning" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/26/q-learning/">Q-learning算法</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/26/q-learning/" class="archive-article-date">
-  	<time datetime="2018-11-26T12:41:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-26</time>
-</a>
-        
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp; 强化学习是机器学习的一个分支，目前应用比较广泛的强化学习方法有AHC、TD以及Q-learning、sarsa、H-learning、DQN等<sup>[1]</sup>。<br>&emsp;&emsp;连接主义学习理论是心理学学习理论的一种，其将学习的方式分类为有监督学习、无监督学习和强化学习。<br>&emsp;&emsp;监督学习是人工标记输出,并反馈修改神经网络权值的学习方法。无监督学习需要机器对给定的输入自行聚类。而强化学习则是机器主动做出试探动作，并根据环境的反馈来修改行为的学习方式。<br>&emsp;&emsp;本文主要介绍在强化学习中使用最多的基础算法，即Q-learning。</p>
-<h3 id="0x01-Q-learning算法"><a href="#0x01-Q-learning算法" class="headerlink" title="0x01 Q-learning算法"></a><em>0x01 Q-learning算法</em></h3><p>&emsp;&emsp;q-learning算法<sup>[2]</sup>包含两个最主要的概念，即状态S（state）和动作A（action），每次通过选择动作更新状态时，要同时按照图中的最优值函数Q计算公式更新Q表。其中参数α称为学习率，其决定这次的误差有多少是要被学习的, 且α是一个小于1 的数。γ为折扣率，是对未来 reward 的衰减值，值在[0,1]选择。</p>
-<div align="center">
-<img src="/2018/11/26/q-learning/Q-learning.jpg">
-<div align="left">  
-
-<p>&emsp;&emsp;在强化学习中，如果已经估计出最优值函数Q，则有三种动作选择方式<sup>[1]</sup>：贪婪动作选择策略（greedy）、ε-贪婪动作策略（ε-greedy）和softmax策略。第一种策略总是选择最高Q值的下步动作，第二种策略有ε的概率选择最高Q值，（1-ε）的概率任意选择动作，第三种策略根据各动作的Q值权重来选择动作。<br>&emsp;&emsp;在了解基础的算法以后，分析一个<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">实际问题</a><sup>[3]</sup>，例子描述了如何利用q-learning来学习未知环境并训练agent。</p>
-<h3 id="0x02-实例分析"><a href="#0x02-实例分析" class="headerlink" title="0x02 实例分析"></a><em>0x02 实例分析</em></h3><p>&emsp;&emsp;现在分析一下<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">莫烦视频</a><sup>[4]</sup>中的代码段，<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">代码</a><sup>[5]</sup>可从github上获得。该例子的内容，是移动一个圆点，使其学会以最快的速度从左侧移动至右侧。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_q_table</span>(<span class="params">n_states, actions</span>):</span></span><br><span class="line">    table = pd.DataFrame(</span><br><span class="line">        np.zeros((n_states, len(actions))),</span><br><span class="line">        columns=actions,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> table</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数build_q_table旨在新建一个6行2列的Q值表，行代表状态，列代表左右移动。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choose_action</span>(<span class="params">state, q_table</span>):</span></span><br><span class="line">    state_actions = q_table.iloc[state, :]</span><br><span class="line">    <span class="keyword">if</span> (np.random.uniform() &gt; EPSILON) <span class="keyword">or</span> ((state_actions == <span class="number">0</span>).all()): </span><br><span class="line">        action_name = np.random.choice(ACTIONS)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        action_name = state_actions.idxmax()</span><br><span class="line">    <span class="keyword">return</span> action_name</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;该例子采用ε-greedy策略来选择动作，choose_action即根据ε值选择下一步的实际动作，有90%的机率选择最大的Q值动作，其余10%的机率随机选择其他动作</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_env_feedback</span>(<span class="params">S, A</span>):</span></span><br><span class="line">    <span class="keyword">if</span> A == <span class="string">&#x27;right&#x27;</span>: </span><br><span class="line">        <span class="keyword">if</span> S == N_STATES - <span class="number">2</span>:</span><br><span class="line">            S_ = <span class="string">&#x27;terminal&#x27;</span></span><br><span class="line">            R = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S + <span class="number">1</span></span><br><span class="line">            R = <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        R = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> S == <span class="number">0</span>:</span><br><span class="line">            S_ = S </span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            S_ = S - <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> S_, R</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数get_env_feedback的作用是假设按照已选择完成的动作行动，则下一状态的环境是否到达最左或最右，若是，则采取相应措施，若不是，则判断可安全执行。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rl</span>():</span></span><br><span class="line">    q_table = build_q_table(N_STATES, ACTIONS)</span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> range(MAX_EPISODES):</span><br><span class="line">        step_counter = <span class="number">0</span></span><br><span class="line">        S = <span class="number">0</span></span><br><span class="line">        is_terminated = <span class="literal">False</span></span><br><span class="line">        update_env(S, episode, step_counter)</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> is_terminated:</span><br><span class="line"></span><br><span class="line">            A = choose_action(S, q_table)</span><br><span class="line">            S_, R = get_env_feedback(S, A) </span><br><span class="line">            q_predict = q_table.loc[S, A]</span><br><span class="line">            <span class="keyword">if</span> S_ != <span class="string">&#x27;terminal&#x27;</span>:</span><br><span class="line">                q_target = R + GAMMA * q_table.iloc[S_, :].max()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                q_target = R </span><br><span class="line">                is_terminated = <span class="literal">True</span> </span><br><span class="line"></span><br><span class="line">            q_table.loc[S, A] += ALPHA * (q_target - q_predict)</span><br><span class="line">            S = S_ </span><br><span class="line"></span><br><span class="line">            update_env(S, episode, step_counter+<span class="number">1</span>)</span><br><span class="line">            step_counter += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> q_table</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;函数update_env是在搭建环境，这里不赘述。函数rl则是执行函数，循环做选择动作、判断环境、更新Q表以及实际运行动作的过程。</p>
-<h3 id="0x03-引用文献"><a href="#0x03-引用文献" class="headerlink" title="0x03 引用文献"></a><em>0x03 引用文献</em></h3><p>[1]强化学习方法及其应用研究<br>[2]<a target="_blank" rel="noopener" href="https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/">https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/2-2-A-q-learning/</a><br>[3]<a target="_blank" rel="noopener" href="http://mnemstudio.org/path-finding-q-learning-tutorial.htm">http://mnemstudio.org/path-finding-q-learning-tutorial.htm</a><br>[4]<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16921335/?p=6">https://www.bilibili.com/video/av16921335/?p=6</a><br>[5]<a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py">https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/1_command_line_reinforcement_learning/treasure_on_right.py</a> </p>
-</div></div>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">强化学习，算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/26/q-learning/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-Linux性能优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -480,6 +389,91 @@
 
 
   
+    <article id="post-Windows内核开发-开发工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">Windows内核开发-开发工具</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2018-10-20T08:00:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-20</time>
+</a>
+        
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a><em>0x00 引言</em></h3><p>&emsp;&emsp;Windows内核开发所用到的工具。</p>
+<h3 id="0x01-系统自带工具"><a href="#0x01-系统自带工具" class="headerlink" title="0x01 系统自带工具"></a><em>0x01 系统自带工具</em></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 任务管理器</span><br><span class="line">2 事件查看器</span><br><span class="line">3 资源监视器</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、任务管理器</em></strong><br>&emsp;&emsp;任务栏右键-任务管理器，能够查询到所有进程的信息。<br>&emsp;&emsp;任务管理器-详细信息，可添加每个进程的句柄查询列。  </p>
+<p><strong><em>2、事件查看器</em></strong><br>&emsp;&emsp;右键开始菜单-事件查看器-Windows日志-应用程序可以查看到崩溃日志。  </p>
+<p><strong><em>3、资源监视器</em></strong><br>&emsp;&emsp;任务管理器-性能-打开资源管理器-CPU，可以查看有哪些句柄与打开它的进程之间的关联信息。  </p>
+<h3 id="0x02-Sysinternals"><a href="#0x02-Sysinternals" class="headerlink" title="0x02 Sysinternals"></a><em>0x02 Sysinternals</em></h3><p>&emsp;&emsp;Winternals公司提供的<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/sysinternals/downloads/sysinternals-suite">免费工具</a>。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 procmon</span><br><span class="line">2 procexp</span><br><span class="line">3 dbgview</span><br><span class="line">4 autoruns</span><br><span class="line">5 运行</span><br></pre></td></tr></table></figure>
+<p><strong><em>1、procmon</em></strong><br>&emsp;&emsp;能够捕获到所有进程的文件打开、网络连接、注册表等事件。  </p>
+<p><strong><em>2、procexp</em></strong><br>&emsp;&emsp;能够捕获到所有进程的cpu占用、线程cpu占用、文件符占用等信息。  </p>
+<p><strong><em>3、dbgview</em></strong><br>&emsp;&emsp;能够捕获到日志打印，比如使用OutputDebugString函数，或者是Qt的qDebug。  </p>
+<div align="center">
+<img src="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/dbgview.png" width="700" height="320">
+<div align="left">  
+
+<p><strong><em>4、autoruns</em></strong><br>&emsp;&emsp;能够查看自启动项</p>
+<p><strong><em>5、运行</em></strong><br>&emsp;&emsp;通过”运行”进程，我们可以立刻打开某个功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mstsc - rdp连接窗口</span><br><span class="line">verifier - 系统已加载签名</span><br><span class="line">regedit - 注册表</span><br><span class="line">services.msc - 服务</span><br><span class="line">sdclt - 备份还原</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-WinDbg"><a href="#0x03-WinDbg" class="headerlink" title="0x03 WinDbg"></a><em>0x03 WinDbg</em></h3><p>&emsp;&emsp;Windbg是在windows平台下，强大的用户态和内核态调试工具。它的另外一个用途是可以用来分析dump数据。<br>&emsp;&emsp;Windbg在分析dump数据的时候，前提是必须要有.PDB文件。当同时有.PDB文件和源码时，可以使用Visual Studio进行查看。</p>
+<h3 id="0x04-DEPENX"><a href="#0x04-DEPENX" class="headerlink" title="0x04 DEPENX"></a><em>0x04 DEPENX</em></h3><p>&emsp;&emsp;用于查看动态库的符号详情</p>
+<h3 id="0x05-WireShark"><a href="#0x05-WireShark" class="headerlink" title="0x05 WireShark"></a><em>0x05 WireShark</em></h3><p>&emsp;&emsp;用于抓包</p>
+<h3 id="0x10-常见问题"><a href="#0x10-常见问题" class="headerlink" title="0x10 常见问题"></a><em>0x10 常见问题</em></h3><p>1.如何根据网络连接的端口号查看对应进程？</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -o <span class="comment"># 查找对应端口号的进程PID</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开资源管理器-网络查看</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="comment"># 打开任务管理器-进程查看</span></span><br></pre></td></tr></table></figure></div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/20/Windows%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/17/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/19/">下一页</a>
@@ -601,15 +595,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Linux 工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -621,11 +615,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">内核</a>
+                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">计算机技术，Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">内核</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -641,11 +635,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">机器学习，神经网络，算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -677,15 +671,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">食物 茶</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -693,7 +683,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具，流</a>
+                <a href="javascript:void(0)" class="js-tag color2">信息安全技术</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -702,6 +692,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">视觉，入门</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数字货币 区块链</a>
               </li>
              
               <li class="article-tag-list-item">
